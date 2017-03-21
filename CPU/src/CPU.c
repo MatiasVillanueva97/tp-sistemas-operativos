@@ -41,6 +41,10 @@ int main(int argc, char *argv[])
 	    exit(1);
 	}
 
+
+	// Esto es un comentario para comprobara qeu hicimos las cosas bien de que estas muy bien es un estado bueno
+	// para asegurar qeest buen estado no es necesario qeu esntiendas nada, menos mi dislexia
+
 	memset(&hints, 0, sizeof hints);
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
