@@ -11,8 +11,11 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
-
 #include <arpa/inet.h>
+
+#include "commons/txt.h"
+#include "commons/string.h"
+#include "commons/collections/list.h"
 
 #define PORT "3490" // the port client will be connecting to
 
@@ -41,9 +44,6 @@ int main(int argc, char *argv[])
 	    exit(1);
 	}
 
-
-	// Esto es un comentario para comprobara qeu hicimos las cosas bien de que estas muy bien es un estado bueno
-	// para asegurar qeest buen estado no es necesario qeu esntiendas nada, menos mi dislexia
 
 	memset(&hints, 0, sizeof hints);
 	hints.ai_family = AF_UNSPEC;
