@@ -14,9 +14,12 @@
 #include <arpa/inet.h>
 
 
+<<<<<<< HEAD
 /// Seguimos con las pruebas de git, aca comentarios y agrego librerias
 /// esto no paraaaaaaaaaaaaaa
 
+=======
+>>>>>>> e0ed8033a5ffee5bac0f07ecd1a8cc12f686bcba
 #include "commons/txt.h"
 #include "commons/string.h"
 #include "commons/collections/list.h"
