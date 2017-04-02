@@ -14,9 +14,6 @@
 #include <arpa/inet.h>
 
 
-/// Seguimos con las pruebas de git, aca comentarios y agrego librerias
-///ghvbhf
-
 #include "commons/txt.h"
 #include "commons/string.h"
 #include "commons/collections/list.h"
