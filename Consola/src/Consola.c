@@ -11,10 +11,11 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
+#include "commons/config.h"
 
 #include <arpa/inet.h>
 
-#define PORT "3490" // the port client will be connecting to
+//#define PORT "3490" // the port client will be connecting to
 
 #define MAXDATASIZE 100 // max number of bytes we can get at once
 
@@ -28,6 +29,27 @@ void *get_in_addr(struct sockaddr *sa)
 	return &(((struct sockaddr_in6*)sa)->sin6_addr);
 }
 
+char* getStringFromConfig(t_config *config, char*valor){
+	char* aux = malloc(sizeof(char*));
+
+	if(config_has_property(config, valor)){
+		strcpy(aux,config_get_string_value(config, valor));
+	}
+
+	else perror("Archivo config mal hecho");
+
+	return aux;
+}
+
+void configuracionInicial(char*PATH,char**PORT,char**IP){
+	t_config *config;
+	config = config_create(PATH);
+	*IP = getStringFromConfig(config,"IP_KERNEL");
+	*PORT = getStringFromConfig(config,"PUERTO_KERNEL");
+	config_destroy(config);
+}
+
+
 int main(int argc, char *argv[])
 {
 	int sockfd, numbytes;
@@ -35,17 +57,20 @@ int main(int argc, char *argv[])
 	struct addrinfo hints, *servinfo, *p;
 	int rv;
 	char s[INET6_ADDRSTRLEN];
+	char *PORT,*IP;
 
 	if (argc != 2) {
 	    fprintf(stderr,"usage: client hostname\n");
 	    exit(1);
 	}
 
+	configuracionInicial(argv[1],&PORT,&IP);
+
 	memset(&hints, 0, sizeof hints);
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
 
-	if ((rv = getaddrinfo(argv[1], PORT, &hints, &servinfo)) != 0) {
+	if ((rv = getaddrinfo(IP, PORT, &hints, &servinfo)) != 0) {
 		fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
 		return 1;
 	}
