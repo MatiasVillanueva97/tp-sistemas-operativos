@@ -21,6 +21,12 @@
 
 #include <arpa/inet.h>
 
+
+typedef struct{
+	char *PORT;
+	char *PUNTO_MONTAJE;
+}config_FileSystem;
+
 char* getStringFromConfig(t_config *config, char*valor){
 	char* aux = malloc(sizeof(char*));
 
@@ -33,25 +39,25 @@ char* getStringFromConfig(t_config *config, char*valor){
 	return aux;
 }
 
-void configuracionInicial(char*PATH,char**PORT,char**PUNTO_MONTAJE){
+void configuracionInicial(char*PATH, config_FileSystem * configFS){
 	t_config *config;
 	config = config_create(PATH);
-	*PORT = getStringFromConfig(config,"PUERTO");
-	*PUNTO_MONTAJE = getStringFromConfig(config,"PUNTO_MONTAJE");
+	configFS->PORT = getStringFromConfig(config,"PUERTO");
+	configFS->PUNTO_MONTAJE = getStringFromConfig(config,"PUNTO_MONTAJE");
 	config_destroy(config);
 }
 
 
 int main(int argc, char* argv[]) {
 
-	char *PORT,*PUNTO_MONTAJE;
+	config_FileSystem * config;
 
 	if (argc != 2) {
 		    fprintf(stderr,"usage: client hostname\n");
 		    exit(1);
 		}
 
-	configuracionInicial(argv[1],&PORT,&PUNTO_MONTAJE);
+	configuracionInicial(argv[1],config);
 
 
 	return EXIT_SUCCESS;
