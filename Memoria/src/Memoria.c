@@ -13,6 +13,17 @@
 
 #include "commons/config.h"
 
+typedef struct{
+	char* PORT;
+	char* MARCOS;
+	char* MARCO_SIZE;
+	char* ENTRADAS_CACHE ;
+	char* CACHE_X_PROC;
+	char* RETARDO_MEMORIA;
+	char* REEMPLAZO_CACHE;
+}config_Memoria;
+
+
 char* getStringFromConfig(t_config *config, char*valor){
 	char* aux = malloc(sizeof(char*));
 
@@ -25,29 +36,28 @@ char* getStringFromConfig(t_config *config, char*valor){
 	return aux;
 }
 
-void configuracionInicial(char* PATH,char** PORT,char** MARCOS,char** MARCO_SIZE,char** ENTRADAS_CACHE,char**CACHE_X_PROC,char**RETARDO_MEMORIA,char**REEMPLAZO_CACHE){
+void configuracionInicial(char* PATH, config_Memoria *configMemoria){
 	t_config *config;
 	config = config_create(PATH);
-	*PORT = getStringFromConfig(config,"PUERTO");
-	*MARCOS = getStringFromConfig(config,"MARCOS");
-	*MARCO_SIZE = getStringFromConfig(config,"MARCO_SIZE");
-	*ENTRADAS_CACHE = getStringFromConfig(config,"ENTRADAS_CACHE");
-	*CACHE_X_PROC = getStringFromConfig(config,"CACHE_X_PROC");
-	*REEMPLAZO_CACHE=getStringFromConfig(config,"REEMPLAZO_CACHE");
-	*RETARDO_MEMORIA = getStringFromConfig(config,"RETARDO_MEMORIA");
+	configMemoria->PORT = getStringFromConfig(config,"PUERTO");
+	configMemoria->MARCOS = getStringFromConfig(config,"MARCOS");
+	configMemoria->MARCO_SIZE = getStringFromConfig(config,"MARCO_SIZE");
+	configMemoria->ENTRADAS_CACHE = getStringFromConfig(config,"ENTRADAS_CACHE");
+	configMemoria->CACHE_X_PROC = getStringFromConfig(config,"CACHE_X_PROC");
+	configMemoria->REEMPLAZO_CACHE=getStringFromConfig(config,"REEMPLAZO_CACHE");
+	configMemoria->RETARDO_MEMORIA = getStringFromConfig(config,"RETARDO_MEMORIA");
 	config_destroy(config);
 }
 
 int main(int argc, char *argv[]) {
-    char* PORT;
-    char* MARCOS;
-	char* MARCO_SIZE;
-	char* ENTRADAS_CACHE ;
-	char* CACHE_X_PROC;
-	char* RETARDO_MEMORIA;
-	char* REEMPLAZO_CACHE;
+	config_Memoria config;
 
-    configuracionInicial("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Memoria/memoria.config",&PORT,&MARCOS,&MARCO_SIZE,&ENTRADAS_CACHE ,&CACHE_X_PROC,&RETARDO_MEMORIA,&REEMPLAZO_CACHE);
+	if (argc != 2) {
+		    fprintf(stderr,"usage: client hostname\n");
+		    exit(1);
+	}
+
+    configuracionInicial(argv[1],&config);
     puts("16 GB DE RAM"); /* prints !!!Hello World!!! */
 	return EXIT_SUCCESS;
 }
