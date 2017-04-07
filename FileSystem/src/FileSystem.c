@@ -50,14 +50,14 @@ void configuracionInicial(char*PATH, config_FileSystem * configFS){
 
 int main(int argc, char* argv[]) {
 
-	config_FileSystem * config;
+	config_FileSystem config;
 
 	if (argc != 2) {
 		    fprintf(stderr,"usage: client hostname\n");
 		    exit(1);
 		}
 
-	configuracionInicial(argv[1],config);
+	configuracionInicial(argv[1],&config);
 
 
 	return EXIT_SUCCESS;
