@@ -59,6 +59,8 @@ int main(int argc, char *argv[])
 	char s[INET6_ADDRSTRLEN];
 	char *PORT,*IP;
 
+
+
 	if (argc != 2) {
 	    fprintf(stderr,"usage: client hostname\n");
 	    exit(1);
