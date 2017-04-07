@@ -14,8 +14,8 @@
 #include <arpa/inet.h>
 #include <sys/wait.h>
 #include <signal.h>
-#include "sockets.h"
 #include "commons/config.h"
+#include "../../Nuestras/src/sockets.h"
 
 
 #define PORT "3490"  // the port users will be connecting to
