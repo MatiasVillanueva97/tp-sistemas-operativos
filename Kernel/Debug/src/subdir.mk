@@ -5,14 +5,17 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../src/Kernel.c \
+../src/config.c \
 ../src/sockets.c 
 
 OBJS += \
 ./src/Kernel.o \
+./src/config.o \
 ./src/sockets.o 
 
 C_DEPS += \
 ./src/Kernel.d \
+./src/config.d \
 ./src/sockets.d 
 
 

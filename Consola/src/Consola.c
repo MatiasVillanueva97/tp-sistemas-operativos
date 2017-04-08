@@ -12,6 +12,7 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include "commons/config.h"
+#include "sockets.h"
 
 #include <arpa/inet.h>
 
@@ -26,27 +27,6 @@ typedef struct{
 }config_Consola;
 
 // get sockaddr, IPv4 or IPv6:
-void *get_in_addr(struct sockaddr *sa)
-{
-	if (sa->sa_family == AF_INET) {
-		return &(((struct sockaddr_in*)sa)->sin_addr);
-	}
-
-	return &(((struct sockaddr_in6*)sa)->sin6_addr);
-}
-
-char* getStringFromConfig(t_config *config, char*valor){
-	char* aux = malloc(sizeof(char*));
-
-	if(config_has_property(config, valor)){
-		strcpy(aux,config_get_string_value(config, valor));
-	}
-
-	else perror("Archivo config mal hecho");
-
-	return aux;
-}
-
 void configuracionInicial(char*PATH,config_Consola * configConsola){
 	t_config *config;
 	config = config_create(PATH);

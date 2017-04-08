@@ -15,7 +15,7 @@
 #include "commons/txt.h"
 #include "commons/string.h"
 #include "commons/collections/list.h"
-#include "../../Nuestras/src/sockets.h"
+#include "sockets.h"
 
 // aca poner la futura libreria
 

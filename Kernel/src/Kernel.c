@@ -15,25 +15,12 @@
 #include <sys/wait.h>
 #include <signal.h>
 #include "commons/config.h"
-#include "../../Nuestras/src/sockets.h"
+#include "sockets.h"
 
 
 #define PORT "3490"  // the port users will be connecting to
 
 #define BACKLOG 10	 // how many pending connections queue will hold
-
-
-char* getStringFromConfig(t_config *config, char*valor){
-	char* aux = malloc(sizeof(char*));
-
-	if(config_has_property(config, valor)){
-		strcpy(aux,config_get_string_value(config, valor));
-	}
-
-	else perror("Archivo config mal hecho");
-
-	return aux;
-}
 
 
 typedef struct {
@@ -51,9 +38,9 @@ typedef struct {
 	char ** SEM_INIT;
 	char ** SHARED_VARS;
 	char * STACK_SIZE;
-}estructuraDeMierda;
+}config_Kernel;
 
-void configuracionInicial(char*PATH, estructuraDeMierda * est){
+void configuracionInicial(char*PATH, config_Kernel * est){
 	t_config * config;
 	config = config_create(PATH);
 	est->PUERTO_PROG = getStringFromConfig(config,"PUERTO_PROG");
@@ -85,11 +72,11 @@ int main(void)
 	int rv;
 	char buf[100];
 
-	estructuraDeMierda configuracion;
+	config_Kernel config;
 
-	configuracionInicial("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Kernel/kernel.config",&configuracion);
+	configuracionInicial("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Kernel/kernel.config",&config);
 
-	socket=crearSocketYBindeo(configuracion.PUERTO_PROG);
+	socket=crearSocketYBindeo(config.PUERTO_PROG);
 
 	escuchar(socket);
 

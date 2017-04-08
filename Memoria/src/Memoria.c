@@ -24,18 +24,6 @@ typedef struct{
 }config_Memoria;
 
 
-char* getStringFromConfig(t_config *config, char*valor){
-	char* aux = malloc(sizeof(char*));
-
-	if(config_has_property(config, valor)){
-		strcpy(aux,config_get_string_value(config, valor));
-	}
-
-	else perror("Archivo config mal hecho");
-
-	return aux;
-}
-
 void configuracionInicial(char* PATH, config_Memoria *configMemoria){
 	t_config *config;
 	config = config_create(PATH);

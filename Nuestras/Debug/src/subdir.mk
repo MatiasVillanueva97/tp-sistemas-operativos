@@ -4,17 +4,14 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../src/CPU.c \
 ../src/config.c \
 ../src/sockets.c 
 
 OBJS += \
-./src/CPU.o \
 ./src/config.o \
 ./src/sockets.o 
 
 C_DEPS += \
-./src/CPU.d \
 ./src/config.d \
 ./src/sockets.d 
 
