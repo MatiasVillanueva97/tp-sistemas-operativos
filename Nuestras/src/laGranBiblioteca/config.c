@@ -6,6 +6,9 @@
  */
 #include "commons/config.h"
 
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 char* getStringFromConfig(t_config *config, char*valor){
 	char* aux = malloc(sizeof(char*));
 
@@ -17,5 +20,16 @@ char* getStringFromConfig(t_config *config, char*valor){
 
 	return aux;
 }
+void imprimirArraysDeStrings(char** lista)
+{
+	printf("[ %s",*lista);
+	while(*(lista+1) != NULL) //Mostrar a gabi; //lenguaje de mierda.
+	{
+		lista++;
+		printf(", %s ", *lista);
+	}
+	printf(" ]\n");
+}
+
 
 

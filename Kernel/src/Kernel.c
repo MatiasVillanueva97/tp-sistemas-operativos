@@ -61,7 +61,7 @@ void configuracionInicial(char*PATH, config_Kernel * est){
 	config_destroy(config);
 }
 
-void imprimirListasConfiguracionInicial(char** lista)
+void imprimirArraysDeStrings(char** lista)
 {
 	printf("[ %s",*lista);
 	while(*(lista+1) != NULL) //Mostrar a gabi; //lenguaje de mierda.
@@ -88,13 +88,13 @@ void imprimirConfiguracionInicial(config_Kernel config) // Yo gabriel maiori, di
 
 	printf("SEM_IDS: ");
 
-	imprimirListasConfiguracionInicial(config.SEM_IDS);
+	imprimirArraysDeStrings(config.SEM_IDS);
 	printf("SEM_INIT: ");
 
-	imprimirListasConfiguracionInicial(config.SEM_INIT);
+	imprimirArraysDeStrings(config.SEM_INIT);
 	printf("SHARED_VARS: ");
 
-	imprimirListasConfiguracionInicial(config.SHARED_VARS);
+	imprimirArraysDeStrings(config.SHARED_VARS);
 
 
 	printf("STACK_SIZE: %s \n", config.STACK_SIZE);
