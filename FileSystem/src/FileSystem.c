@@ -37,18 +37,25 @@ void configuracionInicial(char*PATH, config_FileSystem * configFS){
 	config_destroy(config);
 }
 
+void imprimirConfiguracionInicial(config_FileSystem config){
+
+	printf("PORT: %s\n", config.PORT);
+	printf("PUNTO_MONTAJE: %s \n", config.PUNTO_MONTAJE);
+
+}
+
 
 int main(int argc, char* argv[]) {
 
 	config_FileSystem config;
 
 	if (argc != 2) {
-		    fprintf(stderr,"usage: client hostname\n");
+		    printf(stderr,"usage: client hostname\n");
 		    exit(1);
 		}
 
 	configuracionInicial(argv[1],&config);
-
+	imprimirConfiguracionInicial(config);
 
 	return EXIT_SUCCESS;
 }

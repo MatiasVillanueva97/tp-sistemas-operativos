@@ -35,6 +35,12 @@ void configuracionInicial(char*PATH,config_Consola * configConsola){
 	config_destroy(config);
 }
 
+void imprimirConfiguracionInicial(config_Consola config){
+
+	printf("IP_KERNEL: %s\n", config.IP);
+	printf("PUERTO_KERNEL: %s \n", config.PORT);
+
+}
 
 int main(int argc, char *argv[])
 {
@@ -53,6 +59,7 @@ int main(int argc, char *argv[])
 	}*/
 
 	configuracionInicial("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Consola/consola.config",&config);
+	imprimirConfiguracionInicial(config);
 
 	memset(&hints, 0, sizeof hints);
 	hints.ai_family = AF_UNSPEC;

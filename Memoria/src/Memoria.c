@@ -36,7 +36,17 @@ void configuracionInicial(char* PATH, config_Memoria *configMemoria){
 	configMemoria->RETARDO_MEMORIA = getStringFromConfig(config,"RETARDO_MEMORIA");
 	config_destroy(config);
 }
+void imprimirConfiguracionInicial(config_Memoria config){
 
+	printf("PUERTO: %s\n", config.PORT);
+	printf("MARCOS: %s \n", config.MARCOS);
+	printf("MARCO_SIZE: %s\n", config.MARCO_SIZE);
+	printf("ENTRADAS_CACHE: %s \n", config.ENTRADAS_CACHE);
+	printf("CACHE_X_PROC: %s\n", config.CACHE_X_PROC);
+	printf("REEMPLAZO_CACHE: %s \n", config.REEMPLAZO_CACHE);
+	printf("RETARDO_MEMORIA: %s\n", config.RETARDO_MEMORIA);
+
+}
 int main(int argc, char *argv[]) {
 	config_Memoria config;
 
@@ -46,6 +56,7 @@ int main(int argc, char *argv[]) {
 	}
 
     configuracionInicial(argv[1],&config);
+    imprimirConfiguracionInicial(config);
     puts("16 GB DE RAM"); /* prints !!!Hello World!!! */
 	return EXIT_SUCCESS;
 }

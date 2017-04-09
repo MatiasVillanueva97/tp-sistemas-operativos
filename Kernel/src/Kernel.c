@@ -63,13 +63,13 @@ void configuracionInicial(char*PATH, config_Kernel * est){
 
 void imprimirListasConfiguracionInicial(char** lista)
 {
-	int i=0;
-
-	for(i; **lista!=NULL; i++)
+	printf("[ %s",*lista);
+	while(*(lista+1) != NULL) //Mostrar a gabi; //lenguaje de mierda.
 	{
-		printf(" %s ", *(lista+i));
+		lista++;
+		printf(", %s ", *lista);
 	}
-
+	printf(" ]\n");
 }//SEM_IDS:[SEM1, SEM2, SEM3]
 
 void imprimirConfiguracionInicial(config_Kernel config) // Yo gabriel maiori, dije explicitamente que esto es una terrible NEGRADA, pero como yo soy el tosco del team, no puedo quejarme
@@ -89,12 +89,15 @@ void imprimirConfiguracionInicial(config_Kernel config) // Yo gabriel maiori, di
 	printf("SEM_IDS: ");
 
 	imprimirListasConfiguracionInicial(config.SEM_IDS);
+	printf("SEM_INIT: ");
 
-	/*printf("SEM_INIT: %s \nputo el que lee\n", config.SEM_INIT);
-	printf("SHARED_VARS: %s \nputo el que lee\n", config.SHARED_VARS);
-	*/
+	imprimirListasConfiguracionInicial(config.SEM_INIT);
+	printf("SHARED_VARS: ");
 
-	printf("STACK_SIZE: %s \nputo el que lee\n", config.STACK_SIZE);
+	imprimirListasConfiguracionInicial(config.SHARED_VARS);
+
+
+	printf("STACK_SIZE: %s \n", config.STACK_SIZE);
 }
 
 
