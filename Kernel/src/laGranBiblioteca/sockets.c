@@ -42,6 +42,7 @@ void sigchld_handler(int s)
 	errno = saved_errno;
 }
 
+
 void *get_in_addr(struct sockaddr *sa)
 {
 	if (sa->sa_family == AF_INET) {
@@ -50,6 +51,7 @@ void *get_in_addr(struct sockaddr *sa)
 
 	return &(((struct sockaddr_in6*)sa)->sin6_addr);
 }
+
 
 int conexionConKernel(char* puerto, char* ip)
 {
@@ -180,7 +182,7 @@ void escuchar(int sockfd)
 }
 
 
-char* recibir(int socket) // Toda esta funcion deberá ccambiar en el momento qeu defininamos el protocolo de paquetes de mensajes :)
+char* recibir(int socket) // Toda esta funcion deberá ccambiar en el momento qeu definamos el protocolo de paquetes de mensajes :)
 {
 	int numbytes;
 	char buf[MAXDATASIZE];
@@ -197,11 +199,71 @@ char* recibir(int socket) // Toda esta funcion deberá ccambiar en el momento qe
 	return 0;
 }
 
+
 void enviarMensaje(char* mensaje, int socket)
 {
 	send(socket, mensaje, strlen(mensaje)+1, 0);
 }
 
 
+int conexionPosible(int id, int permitidos[])
+{
+	int i;
+	for(i = 0; i < 4; i++){
+		if(id == permitidos[i])
+			return 1;
+	}
+	return 0;
+}
+
+//Esta funcion devuelve el id del Servidor al que se conecta
+
+int handshakeCliente(int socket, int id)
+{
+	int id_receptor;
+
+	//Se envia el id del cliente al Servidor
+
+	if (send(socket, id, sizeof(id), 0) == -1){
+		perror("send");
+		exit(1);
+	}
+
+	//Se recibe el id del Servidor
+
+	if ((recv(socket, id_receptor, sizeof(id_receptor), 0)) == -1) {
+			perror("recv");
+			exit(1);
+	}
+
+	return id_receptor;
+}
+
+
+//Devuelve el id o -1 si rechazo la conexion
+
+int handshakeServidor(int socket,int id, int permitidos[])
+{
+	int id_emisor;
+	int rta;
+
+	//Se recibe el id del emisor mediante la conexion
+
+	if ((recv(socket, &id_emisor, sizeof(id_emisor), 0)) == -1) {
+		perror("recv");
+		exit(1);
+	}
+
+	rta = conexionPosible(id_emisor,permitidos) ? id : -1; // se comprueba que puedan conectarse
+
+	//Se envia el id del servidor al cliente en caso de que se acepte la conexion
+
+	if (send(socket, &rta, sizeof(rta), 0) == -1){
+			perror("send");
+			exit(1);
+	}
+
+	return rta;
+}
 
 

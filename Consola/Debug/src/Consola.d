@@ -1,3 +1,3 @@
-src/Consola.d: ../src/Consola.c ../src/sockets.h
+src/Consola.d: ../src/Consola.c ../src/laGranBiblioteca/sockets.h
 
-../src/sockets.h:
+../src/laGranBiblioteca/sockets.h:

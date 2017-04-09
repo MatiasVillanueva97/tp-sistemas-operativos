@@ -4,17 +4,20 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../src/Consola.c 
+../src/laGranBiblioteca/config.c \
+../src/laGranBiblioteca/sockets.c 
 
 OBJS += \
-./src/Consola.o 
+./src/laGranBiblioteca/config.o \
+./src/laGranBiblioteca/sockets.o 
 
 C_DEPS += \
-./src/Consola.d 
+./src/laGranBiblioteca/config.d \
+./src/laGranBiblioteca/sockets.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
-src/%.o: ../src/%.c
+src/laGranBiblioteca/%.o: ../src/laGranBiblioteca/%.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: GCC C Compiler'
 	gcc -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o "$@" "$<"

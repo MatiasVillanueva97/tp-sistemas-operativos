@@ -1,3 +1,3 @@
-src/Kernel.d: ../src/Kernel.c ../src/sockets.h
+src/Kernel.d: ../src/Kernel.c ../src/laGranBiblioteca/sockets.h
 
-../src/sockets.h:
+../src/laGranBiblioteca/sockets.h:

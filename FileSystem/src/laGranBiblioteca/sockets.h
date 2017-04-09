@@ -9,3 +9,7 @@ int crearSocketYBindeo(int);
 void escuchar(int);
 
 char* recibir(int); // Toda esta funcion deberá ccambiar en el momento qeu defininamos el protocolo de paquetes de mensajes :)
+
+int handshakeCliente(int socket, int id);
+
+int handshakeServidor(int socket,int id, int permitidos[]);

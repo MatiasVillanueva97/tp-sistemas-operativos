@@ -4,19 +4,13 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../src/CPU.c \
-../src/config.c \
-../src/sockets.c 
+../src/CPU.c 
 
 OBJS += \
-./src/CPU.o \
-./src/config.o \
-./src/sockets.o 
+./src/CPU.o 
 
 C_DEPS += \
-./src/CPU.d \
-./src/config.d \
-./src/sockets.d 
+./src/CPU.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

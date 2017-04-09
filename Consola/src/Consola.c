@@ -12,7 +12,7 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include "commons/config.h"
-#include "sockets.h"
+#include "laGranBiblioteca/sockets.h"
 
 #include <arpa/inet.h>
 

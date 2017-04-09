@@ -218,21 +218,20 @@ int conexionPosible(int id, int permitidos[])
 
 //Esta funcion devuelve el id del Servidor al que se conecta
 
-
 int handshakeCliente(int socket, int id)
 {
 	int id_receptor;
 
 	//Se envia el id del cliente al Servidor
 
-	if (send(socket, &id, sizeof(id), 0) == -1){
+	if (send(socket, id, sizeof(id), 0) == -1){
 		perror("send");
 		exit(1);
 	}
 
 	//Se recibe el id del Servidor
 
-	if ((recv(socket, &id_receptor, sizeof(id_receptor), 0)) == -1) {
+	if ((recv(socket, id_receptor, sizeof(id_receptor), 0)) == -1) {
 			perror("recv");
 			exit(1);
 	}

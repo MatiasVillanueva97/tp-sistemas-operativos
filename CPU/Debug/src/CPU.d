@@ -1,3 +1,3 @@
-src/CPU.d: ../src/CPU.c ../src/sockets.h
+src/CPU.d: ../src/CPU.c ../src/laGranBiblioteca/sockets.h
 
-../src/sockets.h:
+../src/laGranBiblioteca/sockets.h:
