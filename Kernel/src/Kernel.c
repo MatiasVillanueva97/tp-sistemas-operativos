@@ -57,7 +57,46 @@ void configuracionInicial(char*PATH, config_Kernel * est){
 	est->SEM_INIT = config_get_array_value(config,"SEM_INIT");
 	est->SHARED_VARS = config_get_array_value(config,"SHARED_VARS");
 	est->STACK_SIZE = getStringFromConfig(config,"STACK_SIZE");
+
+	config_destroy(config);
 }
+
+void imprimirListasConfiguracionInicial(char** lista)
+{
+	int i=0;
+
+	for(i; **lista!=NULL; i++)
+	{
+		printf(" %s ", *(lista+i));
+	}
+
+}//SEM_IDS:[SEM1, SEM2, SEM3]
+
+void imprimirConfiguracionInicial(config_Kernel config) // Yo gabriel maiori, dije explicitamente que esto es una terrible NEGRADA, pero como yo soy el tosco del team, no puedo quejarme
+{
+	printf("PUERTO_PROG: %s \n", config.PUERTO_PROG);
+	printf("PUERTO_CPU: %s \n", config.PUERTO_CPU);
+	printf("IP_MEMORIA: %s \n", config.IP_MEMORIA);
+	printf("PUERTO_MEMORIA: %s \n", config.PUERTO_MEMORIA);
+	printf("IP_FS: %s \n", config.IP_FS);
+	printf("PUERTO_FS: %s \n", config.PUERTO_FS);
+	printf("QUANTUM: %s \n", config.QUANTUM);
+	printf("QUANTUM_SLEEP: %s \n", config.QUANTUM_SLEEP);
+	printf("ALGORITMO: %s\n", config.ALGORITMO);
+	printf("GRADO_MULTIPROG: %s \n", config.GRADO_MULTIPROG);
+
+
+	printf("SEM_IDS: ");
+
+	imprimirListasConfiguracionInicial(config.SEM_IDS);
+
+	/*printf("SEM_INIT: %s \nputo el que lee\n", config.SEM_INIT);
+	printf("SHARED_VARS: %s \nputo el que lee\n", config.SHARED_VARS);
+	*/
+
+	printf("STACK_SIZE: %s \nputo el que lee\n", config.STACK_SIZE);
+}
+
 
 
 int main(void)
@@ -76,6 +115,8 @@ int main(void)
 	config_Kernel config;
 
 	configuracionInicial("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Kernel/kernel.config",&config);
+
+	imprimirConfiguracionInicial(config);
 
 	socket=crearSocketYBindeo(config.PUERTO_PROG);
 
@@ -96,19 +137,21 @@ int main(void)
 		if (!fork()) { // this is the child process
 			close(socket); // child doesn't need the listener
 
-			}
-
-			if(handshakeServidor(new_fd,ID,aceptados) == -1){
+			int resHanS;
+			if(resHanS=(handshakeServidor(new_fd,ID,aceptados)) == -1){
 				close(new_fd);
 			}
 
-			if (send(new_fd, "Hello, paton!", 13, 0) == -1){
+			printf("Respuesta del handsacke del server: %d\n\n",resHanS);
+
+			if (send(new_fd, "Hello patonC!", 13, 0) == -1){
 				perror("send");
 				exit(1);
 			}
 			if ((numbytes = recv(new_fd, buf, 100-1, 0)) == -1) {
 				    perror("recv");
 				    exit(1);
+			}
 
 			buf[numbytes]= '\0';
 			printf("Kernel: received '%s'\n",buf);

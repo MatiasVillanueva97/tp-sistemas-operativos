@@ -17,3 +17,5 @@ char* getStringFromConfig(t_config *config, char*valor){
 
 	return aux;
 }
+
+
