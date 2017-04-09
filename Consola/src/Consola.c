@@ -115,7 +115,7 @@ int main(int argc, char *argv[])
 		perror("send");
 	}
 
-	enviarMensaje(1,"este es el mensaje",sockfd);
+	enviarMensaje(1,"esto es el mensaje",sockfd);
 
 	close(sockfd);
 

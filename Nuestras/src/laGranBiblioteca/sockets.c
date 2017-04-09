@@ -210,7 +210,7 @@ int definirBytesDelMensaje(int header)
 char* recibir(int socket) // Toda esta funcion deberá ccambiar en el momento qeu definamos el protocolo de paquetes de mensajes :)
 {
 	int header;
-	char* mensaje;
+	char* mensaje = string_new();
 	int bytes;
 	int leidos;
 
@@ -220,17 +220,19 @@ char* recibir(int socket) // Toda esta funcion deberá ccambiar en el momento qe
 		    exit(1);
 	}
 
-	if(bytes = definirBytesDelMensaje(header) == -1){
+	if((bytes = definirBytesDelMensaje(header) )== -1){
 		perror("error de tipo");
 		exit(1);
 	}
 
-	if (leidos = recv(socket, mensaje, 100, 0) == -1) {
+	if (recv(socket, mensaje, bytes, 0) == -1) {
 		perror("recv");
 		exit(1);
 	}
 
-	mensaje[leidos] = '\0';
+	//printf("%i \n",leidos);
+
+	//mensaje[leidos] = '\0';
 
 	/*int numbytes;
 	char buf[MAXDATASIZE];
@@ -251,7 +253,7 @@ char* recibir(int socket) // Toda esta funcion deberá ccambiar en el momento qe
 void enviarMensaje(int tipo, char* mensaje, int socket)
 {
 	send(socket, &tipo, sizeof(tipo), 0);
-	if(send(socket, mensaje, sizeof(mensaje), 0) == -1 ){
+	if(send(socket, mensaje, strlen(mensaje) + 1, 0) == -1 ){
 		perror("recv");
 		exit(1);
 	}
