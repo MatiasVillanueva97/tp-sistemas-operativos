@@ -16,11 +16,13 @@
 #include <signal.h>
 #include "commons/config.h"
 #include "laGranBiblioteca/sockets.h"
+#include "laGranBiblioteca/config.h"
 
 
 #define PORT "3490"  // the port users will be connecting to
 
-#define BACKLOG 10	 // how many pending connections queue will hold
+#define BACKLOG 10// how many pending connections queue will hold
+
 #define ID 0
 
 typedef struct {
@@ -60,17 +62,6 @@ void configuracionInicial(char*PATH, config_Kernel * est){
 
 	config_destroy(config);
 }
-
-void imprimirArraysDeStrings(char** lista)
-{
-	printf("[ %s",*lista);
-	while(*(lista+1) != NULL) //Mostrar a gabi; //lenguaje de mierda.
-	{
-		lista++;
-		printf(", %s ", *lista);
-	}
-	printf(" ]\n");
-}//SEM_IDS:[SEM1, SEM2, SEM3]
 
 void imprimirConfiguracionInicial(config_Kernel config) // Yo gabriel maiori, dije explicitamente que esto es una terrible NEGRADA, pero como yo soy el tosco del team, no puedo quejarme
 {
@@ -145,7 +136,9 @@ int main(void)
 				close(new_fd);
 			}
 
-			printf("Respuesta del handsacke del server: %d\n\n",resHanS);
+			printf("Respuesta del handsacke del server: %d\n",resHanS);
+
+
 
 			if (send(new_fd, "Hello patonC!", 13, 0) == -1){
 				perror("send");
@@ -158,6 +151,11 @@ int main(void)
 
 			buf[numbytes]= '\0';
 			printf("Kernel: received '%s'\n",buf);
+
+			char* aux;
+			aux = recibir(new_fd);
+			printf("mensaje recibido:  %s",aux);
+
 			close(new_fd);
 			exit(0);
 		}

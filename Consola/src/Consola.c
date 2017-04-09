@@ -102,6 +102,7 @@ int main(int argc, char *argv[])
 	printf("handshake cliente%i \n",handshakeCliente(sockfd,ID));
 
 
+
 	if ((numbytes = recv(sockfd, buf, MAXDATASIZE-1, 0)) == -1) {
 	    perror("recv");
 	    exit(1);
@@ -114,6 +115,7 @@ int main(int argc, char *argv[])
 		perror("send");
 	}
 
+	enviarMensaje(1,"este es el mensaje",sockfd);
 
 	close(sockfd);
 

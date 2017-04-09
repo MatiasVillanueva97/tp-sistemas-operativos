@@ -31,6 +31,11 @@
 
 // get sockaddr, IPv4 or IPv6:
 
+typedef struct{
+	int tipo;
+	int cantidad;
+}t_mensajeByte;
+
 
 void sigchld_handler(int s)
 {
@@ -182,9 +187,52 @@ void escuchar(int sockfd)
 }
 
 
+int definirBytesDelMensaje(int header)
+{
+	switch(header){
+		case 0:
+			return sizeof(int);
+			break;
+		case 1:
+			return 100;
+			break;
+		case 2:
+			return sizeof(char);
+			break;
+		case 3:
+			return sizeof(float);
+			break;
+		default:
+			return -1;
+	}
+}
+
 char* recibir(int socket) // Toda esta funcion deberá ccambiar en el momento qeu definamos el protocolo de paquetes de mensajes :)
 {
-	int numbytes;
+	int header;
+	char* mensaje;
+	int bytes;
+	int leidos;
+
+
+	if ((recv(socket, &header, sizeof(header), 0)) == -1) {
+		    perror("recv");
+		    exit(1);
+	}
+
+	if(bytes = definirBytesDelMensaje(header) == -1){
+		perror("error de tipo");
+		exit(1);
+	}
+
+	if (leidos = recv(socket, mensaje, 100, 0) == -1) {
+		perror("recv");
+		exit(1);
+	}
+
+	mensaje[leidos] = '\0';
+
+	/*int numbytes;
 	char buf[MAXDATASIZE];
 
 	if ((numbytes = recv(socket, buf, MAXDATASIZE-1, 0)) == -1) {
@@ -194,15 +242,19 @@ char* recibir(int socket) // Toda esta funcion deberá ccambiar en el momento qe
 
 	buf[numbytes] = '\0';
 
-	printf("CPU: received '%s'\n",buf);
+	printf("CPU: received '%s'\n",buf);*/
 
-	return 0;
+	return mensaje;
 }
 
 
-void enviarMensaje(char* mensaje, int socket)
+void enviarMensaje(int tipo, char* mensaje, int socket)
 {
-	send(socket, mensaje, strlen(mensaje)+1, 0);
+	send(socket, &tipo, sizeof(tipo), 0);
+	if(send(socket, mensaje, sizeof(mensaje), 0) == -1 ){
+		perror("recv");
+		exit(1);
+	}
 }
 
 
