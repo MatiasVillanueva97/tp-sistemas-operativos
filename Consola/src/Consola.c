@@ -19,7 +19,7 @@
 //#define PORT "3490" // the port client will be connecting to
 
 #define MAXDATASIZE 100 // max number of bytes we can get at once
-
+#define ID 3
 
 typedef struct{
 	char *PORT;
@@ -47,12 +47,12 @@ int main(int argc, char *argv[])
 
 
 
-	if (argc != 2) {
+	/*if (argc != 2) {
 	    fprintf(stderr,"usage: client hostname\n");
 	    exit(1);
-	}
+	}*/
 
-	configuracionInicial(argv[1],&config);
+	configuracionInicial("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Consola/consola.config",&config);
 
 	memset(&hints, 0, sizeof hints);
 	hints.ai_family = AF_UNSPEC;
@@ -80,6 +80,7 @@ int main(int argc, char *argv[])
 		break;
 	}
 
+
 	if (p == NULL) {
 		fprintf(stderr, "client: failed to connect\n");
 		return 2;
@@ -90,6 +91,9 @@ int main(int argc, char *argv[])
 	printf("client: connecting to %s\n", s);
 
 	freeaddrinfo(servinfo); // all done with this structure
+
+	printf("handshake cliente%i \n",handshakeCliente(sockfd,ID));
+
 
 	if ((numbytes = recv(sockfd, buf, MAXDATASIZE-1, 0)) == -1) {
 	    perror("recv");
@@ -102,6 +106,8 @@ int main(int argc, char *argv[])
 	if (send(sockfd, "Patos, world!", 13, 0) == -1){
 		perror("send");
 	}
+
+
 	close(sockfd);
 
 	return 0;

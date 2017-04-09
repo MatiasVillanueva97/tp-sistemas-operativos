@@ -21,7 +21,7 @@
 #define PORT "3490"  // the port users will be connecting to
 
 #define BACKLOG 10	 // how many pending connections queue will hold
-
+#define ID 0
 
 typedef struct {
 	char * PUERTO_PROG;
@@ -71,6 +71,7 @@ int main(void)
 	char s[INET6_ADDRSTRLEN];
 	int rv;
 	char buf[100];
+	int aceptados[] = {1,2,3,4};
 
 	config_Kernel config;
 
@@ -94,13 +95,21 @@ int main(void)
 
 		if (!fork()) { // this is the child process
 			close(socket); // child doesn't need the listener
+
+			}
+
+			if(handshakeServidor(new_fd,ID,aceptados) == -1){
+				close(new_fd);
+			}
+
 			if (send(new_fd, "Hello, paton!", 13, 0) == -1){
 				perror("send");
+				exit(1);
 			}
 			if ((numbytes = recv(new_fd, buf, 100-1, 0)) == -1) {
 				    perror("recv");
 				    exit(1);
-			}
+
 			buf[numbytes]= '\0';
 			printf("Kernel: received '%s'\n",buf);
 			close(new_fd);
