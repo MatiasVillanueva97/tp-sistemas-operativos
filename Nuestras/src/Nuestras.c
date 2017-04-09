@@ -28,11 +28,11 @@ void copiarEnProyecto(char * proyecto){
 int main(void) {
 
 
-	copiarEnProyecto("Kernel");
-	copiarEnProyecto("Consola");
-	copiarEnProyecto("CPU");
-	copiarEnProyecto("Memoria");
-	copiarEnProyecto("FileSystem");
+	//copiarEnProyecto("Kernel");
+	//copiarEnProyecto("Consola");
+	//copiarEnProyecto("CPU");
+	//copiarEnProyecto("Memoria");
+	//copiarEnProyecto("FileSystem");
 
 
 	return EXIT_SUCCESS;
