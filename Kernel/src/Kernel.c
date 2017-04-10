@@ -49,6 +49,7 @@ int main(void)
 	// Variables para el while que contiene el select
 	fd_set master;    // master file descriptor list
 	fd_set read_fds;  // temp file descriptor list for select()
+
 	int fdmax;        // maximum file descriptor number
 	int listener;     // listening socket descriptor
 	int newfd;
@@ -63,6 +64,8 @@ int main(void)
 	imprimirConfiguracionInicialKernel(config);
 
 	printf("\n\n\nEstableciendo Conexiones:\n");
+
+
 
 
 	// ******* Proceso de conectar al Kernel con otros modulos que le realizen peticiones
@@ -80,10 +83,11 @@ int main(void)
 
 	// *******
 
+
 	while(1)
 	 {
 	    read_fds = master; // copy it
-	    if (select(fdmax+1, &read_fds, NULL, NULL, 0) == -1) {
+	    if (select(fdmax+1, &read_fds, NULL, NULL, NULL) == -1) {
 	            perror("select");
 	            exit(4);
 	        }
@@ -100,50 +104,51 @@ int main(void)
 
 						if (newfd == -1) {
 	                        perror("accept");
-	                    } else {
-	                        FD_SET(newfd, &master); // add to master set
-	                        if (newfd > fdmax) {    // keep track of the max
-	                            fdmax = newfd;
-	                        }
+	                    }
+						else {
+	                        	FD_SET(newfd, &master); // add to master set
+	                        	if (newfd > fdmax) {    // keep track of the max
+	                        		fdmax = newfd;
+	                        	}
 
-	                        int algo;
-	                        algo=handshakeServidor(newfd, ID, aceptados);
-	                        printf("Respesuesta HdServidor: %d\n", algo);
-
-
-	                        printf("selectserver: new connection from %s on "
-	                            "socket %d\n",
-								inet_ntop(their_addr.ss_family,
+	                        	if (handshakeServidor(newfd, ID, aceptados)== -1){
+	                        		perror("error en el handshake");
+	                        		close(newfd);
+	                        	}
+	                        	else{
+	                        		printf("selectserver: new connection from %s on "
+	                        		"socket %d\n",
+									inet_ntop(their_addr.ss_family,
 									get_in_addr((struct sockaddr*)&their_addr),
 									s, INET6_ADDRSTRLEN),
-								newfd);
-	                    }
+									newfd);
+	                        	}
+	                       }
 	                } else {
 	                    // handle data from a client
-	                    if ((nbytes = recv(i, buf, sizeof buf, 0)) <= 0) {
+	                    if ((nbytes = recibirMensaje(i,buf)) <= 0) {
 	                        // got error or connection closed by client
 	                        if (nbytes == 0) {
-	                    	printf("1 Esto es aabajo de nbytes: %s\n", buf);
-	                            // connection closed
+	                    	   // connection closed
 	                            printf("selectserver: socket %d hung up\n", i);
 	                        } else {
 	                            perror("recv");
 	                        }
-	                    	printf("2 esto es antes del close : %s\n ", buf);
-	                        close(i); // bye!
+	                    	close(i); // bye!
 	                        FD_CLR(i, &master); // remove from master set
 	                    } else {
-	                    	printf("3 esto es dentro del else: %s\n", buf);
-	                        // we got some data from a client
+	                    	printf("Recibido de: %s\n", buf);
+	                    	// we got some data from a client
 	                        for(j = 0; j <= fdmax; j++) {
 	                            // send to everyone!
-	                            if (FD_ISSET(j, &master)) {
+	                            if (FD_ISSET(j, &master)&&j != listener && j != i&& send(j, buf, nbytes, 0) == -1) {//valida cosas
 	                                // except the listener and ourselves
-	                                if (j != listener && j != i) {
+	                            	perror("send");
+	                            	/* if (j != listener && j != i) {
 	                                    if (send(j, buf, nbytes, 0) == -1) {
 	                                        perror("send");
-	                                    }
-	                                }
+	                                    }*/
+	                                //}
 	                            }
 	                        }
 	                    }

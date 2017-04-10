@@ -100,11 +100,11 @@ int main(int argc, char *argv[])
 
 	//printf("client: received '%s'\n",buf);
 
-	if (send(sockfd, "Patos, world!", 13, 0) == -1){
+	/*if (send(sockfd, "Patos, world!", 13, 0) == -1){
 		perror("send");
-	}
+	}*/
 
-	//enviarMensaje("LA RE CONCHA DE TU MADRE RAUL",sockfd);
+	enviarMensaje("LA RE CONCHA DE TU MADRE RAUL",sockfd);
 
 	close(sockfd);
 

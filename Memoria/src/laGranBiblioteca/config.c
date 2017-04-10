@@ -186,21 +186,28 @@ void imprimirConfiguracionInicialMemoria(config_Memoria config){
 //   ************************* Funciones para la configuracion de la CPU   ****************************
 
 typedef struct{
-	char *PORT;
-	char *IP;
+	char *IP_KERNEL;
+	char *PORT_KERNEL;
+	char *IP_MEMORIA;
+	char *PORT_MEMORIA;
+
 }config_CPU;
 
 void configuracionInicialCPU(char*PATH,config_CPU * configCPU){
 	t_config * config;
 	config = config_create(PATH);
-	configCPU->PORT = getStringFromConfig(config,"PUERTO_KERNEL");
-	configCPU->IP = getStringFromConfig(config,"IP_KERNEL");
+	configCPU->PORT_KERNEL = getStringFromConfig(config,"PUERTO_KERNEL");
+	configCPU->IP_KERNEL = getStringFromConfig(config,"IP_KERNEL");
+	configCPU->PORT_MEMORIA = getStringFromConfig(config,"PUERTO_MEMORIA");
+	configCPU->IP_MEMORIA = getStringFromConfig(config,"IP_MEMORIA");
 	config_destroy(config);
 }
 
 void imprimirConfiguracionInicialCPU(config_CPU config){
 
-	printf("IP_KERNEL: %s\n", config.IP);
-	printf("PUERTO_KERNEL: %s \n", config.PORT);
+	printf("IP_KERNEL: %s\n", config.IP_KERNEL);
+	printf("PORT_KERNEL: %s \n", config.PORT_KERNEL);
+	printf("IP_MEMORIA: %s\n", config.IP_MEMORIA);
+	printf("PORT_MEMORIA: %s \n", config.PORT_MEMORIA);
 
 }

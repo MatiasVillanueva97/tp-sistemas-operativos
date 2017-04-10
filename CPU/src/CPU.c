@@ -17,7 +17,7 @@
 #include "commons/config.h"
 #include "laGranBiblioteca/sockets.h"
 #include "laGranBiblioteca/config.h"
-
+#define ID 1
 
 int main(int argc, char *argv[])
 {
@@ -42,8 +42,9 @@ int main(int argc, char *argv[])
 
 	char* mensaje = "Este es el menjasaque que enviaremos, aujerooosdasdasdfasd";
 
-	int socket = conexionConKernel(config.PORT,config.IP);
+	int socket = conexionConServidor(config.PORT_KERNEL,config.IP_KERNEL);
 
+	printf("handshake cliente%i \n",handshakeCliente(socket,ID));
 	enviarMensaje(mensaje, socket);
 
 	close(socket);

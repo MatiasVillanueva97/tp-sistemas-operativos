@@ -82,8 +82,11 @@ void imprimirConfiguracionInicialMemoria(config_Memoria);
 //Para la CPU
 
 typedef struct{
-	char *PORT;
-	char *IP;
+	char *IP_KERNEL;
+	char *PORT_KERNEL;
+	char *IP_MEMORIA;
+	char *PORT_MEMORIA;
+
 }config_CPU;
 
 void configuracionInicialCPU(char*PATH,config_CPU *);
