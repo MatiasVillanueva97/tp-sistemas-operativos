@@ -45,7 +45,11 @@ int main(int argc, char *argv[])
 	int socket = conexionConServidor(config.PORT_KERNEL,config.IP_KERNEL);
 
 	printf("handshake cliente%i \n",handshakeCliente(socket,ID));
-	enviarMensaje(mensaje, socket);
+//	enviarMensaje(mensaje, socket);
+
+	char* mens=string_new();
+	recibirMensaje(socket, mens);
+	printf("Mensaje traido desde el kernel que viene desde la consola:\n\n\n%s\n\n\n",mens);
 
 	close(socket);
 }

@@ -231,7 +231,7 @@ int recibirMensaje(int socket,char* mensaje) // Toda esta funcion deberá ccambi
 	return longitud;
 }
 
-void enviarMensaje(char* contenido, int socket)
+int enviarMensaje(char* contenido, int socket)
 {
 	int total = 0;
 	int n;
@@ -241,15 +241,18 @@ void enviarMensaje(char* contenido, int socket)
 
 	if(send(socket, &longitud , sizeof(int), 0) == -1 ){
 			perror("recv");
-			exit(1);
+			return -1;
 	}
 
 	while(total < longitud){
 		n = send(socket, contenido + total, bytesleft, 0);
-		if(n == -1) break;
+		if(n == -1)
+			return -1;
 		total += n;
 		bytesleft -= n;
 	}
+
+	return 0;
 }
 
 
@@ -267,41 +270,42 @@ int conexionPosible(int id, int permitidos[])
 
 int handshakeCliente(int socket, int id)
 {
-	int id_receptor;
+	int id_servidor;
 
 	//Se envia el id del cliente al Servidor
-
-	if (send(socket, &id, sizeof(id), 0) == -1){
+	if (send(socket, &id, sizeof(id), 0) == -1)
 		perror("send");
-		exit(1);
-	}
+
 
 	//Se recibe el id del Servidor
 
-	if ((recv(socket, &id_receptor, sizeof(id_receptor), 0)) == -1) {
+	if ((recv(socket, &id_servidor, sizeof(id_servidor), 0)) == -1)
 			perror("recv");
-			exit(1);
+
+	if(id_servidor == -1){
+		perror("No se pudo establecer la conexcion: id_receptor=-1");
+		close(socket);
 	}
 
-	return id_receptor;
+	return id_servidor;
 }
 
 
-//Devuelve el id o -1 si rechazo la conexion
+//Devuelve el id del cliente con quien se conecto
 
 int handshakeServidor(int socket,int id, int permitidos[])
 {
-	int id_emisor;
+	int id_cliente;
 	int rta;
 
 	//Se recibe el id del emisor mediante la conexion
 
-	if ((recv(socket, &id_emisor, sizeof(id_emisor), 0)) == -1) {
+	if ((recv(socket, &id_cliente, sizeof(id_cliente), 0)) == -1) {
 		perror("recv");
 		exit(1);
 	}
 
-	rta = conexionPosible(id_emisor,permitidos) ? id : -1; // se comprueba que puedan conectarse
+	rta = conexionPosible(id_cliente,permitidos) ? id : -1; // se comprueba que puedan conectarse
 
 	//Se envia el id del servidor al cliente en caso de que se acepte la conexion
 
@@ -310,7 +314,13 @@ int handshakeServidor(int socket,int id, int permitidos[])
 			exit(1);
 	}
 
-	return rta;
+	if(rta == -1)
+		return -1;
+
+
+	return id_cliente;
 }
+
+
 
 
