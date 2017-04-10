@@ -39,3 +39,53 @@ void imprimirConfiguracionInicialKernel(config_Kernel); // Yo gabriel maiori, di
 
 // esta funcion setea en una estructura ttodo lo que provenga por el archivo config
 void configuracionInicialKernel(char*,config_Kernel*);
+
+// Para la Consola
+
+typedef struct{
+	char *PORT;
+	char *IP;
+}config_Consola;
+
+void configuracionInicialConsola(char*,config_Consola *);
+
+void imprimirConfiguracionInicialConsola(config_Consola);
+
+//Para el File System
+
+typedef struct{
+	char * PORT;
+	char * PUNTO_MONTAJE;
+}config_FileSystem;
+
+void configuracionInicialFileSystem(char*, config_FileSystem*);
+
+void imprimirConfiguracionInicialFileSystem(config_FileSystem);
+
+//Para la Memoria
+
+typedef struct{
+	char* PORT;
+	char* MARCOS;
+	char* MARCO_SIZE;
+	char* ENTRADAS_CACHE ;
+	char* CACHE_X_PROC;
+	char* RETARDO_MEMORIA;
+	char* REEMPLAZO_CACHE;
+	char* IP; // Lo agrego yo maiori, y le dejo la ip del localhost
+}config_Memoria;
+
+void configuracionInicialMemoria(char*, config_Memoria *);
+
+void imprimirConfiguracionInicialMemoria(config_Memoria);
+
+//Para la CPU
+
+typedef struct{
+	char *PORT;
+	char *IP;
+}config_CPU;
+
+void configuracionInicialCPU(char*PATH,config_CPU *);
+
+void imprimirConfiguracionInicialCPU(config_CPU);

@@ -22,26 +22,6 @@
 #define MAXDATASIZE 100 // max number of bytes we can get at once
 #define ID 3
 
-typedef struct{
-	char *PORT;
-	char *IP;
-}config_Consola;
-
-// get sockaddr, IPv4 or IPv6:
-void configuracionInicial(char*PATH,config_Consola * configConsola){
-	t_config *config;
-	config = config_create(PATH);
-	configConsola->PORT = getStringFromConfig(config,"PUERTO_KERNEL");
-	configConsola->IP = getStringFromConfig(config,"IP_KERNEL");
-	config_destroy(config);
-}
-
-void imprimirConfiguracionInicial(config_Consola config){
-
-	printf("IP_KERNEL: %s\n", config.IP);
-	printf("PUERTO_KERNEL: %s \n", config.PORT);
-
-}
 
 int main(int argc, char *argv[])
 {
@@ -65,8 +45,8 @@ int main(int argc, char *argv[])
 	// ******* Configuración inicial Consola
 
 	printf("Confiruacion Inicial:\n");
-	configuracionInicial("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Consola/consola.config",&config);
-	imprimirConfiguracionInicial(config);
+	configuracionInicialConsola("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Consola/consola.config",&config);
+	imprimirConfiguracionInicialConsola(config);
 
 	// ******* Procesos de Consola-  por ahora enviar mensajitos
 

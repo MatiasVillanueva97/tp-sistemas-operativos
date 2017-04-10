@@ -27,29 +27,6 @@
 #include <arpa/inet.h>
 
 
-typedef struct{
-	char * PORT;
-	char * PUNTO_MONTAJE;
-}config_FileSystem;
-
-
-void configuracionInicialFileSystem(char*PATH, config_FileSystem* conFs){
-	t_config * config;
-	config = config_create(PATH);
-
-	conFs->PORT = getStringFromConfig(config,"PUERTO");
-	conFs->PUNTO_MONTAJE = getStringFromConfig(config,"PUNTO_MONTAJE");
-
-	config_destroy(config);
-}
-
-void imprimirConfiguracionInicialFileSystem(config_FileSystem config){
-	printf("PORT: %s\n", config.PORT);
-	printf("PUNTO_MONTAJE: %s \n", config.PUNTO_MONTAJE);
-
-}
-
-
 int main(int argc, char* argv[]) {
 	printf("Inicializando FileSystem.....\n\n");
 	config_FileSystem config;
