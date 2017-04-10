@@ -92,10 +92,9 @@ void imprimirConfiguracionInicial(config_Kernel config) // Yo gabriel maiori, di
 }
 
 
-
 int main(void)
 {
-	int socket, new_fd,numbytes;  // listen on sock_fd, new connection on new_fd
+	int socket, new_fd, numbytes;  // listen on sock_fd, new connection on new_fd
 	struct addrinfo hints, *servinfo, *p;
 	struct sockaddr_storage their_addr; // connector's address information
 	socklen_t sin_size;
@@ -106,17 +105,109 @@ int main(void)
 	char buf[100];
 	int aceptados[] = {1,2,3,4};
 
+
+	// para el while asqueroso
+	fd_set master;    // master file descriptor list
+	fd_set read_fds;  // temp file descriptor list for select()
+	int fdmax;        // maximum file descriptor number
+
+	int listener;     // listening socket descriptor
+	int newfd;
+	FD_ZERO(&master);    // clear the master and temp sets
+ 	FD_ZERO(&read_fds);
+
 	config_Kernel config;
 
 	configuracionInicial("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Kernel/kernel.config",&config);
 
 	imprimirConfiguracionInicial(config);
 
-	socket=crearSocketYBindeo(config.PUERTO_PROG);
 
-	escuchar(socket);
+	listener=crearSocketYBindeo(config.PUERTO_PROG);
 
-	while(1) {  // main accept() loop
+	escuchar(listener);
+	// añadir la listener para la setear maestro   -add the listener to the master set
+	  FD_SET(listener, &master);
+
+	    // keep track of the biggest file descriptor
+	    fdmax = listener; // so far, it's this one
+
+	int i=0, nbytes, j=0;
+
+	while(1)
+	 {
+	    read_fds = master; // copy it
+	    if (select(fdmax+1, &read_fds, NULL, NULL, 0) == -1) {
+	            perror("select");
+	            exit(4);
+	        }
+
+	        // run through the existing connections looking for data to read
+	        for(i = 0; i <= fdmax; i++) {
+	            if (FD_ISSET(i, &read_fds)) { // we got one!!
+	                if (i == listener) {
+	                    // handle new connections
+	                	sin_size = sizeof their_addr;
+						newfd = accept(listener,
+							(struct sockaddr *)&their_addr,
+							&sin_size);
+
+						if (newfd == -1) {
+	                        perror("accept");
+	                    } else {
+	                        FD_SET(newfd, &master); // add to master set
+	                        if (newfd > fdmax) {    // keep track of the max
+	                            fdmax = newfd;
+	                        }
+
+	                        int algo;
+	                        algo=handshakeServidor(newfd, ID, aceptados);
+	                        printf("Respesuesta HdServidor: %d\n", algo);
+
+
+	                        printf("selectserver: new connection from %s on "
+	                            "socket %d\n",
+								inet_ntop(their_addr.ss_family,
+									get_in_addr((struct sockaddr*)&their_addr),
+									s, INET6_ADDRSTRLEN),
+								newfd);
+	                    }
+	                } else {
+	                    // handle data from a client
+	                    if ((nbytes = recv(i, buf, sizeof buf, 0)) <= 0) {
+	                        // got error or connection closed by client
+	                        if (nbytes == 0) {
+	                    	printf("1 Esto es aabajo de nbytes: %s\n", buf);
+	                            // connection closed
+	                            printf("selectserver: socket %d hung up\n", i);
+	                        } else {
+	                            perror("recv");
+	                        }
+	                    	printf("2 esto es antes del close : %s\n ", buf);
+	                        close(i); // bye!
+	                        FD_CLR(i, &master); // remove from master set
+	                    } else {
+	                    	printf("3 esto es dentro del else: %s\n", buf);
+	                        // we got some data from a client
+	                        for(j = 0; j <= fdmax; j++) {
+	                            // send to everyone!
+	                            if (FD_ISSET(j, &master)) {
+	                                // except the listener and ourselves
+	                                if (j != listener && j != i) {
+	                                    if (send(j, buf, nbytes, 0) == -1) {
+	                                        perror("send");
+	                                    }
+	                                }
+	                            }
+	                        }
+	                    }
+	                } // END handle data from client
+	            } // END got new incoming connection
+	        } // END looping through file descriptors
+	    } // END while(1)--and you thought it would never end!
+
+
+	/*while(1) {  // main accept() loop
 		sin_size = sizeof their_addr;
 		new_fd = accept(socket, (struct sockaddr *)&their_addr, &sin_size);
 
@@ -159,7 +250,7 @@ int main(void)
 			exit(0);
 		}
 		close(new_fd);  // parent doesn't need this
-	}
+	}*/
 
 	return 0;
 }
