@@ -21,10 +21,10 @@ typedef struct{
 	char* CACHE_X_PROC;
 	char* RETARDO_MEMORIA;
 	char* REEMPLAZO_CACHE;
+	char* IP; // Lo agrego yo maiori, y le dejo la ip del localhost
 }config_Memoria;
 
-
-void configuracionInicial(char* PATH, config_Memoria *configMemoria){
+void configuracionInicialMemoria(char* PATH, config_Memoria *configMemoria){
 	t_config *config;
 	config = config_create(PATH);
 	configMemoria->PORT = getStringFromConfig(config,"PUERTO");
@@ -34,29 +34,37 @@ void configuracionInicial(char* PATH, config_Memoria *configMemoria){
 	configMemoria->CACHE_X_PROC = getStringFromConfig(config,"CACHE_X_PROC");
 	configMemoria->REEMPLAZO_CACHE=getStringFromConfig(config,"REEMPLAZO_CACHE");
 	configMemoria->RETARDO_MEMORIA = getStringFromConfig(config,"RETARDO_MEMORIA");
+	configMemoria->IP = getStringFromConfig(config,"IP");
 	config_destroy(config);
 }
-void imprimirConfiguracionInicial(config_Memoria config){
+void imprimirConfiguracionInicialMemoria(config_Memoria config){
 
 	printf("PUERTO: %s\n", config.PORT);
 	printf("MARCOS: %s \n", config.MARCOS);
 	printf("MARCO_SIZE: %s\n", config.MARCO_SIZE);
-	printf("ENTRADAS_CACHE: %s \n", config.ENTRADAS_CACHE);
+	printf("ENTRADAS_CACHE: %s\n", config.ENTRADAS_CACHE);
 	printf("CACHE_X_PROC: %s\n", config.CACHE_X_PROC);
-	printf("REEMPLAZO_CACHE: %s \n", config.REEMPLAZO_CACHE);
+	printf("REEMPLAZO_CACHE: %s\n", config.REEMPLAZO_CACHE);
 	printf("RETARDO_MEMORIA: %s\n", config.RETARDO_MEMORIA);
-
+	printf("IP: %s\n", config.IP);
 }
+
 int main(int argc, char *argv[]) {
+	printf("Inicializando Memoria.....\n\n");
+
 	config_Memoria config;
 
-	if (argc != 2) {
+	/*if (argc != 2) {
 		    fprintf(stderr,"usage: client hostname\n");
 		    exit(1);
-	}
+	}*/
 
-    configuracionInicial(argv[1],&config);
-    imprimirConfiguracionInicial(config);
-    puts("16 GB DE RAM"); /* prints !!!Hello World!!! */
-	return EXIT_SUCCESS;
+ 	printf("Configuracion Inicial: \n");
+
+    configuracionInicialMemoria("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Memoria/memoria.config",&config);
+    imprimirConfiguracionInicialMemoria(config);
+
+    printf("\n\nAca hará lo que la memoria haga: \n");
+
+    return EXIT_SUCCESS;
 }

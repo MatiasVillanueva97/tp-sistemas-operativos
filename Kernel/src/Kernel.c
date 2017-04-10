@@ -42,7 +42,8 @@ typedef struct {
 	char * STACK_SIZE;
 }config_Kernel;
 
-void configuracionInicial(char*PATH, config_Kernel * est){
+
+void configuracionInicialKernel(char*PATH, config_Kernel*est){
 	t_config * config;
 	config = config_create(PATH);
 	est->PUERTO_PROG = getStringFromConfig(config,"PUERTO_PROG");
@@ -63,7 +64,7 @@ void configuracionInicial(char*PATH, config_Kernel * est){
 	config_destroy(config);
 }
 
-void imprimirConfiguracionInicial(config_Kernel config) // Yo gabriel maiori, dije explicitamente que esto es una terrible NEGRADA, pero como yo soy el tosco del team, no puedo quejarme
+void imprimirConfiguracionInicialKernel(config_Kernel config) // Yo gabriel maiori, dije explicitamente que esto es una terrible NEGRADA, pero como yo soy el tosco del team, no puedo quejarme
 {
 	printf("PUERTO_PROG: %s \n", config.PUERTO_PROG);
 	printf("PUERTO_CPU: %s \n", config.PUERTO_CPU);
@@ -91,39 +92,48 @@ void imprimirConfiguracionInicial(config_Kernel config) // Yo gabriel maiori, di
 	printf("STACK_SIZE: %s \n", config.STACK_SIZE);
 }
 
-
 int main(void)
 {
-	int socket, new_fd, numbytes;  // listen on sock_fd, new connection on new_fd
+ 	printf("Inizializando Kernel.....\n\n");
+
+ 	// ******* Declaración de la mayoria de las variables a utilizar
+
+	socklen_t sin_size;
+	config_Kernel config;
+
 	struct addrinfo hints, *servinfo, *p;
 	struct sockaddr_storage their_addr; // connector's address information
-	socklen_t sin_size;
 	struct sigaction sa;
+
+	int socket, new_fd, numbytes, rv;  // listen on sock_fd, new connection on new_fd
 	int yes=1;
-	char s[INET6_ADDRSTRLEN];
-	int rv;
-	char buf[100];
 	int aceptados[] = {1,2,3,4};
 
+	char s[INET6_ADDRSTRLEN];
+	char buf[100];
 
-	// para el while asqueroso
+	// Variables para el while que contiene el select
 	fd_set master;    // master file descriptor list
 	fd_set read_fds;  // temp file descriptor list for select()
 	int fdmax;        // maximum file descriptor number
-
 	int listener;     // listening socket descriptor
 	int newfd;
 	FD_ZERO(&master);    // clear the master and temp sets
  	FD_ZERO(&read_fds);
 
-	config_Kernel config;
+ 	// ******* Configuracion del Kernel a partir de un archivo
 
-	configuracionInicial("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Kernel/kernel.config",&config);
+ 	printf("Configuracion Inicial: \n");
 
-	imprimirConfiguracionInicial(config);
+	configuracionInicialKernel("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Kernel/kernel.config",&config);
+	imprimirConfiguracionInicialKernel(config);
+
+	printf("\n\n\nEstableciendo Conexiones:\n");
 
 
-	listener=crearSocketYBindeo(config.PUERTO_PROG);
+	// ******* Proceso de conectar al Kernel con otros modulos que le realizen peticiones
+
+	listener = crearSocketYBindeo(config.PUERTO_PROG);
 
 	escuchar(listener);
 	// añadir la listener para la setear maestro   -add the listener to the master set
@@ -133,6 +143,8 @@ int main(void)
 	    fdmax = listener; // so far, it's this one
 
 	int i=0, nbytes, j=0;
+
+	// *******
 
 	while(1)
 	 {

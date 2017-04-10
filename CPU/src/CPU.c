@@ -7,37 +7,63 @@
 #include <unistd.h>
 #include <errno.h>
 #include <string.h>
-#include <netdb.h>
 #include <sys/types.h>
-#include <netinet/in.h>
 #include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
 #include <arpa/inet.h>
-#include "commons/txt.h"
-#include "commons/string.h"
-#include "commons/collections/list.h"
+#include <sys/wait.h>
+#include <signal.h>
+#include "commons/config.h"
 #include "laGranBiblioteca/sockets.h"
+#include "laGranBiblioteca/config.h"
 
-// aca poner la futura libreria
 
+typedef struct{
+	char *PORT;
+	char *IP;
+}config_CPU;
+
+void configuracionInicialCPU(char*PATH,config_CPU * configCPU){
+	t_config * config;
+	config = config_create(PATH);
+	configCPU->PORT = getStringFromConfig(config,"PUERTO_KERNEL");
+	configCPU->IP = getStringFromConfig(config,"IP_KERNEL");
+	config_destroy(config);
+}
+
+void imprimirConfiguracionInicialCPU(config_CPU config){
+
+	printf("IP_KERNEL: %s\n", config.IP);
+	printf("PUERTO_KERNEL: %s \n", config.PORT);
+
+}
 int main(int argc, char *argv[])
 {
-	if (argc != 2){
+	printf("Inicializando CPU.....\n\n");
+
+	config_CPU config;
+
+	/*if (argc != 2){
 	    fprintf(stderr,"usage: client hostname\n");
 	    exit(1);
-	}
+	}*/
 
-	printf("Hola! Soy una cpu!:, conctese con el kernel, la ip y el puerto estn harcodeados, algun dia los ingresara: ");
+	// ******* Configuracion Inicial de CPU
 
-	char* puerto = "3490";
-	//char* ip = "127.0.0.1";
+ 	printf("Configuracion Inicial: \n");
+	configuracionInicialCPU("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/CPU/cpu.config",&config);
+	imprimirConfiguracionInicialCPU(config);
+
+	// ******* Porcesos de la CPU - por ahora , solo un envio de mensajes
+
+	printf("\n\nHola! Soy una cpu!:, conctese con el kernel, la ip y el puerto estn harcodeados, algun dia los ingresara: ");
 
 	char* mensaje = "Este es el menjasaque que enviaremos, aujerooosdasdasdfasd";
 
-	int socket = conexionConKernel(puerto,argv[1]);
+	int socket = conexionConKernel(config.PORT,config.IP);
 
 	enviarMensaje(mensaje, socket);
 
 	close(socket);
-
-	return 0;
 }

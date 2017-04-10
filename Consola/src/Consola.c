@@ -13,6 +13,7 @@
 #include <sys/socket.h>
 #include "commons/config.h"
 #include "laGranBiblioteca/sockets.h"
+#include "laGranBiblioteca/config.h"
 
 #include <arpa/inet.h>
 
@@ -44,26 +45,33 @@ void imprimirConfiguracionInicial(config_Consola config){
 
 int main(int argc, char *argv[])
 {
-	int sockfd, numbytes;
-	char buf[MAXDATASIZE];
-	struct addrinfo hints, *servinfo, *p;
-	int rv;
-	char s[INET6_ADDRSTRLEN];
+	printf("Inicializando Consola.....\n\n");
+
 	config_Consola config;
+	struct addrinfo hints, *servinfo, *p;
+	int sockfd, numbytes, rv;
+	char buf[MAXDATASIZE];
+	char s[INET6_ADDRSTRLEN];
 
-
+	memset(&hints, 0, sizeof hints);
+	hints.ai_family = AF_UNSPEC;
+	hints.ai_socktype = SOCK_STREAM;
 
 	/*if (argc != 2) {
 	    fprintf(stderr,"usage: client hostname\n");
 	    exit(1);
 	}*/
 
+	// ******* Configuración inicial Consola
+
+	printf("Confiruacion Inicial:\n");
 	configuracionInicial("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Consola/consola.config",&config);
 	imprimirConfiguracionInicial(config);
 
-	memset(&hints, 0, sizeof hints);
-	hints.ai_family = AF_UNSPEC;
-	hints.ai_socktype = SOCK_STREAM;
+	// ******* Procesos de Consola-  por ahora enviar mensajitos
+
+	printf("\n\nAca todos los procesos de la Consola:\n\n");
+
 
 	if ((rv = getaddrinfo(config.IP, config.PORT, &hints, &servinfo)) != 0) {
 		fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
