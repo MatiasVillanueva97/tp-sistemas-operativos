@@ -10,7 +10,7 @@ void escuchar(int);
 
 char* recibir(int); // Toda esta funcion deberá ccambiar en el momento qeu defininamos el protocolo de paquetes de mensajes :)
 
-void enviarMensaje(int tipo, char* mensaje, int socket);
+void enviarMensaje(char* mensaje, int socket);
 
 int handshakeCliente(int socket, int id);
 

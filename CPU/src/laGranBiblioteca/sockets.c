@@ -209,53 +209,42 @@ int definirBytesDelMensaje(int header)
 
 char* recibir(int socket) // Toda esta funcion deberá ccambiar en el momento qeu definamos el protocolo de paquetes de mensajes :)
 {
-	int header;
+	int longitud;
 	char* mensaje = string_new();
-	int bytes;
-	int leidos;
 
-
-	if ((recv(socket, &header, sizeof(header), 0)) == -1) {
+	if ((recv(socket, &longitud, sizeof(int), 0)) == -1) {
 		    perror("recv");
 		    exit(1);
 	}
 
-	if((bytes = definirBytesDelMensaje(header) )== -1){
-		perror("error de tipo");
-		exit(1);
-	}
-
-	if (recv(socket, mensaje, bytes, 0) == -1) {
+	if (recv(socket, mensaje, longitud, 0) == -1) {
 		perror("recv");
 		exit(1);
 	}
 
-	//printf("%i \n",leidos);
-
-	//mensaje[leidos] = '\0';
-
-	/*int numbytes;
-	char buf[MAXDATASIZE];
-
-	if ((numbytes = recv(socket, buf, MAXDATASIZE-1, 0)) == -1) {
-	    perror("recv");
-	    exit(1);
-	}
-
-	buf[numbytes] = '\0';
-
-	printf("CPU: received '%s'\n",buf);*/
+	*(mensaje + longitud) = '\0';
 
 	return mensaje;
 }
 
-
-void enviarMensaje(int tipo, char* mensaje, int socket)
+void enviarMensaje(char* contenido, int socket)
 {
-	send(socket, &tipo, sizeof(tipo), 0);
-	if(send(socket, mensaje, strlen(mensaje) + 1, 0) == -1 ){
-		perror("recv");
-		exit(1);
+	int total = 0;
+	int n;
+	int bytesleft;
+	int longitud = strlen(contenido) + 1;
+	bytesleft = longitud;
+
+	if(send(socket, &longitud , sizeof(int), 0) == -1 ){
+			perror("recv");
+			exit(1);
+	}
+
+	while(total < longitud){
+		n = send(socket, contenido + total, bytesleft, 0);
+		if(n == -1) break;
+		total += n;
+		bytesleft -= n;
 	}
 }
 

@@ -128,8 +128,8 @@ int main(void)
 		 inet_ntop(their_addr.ss_family,get_in_addr((struct sockaddr *)&their_addr),s, sizeof s); // para poder imprimir la ip del server
 		 printf("server: got connection from %s\n", s);
 
-		//if (!fork()) { // this is the child process
-			//close(socket); // child doesn't need the listener
+		if (!fork()) { // this is the child process
+			close(socket); // child doesn't need the listener
 
 			int resHanS;
 			if((resHanS=handshakeServidor(new_fd,ID,aceptados)) == -1){
@@ -157,8 +157,8 @@ int main(void)
 
 			close(new_fd);
 			exit(0);
-		//}
-		//close(new_fd);  // parent doesn't need this
+		}
+		close(new_fd);  // parent doesn't need this
 	}
 
 	return 0;
