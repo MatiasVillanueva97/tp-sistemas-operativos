@@ -41,12 +41,9 @@ int main(void) {
 	socklen_t sin_size;
 	config_Kernel config;
 
-	struct addrinfo hints, *servinfo, *p;
 	struct sockaddr_storage their_addr; // connector's address information
-	struct sigaction sa;
 
-	int socket, new_fd, numbytes, rv, id_cliente; // listen on sock_fd, new connection on new_fd
-	int yes = 1;
+	int id_cliente; // listen on sock_fd, new connection on new_fd
 	int aceptados[] = { 1, 2, 3, 4 };
 
 	char s[INET6_ADDRSTRLEN];
@@ -69,9 +66,8 @@ int main(void) {
 
 	printf("Configuracion Inicial: \n");
 
-	configuracionInicialKernel(
-			"/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Kernel/kernel.config",
-			&config);
+	configuracionInicialKernel("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Kernel/kernel.config",&config);
+
 	imprimirConfiguracionInicialKernel(config);
 
 	printf("\n\n\nEstableciendo Conexiones:\n");
@@ -89,10 +85,8 @@ int main(void) {
 
 	int i = 0, nbytes, j = 0;
 
-		int falg=0;
-
-	read_fds = master; // copy it
 	while (1) {
+	read_fds = master; // copy it
 		if (select(fdmax + 1, &read_fds, NULL, NULL, 0) == -1) {
 			perror("select");
 			exit(4);
