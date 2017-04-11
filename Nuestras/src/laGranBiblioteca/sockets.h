@@ -1,6 +1,6 @@
 void sigchld_handler(int s);
 
-void *get_in_addr(struct sockaddr*);
+void *getSin_Addr(struct sockaddr*);
 
 int conexionConKernel(char*, char*);
 

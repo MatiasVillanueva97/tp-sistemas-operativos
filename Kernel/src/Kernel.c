@@ -74,14 +74,16 @@ int main(void) {
 
 	printf("Esperando conexion con File System \n");
 
-	if(socketFS = conexionConServidor(config.PUERTO_FS,config.IP_FS));
+	//socketFS = conexionConServidor(config.PUERTO_FS,config.IP_FS);
 
 
+	//FD_SET(socketFS, &write_fds);
 
 	printf("Esperando conexion con Memoria \n");
 
-	socketMemoria = conexionConServidor(config.PUERTO_MEMORIA,config.IP_MEMORIA);
+/*	socketMemoria = conexionConServidor(config.PUERTO_MEMORIA,config.IP_MEMORIA);
 
+	FD_SET(socketMemoria, &write_fds);*/
 
 
 
@@ -127,7 +129,7 @@ int main(void) {
 							perror("error en el handshake");
 							close(newfd);
 						} else {
-							printf("selectserver: new connection from %s on ""socket %d\n", inet_ntop(their_addr.ss_family,get_in_addr((struct sockaddr*) &their_addr),s, INET6_ADDRSTRLEN), newfd);
+							printf("selectserver: new connection from %s on ""socket %d\n", inet_ntop(their_addr.ss_family,getSin_Addr((struct sockaddr *)&their_addr),s, INET6_ADDRSTRLEN), newfd);
 						}
 						if(id_cliente != 0 && id_cliente != 3){ // sea distinto a el kernel o consola
 							FD_SET(newfd, &write_fds);
@@ -166,51 +168,6 @@ int main(void) {
 			} // END got new incoming connection
 		} // END looping through file descriptors
 	} // END while(1)--and you thought it would never end!
-
-	/*while(1) {  // main accept() loop
-	 sin_size = sizeof their_addr;
-	 new_fd = accept(socket, (struct sockaddr *)&their_addr, &sin_size);
-
-	 if (new_fd == -1) {
-	 perror("accept");
-	 continue;
-	 }
-
-	 inet_ntop(their_addr.ss_family,get_in_addr((struct sockaddr *)&their_addr),s, sizeof s); // para poder imprimir la ip del server
-	 printf("server: got connection from %s\n", s);
-
-	 if (!fork()) { // this is the child process
-	 close(socket); // child doesn't need the listener
-
-	 int resHanS;
-	 if((resHanS=handshakeServidor(new_fd,ID,aceptados)) == -1){
-	 close(new_fd);
-	 }
-
-	 printf("Respuesta del handsacke del server: %d\n",resHanS);
-
-
-
-	 if (send(new_fd, "Hello patonC!", 13, 0) == -1){
-	 perror("send");
-	 exit(1);
-	 }
-	 if ((numbytes = recv(new_fd, buf, 13, 0)) == -1) {
-	 perror("recv");
-	 exit(1);
-	 }
-
-	 buf[numbytes]= '\0';
-	 printf("Kernel: received %s \n",buf);
-
-	 char* aux = recibir(new_fd);
-	 printf("mensaje recibido:  %s \n",aux);
-
-	 close(new_fd);
-	 exit(0);
-	 }
-	 close(new_fd);  // parent doesn't need this
-	 }*/
 
 	return 0;
 }

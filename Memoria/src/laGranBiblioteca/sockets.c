@@ -36,7 +36,7 @@ typedef struct{
 	int cantidad;
 }t_mensajeByte;
 
-
+/*
 void sigchld_handler(int s)
 {
 	// waitpid() might overwrite errno, so we save and restore it:
@@ -45,18 +45,19 @@ void sigchld_handler(int s)
 	while(waitpid(-1, NULL, WNOHANG) > 0);
 
 	errno = saved_errno;
-}
+}*/
 
 
-void *get_in_addr(struct sockaddr *sa)
+void *getSin_Addr(struct sockaddr *sa)
 {
-	if (sa->sa_family == AF_INET) {
+	/*if (sa->sa_family == AF_INET) {
 		return &(((struct sockaddr_in*)sa)->sin_addr);
 	}
 
-	return &(((struct sockaddr_in6*)sa)->sin6_addr);
-}
+	return &(((struct sockaddr_in6*)sa)->sin6_addr);*/
 
+	return &(((struct sockaddr_in*)sa)->sin_addr); //IPV4
+}
 
 int conexionConServidor(char* puerto, char* ip)
 {
@@ -98,7 +99,7 @@ int conexionConServidor(char* puerto, char* ip)
 		return 2;
 	}
 
-	inet_ntop(p->ai_family, get_in_addr((struct sockaddr *)p->ai_addr),
+	inet_ntop(p->ai_family, getSin_Addr((struct sockaddr *)p->ai_addr),
 			s, sizeof s);
 	printf("CPU: connecting to %s\n", s);
 
@@ -175,14 +176,14 @@ void escuchar(int sockfd)
 			exit(1);
 		}
 
-		sa.sa_handler = sigchld_handler; // reap all dead processes
+		/*sa.sa_handler = sigchld_handler; // reap all dead processes
 		sigemptyset(&sa.sa_mask); //manejo de errores
 		sa.sa_flags = SA_RESTART;
 		if (sigaction(SIGCHLD, &sa, NULL) == -1) {
 			perror("sigaction");
 			exit(1);
 		}
-
+*/
 		printf("server: waiting for connections...\n");
 }
 

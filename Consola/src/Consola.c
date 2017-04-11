@@ -50,46 +50,9 @@ int main(int argc, char *argv[])
 
 	// ******* Procesos de Consola-  por ahora enviar mensajitos
 
-	printf("\n\nAca todos los procesos de la Consola:\n\n");
+	int socket = conexionConServidor(config.PORT,config.IP);
 
-
-	if ((rv = getaddrinfo(config.IP, config.PORT, &hints, &servinfo)) != 0) {
-		fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
-		return 1;
-	}
-
-	// loop through all the results and connect to the first we can
-	for(p = servinfo; p != NULL; p = p->ai_next) {
-		if ((sockfd = socket(p->ai_family, p->ai_socktype,
-				p->ai_protocol)) == -1) {
-			perror("client: socket");
-			continue;
-		}
-
-		if (connect(sockfd, p->ai_addr, p->ai_addrlen) == -1) {
-			perror("client: connect");
-			close(sockfd);
-			continue;
-		}
-
-		break;
-	}
-
-
-	if (p == NULL) {
-		fprintf(stderr, "client: failed to connect\n");
-		return 2;
-	}
-
-	inet_ntop(p->ai_family, get_in_addr((struct sockaddr *)p->ai_addr),
-			s, sizeof s);
-	printf("client: connecting to %s\n", s);
-
-	freeaddrinfo(servinfo); // all done with this structure
-
-	printf("handshake cliente%i \n",handshakeCliente(sockfd,ID));
-
-
+	printf("handshake cliente%i \n",handshakeCliente(socket,ID));
 
 	/*if ((numbytes = recv(sockfd, buf, MAXDATASIZE-1, 0)) == -1) {
 	    perror("recv");
@@ -104,7 +67,7 @@ int main(int argc, char *argv[])
 		perror("send");
 	}*/
 
-	enviarMensaje("LA RE CONCHA DE TU MADRE RAUL",sockfd);
+	enviarMensaje("LA RE CONCHA DE TU MADRE RAUL",socket);
 
 	close(sockfd);
 

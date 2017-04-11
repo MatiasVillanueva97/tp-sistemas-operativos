@@ -40,7 +40,6 @@ int main(int argc, char *argv[])
 
 	printf("\n\nHola! Soy una cpu!:, conctese con el kernel, la ip y el puerto estn harcodeados, algun dia los ingresara: ");
 
-	char* mensaje = "Este es el menjasaque que enviaremos, aujerooosdasdasdfasd";
 
 	int socket = conexionConServidor(config.PORT_KERNEL,config.IP_KERNEL);
 
