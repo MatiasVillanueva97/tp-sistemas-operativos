@@ -4,7 +4,7 @@ void *getSin_Addr(struct sockaddr*);
 
 int conexionConKernel(char*, char*);
 
-int crearSocketYBindeo(int);
+int crearSocketYBindeo(char*);
 
 void escuchar(int);
 

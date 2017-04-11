@@ -110,7 +110,7 @@ int conexionConServidor(char* puerto, char* ip)
 }
 
 
-int crearSocketYBindeo(int puerto)
+int crearSocketYBindeo(char* puerto)
 {
 	int sockfd;  // listen on sock_fd, new connection on new_fd
 	struct addrinfo hints, *servinfo, *p;

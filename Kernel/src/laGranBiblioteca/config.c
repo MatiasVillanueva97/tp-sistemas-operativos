@@ -133,7 +133,7 @@ void configuracionInicialFileSystem(char*PATH, config_FileSystem* conFs){
 	config = config_create(PATH);
 
 	conFs->PORT = getStringFromConfig(config,"PUERTO");
-	conFs->PUNTO_MONTAJE = getStringFromConfig(config,"PUNTO_MONTAJE");
+	conFs->PUNTO_MONTAJE = config_get_array_value(config,"PUNTO_MONTAJE")[0];
 
 	config_destroy(config);
 }
