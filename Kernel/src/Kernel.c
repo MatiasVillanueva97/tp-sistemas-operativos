@@ -49,6 +49,8 @@ int main(void) {
 	char s[INET6_ADDRSTRLEN];
 	char buf[100];
 
+	int socketFS;
+	int socketMemoria;
 
 	// Variables para el while que contiene el select
 	fd_set master;    // master file descriptor list
@@ -69,6 +71,19 @@ int main(void) {
 	configuracionInicialKernel("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Kernel/kernel.config",&config);
 
 	imprimirConfiguracionInicialKernel(config);
+
+	printf("Esperando conexion con File System \n");
+
+	if(socketFS = conexionConServidor(config.PUERTO_FS,config.IP_FS));
+
+
+
+	printf("Esperando conexion con Memoria \n");
+
+	socketMemoria = conexionConServidor(config.PUERTO_MEMORIA,config.IP_MEMORIA);
+
+
+
 
 	printf("\n\n\nEstableciendo Conexiones:\n");
 
