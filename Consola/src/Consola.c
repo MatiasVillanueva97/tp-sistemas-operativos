@@ -17,30 +17,20 @@
 
 #include <arpa/inet.h>
 
-//#define PORT "3490" // the port client will be connecting to
 
 #define MAXDATASIZE 100 // max number of bytes we can get at once
 #define ID 3
 
 
-int main(int argc, char *argv[])
+int main(void)
 {
 	printf("Inicializando Consola.....\n\n");
 
 	config_Consola config;
-	struct addrinfo hints, *servinfo, *p;
-	int sockfd, numbytes, rv;
-	char buf[MAXDATASIZE];
+	int socketConsola, rta_conexion;
+	char* mensaje = string_new();
 	char s[INET6_ADDRSTRLEN];
 
-	memset(&hints, 0, sizeof hints);
-	hints.ai_family = AF_UNSPEC;
-	hints.ai_socktype = SOCK_STREAM;
-
-	/*if (argc != 2) {
-	    fprintf(stderr,"usage: client hostname\n");
-	    exit(1);
-	}*/
 
 	// ******* Configuración inicial Consola
 
@@ -48,17 +38,36 @@ int main(int argc, char *argv[])
 	configuracionInicialConsola("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Consola/consola.config",&config);
 	imprimirConfiguracionInicialConsola(config);
 
+
 	// ******* Procesos de Consola-  por ahora enviar mensajitos
 
-	int socket = conexionConServidor(config.PORT,config.IP);
+	socketConsola = conexionConServidor(config.PORT,config.IP);
 
-	printf("handshake cliente%i \n",handshakeCliente(socket,ID));
+	// validacion de un correcto hadnshake
+	if (socketConsola == 1){
+		perror("Falla en el protocolo de comunicación");
+		exit(1);
+	}
+	if (socketConsola == 2){
+		perror("No se conectado con el FileSystem, asegurese de que este abierto el proceso");
+		exit(1);
+	}
+	if ( (rta_conexion = handshakeCliente(socketConsola, ID)) == -1) {
+		perror("Error en el handshake con el Servidor");
+		close(socketConsola);
+	}
+	printf("Conexión exitosa con el Servidor(%i)!!\n",rta_conexion);
 
-	char* mensaje = string_new();
-	printf("Ingrese mensaje a enviar: ");
+
+	printf("\n\nIngrese mensaje a enviar: ");
 	fgets(mensaje,100,stdin);
-	enviarMensaje(mensaje,socket);
 
-	close(sockfd);
+	// Envio del mensaje
+	if(enviarMensaje(mensaje,socketConsola)==-1){
+		perror("Error en el Send");
+	}
+
+	close(socketConsola);
+
 	return 0;
 }

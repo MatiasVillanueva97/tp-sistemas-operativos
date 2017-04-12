@@ -101,7 +101,7 @@ int conexionConServidor(char* puerto, char* ip)
 
 	inet_ntop(p->ai_family, getSin_Addr((struct sockaddr *)p->ai_addr),
 			s, sizeof s);
-	printf("CPU: connecting to %s\n", s);
+	printf("Conexion con ip %s - ", s);
 
 	freeaddrinfo(servinfo); // all done with this structure
 
@@ -183,8 +183,8 @@ void escuchar(int sockfd)
 			perror("sigaction");
 			exit(1);
 		}
-*/
-		printf("server: waiting for connections...\n");
+		*/
+		printf("\n\nEstableciendo Conexiones:\n\n");
 }
 
 

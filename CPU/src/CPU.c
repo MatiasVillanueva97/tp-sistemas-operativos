@@ -19,16 +19,13 @@
 #include "laGranBiblioteca/config.h"
 #define ID 1
 
-int main(int argc, char *argv[])
+int main(void)
 {
 	printf("Inicializando CPU.....\n\n");
 
 	config_CPU config;
-
-	/*if (argc != 2){
-	    fprintf(stderr,"usage: client hostname\n");
-	    exit(1);
-	}*/
+	int socketCPU, rta_conexion;
+	char* mensajeRecibido = string_new();
 
 	// ******* Configuracion Inicial de CPU
 
@@ -36,19 +33,33 @@ int main(int argc, char *argv[])
 	configuracionInicialCPU("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/CPU/cpu.config",&config);
 	imprimirConfiguracionInicialCPU(config);
 
-	// ******* Porcesos de la CPU - por ahora , solo un envio de mensajes
+	// ******* Porcesos de la CPU - por ahora solo recibir un mensaje
 
-	printf("\n\nHola! Soy una cpu!:, conctese con el kernel, la ip y el puerto estn harcodeados, algun dia los ingresara: ");
+	printf("\n\nHola! Soy una cpu! Aca estan mis procesos:\n\n");
 
+	socketCPU = conexionConServidor(config.PORT_KERNEL,config.IP_KERNEL); // Asignación del socket que se conectara con el filesytem
 
-	int socket = conexionConServidor(config.PORT_KERNEL,config.IP_KERNEL);
+	// validacion de un correcto hadnshake
+	if (socketCPU == 1){
+		perror("Falla en el protocolo de comunicación");
+		exit(1);
+	}
+	if (socketCPU == 2){
+		perror("No se conectado con el FileSystem, asegurese de que este abierto el proceso");
+		exit(1);
+	}
+	if ( (rta_conexion = handshakeCliente(socketCPU, ID)) == -1) {
+		perror("Error en el handshake con el Servidor");
+		close(socketCPU);
+	}
+	printf("Conexión exitosa con el Servidor(%i)!!\n",rta_conexion);
 
-	printf("handshake cliente%i \n",handshakeCliente(socket,ID));
-//	enviarMensaje(mensaje, socket);
+	// Recepcion del mensaje
+	if(recibirMensaje(socketCPU,mensajeRecibido)==-1){
+		perror("Error en el Reciv");
+	}
+	printf("Mensaje desde el Kernel: %s\n\n", mensajeRecibido);
 
-	char* mens=string_new();
-	recibirMensaje(socket, mens);
-	printf("Mensaje traido desde el kernel que viene desde la consola:\n\n\n%s\n\n\n",mens);
-
-	close(socket);
+	close(socketCPU);
+	return 0;
 }

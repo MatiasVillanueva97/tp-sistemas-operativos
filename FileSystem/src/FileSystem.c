@@ -23,80 +23,63 @@
 #include "commons/config.h"
 #include "laGranBiblioteca/sockets.h"
 #include "laGranBiblioteca/config.h"
+
 #define ID 4
 
-int main(int argc, char* argv[]) {
+int main(void) {
 	printf("Inicializando FileSystem.....\n\n");
-	config_FileSystem config;
+
 	// ******* Declaración de la mayoria de las variables a utilizar
 
+	config_FileSystem config;
 	socklen_t sin_size;
 
 	struct sockaddr_storage their_addr; // connector's address information
 
-	int id_cliente; // listen on sock_fd, new connection on new_fd
+	int id_cliente, rta_handshake, nuevoSocket, listener;// listen on sock_fd, new connection on new_fd
 	int aceptados[] = {0};
-	int numbytes;
-	char s[INET6_ADDRSTRLEN];
-	char buf[100];
+	char ip[INET6_ADDRSTRLEN];
+	char* mensajeRecibido= string_new();
 
-	int socketFS;
-	int socketMemoria;
+	// ******* Configuracion del FileSystem a partir de un archivo
 
-	//Variables para el while que contiene el select
-	fd_set master;    // master file descriptor list
-	fd_set read_fds;  // temp file descriptor list for select()
-	fd_set write_fds;
-
-	int fdmax;        // maximum file descriptor number
-	int listener;     // listening socket descriptor
-	int newfd;
-	FD_ZERO(&master);    // clear the master and temp sets
-	FD_ZERO(&read_fds);
-	FD_ZERO(&write_fds);
-
-	/*if (argc != 2) {
-	 printf(stderr,"usage: client hostname\n");
-	 exit(1);
-	 }
-	 */
-
-	int new_fd;
 	printf("Configuracion Inicial: \n");
-	configuracionInicialFileSystem(
-			"/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/FileSystem/fileSystem.config",
-			&config);
+	configuracionInicialFileSystem("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/FileSystem/fileSystem.config",&config);
 	imprimirConfiguracionInicialFileSystem(config);
+
+
+	// ******* Conexiones obligatorias y necesarias
 
 	listener = crearSocketYBindeo(config.PORT);
 	escuchar(listener);
 
-		sin_size = sizeof their_addr;
-		if ((new_fd = accept(listener, (struct sockaddr *) &their_addr,
-				&sin_size)) == -1) {
-			perror("accept");
-		}
-		inet_ntop(their_addr.ss_family,
-				getSin_Addr((struct sockaddr *) &their_addr), s, sizeof s); // para poder imprimir la ip del server
-		printf("server: got connection from %s\n", s);
-		 // this is the child process
-			close(listener); // child doesn't need the listener
-			int resHanS;
-			if ((resHanS = handshakeServidor(new_fd, ID, aceptados)) == -1) {
-				close(new_fd);
-			}
-			printf("Respuesta del handsacke del server: %d\n", resHanS);
-			char* mensaje= string_new();
-			//while(strcmp(mensaje, "fin")){
-				recibirMensaje(new_fd,mensaje);
-				printf("Mensaje del kernel %s\n", mensaje);
-			//}
+	sin_size = sizeof their_addr;
 
-			close(new_fd);
-			exit(0);
+	if ((nuevoSocket = accept(listener, (struct sockaddr *) &their_addr, &sin_size)) == -1) {
+		perror("Error en el Accept");
+	}
 
-		close(new_fd);  // parent doesn't need this
+	inet_ntop(their_addr.ss_family, getSin_Addr((struct sockaddr *) &their_addr), ip, sizeof ip); // para poder imprimir la ip del server
 
+	printf("Conexion con %s\n", ip);
+
+
+	close(listener); // child doesn't need the listener
+
+	if ((rta_handshake = handshakeServidor(nuevoSocket, ID, aceptados)) == -1) {
+		perror("Error con el handshake: -1");
+		close(nuevoSocket);
+	}
+
+	printf("Conexión exitosa con el Server(%i)!!\n",rta_handshake);
+
+	if(recibirMensaje(nuevoSocket,mensajeRecibido)==-1){
+		perror("Error en el Reciv");
+	}
+
+	printf("Mensaje desde el Kernel: %s\n\n", mensajeRecibido);
+
+	close(nuevoSocket);  // parent doesn't need this
 
 	return EXIT_SUCCESS;
 }
