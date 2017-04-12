@@ -71,41 +71,32 @@ int main(int argc, char* argv[]) {
 	listener = crearSocketYBindeo(config.PORT);
 	escuchar(listener);
 
-	while (1) {  // main accept() loop
 		sin_size = sizeof their_addr;
 		if ((new_fd = accept(listener, (struct sockaddr *) &their_addr,
 				&sin_size)) == -1) {
 			perror("accept");
-			continue;
 		}
 		inet_ntop(their_addr.ss_family,
 				getSin_Addr((struct sockaddr *) &their_addr), s, sizeof s); // para poder imprimir la ip del server
 		printf("server: got connection from %s\n", s);
-		if (!fork()) { // this is the child process
+		 // this is the child process
 			close(listener); // child doesn't need the listener
 			int resHanS;
 			if ((resHanS = handshakeServidor(new_fd, ID, aceptados)) == -1) {
 				close(new_fd);
 			}
 			printf("Respuesta del handsacke del server: %d\n", resHanS);
-			/*if (send(new_fd, "Hello patonC!", 13, 0) == -1) {
-				perror("send");
-				exit(1);
-			}
-			if ((numbytes = recv(new_fd, buf, 13, 0)) == -1) {
-				perror("recv");
-				exit(1);
-			}
-			buf[numbytes] = '\0';
-			printf("Kernel: received %s \n", buf);
+			char* mensaje= string_new();
+			//while(strcmp(mensaje, "fin")){
+				recibirMensaje(new_fd,mensaje);
+				printf("Mensaje del kernel %s\n", mensaje);
+			//}
 
-			char* aux = recibirMensaje(new_fd);
-			printf("mensaje recibido:  %s \n", aux);*/
 			close(new_fd);
 			exit(0);
-		}
+
 		close(new_fd);  // parent doesn't need this
-	}
+
 
 	return EXIT_SUCCESS;
 }

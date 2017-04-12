@@ -89,19 +89,11 @@ int main(int argc, char* argv[]) {
 				close(new_fd);
 			}
 			printf("Respuesta del handsacke del server: %d\n", resHanS);
-			/*if (send(new_fd, "Hello patonC!", 13, 0) == -1) {
-				perror("send");
-				exit(1);
-			}
-			if ((numbytes = recv(new_fd, buf, 13, 0)) == -1) {
-				perror("recv");
-				exit(1);
-			}
-			buf[numbytes] = '\0';
-			printf("Kernel: received %s \n", buf);
 
-			char* aux = recibirMensaje(new_fd);
-			printf("mensaje recibido:  %s \n", aux);*/
+			char* mensaje= string_new();
+						recibirMensaje(new_fd,mensaje);
+						printf("Mensaje del kernel %s\n", mensaje);
+
 			close(new_fd);
 			exit(0);
 		}

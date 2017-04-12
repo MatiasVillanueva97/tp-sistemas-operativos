@@ -54,22 +54,11 @@ int main(int argc, char *argv[])
 
 	printf("handshake cliente%i \n",handshakeCliente(socket,ID));
 
-	/*if ((numbytes = recv(sockfd, buf, MAXDATASIZE-1, 0)) == -1) {
-	    perror("recv");
-	    exit(1);
-	}*/
-
-	//buf[numbytes] = '\0';
-
-	//printf("client: received '%s'\n",buf);
-
-	/*if (send(sockfd, "Patos, world!", 13, 0) == -1){
-		perror("send");
-	}*/
-
-	enviarMensaje("LA RE CONCHA DE TU MADRE RAUL",socket);
+	char* mensaje = string_new();
+	printf("Ingrese mensaje a enviar: ");
+	fgets(mensaje,100,stdin);
+	enviarMensaje(mensaje,socket);
 
 	close(sockfd);
-
 	return 0;
 }

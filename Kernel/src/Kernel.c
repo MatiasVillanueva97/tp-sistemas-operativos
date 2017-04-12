@@ -75,7 +75,14 @@ int main(void) {
 	printf("Esperando conexion con File System \n");
 
 	socketFS = conexionConServidor(config.PUERTO_FS,config.IP_FS);
-
+	if (socketFS == 1){
+		perror("Falla en el protocolo");
+		exit(1);
+	}
+	if (socketFS == 2){
+		perror("Conecta el fileSystem imbecil");
+		exit(1);
+	}
 	int rta;
 
 	if ( (rta=handshakeCliente(socketFS, ID)) == -1) {
@@ -84,19 +91,30 @@ int main(void) {
 	}
 	printf("handshake con File System Bien Hecho %i",rta);
 
-	//FD_SET(socketFS, &write_fds);
+	FD_SET(socketFS, &write_fds);
+
+
+
 
 	printf("Esperando conexion con Memoria \n");
-
 	socketMemoria = conexionConServidor(config.PUERTO_MEMORIA,config.IP_MEMORIA);
-
+	if (socketFS == 1){
+			perror("Falla en el protocolo");
+			exit(1);
+		}
+		if (socketFS == 2){
+			perror("Conecta el fileSystem imbecil");
+			exit(1);
+		}
 	if ( (rta=handshakeCliente(socketMemoria, ID)) == -1) {
 				perror("error en el handshake");
 				close(socketMemoria);
 		}
 	printf("handshake con Memoria Bien Hecho %i",rta);
 
-	//FD_SET(socketMemoria, &write_fds);
+	FD_SET(socketMemoria, &write_fds);
+
+	//Delegar aca.
 
 
 	printf("\n\n\nEstableciendo Conexiones:\n");
