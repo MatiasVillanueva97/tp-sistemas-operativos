@@ -40,6 +40,7 @@ void imprimirConfiguracionInicialKernel(config_Kernel); // Yo gabriel maiori, di
 // esta funcion setea en una estructura ttodo lo que provenga por el archivo config
 void configuracionInicialKernel(char*,config_Kernel*);
 
+void liberarConfiguracionKernel(config_Kernel* );
 // Para la Consola
 
 typedef struct{
@@ -92,3 +93,4 @@ typedef struct{
 void configuracionInicialCPU(char*PATH,config_CPU *);
 
 void imprimirConfiguracionInicialCPU(config_CPU);
+

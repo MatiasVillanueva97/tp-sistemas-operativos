@@ -34,7 +34,7 @@ int main(void)
 
 	// ******* Configuración inicial Consola
 
-	printf("Confiruacion Inicial:\n");
+	printf("Configuracion Inicial:\n");
 	configuracionInicialConsola("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Consola/consola.config",&config);
 	imprimirConfiguracionInicialConsola(config);
 

@@ -115,6 +115,7 @@ int main(void) {
 	FD_SET(listener, &master); // agrega al master el socket
 
 	fdmax = listener; // por algun motivo desconocido por nosotros, el select necesita tener siempre apuntando al ultimo socket del master (el ultimo que se abre)
+	liberarConfiguracionKernel(&config);
 
 	while (1) {
 		read_fds = master;
@@ -186,6 +187,5 @@ int main(void) {
 			} // END got new incoming connection
 		} // END looping through file descriptors
 	} // END while(1)--and you thought it would never end!
-
 	return 0;
 }

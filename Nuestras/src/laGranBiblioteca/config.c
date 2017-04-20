@@ -31,6 +31,16 @@ void imprimirArraysDeStrings(char** lista)
 	printf(" ]\n");
 }
 
+void liberarArray(char** array){
+	int i= 0;
+	while(array[i]!= NULL){
+		free(array[i]);
+		i++;
+	}
+	free(array);
+}
+
+
 //   ************************* Funciones para la configuracion del Kernel   ****************************
 
 typedef struct {
@@ -70,7 +80,22 @@ void configuracionInicialKernel(char*PATH, config_Kernel*est){
 
 	config_destroy(config);
 }
-
+void liberarConfiguracionKernel(config_Kernel* est){
+		free(est->PUERTO_PROG);
+		free(est->PUERTO_CPU);
+		free(est->IP_MEMORIA);
+		free(est->PUERTO_MEMORIA);
+		free(est->IP_FS);
+		free(est->PUERTO_FS);
+		free(est->QUANTUM);
+		free(est->QUANTUM_SLEEP);
+		free(est->ALGORITMO);
+		free(est->GRADO_MULTIPROG);
+		liberarArray(est->SEM_IDS);
+		liberarArray(est->SEM_INIT);
+		liberarArray(est->SHARED_VARS);
+		free(est->STACK_SIZE);
+}
 void imprimirConfiguracionInicialKernel(config_Kernel config) // Yo gabriel maiori, dije explicitamente que esto es una terrible NEGRADA, pero como yo soy el tosco del team, no puedo quejarme
 {
 	printf("PUERTO_PROG: %s \n", config.PUERTO_PROG);
