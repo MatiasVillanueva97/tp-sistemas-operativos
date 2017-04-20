@@ -9,16 +9,15 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-char* getStringFromConfig(t_config * config, char*valor){
- char* aux = string_new();
+char * getStringFromConfig(t_config * config, char*valor){
+	char* aux = string_new();
 
- if(config_has_property(config, valor)){
-	 string_append(&aux,config_get_string_value(config, valor));
- }
+	if(config_has_property(config, valor)){
+		string_append(&aux,config_get_string_value(config, valor));
+	}
 
- else perror("Archivo config mal hecho");
-
- return aux;
+	else perror("Archivo config mal hecho");
+	return aux;
 }
 /*char* getStringFromConfig(t_config *config, char*valor){
 	char* aux =  malloc(strlen(config_get_string_value(config, valor)));
