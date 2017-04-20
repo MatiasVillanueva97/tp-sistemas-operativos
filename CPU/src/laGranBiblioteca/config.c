@@ -5,13 +5,23 @@
  *      Author: utnso
  */
 #include "commons/config.h"
-
+#include "commons/string.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-char* getStringFromConfig(t_config *config, char*valor){
-	char* aux = malloc(sizeof(char*));
+char* getStringFromConfig(t_config * config, char*valor){
+ char* aux = string_new();
 
+ if(config_has_property(config, valor)){
+	 string_append(&aux,config_get_string_value(config, valor));
+ }
+
+ else perror("Archivo config mal hecho");
+
+ return aux;
+}
+/*char* getStringFromConfig(t_config *config, char*valor){
+	char* aux =  malloc(strlen(config_get_string_value(config, valor)));
 	if(config_has_property(config, valor)){
 		strcpy(aux,config_get_string_value(config, valor));
 	}
@@ -19,7 +29,7 @@ char* getStringFromConfig(t_config *config, char*valor){
 	else perror("Archivo config mal hecho");
 
 	return aux;
-}
+}*/
 void imprimirArraysDeStrings(char** lista)
 {
 	printf("[ %s",*lista);

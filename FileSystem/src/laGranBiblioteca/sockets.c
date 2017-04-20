@@ -154,7 +154,6 @@ int crearSocketYBindeo(char* puerto)
 				fprintf(stderr, "server: failed to bind\n");
 				exit(1);
 			}
-
 		return sockfd;
 
 }
