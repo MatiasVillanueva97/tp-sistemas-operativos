@@ -39,7 +39,7 @@ int main(void) {
 	int id_cliente, rta_handshake, nuevoSocket, listener;// listen on sock_fd, new connection on new_fd
 	int aceptados[] = {0};
 	char ip[INET6_ADDRSTRLEN];
-	char* mensajeRecibido = string_new();
+	char* mensajeRecibido = string_new();//El valgrind dice que hay un problema acá
 
 	// ******* Configuracion del FileSystem a partir de un archivo
 
