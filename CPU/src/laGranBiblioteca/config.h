@@ -97,4 +97,5 @@ typedef struct{
 void configuracionInicialCPU(char*PATH,config_CPU *);
 
 void imprimirConfiguracionInicialCPU(config_CPU);
+void liberarConfiguracionCPU(config_CPU* config);
 

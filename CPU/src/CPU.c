@@ -25,7 +25,7 @@ int main(void)
 
 	config_CPU config;
 	int socketCPU, rta_conexion;
-	char* mensajeRecibido = string_new();
+	char* mensajeRecibido ="";
 
 	// ******* Configuracion Inicial de CPU
 
@@ -61,5 +61,6 @@ int main(void)
 	printf("Mensaje desde el Kernel: %s\n\n", mensajeRecibido);
 
 	close(socketCPU);
+	liberarConfiguracionCPU(&config);
 	return 0;
 }
