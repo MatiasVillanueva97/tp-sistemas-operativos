@@ -156,7 +156,8 @@ void imprimirConfiguracionInicialConsola(config_Consola config){
 }
 
 void liberarConfiguracionConsola(config_Consola * configConsola){
-
+	free(configConsola->IP);
+	free(configConsola->PORT);
 }
 
 //   ************************* Funciones para la configuracion del File System   ****************************

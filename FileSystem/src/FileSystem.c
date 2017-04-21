@@ -39,7 +39,7 @@ int main(void) {
 	int id_cliente, rta_handshake, nuevoSocket, listener;// listen on sock_fd, new connection on new_fd
 	int aceptados[] = {0};
 	char ip[INET6_ADDRSTRLEN];
-	char* mensajeRecibido = string_new();//El valgrind dice que hay un problema acá
+	char* mensajeRecibido= "";//El valgrind dice que hay un problema acá
 
 	// ******* Configuracion del FileSystem a partir de un archivo
 
@@ -72,16 +72,14 @@ int main(void) {
 	}
 
 	printf("Conexión exitosa con el Server(%i)!!\n",rta_handshake);
-
 	if(recibirMensaje(nuevoSocket,mensajeRecibido)==-1){
 		perror("Error en el Reciv");
 	}
 
 	printf("Mensaje desde el Kernel: %s\n\n", mensajeRecibido);
-	free(mensajeRecibido);
+
 	close(nuevoSocket);  // parent doesn't need this
 
 	liberarConfiguracionFileSystem(&config);
-
 	return EXIT_SUCCESS;
 }

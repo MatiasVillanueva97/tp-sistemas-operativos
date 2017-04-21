@@ -28,7 +28,7 @@ int main(void)
 
 	config_Consola config;
 	int socketConsola, rta_conexion;
-	char* mensaje = string_new();
+	char* mensaje = malloc(100);
 	char s[INET6_ADDRSTRLEN];
 
 
@@ -68,6 +68,8 @@ int main(void)
 	}
 
 	close(socketConsola);
+	free(mensaje);
 
+	liberarConfiguracionConsola(&config);
 	return 0;
 }

@@ -41,6 +41,8 @@ void imprimirConfiguracionInicialKernel(config_Kernel); // Yo gabriel maiori, di
 void configuracionInicialKernel(char*,config_Kernel*);
 
 void liberarConfiguracionKernel(config_Kernel* );
+
+
 // Para la Consola
 
 typedef struct{
@@ -52,6 +54,7 @@ void configuracionInicialConsola(char*,config_Consola *);
 
 void imprimirConfiguracionInicialConsola(config_Consola);
 
+void liberarConfiguracionConsola(config_Consola *);
 //Para el File System
 
 typedef struct{
@@ -63,6 +66,7 @@ void configuracionInicialFileSystem(char*, config_FileSystem*);
 
 void imprimirConfiguracionInicialFileSystem(config_FileSystem);
 
+void liberarConfiguracionFileSystem(config_FileSystem * conFs);
 //Para la Memoria
 
 typedef struct{
