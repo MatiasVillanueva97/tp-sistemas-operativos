@@ -25,6 +25,7 @@
 #include "commons/collections/list.h"
 #include <sys/wait.h>
 #include <signal.h>
+#include "sockets.h"
 
 #define MAXDATASIZE 100 // max number of bytes we can get at once
 #define BACKLOG 10	 // how many pending connections queue will hold
@@ -219,7 +220,6 @@ int recibirMensaje(int socket,char* mensaje) // Toda esta funcion deberá ccambi
 	if (recibido == 0){
 		return 0;
 	}
-
 	if (recv(socket, mensaje, longitud, 0) == -1) {
 		perror("recv");
 		return -1;

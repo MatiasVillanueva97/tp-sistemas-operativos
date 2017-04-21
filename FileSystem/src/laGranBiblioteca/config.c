@@ -10,10 +10,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 char * getStringFromConfig(t_config * config, char*valor){
-	char* aux = string_new();
+	char* aux;
 
 	if(config_has_property(config, valor)){
-		string_append(&aux,config_get_string_value(config, valor));
+		aux = string_duplicate(config_get_string_value(config, valor));
 	}
 
 	else perror("Archivo config mal hecho");
@@ -155,6 +155,10 @@ void imprimirConfiguracionInicialConsola(config_Consola config){
 
 }
 
+void liberarConfiguracionConsola(config_Consola * configConsola){
+
+}
+
 //   ************************* Funciones para la configuracion del File System   ****************************
 
 typedef struct{
@@ -167,7 +171,10 @@ void configuracionInicialFileSystem(char*PATH, config_FileSystem* conFs){
 	config = config_create(PATH);
 
 	conFs->PORT = getStringFromConfig(config,"PUERTO");
-	conFs->PUNTO_MONTAJE = config_get_array_value(config,"PUNTO_MONTAJE")[0];
+	//char** aux = config_get_array_value(config,"PUNTO_MONTAJE");//cuando arreglemos el error hay que borrar esta linea
+	conFs->PUNTO_MONTAJE = getStringFromConfig(config,"PUNTO_MONTAJE");//esta tambien
+	//liberarArray(aux);//esta tambien
+
 
 	config_destroy(config);
 }
@@ -176,6 +183,11 @@ void imprimirConfiguracionInicialFileSystem(config_FileSystem config){
 	printf("PORT: %s\n", config.PORT);
 	printf("PUNTO_MONTAJE: %s \n", config.PUNTO_MONTAJE);
 
+}
+
+void liberarConfiguracionFileSystem(config_FileSystem * conFs){
+	free(conFs->PORT);
+	free(conFs->PUNTO_MONTAJE);
 }
 
 //   ************************* Funciones para la configuracion de la Memoria   ****************************
