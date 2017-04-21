@@ -156,7 +156,8 @@ void imprimirConfiguracionInicialConsola(config_Consola config){
 }
 
 void liberarConfiguracionConsola(config_Consola * configConsola){
-
+	free(configConsola->IP);
+	free(configConsola->PORT);
 }
 
 //   ************************* Funciones para la configuracion del File System   ****************************
@@ -227,6 +228,16 @@ void imprimirConfiguracionInicialMemoria(config_Memoria config){
 	printf("REEMPLAZO_CACHE: %s\n", config.REEMPLAZO_CACHE);
 	printf("RETARDO_MEMORIA: %s\n", config.RETARDO_MEMORIA);
 	printf("IP: %s\n", config.IP);
+}
+void liberarConfiguracionMemoria(config_Memoria * configMemoria){
+	free(configMemoria->PORT);
+	free(configMemoria->MARCOS);
+	free(configMemoria->MARCO_SIZE);
+	free(configMemoria->ENTRADAS_CACHE);
+	free(configMemoria->CACHE_X_PROC);
+	free(configMemoria->REEMPLAZO_CACHE);
+	free(configMemoria->RETARDO_MEMORIA);
+	free(configMemoria->IP);
 }
 
 //   ************************* Funciones para la configuracion de la CPU   ****************************

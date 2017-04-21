@@ -229,6 +229,16 @@ void imprimirConfiguracionInicialMemoria(config_Memoria config){
 	printf("RETARDO_MEMORIA: %s\n", config.RETARDO_MEMORIA);
 	printf("IP: %s\n", config.IP);
 }
+void liberarConfiguracionMemoria(config_Memoria * configMemoria){
+	free(configMemoria->PORT);
+	free(configMemoria->MARCOS);
+	free(configMemoria->MARCO_SIZE);
+	free(configMemoria->ENTRADAS_CACHE);
+	free(configMemoria->CACHE_X_PROC);
+	free(configMemoria->REEMPLAZO_CACHE);
+	free(configMemoria->RETARDO_MEMORIA);
+	free(configMemoria->IP);
+}
 
 //   ************************* Funciones para la configuracion de la CPU   ****************************
 

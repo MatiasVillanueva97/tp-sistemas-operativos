@@ -84,6 +84,8 @@ void configuracionInicialMemoria(char*, config_Memoria *);
 
 void imprimirConfiguracionInicialMemoria(config_Memoria);
 
+void liberarConfiguracionMemoria(config_Memoria *);
+
 //Para la CPU
 
 typedef struct{

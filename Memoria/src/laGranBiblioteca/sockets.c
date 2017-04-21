@@ -212,6 +212,7 @@ int recibirMensaje(int socket,char* mensaje) // Toda esta funcion deberá ccambi
 {
 	int longitud;
 	int recibido;
+
 	if ((recibido = recv(socket, &longitud, sizeof(int), 0)) == -1) {
 		perror("recv");
 		return -1;

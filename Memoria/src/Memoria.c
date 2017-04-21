@@ -39,6 +39,7 @@ int main(void) {
 	int listener, nuevoSocket, rta_handshake;
 	int aceptados[] = {0,3};
 	char ip[INET6_ADDRSTRLEN];
+
 	char* mensajeRecibido= string_new();
 
 
@@ -54,6 +55,7 @@ int main(void) {
 	listener = crearSocketYBindeo(config.PORT); // asignar el socket principal
 	escuchar(listener); // poner a escuchar ese socket
 
+	liberarConfiguracionMemoria(&config);
 	while (1) {
 		sin_size = sizeof their_addr;
 
@@ -81,12 +83,13 @@ int main(void) {
 			}
 
 			printf("Mensaje desde el Kernel: %s\n\n", mensajeRecibido);
-
+			free(mensajeRecibido);//OJO!!!!!ESTO HAY QUE MEJORARLO
 			close(nuevoSocket);
 			exit(0);
 		}
 		close(nuevoSocket);  // parent doesn't need this
-	}
 
+
+	}
 	return EXIT_SUCCESS;
 }
