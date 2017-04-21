@@ -268,3 +268,9 @@ void imprimirConfiguracionInicialCPU(config_CPU config){
 	printf("PORT_MEMORIA: %s \n", config.PORT_MEMORIA);
 
 }
+void liberarConfiguracionCPU(config_CPU * configCPU){
+	free(configCPU->PORT_KERNEL);
+	free(configCPU->IP_KERNEL);
+	free(configCPU->PORT_MEMORIA);
+	free(configCPU->IP_MEMORIA);
+}

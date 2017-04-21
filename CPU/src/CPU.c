@@ -25,7 +25,7 @@ int main(void)
 
 	config_CPU config;
 	int socketCPU, rta_conexion;
-	char* mensajeRecibido ="";
+	char* mensajeRecibido =string_new();
 
 	// ******* Configuracion Inicial de CPU
 
@@ -62,5 +62,6 @@ int main(void)
 
 	close(socketCPU);
 	liberarConfiguracionCPU(&config);
+	free(mensajeRecibido);
 	return 0;
 }
