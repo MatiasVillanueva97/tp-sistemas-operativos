@@ -80,6 +80,6 @@ int main(void) {
 	close(nuevoSocket);  // parent doesn't need this
 
 	liberarConfiguracion();
-	free(mensajeRecibido);
+	// free(mensajeRecibido); esto tira violacion de segmento
 	return EXIT_SUCCESS;
 }

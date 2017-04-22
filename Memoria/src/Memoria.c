@@ -31,7 +31,6 @@ int main(void) {
 
 	// ******* Declaración de la mayoria de las variables a utilizar
 
-	config_Memoria config;
 	socklen_t sin_size;
 
 	struct sockaddr_storage their_addr; // Estructura que contiene la informacion de la conexion
@@ -46,16 +45,19 @@ int main(void) {
 	// ******* Configuracion de la Memoria a partir de un archivo
 
 	printf("Configuracion Inicial: \n");
-	configuracionInicialMemoria("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Memoria/memoria.config",&config);
-	imprimirConfiguracionInicialMemoria(config);
+	configuracionInicial("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Memoria/memoria.config");
+	imprimirConfiguracion();
 
 
 	// ******* Conexiones obligatorias y necesarias
 
-	listener = crearSocketYBindeo(config.PORT); // asignar el socket principal
+	listener = crearSocketYBindeo(configString("PUERTO")); // asignar el socket principal
 	escuchar(listener); // poner a escuchar ese socket
 
-	liberarConfiguracionMemoria(&config);
+
+	liberarConfiguracion();
+
+
 	while (1) {
 		sin_size = sizeof their_addr;
 
@@ -83,7 +85,7 @@ int main(void) {
 			}
 
 			printf("Mensaje desde el Kernel: %s\n\n", mensajeRecibido);
-			free(mensajeRecibido);//OJO!!!!!ESTO HAY QUE MEJORARLO
+			//free(mensajeRecibido);//OJO!!!!!ESTO HAY QUE MEJORARLO -- Comentario 2 esto esta omcentado tiera violacion de segmento
 			close(nuevoSocket);
 			exit(0);
 		}

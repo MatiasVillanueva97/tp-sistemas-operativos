@@ -62,6 +62,6 @@ int main(void)
 
 	close(socketCPU);
 	liberarConfiguracion();
-	free(mensajeRecibido);
+	// free(mensajeRecibido); --- esto tira cviolacion de segmentos
 	return 0;
 }
