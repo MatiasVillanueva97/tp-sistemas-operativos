@@ -31,7 +31,6 @@ int main(void) {
 
 	// ******* Declaración de la mayoria de las variables a utilizar
 
-	config_FileSystem config;
 	socklen_t sin_size;
 
 	struct sockaddr_storage their_addr; // connector's address information
@@ -44,13 +43,13 @@ int main(void) {
 	// ******* Configuracion del FileSystem a partir de un archivo
 
 	printf("Configuracion Inicial: \n");
-	configuracionInicialFileSystem("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/FileSystem/fileSystem.config",&config);
-	imprimirConfiguracionInicialFileSystem(config);
+	configuracionInicial("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/FileSystem/fileSystem.config");
+	imprimirConfiguracion();
 
 
 	// ******* Conexiones obligatorias y necesarias
 
-	listener = crearSocketYBindeo(config.PORT);
+	listener = crearSocketYBindeo(configString("PUERTO"));
 	escuchar(listener);
 
 	sin_size = sizeof their_addr;
@@ -80,7 +79,7 @@ int main(void) {
 
 	close(nuevoSocket);  // parent doesn't need this
 
-	liberarConfiguracionFileSystem(&config);
+	liberarConfiguracion();
 	free(mensajeRecibido);
 	return EXIT_SUCCESS;
 }

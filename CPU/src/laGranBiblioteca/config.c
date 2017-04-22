@@ -1,15 +1,19 @@
 /*
- * config.c
+ * config2.c
+
  *
- *  Created on: 7/4/2017
+ *  Created on: 22/4/2017
  *      Author: utnso
  */
-#include "commons/config.h"
-#include "commons/string.h"
-#include <string.h>
+
 #include <stdio.h>
 #include <stdlib.h>
-char * getStringFromConfig(t_config * config, char*valor){
+#include "commons/config.h"
+#include "commons/collections/list.h"
+#include "config.h"
+
+
+char* getStringFromConfig(t_config *config, char*valor){
 	char* aux;
 
 	if(config_has_property(config, valor)){
@@ -17,260 +21,173 @@ char * getStringFromConfig(t_config * config, char*valor){
 	}
 
 	else perror("Archivo config mal hecho");
-	return aux;
-}
-/*char* getStringFromConfig(t_config *config, char*valor){
-	char* aux =  malloc(strlen(config_get_string_value(config, valor)));
-	if(config_has_property(config, valor)){
-		strcpy(aux,config_get_string_value(config, valor));
-	}
-
-	else perror("Archivo config mal hecho");
 
 	return aux;
-}*/
-void imprimirArraysDeStrings(char** lista)
-{
-	printf("[ %s",*lista);
-	while(*(lista+1) != NULL) //Mostrar a gabi; //lenguaje de mierda.
-	{
-		lista++;
-		printf(", %s ", *lista);
-	}
-	printf(" ]\n");
 }
+
+
+typedef struct{
+	char * etiqueta;
+	void* contenido;
+	int tipo;//0 = char*, 1=char**
+}parametro;
+
 
 void liberarArray(char** array){
-	int i= 0;
-	while(array[i]!= NULL){
-		free(array[i]);
-		i++;
+ int i= 0;
+ while(array[i]!= NULL){
+  free(array[i]);
+  i++;
+ }
+ free(array);
+}
+
+void liberarParametro(parametro * param){
+/*
+	if(param->tipo == 0)
+		free(param->contenido);
+	else
+		liberarArray(param->contenido);*/
+	free(param->contenido);
+	free(param->etiqueta);
+	free(param);
+}
+
+parametro * obtenerParametroString(t_config * config, char * etiqueta){
+	parametro * parametro = malloc(sizeof(*parametro));
+	parametro->contenido = getStringFromConfig(config,etiqueta);
+	parametro->tipo = 0;
+	parametro->etiqueta = etiqueta;
+	return parametro;
+}
+parametro * obtenerParametroArray(t_config * config, char * etiqueta){
+	parametro * parametro = malloc(sizeof(*parametro)) ;
+	parametro->contenido = config_get_array_value(config,etiqueta);
+	parametro->tipo = 1;
+	parametro->etiqueta = etiqueta;
+	return parametro;
+}
+
+parametro * buscarParametro(char * etiqueta){
+	bool busqueda(parametro * parametro){
+		return strcmp(etiqueta, parametro->etiqueta) == 0;
 	}
-	free(array);
+	parametro * par = list_find(listaDeConfig, busqueda);
+	return par;
 }
 
+//-------
+char * configStringArrayElement(char * etiqueta, int indice){
+	parametro * par = buscarParametro(etiqueta);//no hay que hacer un free aca o se rompe la lista
+	return ((char**)par->contenido)[indice];
+}
+char ** configStringArray(char * etiqueta){
+	parametro * par = buscarParametro(etiqueta);//no hay que hacer un free aca o se rompe la lista
+	return (char**)par->contenido;
+}
+char * configString(char * etiqueta){
+	parametro * par = buscarParametro(etiqueta);//no hay que hacer un free aca o se rompe la lista
+	return (char*)par->contenido;
+}
 
-//   ************************* Funciones para la configuracion del Kernel   ****************************
+int configInt(char * etiqueta){
+	return atoi(configString(etiqueta));
+}
 
-typedef struct {
-	char * PUERTO_PROG;
-	char * PUERTO_CPU;
-	char * IP_MEMORIA;
-	char * PUERTO_MEMORIA;
-	char * IP_FS;
-	char * PUERTO_FS;
-	char * QUANTUM;
-	char * QUANTUM_SLEEP;
-	char * ALGORITMO;
-	char * GRADO_MULTIPROG;
-	char ** SEM_IDS;
-	char ** SEM_INIT;
-	char ** SHARED_VARS;
-	char * STACK_SIZE;
-}config_Kernel;
+int configIntArrayElement(char * etiqueta, int indice){
+	return atoi(configStringArrayElement(etiqueta, indice));
+}
+//-------
 
-void configuracionInicialKernel(char*PATH, config_Kernel*est){
+char * file_to_string(FILE * stream){
+	char *contents;
+	fseek(stream, 0L, SEEK_END);
+	long fileSize = ftell(stream);
+	fseek(stream, 0L, SEEK_SET);
+
+	//Allocate enough memory (add 1 for the \0, since fread won't add it)
+	contents = malloc(fileSize+1);
+
+	//Read the file
+	size_t size=fread(contents,1,fileSize,stream);
+	contents[size]=0; // Add terminating zero.
+
+	//No lo lei y me chupa un huevo, es copy-paste de internet
+	return contents;
+}
+
+int countSplit(char ** array){
+	int size;
+	for (size = 0; array[size] != NULL; size++);
+	return size;
+}
+
+//Sirve para liberar un char** por completo
+void liberarLista(char ** lista){
+	int i = 0;
+	for (i = 0; i < countSplit(lista); i++)
+			free(lista[i]);
+	free(lista);
+}
+
+parametro * agregarParametro(char * linea, t_config * config){
+	char ** cadenas = string_split(linea,"=");
+	parametro * param =
+			cadenas[1][0] == '[' ? obtenerParametroArray(config, string_duplicate(cadenas[0])) : obtenerParametroString(config, string_duplicate(cadenas[0]));
+	liberarLista(cadenas);
+	return param;
+}
+
+void configuracionInicial(char*PATH){
 	t_config * config;
-	config = config_create(PATH);
-	est->PUERTO_PROG = getStringFromConfig(config,"PUERTO_PROG");
-	est->PUERTO_CPU = getStringFromConfig(config,"PUERTO_CPU");
-	est->IP_MEMORIA = getStringFromConfig(config,"IP_MEMORIA");
-	est->PUERTO_MEMORIA = getStringFromConfig(config,"PUERTO_MEMORIA");
-	est->IP_FS = getStringFromConfig(config,"IP_FS");
-	est->PUERTO_FS = getStringFromConfig(config,"PUERTO_FS");
-	est->QUANTUM = getStringFromConfig(config,"QUANTUM");
-	est->QUANTUM_SLEEP = getStringFromConfig(config,"QUANTUM_SLEEP");
-	est->ALGORITMO = getStringFromConfig(config,"ALGORITMO");
-	est->GRADO_MULTIPROG = getStringFromConfig(config,"GRADO_MULTIPROG");
-	est->SEM_IDS = config_get_array_value(config,"SEM_IDS");
-	est->SEM_INIT = config_get_array_value(config,"SEM_INIT");
-	est->SHARED_VARS = config_get_array_value(config,"SHARED_VARS");
-	est->STACK_SIZE = getStringFromConfig(config,"STACK_SIZE");
-
-	config_destroy(config);
-}
-void liberarConfiguracionKernel(config_Kernel* est){
-		free(est->PUERTO_PROG);
-		free(est->PUERTO_CPU);
-		free(est->IP_MEMORIA);
-		free(est->PUERTO_MEMORIA);
-		free(est->IP_FS);
-		free(est->PUERTO_FS);
-		free(est->QUANTUM);
-		free(est->QUANTUM_SLEEP);
-		free(est->ALGORITMO);
-		free(est->GRADO_MULTIPROG);
-		liberarArray(est->SEM_IDS);
-		liberarArray(est->SEM_INIT);
-		liberarArray(est->SHARED_VARS);
-		free(est->STACK_SIZE);
-}
-void imprimirConfiguracionInicialKernel(config_Kernel config) // Yo gabriel maiori, dije explicitamente que esto es una terrible NEGRADA, pero como yo soy el tosco del team, no puedo quejarme
-{
-	printf("PUERTO_PROG: %s \n", config.PUERTO_PROG);
-	printf("PUERTO_CPU: %s \n", config.PUERTO_CPU);
-	printf("IP_MEMORIA: %s \n", config.IP_MEMORIA);
-	printf("PUERTO_MEMORIA: %s \n", config.PUERTO_MEMORIA);
-	printf("IP_FS: %s \n", config.IP_FS);
-	printf("PUERTO_FS: %s \n", config.PUERTO_FS);
-	printf("QUANTUM: %s \n", config.QUANTUM);
-	printf("QUANTUM_SLEEP: %s \n", config.QUANTUM_SLEEP);
-	printf("ALGORITMO: %s\n", config.ALGORITMO);
-	printf("GRADO_MULTIPROG: %s \n", config.GRADO_MULTIPROG);
-
-
-	printf("SEM_IDS: ");
-
-	imprimirArraysDeStrings(config.SEM_IDS);
-	printf("SEM_INIT: ");
-
-	imprimirArraysDeStrings(config.SEM_INIT);
-	printf("SHARED_VARS: ");
-
-	imprimirArraysDeStrings(config.SHARED_VARS);
-
-
-	printf("STACK_SIZE: %s \n", config.STACK_SIZE);
-}
-
-//   ************************* Funciones para la configuracion de la Consola   ****************************
-
-typedef struct{
-	char *PORT;
-	char *IP;
-}config_Consola;
-
-void configuracionInicialConsola(char*PATH,config_Consola * configConsola){
-	t_config *config;
-	config = config_create(PATH);
-	configConsola->PORT = getStringFromConfig(config,"PUERTO_KERNEL");
-	configConsola->IP = getStringFromConfig(config,"IP_KERNEL");
-	config_destroy(config);
-}
-
-void imprimirConfiguracionInicialConsola(config_Consola config){
-
-	printf("IP_KERNEL: %s\n", config.IP);
-	printf("PUERTO_KERNEL: %s \n", config.PORT);
-
-}
-
-void liberarConfiguracionConsola(config_Consola * configConsola){
-	free(configConsola->IP);
-	free(configConsola->PORT);
-}
-
-//   ************************* Funciones para la configuracion del File System   ****************************
-
-typedef struct{
-	char * PORT;
-	char * PUNTO_MONTAJE;
-}config_FileSystem;
-
-void configuracionInicialFileSystem(char*PATH, config_FileSystem* conFs){
-	t_config * config;
+	t_list * lista = list_create();
 	config = config_create(PATH);
 
-	conFs->PORT = getStringFromConfig(config,"PUERTO");
-	//char** aux = config_get_array_value(config,"PUNTO_MONTAJE");//cuando arreglemos el error hay que borrar esta linea
-	conFs->PUNTO_MONTAJE = getStringFromConfig(config,"PUNTO_MONTAJE");//esta tambien
-	//liberarArray(aux);//esta tambien
+	FILE* archivo = fopen(PATH,"rb");
+	char * contenidoArchivo = file_to_string(archivo);		//Se carga el contenido del archivo en una sola cadena
+	char ** cadenas = string_split(contenidoArchivo,"\n");
+	int i = 0;
+	for (i = 0; i < countSplit(cadenas); i++)
+			list_add(lista,agregarParametro(cadenas[i], config));//Se agregan a la lista todos los elementos
 
+		//Se liberan las cosas que ya no uso y se cierra el archivo
+	liberarLista(cadenas);
+	free(contenidoArchivo);
+	fclose(archivo);
 
 	config_destroy(config);
+	listaDeConfig = lista;//listaDeConfig es una variable publica que guarda las configuraciones
+}
+void imprimirParametroString(parametro* par){
+	printf("%s: %s\n", par->etiqueta, (char*)par->contenido);
+}
+void imprimirParametroArray(parametro* par){//no hay que hacer free o se borra de la lista
+	printf("%s: [", par->etiqueta);
+	int i = 0;
+	for(i=0;((char**)par->contenido)[i] != NULL;i++){
+		printf("%s",configStringArrayElement(par->etiqueta,i));
+		if(((char**)par->contenido)[i+1] != NULL) printf(",");
+	}
+	printf("]\n");
+}
+void list_forEach(t_list * self, void (*funcion) (void*)){
+	t_link_element *element = self->head;
+	while(element != NULL ){
+		funcion(element->data);
+		element = element->next;
+	}
+}
+void imprimirParametro(parametro* par){
+	if(par->tipo == 0) imprimirParametroString(par);
+	if(par->tipo == 1) imprimirParametroArray(par);
 }
 
-void imprimirConfiguracionInicialFileSystem(config_FileSystem config){
-	printf("PORT: %s\n", config.PORT);
-	printf("PUNTO_MONTAJE: %s \n", config.PUNTO_MONTAJE);
-
+void imprimirConfiguracion(){
+	list_forEach(listaDeConfig, imprimirParametro);
 }
 
-void liberarConfiguracionFileSystem(config_FileSystem * conFs){
-	free(conFs->PORT);
-	free(conFs->PUNTO_MONTAJE);
-}
+void liberarConfiguracion(){
 
-//   ************************* Funciones para la configuracion de la Memoria   ****************************
-
-typedef struct{
-	char* PORT;
-	char* MARCOS;
-	char* MARCO_SIZE;
-	char* ENTRADAS_CACHE ;
-	char* CACHE_X_PROC;
-	char* RETARDO_MEMORIA;
-	char* REEMPLAZO_CACHE;
-	char* IP; // Lo agrego yo maiori, y le dejo la ip del localhost
-}config_Memoria;
-
-void configuracionInicialMemoria(char* PATH, config_Memoria *configMemoria){
-	t_config *config;
-	config = config_create(PATH);
-	configMemoria->PORT = getStringFromConfig(config,"PUERTO");
-	configMemoria->MARCOS = getStringFromConfig(config,"MARCOS");
-	configMemoria->MARCO_SIZE = getStringFromConfig(config,"MARCO_SIZE");
-	configMemoria->ENTRADAS_CACHE = getStringFromConfig(config,"ENTRADAS_CACHE");
-	configMemoria->CACHE_X_PROC = getStringFromConfig(config,"CACHE_X_PROC");
-	configMemoria->REEMPLAZO_CACHE=getStringFromConfig(config,"REEMPLAZO_CACHE");
-	configMemoria->RETARDO_MEMORIA = getStringFromConfig(config,"RETARDO_MEMORIA");
-	configMemoria->IP = getStringFromConfig(config,"IP");
-	config_destroy(config);
-}
-
-void imprimirConfiguracionInicialMemoria(config_Memoria config){
-
-	printf("PUERTO: %s\n", config.PORT);
-	printf("MARCOS: %s \n", config.MARCOS);
-	printf("MARCO_SIZE: %s\n", config.MARCO_SIZE);
-	printf("ENTRADAS_CACHE: %s\n", config.ENTRADAS_CACHE);
-	printf("CACHE_X_PROC: %s\n", config.CACHE_X_PROC);
-	printf("REEMPLAZO_CACHE: %s\n", config.REEMPLAZO_CACHE);
-	printf("RETARDO_MEMORIA: %s\n", config.RETARDO_MEMORIA);
-	printf("IP: %s\n", config.IP);
-}
-void liberarConfiguracionMemoria(config_Memoria * configMemoria){
-	free(configMemoria->PORT);
-	free(configMemoria->MARCOS);
-	free(configMemoria->MARCO_SIZE);
-	free(configMemoria->ENTRADAS_CACHE);
-	free(configMemoria->CACHE_X_PROC);
-	free(configMemoria->REEMPLAZO_CACHE);
-	free(configMemoria->RETARDO_MEMORIA);
-	free(configMemoria->IP);
-}
-
-//   ************************* Funciones para la configuracion de la CPU   ****************************
-
-typedef struct{
-	char *IP_KERNEL;
-	char *PORT_KERNEL;
-	char *IP_MEMORIA;
-	char *PORT_MEMORIA;
-
-}config_CPU;
-
-void configuracionInicialCPU(char*PATH,config_CPU * configCPU){
-	t_config * config;
-	config = config_create(PATH);
-	configCPU->PORT_KERNEL = getStringFromConfig(config,"PUERTO_KERNEL");
-	configCPU->IP_KERNEL = getStringFromConfig(config,"IP_KERNEL");
-	configCPU->PORT_MEMORIA = getStringFromConfig(config,"PUERTO_MEMORIA");
-	configCPU->IP_MEMORIA = getStringFromConfig(config,"IP_MEMORIA");
-	config_destroy(config);
-}
-
-void imprimirConfiguracionInicialCPU(config_CPU config){
-
-	printf("IP_KERNEL: %s\n", config.IP_KERNEL);
-	printf("PORT_KERNEL: %s \n", config.PORT_KERNEL);
-	printf("IP_MEMORIA: %s\n", config.IP_MEMORIA);
-	printf("PORT_MEMORIA: %s \n", config.PORT_MEMORIA);
-
-}
-void liberarConfiguracionCPU(config_CPU * configCPU){
-	free(configCPU->PORT_KERNEL);
-	free(configCPU->IP_KERNEL);
-	free(configCPU->PORT_MEMORIA);
-	free(configCPU->IP_MEMORIA);
+	list_clean_and_destroy_elements(listaDeConfig, liberarParametro);
+	list_destroy(listaDeConfig);
 }

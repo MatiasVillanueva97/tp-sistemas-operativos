@@ -26,7 +26,6 @@ int main(void)
 {
 	printf("Inicializando Consola.....\n\n");
 
-	config_Consola config;
 	int socketConsola, rta_conexion;
 	char* mensaje =malloc(100);
 	//char s[INET6_ADDRSTRLEN];
@@ -35,13 +34,13 @@ int main(void)
 	// ******* Configuración inicial Consola
 
 	printf("Configuracion Inicial:\n");
-	configuracionInicialConsola("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Consola/consola.config",&config);
-	imprimirConfiguracionInicialConsola(config);
+	configuracionInicial("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Consola/consola.config");
+	imprimirConfiguracion();
 
 
 	// ******* Procesos de Consola-  por ahora enviar mensajitos
 
-	socketConsola = conexionConServidor(config.PORT,config.IP);
+	socketConsola = conexionConServidor(configString("PUERTO_KERNEL"),configString("IP_KERNEL"));
 
 	// validacion de un correcto hadnshake
 	if (socketConsola == 1){
@@ -69,6 +68,6 @@ int main(void)
 
 	close(socketConsola);
 	free(mensaje);
-	liberarConfiguracionConsola(&config);
+	liberarConfiguracion();
 	return 0;
 }

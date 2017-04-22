@@ -23,21 +23,21 @@ int main(void)
 {
 	printf("Inicializando CPU.....\n\n");
 
-	config_CPU config;
 	int socketCPU, rta_conexion;
 	char* mensajeRecibido =string_new();
 
 	// ******* Configuracion Inicial de CPU
 
  	printf("Configuracion Inicial: \n");
-	configuracionInicialCPU("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/CPU/cpu.config",&config);
-	imprimirConfiguracionInicialCPU(config);
+
+ 	configuracionInicial("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/CPU/cpu.config");
+ 	imprimirConfiguracion();
 
 	// ******* Porcesos de la CPU - por ahora solo recibir un mensaje
 
 	printf("\n\nHola! Soy una cpu! Aca estan mis procesos:\n\n");
 
-	socketCPU = conexionConServidor(config.PORT_KERNEL,config.IP_KERNEL); // Asignación del socket que se conectara con el filesytem
+	socketCPU = conexionConServidor(configString("PUERTO_KERNEL"),configString("IP_KERNEL")); // Asignación del socket que se conectara con el filesytem
 
 	// validacion de un correcto hadnshake
 	if (socketCPU == 1){
@@ -61,7 +61,7 @@ int main(void)
 	printf("Mensaje desde el Kernel: %s\n\n", mensajeRecibido);
 
 	close(socketCPU);
-	liberarConfiguracionCPU(&config);
+	liberarConfiguracion();
 	free(mensajeRecibido);
 	return 0;
 }

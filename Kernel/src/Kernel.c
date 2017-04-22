@@ -31,7 +31,6 @@ int main(void) {
 	// ******* Declaración de la mayoria de las variables a utilizar
 
 	socklen_t sin_size;
-	config_Kernel config;
 
 	struct sockaddr_storage their_addr; // connector's address information
 
@@ -58,17 +57,15 @@ int main(void) {
 	// ******* Configuracion del Kernel a partir de un archivo
 
 	printf("Configuracion Inicial: \n");
-
-	configuracionInicialKernel("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Kernel/kernel.config",&config);
-
-	imprimirConfiguracionInicialKernel(config);
+	configuracionInicial("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Kernel/kernel.config");
+	imprimirConfiguracion();
 
 
 
 	// ******* Conexiones obligatorias y necesarias del Kernel - FileSystem y Memoria
 
 	printf("\n\n\nEsperando conexiones:\n-FileSystem\n-Memoria\n");
-	socketMemoria = conexionConServidor(config.PUERTO_MEMORIA,config.IP_MEMORIA); // Asignación del socket que se conectara con la memoria
+	socketMemoria = conexionConServidor(configString("PUERTO_MEMORIA"),configString("IP_MEMORIA")); // Asignación del socket que se conectara con la memoria
 
 	if (socketMemoria == 1){
 			perror("Falla en el protocolo de comunicación");
@@ -85,7 +82,7 @@ int main(void) {
 	printf("Conexión exitosa con el Memoria(%i)!!\n",rta_conexion);
 	FD_SET(socketMemoria, &write_fds);  // Agregamos el FileDescriptor de la Memoria al set del write (lo ponemos como que al wachin le vamos a escribir)
 
-	socketFS = conexionConServidor(config.PUERTO_FS,config.IP_FS); // Asignación del socket que se conectara con el filesytem
+	socketFS = conexionConServidor(configString("PUERTO_FS"),configString("IP_FS")); // Asignación del socket que se conectara con el filesytem
 	if (socketFS == 1){
 		perror("Falla en el protocolo de comunicación");
 		exit(1);
@@ -109,13 +106,17 @@ int main(void) {
 
 	// ******* Proceso de conectar al Kernel con otros modulos que le realizen peticiones
 
-	listener = crearSocketYBindeo(config.PUERTO_PROG);
+	listener = crearSocketYBindeo(configString("PUERTO_PROG"));
 
 	escuchar(listener);	 // Pone el listener (socket principal) a escuchar las peticiones
 	FD_SET(listener, &master); // agrega al master el socket
 
 	fdmax = listener; // por algun motivo desconocido por nosotros, el select necesita tener siempre apuntando al ultimo socket del master (el ultimo que se abre)
-	liberarConfiguracionKernel(&config);
+
+
+	liberarConfiguracion();
+
+
 
 	while (1) {
 		read_fds = master;
@@ -187,5 +188,6 @@ int main(void) {
 			} // END got new incoming connection
 		} // END looping through file descriptors
 	} // END while(1)--and you thought it would never end!
+
 	return 0;
 }

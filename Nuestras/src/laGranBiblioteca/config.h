@@ -1,103 +1,35 @@
 /*
- * config.h
+ * config2.h
  *
- *  Created on: 7/4/2017
+ *  Created on: 22/4/2017
  *      Author: utnso
  */
-
-#ifndef CONFIG_H_
-#define CONFIG_H_
-
 #include "commons/config.h"
+#include "commons/collections/list.h"
 
-char* getStringFromConfig(t_config*, char*);
-
-#endif /* CONFIG_H_ */
-
-
-// Para el kernel
-
-typedef struct {
-	char * PUERTO_PROG;
-	char * PUERTO_CPU;
-	char * IP_MEMORIA;
-	char * PUERTO_MEMORIA;
-	char * IP_FS;
-	char * PUERTO_FS;
-	char * QUANTUM;
-	char * QUANTUM_SLEEP;
-	char * ALGORITMO;
-	char * GRADO_MULTIPROG;
-	char ** SEM_IDS;
-	char ** SEM_INIT;
-	char ** SHARED_VARS;
-	char * STACK_SIZE;
-}config_Kernel;
-
-// esta funcion imprime la configuracion inicial
-void imprimirConfiguracionInicialKernel(config_Kernel); // Yo gabriel maiori, dije explicitamente que esto es una terrible NEGRADA, pero como yo soy el tosco del team, no puedo quejarme
-
-// esta funcion setea en una estructura ttodo lo que provenga por el archivo config
-void configuracionInicialKernel(char*,config_Kernel*);
-
-void liberarConfiguracionKernel(config_Kernel* );
+#ifndef LAGRANBIBLIOTECA_CONFIG_H_
+#define LAGRANBIBLIOTECA_CONFIG_H_
 
 
-// Para la Consola
+t_list * listaDeConfig;//Variable global para guardar las configuraciones
 
-typedef struct{
-	char *PORT;
-	char *IP;
-}config_Consola;
+void configuracionInicial(char*);
+void imprimirConfiguracion();
+void liberarConfiguracion();
 
-void configuracionInicialConsola(char*,config_Consola *);
+//recibe una etiqueta y un indice y devuelve el valor en tipo string
+char * configStringArrayElement(char *, int);
 
-void imprimirConfiguracionInicialConsola(config_Consola);
+//recibe una etiqueta y devuelve su valor en tipo array
+char ** configStringArray(char *);
 
-void liberarConfiguracionConsola(config_Consola *);
-//Para el File System
+//recibe una etiqueta y devuelve el valor en tipo string
+char * configString(char *);
 
-typedef struct{
-	char * PORT;
-	char * PUNTO_MONTAJE;
-}config_FileSystem;
+//recibe una etiqueta y devuelve su valor en tipo int
+int configInt(char *);
 
-void configuracionInicialFileSystem(char*, config_FileSystem*);
+//recibe una etiqueta y un indice y devuelve el valor en tipo int
+int configIntArrayElement(char *, int);
 
-void imprimirConfiguracionInicialFileSystem(config_FileSystem);
-
-void liberarConfiguracionFileSystem(config_FileSystem * conFs);
-//Para la Memoria
-
-typedef struct{
-	char* PORT;
-	char* MARCOS;
-	char* MARCO_SIZE;
-	char* ENTRADAS_CACHE ;
-	char* CACHE_X_PROC;
-	char* RETARDO_MEMORIA;
-	char* REEMPLAZO_CACHE;
-	char* IP; // Lo agrego yo maiori, y le dejo la ip del localhost
-}config_Memoria;
-
-void configuracionInicialMemoria(char*, config_Memoria *);
-
-void imprimirConfiguracionInicialMemoria(config_Memoria);
-
-void liberarConfiguracionMemoria(config_Memoria *);
-
-//Para la CPU
-
-typedef struct{
-	char *IP_KERNEL;
-	char *PORT_KERNEL;
-	char *IP_MEMORIA;
-	char *PORT_MEMORIA;
-
-}config_CPU;
-
-void configuracionInicialCPU(char*PATH,config_CPU *);
-
-void imprimirConfiguracionInicialCPU(config_CPU);
-
-void liberarConfiguracionCPU(config_CPU *);
+#endif /* CARPETA_CONFIG2_H_ */
