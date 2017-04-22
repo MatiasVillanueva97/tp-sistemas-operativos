@@ -28,13 +28,16 @@ void copiarEnProyecto(char * proyecto){
 }
 int main(void) {
 
-
+/*
 	copiarEnProyecto("Kernel");
 	copiarEnProyecto("Consola");
 	copiarEnProyecto("CPU");
 	copiarEnProyecto("Memoria");
 	copiarEnProyecto("FileSystem");
 
+*/
+
+	printf("Hace algun tiempo, este codigo era lo mas ranciamente hermoso que podiamos haber esperado del gran programadior, G.H.S\nSal2.\n\n\n");
 
 	return EXIT_SUCCESS;
 }

@@ -21,8 +21,9 @@
 #include <sys/wait.h>
 #include <signal.h>
 #include "commons/config.h"
-#include "laGranBiblioteca/sockets.h"
-#include "laGranBiblioteca/config.h"
+
+#include "../../Nuestras/src/laGranBiblioteca/sockets.h"
+#include "../../Nuestras/src/laGranBiblioteca/config.h"
 
 #define ID 4
 
