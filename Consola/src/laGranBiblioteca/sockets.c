@@ -30,6 +30,13 @@
 #define MAXDATASIZE 100 // max number of bytes we can get at once
 #define BACKLOG 10	 // how many pending connections queue will hold
 
+
+#define CASO_OK 0
+#define CASO_INT 1
+#define CASO_DINAMICO 2
+
+
+
 // get sockaddr, IPv4 or IPv6:
 
 typedef struct{
@@ -162,15 +169,6 @@ int crearSocketYBindeo(char* puerto)
 
 void escuchar(int sockfd)
 {
-	int  new_fd,numbytes;  // listen on sock_fd, new connection on new_fd
-		struct addrinfo hints, *servinfo, *p;
-		struct sockaddr_storage their_addr; // connector's address information
-		socklen_t sin_size;
-		struct sigaction sa;
-		char s[INET6_ADDRSTRLEN];
-		char buf[100];
-
-
 	if (listen(sockfd, BACKLOG) == -1) {
 			perror("listen");
 			exit(1);
@@ -187,71 +185,114 @@ void escuchar(int sockfd)
 		printf("\n\nEstableciendo Conexiones:\n\n");
 }
 
-
-int definirBytesDelMensaje(int header)
+void *deserializador(Header header,int socket)
 {
-	switch(header){
-		case 0:
-			return sizeof(int);
-			break;
-		case 1:
-			return 100;
-			break;
-		case 2:
-			return sizeof(char);
-			break;
-		case 3:
-			return sizeof(float);
-			break;
+	void* contenido;
+	int* numero=malloc(sizeof(uint32_t));
+	int* yes =malloc(sizeof(uint32_t));
+
+	switch(header.tipo)
+	{
+		case CASO_OK:
+		{
+			*yes=0;
+			return yes; // Vos no tenes que entender esto, dejalo. DIE' de  DIE'
+		}
+		case CASO_INT: //Devuelve un int, deberiamos hacer un case por cada estrutuctura que querramos recibir con tamaño fijo.
+		{
+			if(recv(socket,numero,4,0) == -1){
+				perror("Error al Recibir entero");
+				break;
+			}
+			return numero;
+		}
+		case CASO_DINAMICO: // en este caso agarramos todo el contenido de cualquie chorro de bytes y lo devolvemos asi como vino sin asco,
+		{
+			contenido = malloc(header.tamano);
+			if(recv(socket,contenido,header.tamano,0)==-1){
+				perror("Error al recibir mensajes dinamicos");
+				break;
+			}
+			return contenido;
+		}
 		default:
-			return -1;
+			perror("Error al recibir mensajes");
+			exit(-1);
 	}
+	return NULL;
 }
 
-int recibirMensaje(int socket,char* mensaje) // Toda esta funcion deberá ccambiar en el momento qeu definamos el protocolo de paquetes de mensajes :)
+void recibirMensaje(int socket,void* stream) // Toda esta funcion deberá ccambiar en el momento qeu definamos el protocolo de paquetes de mensajes :)
 {
-	int longitud;
-	int recibido;
-
-	if ((recibido = recv(socket, &longitud, sizeof(int), 0)) == -1) {
-		perror("recv");
-		return -1;
-		//exit(1);
+	Header header;
+	if(recv(socket,&header,8,0)==-1){
+		perror("Error en el recibir");
 	}
-	if (recibido == 0){
-		return 0;
-	}
-	if (recv(socket, mensaje, longitud, 0) == -1) {
-		perror("recv");
-		return -1;
-		//exit(1);
-	}
-
-	*(mensaje + longitud) = '\0';
-
-	return longitud;
+	stream = deserializador(header,socket);
 }
 
-int enviarMensaje(char* contenido, int socket)
+
+
+//////////////////////////////////////////////////////////////////
+
+// stream tiene: """ un int con su tipo (4 bytes) + un int que dice el tanaño (4bytes) """ + *(puede estar o no) el contenido que peude ser variable o no
+
+//
+
+void* serializar (int tipoMensaje, void* contenido, int tamanioMensaje){
+
+	void * stream=malloc(tamanioMensaje+(sizeof(int)*2));
+	memcpy(stream, &tipoMensaje, sizeof(int));
+
+	printf("log mistico1 : %s", (char *)stream);
+
+	switch(tipoMensaje)
+	{
+		case CASO_OK: // el caso de una respuesta, que solo da a entender una validacion por ok
+		{
+			memcpy(stream+sizeof(int), &tamanioMensaje, sizeof(int));
+		}break;
+		case CASO_INT: /// 3-150
+		{
+			memcpy(stream+sizeof(int), &tamanioMensaje, sizeof(int));
+			memcpy(stream+(sizeof(int)*2), &contenido, sizeof(int));
+		}break;
+		case CASO_DINAMICO:
+		{
+			memcpy(stream+sizeof(int), &tamanioMensaje, sizeof(int));
+			printf("log mistico2 : %s", (char *)stream);
+			memcpy(stream+(sizeof(int)*2), &contenido, tamanioMensaje);
+			printf("log mistico3 : %s", (char *)stream);
+		}break;
+		default:{
+			perror("Error al serializar el chorro de bytes");
+			exit(-1);
+		}break;
+
+	}
+	return stream;
+}
+
+int enviarMensaje(int socket, int tipoMensaje, void* contenido, int tamanioMensaje)
 {
-	int total = 0;
+	/*int total = 0;
 	int n;
 	int bytesleft;
 	int longitud = strlen(contenido) + 1;
-	bytesleft = longitud;
+	bytesleft = longitud;*/
 
-	if(send(socket, &longitud , sizeof(int), 0) == -1 ){
+	if(send(socket, serializar(tipoMensaje, &contenido, tamanioMensaje) , ((2*sizeof(uint32_t))+tamanioMensaje), 0) == -1 ){
 			perror("recv");
 			return -1;
 	}
 
-	while(total < longitud){
-		n = send(socket, contenido + total, bytesleft, 0);
+/*	while(total < longitud){ /// NO OLVIDAR //// 32 añso 1974
+		n = send(socket, serializar(tipoMensaje, &contenido, socket) , tamanoSerializado(tipoMensaje, contenido);
 		if(n == -1)
 			return -1;
 		total += n;
 		bytesleft -= n;
-	}
+	}*/
 
 	return 0;
 }
@@ -268,7 +309,6 @@ int conexionPosible(int id, int permitidos[])
 }
 
 //Esta funcion devuelve el id del Servidor al que se conecta
-
 int handshakeCliente(int socket, int id)
 {
 	int id_servidor;
@@ -291,9 +331,7 @@ int handshakeCliente(int socket, int id)
 	return id_servidor;
 }
 
-
 //Devuelve el id del cliente con quien se conecto
-
 int handshakeServidor(int socket,int id, int permitidos[])
 {
 	int id_cliente;

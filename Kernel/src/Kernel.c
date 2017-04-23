@@ -65,7 +65,7 @@ int main(void) {
 
 	// ******* Conexiones obligatorias y necesarias del Kernel - FileSystem y Memoria
 
-	printf("\n\n\nEsperando conexiones:\n-FileSystem\n-Memoria\n");
+/*	printf("\n\n\nEsperando conexiones:\n-FileSystem\n-Memoria\n");
 	socketMemoria = conexionConServidor(configString("PUERTO_MEMORIA"),configString("IP_MEMORIA")); // Asignación del socket que se conectara con la memoria
 
 	if (socketMemoria == 1){
@@ -82,6 +82,8 @@ int main(void) {
 	}
 	printf("Conexión exitosa con el Memoria(%i)!!\n",rta_conexion);
 	FD_SET(socketMemoria, &write_fds);  // Agregamos el FileDescriptor de la Memoria al set del write (lo ponemos como que al wachin le vamos a escribir)
+*/
+
 
 	socketFS = conexionConServidor(configString("PUERTO_FS"),configString("IP_FS")); // Asignación del socket que se conectara con el filesytem
 	if (socketFS == 1){
@@ -104,6 +106,9 @@ int main(void) {
 
 
 
+	enviarMensaje(socketFS, 2, (void *)"LA CONCHA DE TU MADRE ROBERTO",  strlen("LA CONCHA DE TU MADRE ROBERTO"));
+
+
 
 	// ******* Proceso de conectar al Kernel con otros modulos que le realizen peticiones
 
@@ -119,7 +124,7 @@ int main(void) {
 
 
 
-	while (1) {
+	/*while (1) {
 		read_fds = master;
 
 		if (select(fdmax + 1, &read_fds, NULL, NULL, 0) == -1) {  // Como pasa por referencia el set de leer, los modifica, por eso hay que setearlos antes
@@ -189,6 +194,6 @@ int main(void) {
 			} // END got new incoming connection
 		} // END looping through file descriptors
 	} // END while(1)--and you thought it would never end!
-
+*/
 	return 0;
 }
