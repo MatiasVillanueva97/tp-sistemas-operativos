@@ -30,6 +30,13 @@
 #define MAXDATASIZE 100 // max number of bytes we can get at once
 #define BACKLOG 10	 // how many pending connections queue will hold
 
+
+#define CASOOK 0
+#define CASOTAMANOFIJO 1
+#define CASOTAMANOVARIABLE 2
+
+
+
 // get sockaddr, IPv4 or IPv6:
 
 typedef struct{
@@ -162,13 +169,7 @@ int crearSocketYBindeo(char* puerto)
 
 void escuchar(int sockfd)
 {
-	int  new_fd,numbytes;  // listen on sock_fd, new connection on new_fd
-		struct addrinfo hints, *servinfo, *p;
-		struct sockaddr_storage their_addr; // connector's address information
-		socklen_t sin_size;
-		struct sigaction sa;
-		char s[INET6_ADDRSTRLEN];
-		char buf[100];
+
 
 
 	if (listen(sockfd, BACKLOG) == -1) {
@@ -187,51 +188,59 @@ void escuchar(int sockfd)
 		printf("\n\nEstableciendo Conexiones:\n\n");
 }
 
-
-int definirBytesDelMensaje(int header)
+void *deserializador(Header header,int socket)
 {
-	switch(header){
-		case 0:
-			return sizeof(int);
-			break;
-		case 1:
-			return 100;
-			break;
-		case 2:
-			return sizeof(char);
-			break;
-		case 3:
-			return sizeof(float);
-			break;
+	void* contenido;
+	int* numero;
+	switch(header.tipo){
+		case CASOOK:
+			return true;//Para mi esto no tiene sentido. Tiene que retornar algo, no sabemos que.
+
+		case CASOTAMANOFIJO://Devuelve un int, deberiamos hacer un case por cada estrutuctura que querramos recibir con tamaño fijo.
+			numero = malloc(sizeof(int));
+			if(recv(socket,numero,4,0) == -1){
+					perror("recv");
+					break;
+			}
+			return numero;
+		case CASOTAMANOVARIABLE:
+			contenido = malloc(header.tamano);
+			if(recv(socket,contenido,header.tamano,0)==-1){
+				perror("recv");
+				break;
+			}
+			return contenido;
 		default:
-			return -1;
+			return NULL;
 	}
 }
 
-int recibirMensaje(int socket,char* mensaje) // Toda esta funcion deberá ccambiar en el momento qeu definamos el protocolo de paquetes de mensajes :)
+void recibirMensaje(int socket,void* mensaje) // Toda esta funcion deberá ccambiar en el momento qeu definamos el protocolo de paquetes de mensajes :)
 {
-	int longitud;
-	int recibido;
-
-	if ((recibido = recv(socket, &longitud, sizeof(int), 0)) == -1) {
+	Header tipo;
+	if(recv(socket,&tipo,8,0)==-1){
 		perror("recv");
-		return -1;
-		//exit(1);
 	}
-	if (recibido == 0){
-		return 0;
-	}
-	if (recv(socket, mensaje, longitud, 0) == -1) {
-		perror("recv");
-		return -1;
-		//exit(1);
-	}
-
-	*(mensaje + longitud) = '\0';
-
-	return longitud;
+	mensaje = deserializador(tipo,socket);
 }
 
+typedef struct {
+	Header header;
+	uint32_t numero;
+}mensajeDeUnInt;
+void* serializador (int socket, int tipo,void* stream){
+	int* x=malloc(sizeof(int));
+	Header header;
+	void* contenido;
+	header.tipo = tipo;
+	switch(tipo){
+	case 0:
+		return &header;
+
+	}
+
+
+}
 int enviarMensaje(char* contenido, int socket)
 {
 	int total = 0;
