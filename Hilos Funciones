@@ -1,0 +1,150 @@
+incluir biblioteca <pthread.h>
+
+int pthread_create(ptthread * thread_id, const ptread_attr_t * attr, void * (*start_routine)(void *), void * arg);
+
+para mandar mas de un parametro mandas una estructura, es decir mandas un puntero a struct.
+
+para esperar la terminación:
+
+int pthread_join(pthreads_t thread_id, void **value_ptr);
+
+-------------------------------------------------------------------
+
+r1 = pthread_create( &hilo, NULL, sumarMilVeces, (void*) arg1);
+
+join( hilo ); 
+
+condicion de carrera: el resultado depende del orden en el que llegan las cosas. 
+
+Helgrind:  herramienta de la familia de valgrind que detecta lerrrores en el manejo de hilos.
+
+valgrind --tool.helgrind ./programa  ##""" asi se llama desde consola
+
+...................
+ :   : :   : :   :
+ :   : :   : :   :
+.: , :.: , :.: , :.
+:::::::::::::::::::
+
+Sincronizacion:
+
+Semaforos - Lock : es un TAD
+
+pthread_mutx_t mutex = PTHEAD_MUTEX_INITIALIZER;
+
+void funcion (argunmento)
+{
+prthead_mutex_lock ( &mutex );
+
+foir ( blabla]
+{proceso;
+}
+
+pthead_mutex_unlock( &mutex );
+}
+
+// cuando ansisop detecta un semaforo tenes que agarar al proceso y madnarlo a la cola de bloqeado.
+
+funciones  semaoro
+
+Mutex: reciben valores por referencias...
+pthread_mutex_init()
+pthread_mutex_lock()
+pthread_mutex_unlock()
+pthread_mutex_destroy()
+
+Contadores:
+sem_init()
+sem_wait()
+sem_post()
+sem_destroy()
+
+hay que agregar gcc thread.c -lpthread
+
+Hay dos estrategias: pool de threads vs threads on Demand
+
+threads detachables,
+
+hilos detachables, podemos tener una varuiable pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED); , 
+esta variable la pasas por el segundo paramtro que habiamos definido como null arriba de todo, 
+y despues al terminar, haces un pthread_attr_destroy(&attr). 
+
+el hilo me permite ejecutar cosas al mismo tiempo.
+
+
+
+
+
+
+sjfajsdflasdjfasd
+
+
+para poder mandar la estrucutra, 
+
+haciendo esto al enviar la estructura como esta por un socket, nos olvidamos de serializar.
+
+tyepedef struct
+{
+..datos..
+}
+_attribute_((packed))
+t_persona;
+
+es importante devolver una respuesta de ok, o error, y cositas asi....
+
+los mensajes homologables se pueden pre establecer.
+
+mensajes sin parametros
+mensajes con parametros
+mensajes tamaños variables
+
+
+NO HACER DOS SENDS.
+
+......................
+::::::::::::::::::::::
+:::: : : : : : ::: :: 
+: :  : : : : : ::  ::
+: :  :       : ::  ::
+......................
+
+
+reciv( i , &id , 4, 0);                     send(s, buffer, 113009, 0); ni strlen, ni sizeof--- no sirven. 
+
+id - tam - buffer
+4  -   4 - 112009
+
+void* v = malloc(1118009);
+memcopy(v, &id,sizeof(int));
+memcopy(v+sizeof(int), &tam, sizeof(int));
+memcopy(v+4*2 , buffer, 1119001);
+
+send( s , v , 112009 , 0 );
+
+reciv( i, &id , 4, 0 );
+
+swicht(id)
+case ok:
+|algo
+case persona:
+ reci(i,&persona, sizeof(persona), 0);
+ lo que sigue
+....
+case archivos
+ reciv(i, &tam, 4, 0);
+ b = malloc(tam); y despues free(b)
+ // plan b - realloc
+ reciv(i, b, tam, 0);
+
+en lugar de hacer unos envios de cuatro u otro nuemero de bytes e ir leyendo, 
+lo que podes hacer es tirar un struct y recibir una struct.
+
+no mandar direcciones de memoria!!! 
+
+
+tamnaiofinal = serializar(tipo, void * buffer, tamanio); -- hacer esta funcion no es tan dificl.
+
+md5 sum - reduccion criptografica. DEvuelve 32 carcteres hexa
+
+
+
