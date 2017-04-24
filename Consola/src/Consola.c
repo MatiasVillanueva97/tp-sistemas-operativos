@@ -63,9 +63,9 @@ int main(void)
 	fgets(mensaje,100,stdin);
 
 	// Envio del mensaje
-	/*if(enviarMensaje(mensaje,socketConsola)==-1){
+	if(enviarMensaje(socketConsola,2,(void*)mensaje,strlen(mensaje)+1)==-1){
 		perror("Error en el Send");
-	}*/
+	}
 
 	close(socketConsola);
 	free(mensaje);

@@ -57,9 +57,9 @@ int main(void)
 	printf("Conexión exitosa con el Servidor(%i)!!\n",rta_conexion);
 
 	// Recepcion del mensaje
-	/*if(recibirMensaje(socketCPU,mensajeRecibido)==-1){
+	if(recibirMensaje(socketCPU,(void*)mensajeRecibido)==-1){
 		perror("Error en el Reciv");
-	}*/
+	}
 	printf("Mensaje desde el Kernel: %s\n\n", mensajeRecibido);
 
 	close(socketCPU);

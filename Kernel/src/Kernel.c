@@ -65,7 +65,7 @@ int main(void) {
 
 	// ******* Conexiones obligatorias y necesarias del Kernel - FileSystem y Memoria
 
-/*	printf("\n\n\nEsperando conexiones:\n-FileSystem\n-Memoria\n");
+	printf("\n\n\nEsperando conexiones:\n-FileSystem\n-Memoria\n");
 	socketMemoria = conexionConServidor(configString("PUERTO_MEMORIA"),configString("IP_MEMORIA")); // Asignación del socket que se conectara con la memoria
 
 	if (socketMemoria == 1){
@@ -82,7 +82,7 @@ int main(void) {
 	}
 	printf("Conexión exitosa con el Memoria(%i)!!\n",rta_conexion);
 	FD_SET(socketMemoria, &write_fds);  // Agregamos el FileDescriptor de la Memoria al set del write (lo ponemos como que al wachin le vamos a escribir)
-*/
+
 
 
 	socketFS = conexionConServidor(configString("PUERTO_FS"),configString("IP_FS")); // Asignación del socket que se conectara con el filesytem
@@ -108,7 +108,7 @@ int main(void) {
 	//int x= 3;
 	//enviarMensaje(socketFS, 2,(void*)&x, sizeof(int));
 
-	enviarMensaje(socketFS, 2,(void*)"hola negro, esto deberia anda", strlen("hola negro, esto deberia anda")+1);
+	//enviarMensaje(socketFS, 2,(void*)"hola negro, esto deberia anda", strlen("hola negro, esto deberia anda")+1);
 
 
 
@@ -126,7 +126,7 @@ int main(void) {
 
 
 
-	/*while (1) {
+	while (1) {
 		read_fds = master;
 
 		if (select(fdmax + 1, &read_fds, NULL, NULL, 0) == -1) {  // Como pasa por referencia el set de leer, los modifica, por eso hay que setearlos antes
@@ -166,7 +166,7 @@ int main(void) {
 				}
 				else {
 					// handle data from a client
-					if ((nbytes = recibirMensaje(socketSeleccionado, mensajeRecibido)) <= 0) { // aca esta el reciv // got error or connection closed by client
+					if ((nbytes = recibirMensaje(socketSeleccionado, (void*)mensajeRecibido)) <= 0) { // aca esta el reciv // got error or connection closed by client
 						if (nbytes == 0) {  // Solo se cumplira esta condicion cuando se haya cerrado el socket del lado del cliente
 							printf("Fin de conexion con socket %d.\n", socketSeleccionado);
 						}
@@ -185,7 +185,7 @@ int main(void) {
 
 						for (socketAEnviarMensaje = 0; socketAEnviarMensaje <= fdmax; socketAEnviarMensaje++) {   // send to everyone!
 							if (FD_ISSET(socketAEnviarMensaje, &write_fds) && socketAEnviarMensaje != listener && socketAEnviarMensaje != socketSeleccionado){
-								if( enviarMensaje(mensajeRecibido,socketAEnviarMensaje)==-1 ){  //valida cosas except the listener and ourselves
+								if( enviarMensaje(socketAEnviarMensaje,2,(void*)mensajeRecibido,strlen(mensajeRecibido)+1)==-1 ){  //valida cosas except the listener and ourselves
 									perror("send");
 									}
 								FD_CLR(socketAEnviarMensaje, &write_fds);
@@ -196,6 +196,6 @@ int main(void) {
 			} // END got new incoming connection
 		} // END looping through file descriptors
 	} // END while(1)--and you thought it would never end!
-*/
+
 	return 0;
 }

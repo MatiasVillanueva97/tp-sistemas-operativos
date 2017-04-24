@@ -223,13 +223,18 @@ void *deserializador(Header header,int socket)
 	return NULL;
 }
 
-void recibirMensaje(int socket,void* stream) // Toda esta funcion deberá ccambiar en el momento qeu definamos el protocolo de paquetes de mensajes :)
+int recibirMensaje(int socket,void* stream) // Toda esta funcion deberá ccambiar en el momento qeu definamos el protocolo de paquetes de mensajes :)
 {
 	Header header;
-	if(recv(socket,&header,8,0)==-1){
+	int cantidad;
+	if((cantidad=recv(socket,&header,8,0))==-1){
 		perror("Error en el recibir");
 	}
+
+	if(cantidad == 0) return 0;
+
 	memcpy(stream, deserializador(header,socket), header.tamano);
+	return header.tamano;
 }
 
 
@@ -272,25 +277,26 @@ void* serializar (int tipoMensaje, void* contenido, int tamanioMensaje){
 
 int enviarMensaje(int socket, int tipoMensaje, void* contenido, int tamanioMensaje)
 {
-	/*int total = 0;
+	int total = 0;
 	int n;
 	int bytesleft;
-	int longitud = strlen(contenido) + 1;
-	bytesleft = longitud;*/
-	void* auxiliar = malloc (((2*sizeof(uint32_t))+tamanioMensaje));
+	int longitud = 2*sizeof(uint32_t) + tamanioMensaje;
+	bytesleft = longitud;
+	void* auxiliar;
 	auxiliar = serializar(tipoMensaje, contenido, tamanioMensaje);
-	if(send(socket, auxiliar , ((2*sizeof(uint32_t))+tamanioMensaje), 0) == -1 ){
+	/*if(send(socket, auxiliar , ((2*sizeof(uint32_t))+tamanioMensaje), 0) == -1 ){
 			perror("recv");
 			return -1;
-	}
-
-/*	while(total < longitud){ /// NO OLVIDAR //// 32 añso 1974
-		n = send(socket, serializar(tipoMensaje, &contenido, socket) , tamanoSerializado(tipoMensaje, contenido);
+	}*/
+	while(total < longitud){ /// NO OLVIDAR //// 32 añso 1974
+		n = send(socket, auxiliar + total, longitud - total,0);
 		if(n == -1)
 			return -1;
 		total += n;
 		bytesleft -= n;
-	}*/
+	}
+
+	free(auxiliar);
 
 	return 0;
 }
