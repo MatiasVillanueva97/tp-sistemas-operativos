@@ -77,10 +77,9 @@ int main(void) {
 	/*if(recibirMensaje(nuevoSocket,(void *)mensajeRecibido)==-1){
 		perror("Error en el Reciv");
 	}*/
-
-	recibirMensaje(nuevoSocket,(void *)mensajeRecibido);
-
-	printf("Mensaje desde el Kernel: %s\n\n", (char *)mensajeRecibido);
+	char* mensaje;
+	recibirMensaje(nuevoSocket,(void *)mensaje);
+	printf("Mensaje desde el Kernel: %s\n\n", mensaje);
 
 	close(nuevoSocket);  // parent doesn't need this
 

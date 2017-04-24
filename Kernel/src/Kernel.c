@@ -105,8 +105,10 @@ int main(void) {
 	//Delegar aca.
 
 
+	//int x= 3;
+	//enviarMensaje(socketFS, 2,(void*)&x, sizeof(int));
 
-	enviarMensaje(socketFS, 2, (void *)"LA CONCHA DE TU MADRE ROBERTO",  strlen("LA CONCHA DE TU MADRE ROBERTO"));
+	enviarMensaje(socketFS, 2,(void*)"hola negro, esto deberia anda", strlen("hola negro, esto deberia anda")+1);
 
 
 

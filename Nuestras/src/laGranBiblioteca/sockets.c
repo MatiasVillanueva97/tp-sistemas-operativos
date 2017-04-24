@@ -185,6 +185,7 @@ void escuchar(int sockfd)
 		printf("\n\nEstableciendo Conexiones:\n\n");
 }
 
+
 void *deserializador(Header header,int socket)
 {
 	void* contenido;
@@ -228,7 +229,7 @@ void recibirMensaje(int socket,void* stream) // Toda esta funcion deberá ccambi
 	if(recv(socket,&header,8,0)==-1){
 		perror("Error en el recibir");
 	}
-	stream = deserializador(header,socket);
+	memcpy(stream, deserializador(header,socket), header.tamano);
 }
 
 
@@ -244,8 +245,6 @@ void* serializar (int tipoMensaje, void* contenido, int tamanioMensaje){
 	void * stream=malloc(tamanioMensaje+(sizeof(int)*2));
 	memcpy(stream, &tipoMensaje, sizeof(int));
 
-	printf("log mistico1 : %s", (char *)stream);
-
 	switch(tipoMensaje)
 	{
 		case CASO_OK: // el caso de una respuesta, que solo da a entender una validacion por ok
@@ -255,14 +254,12 @@ void* serializar (int tipoMensaje, void* contenido, int tamanioMensaje){
 		case CASO_INT: /// 3-150
 		{
 			memcpy(stream+sizeof(int), &tamanioMensaje, sizeof(int));
-			memcpy(stream+(sizeof(int)*2), &contenido, sizeof(int));
+			memcpy(stream+(sizeof(int)*2), contenido, sizeof(int));
 		}break;
 		case CASO_DINAMICO:
 		{
 			memcpy(stream+sizeof(int), &tamanioMensaje, sizeof(int));
-			printf("log mistico2 : %s", (char *)stream);
-			memcpy(stream+(sizeof(int)*2), &contenido, tamanioMensaje);
-			printf("log mistico3 : %s", (char *)stream);
+			memcpy(stream+(sizeof(int)*2), contenido, tamanioMensaje);
 		}break;
 		default:{
 			perror("Error al serializar el chorro de bytes");
@@ -280,8 +277,9 @@ int enviarMensaje(int socket, int tipoMensaje, void* contenido, int tamanioMensa
 	int bytesleft;
 	int longitud = strlen(contenido) + 1;
 	bytesleft = longitud;*/
-
-	if(send(socket, serializar(tipoMensaje, &contenido, tamanioMensaje) , ((2*sizeof(uint32_t))+tamanioMensaje), 0) == -1 ){
+	void* auxiliar = malloc (((2*sizeof(uint32_t))+tamanioMensaje));
+	auxiliar = serializar(tipoMensaje, contenido, tamanioMensaje);
+	if(send(socket, auxiliar , ((2*sizeof(uint32_t))+tamanioMensaje), 0) == -1 ){
 			perror("recv");
 			return -1;
 	}
@@ -359,7 +357,3 @@ int handshakeServidor(int socket,int id, int permitidos[])
 
 	return id_cliente;
 }
-
-
-
-

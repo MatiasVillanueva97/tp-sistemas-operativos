@@ -3,7 +3,7 @@ typedef struct{
 	uint32_t tamano;
 } __attribute__((packed))
 Header;
-void sigchld_handler(int s);
+void sigchld_handler(int);
 
 void *getSin_Addr(struct sockaddr*);
 
@@ -17,8 +17,10 @@ void recibirMensaje(int ,void* ); // Toda esta funcion deberá ccambiar en el mo
 
 int enviarMensaje(int , int , void* , int );
 
-int handshakeCliente(int socket, int id);
+int handshakeCliente(int, int );
 
-int handshakeServidor(int socket,int id, int permitidos[]);
+int handshakeServidor(int,int , int[]);
 
+void *deserializador(Header, int);
 
+void* serializar (int, void* , int);
