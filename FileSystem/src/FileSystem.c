@@ -74,11 +74,10 @@ int main(void) {
 	printf("Conexión exitosa con el Server(%i)!!\n",rta_handshake);
 
 
-	/*if(recibirMensaje(nuevoSocket,(void *)mensajeRecibido)==-1){
-		perror("Error en el Reciv");
-	}*/
 	char* mensaje;
-	recibirMensaje(nuevoSocket,(void *)mensaje);
+	if(recibirMensaje(nuevoSocket,(void *)mensajeRecibido)==-1){
+		perror("Error en el Reciv");
+	}
 	printf("Mensaje desde el Kernel: %s\n\n", mensaje);
 
 	close(nuevoSocket);  // parent doesn't need this
