@@ -66,7 +66,7 @@ int main(void) {
 	// ******* Conexiones obligatorias y necesarias del Kernel - FileSystem y Memoria
 
 	printf("\n\n\nEsperando conexiones:\n-FileSystem\n-Memoria\n");
-	socketMemoria = conexionConServidor(configString("PUERTO_MEMORIA"),configString("IP_MEMORIA")); // Asignación del socket que se conectara con la memoria
+	socketMemoria = conexionConServidor(getConfigString("PUERTO_MEMORIA"),getConfigString("IP_MEMORIA")); // Asignación del socket que se conectara con la memoria
 
 	if (socketMemoria == 1){
 			perror("Falla en el protocolo de comunicación");
@@ -85,7 +85,7 @@ int main(void) {
 
 
 
-	socketFS = conexionConServidor(configString("PUERTO_FS"),configString("IP_FS")); // Asignación del socket que se conectara con el filesytem
+	socketFS = conexionConServidor(getConfigString("PUERTO_FS"),getConfigString("IP_FS")); // Asignación del socket que se conectara con el filesytem
 	if (socketFS == 1){
 		perror("Falla en el protocolo de comunicación");
 		exit(1);
@@ -114,7 +114,7 @@ int main(void) {
 
 	// ******* Proceso de conectar al Kernel con otros modulos que le realizen peticiones
 
-	listener = crearSocketYBindeo(configString("PUERTO_PROG"));
+	listener = crearSocketYBindeo(getConfigString("PUERTO_PROG"));
 
 	escuchar(listener);	 // Pone el listener (socket principal) a escuchar las peticiones
 	FD_SET(listener, &master); // agrega al master el socket

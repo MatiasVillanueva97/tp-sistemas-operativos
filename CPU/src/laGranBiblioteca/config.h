@@ -17,19 +17,38 @@ void configuracionInicial(char*);
 void imprimirConfiguracion();
 void liberarConfiguracion();
 
+//-- Getters de parametros
+
 //recibe una etiqueta y un indice y devuelve el valor en tipo string
-char * configStringArrayElement(char *, int);
+char * getConfigStringArrayElement(char * etiqueta, int indice);
 
 //recibe una etiqueta y devuelve su valor en tipo array
-char ** configStringArray(char *);
+char ** getConfigStringArray(char * etiqueta);
 
 //recibe una etiqueta y devuelve el valor en tipo string
-char * configString(char *);
+char * getConfigString(char * etiqueta);
 
 //recibe una etiqueta y devuelve su valor en tipo int
-int configInt(char *);
+int getConfigInt(char * etiqueta);
 
 //recibe una etiqueta y un indice y devuelve el valor en tipo int
-int configIntArrayElement(char *, int);
+int getConfigIntArrayElement(char *, int);
+
+
+//--Setters de parametros
+
+//Sirve para editar un string
+void setConfigString(char * etiqueta, char * valor);
+
+//Sirve para editar un string dentro de un array
+void setConfigStringArrayElement(char * etiqueta, int indice, char * valor);
+
+//Sirve para editar un int
+void setConfigInt(char * etiqueta, int valor);
+
+//Sirve para editar un int dentro de un array
+void setConfigIntArrayElement(char * etiqueta, int indice, int valor);
+
+
 
 #endif /* CARPETA_CONFIG2_H_ */

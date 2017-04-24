@@ -41,7 +41,7 @@ int main(void)
 
 	// ******* Procesos de Consola-  por ahora enviar mensajitos
 
-	socketConsola = conexionConServidor(configString("PUERTO_KERNEL"),configString("IP_KERNEL"));
+	socketConsola = conexionConServidor(getConfigString("PUERTO_KERNEL"),getConfigString("IP_KERNEL"));
 
 	// validacion de un correcto hadnshake
 	if (socketConsola == 1){

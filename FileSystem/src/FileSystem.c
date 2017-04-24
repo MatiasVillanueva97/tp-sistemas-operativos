@@ -21,6 +21,7 @@
 #include <sys/wait.h>
 #include <signal.h>
 #include "commons/config.h"
+#include "commons/string.h"
 
 #include "../../Nuestras/src/laGranBiblioteca/sockets.h"
 #include "../../Nuestras/src/laGranBiblioteca/config.h"
@@ -50,7 +51,7 @@ int main(void) {
 
 	// ******* Conexiones obligatorias y necesarias
 
-	listener = crearSocketYBindeo(configString("PUERTO"));
+	listener = crearSocketYBindeo(getConfigString("PUERTO"));
 	escuchar(listener);
 
 	sin_size = sizeof their_addr;

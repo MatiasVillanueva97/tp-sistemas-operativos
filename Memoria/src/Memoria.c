@@ -53,7 +53,7 @@ int main(void) {
 
 	// ******* Conexiones obligatorias y necesarias
 
-	listener = crearSocketYBindeo(configString("PUERTO")); // asignar el socket principal
+	listener = crearSocketYBindeo(getConfigString("PUERTO")); // asignar el socket principal
 	escuchar(listener); // poner a escuchar ese socket
 
 

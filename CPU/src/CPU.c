@@ -39,7 +39,7 @@ int main(void)
 
 	printf("\n\nHola! Soy una cpu! Aca estan mis procesos:\n\n");
 
-	socketCPU = conexionConServidor(configString("PUERTO_KERNEL"),configString("IP_KERNEL")); // Asignación del socket que se conectara con el filesytem
+	socketCPU = conexionConServidor(getConfigString("PUERTO_KERNEL"),getConfigString("IP_KERNEL")); // Asignación del socket que se conectara con el filesytem
 
 	// validacion de un correcto hadnshake
 	if (socketCPU == 1){
