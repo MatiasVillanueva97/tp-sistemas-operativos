@@ -56,9 +56,14 @@ int main(void) {
 	listener = crearSocketYBindeo(getConfigString("PUERTO")); // asignar el socket principal
 	escuchar(listener); // poner a escuchar ese socket
 
+	void* memoriaTotal = malloc(getConfigInt("MARCO_SIZE"));
+
 
 	liberarConfiguracion();
 
+
+	char *memoriav1 = string_new(); // aca se guarda el script o cualquier cosa que llega
+	int numero_pag=0; // variable que de dice el numero de pagina
 
 	while (1) {
 		sin_size = sizeof their_addr;
@@ -88,12 +93,23 @@ int main(void) {
 
 			printf("Mensaje desde el Kernel: %s\n\n", mensajeRecibido);
 			//free(mensajeRecibido);//OJO!!!!!ESTO HAY QUE MEJORARLO -- Comentario 2 esto esta omcentado tiera violacion de segmento
+
+			if(mensajeRecibido[0]=='0') // leo un 0, eso quiere decir que kernel me acaba de mandar un codigo ansisop para guardar
+			{
+				memoriav1=mensajeRecibido; // abstraccion pura
+				numero_pag++;
+
+				printf("Reservado: memoriav1: %s\nEnviado: numero_pag: %d\n\n", memoriav1, numero_pag);
+
+				enviarMensaje(nuevoSocket, 1, (void *)&numero_pag, sizeof(int));
+			}
+
 			close(nuevoSocket);
 			exit(0);
 		}
 		close(nuevoSocket);  // parent doesn't need this
-
-
 	}
+
+
 	return EXIT_SUCCESS;
 }

@@ -26,6 +26,13 @@
 
 #define ID 0
 
+typedef struct
+{
+	int id_pcb;
+	int contPags_pcb;
+}__attribute__((packed)) PCB_DATA;
+
+
 int main(void) {
 	printf("Inicializando Kernel.....\n\n");
 
@@ -84,7 +91,7 @@ int main(void) {
 	FD_SET(socketMemoria, &write_fds);  // Agregamos el FileDescriptor de la Memoria al set del write (lo ponemos como que al wachin le vamos a escribir)
 
 
-
+/*
 	socketFS = conexionConServidor(getConfigString("PUERTO_FS"),getConfigString("IP_FS")); // Asignación del socket que se conectara con el filesytem
 	if (socketFS == 1){
 		perror("Falla en el protocolo de comunicación");
@@ -101,7 +108,7 @@ int main(void) {
 	printf("Conexión exitosa con el FileSystem(%i)!!\n",rta_conexion);
 
 	FD_SET(socketFS, &write_fds); // Agregamos el FileDescriptor del fileSystem al set del write (lo ponemos como que al wachin le vamos a escribir)
-
+*/
 	//Delegar aca.
 
 
@@ -112,21 +119,67 @@ int main(void) {
 
 
 
+
+
+
+
+
+
+
+    // 1 - llega un proceso desde la consola
+	// 2 - se le mandan los datos a memoria
+	// 3 - se recibe el ok de memoria
+	// 4 - se la asiga un pcb a esta instruccion
+	// 5 - se aunmenta el contador de de paginas en memoria . Esto no se hace aca pero lo pongo igual para no olvidarnos
+
+	// 6 - esto ya es cosa mia, pero me imagino que al cpu hay que indicarle que tiene un procesito para ejecutar pasandole un pcb
+
+	// Primer Parte: Llega un proceso desde la consola . tendria que ir un reciv pero no voy a tocar consola asi que solo voy a trabajar en kernel harcodeando datos
+
+	char *scripAnsisop = string_new();
+	scripAnsisop = "0 - scrip hiper rudimentario, imprimir algo por pantalla"; // ahora que estoy probando si leo un 0 es un script en el primer caracter imprimire algo por pantalla
+
+	printf("%s", scripAnsisop);
+
+	int	historico_pcb = 87;
+	PCB_DATA pcb;
+
+	pcb.id_pcb=0;
+	pcb.contPags_pcb=0;
+	historico_pcb++;
+	printf("\n\nPcb Inicial:\nid_pcb: %d", pcb.id_pcb);
+	printf("\ncontPags_pcb: %d\n\n", pcb.contPags_pcb);
+
+	enviarMensaje(socketMemoria, 2,(void*)scripAnsisop, strlen(scripAnsisop)+1);
+
+	int nuevo_contPags_pcb;
+
+
+	if(recibirMensaje(socketMemoria, &nuevo_contPags_pcb)==-1)
+	{
+		perror("Error en el reciv del ok de la memoria");
+	}
+
+	pcb.id_pcb=historico_pcb;
+	pcb.contPags_pcb=nuevo_contPags_pcb;
+	printf("\n\nPcb DesPues de recibir la pagina y el ok:\nid_pcb: %d\ncontPags_pcb: %d\n\n", pcb.id_pcb, pcb.contPags_pcb);
+
+
 	// ******* Proceso de conectar al Kernel con otros modulos que le realizen peticiones
 
-	listener = crearSocketYBindeo(getConfigString("PUERTO_PROG"));
+/*	listener = crearSocketYBindeo(getConfigString("PUERTO_PROG"));
 
 	escuchar(listener);	 // Pone el listener (socket principal) a escuchar las peticiones
 	FD_SET(listener, &master); // agrega al master el socket
 
 	fdmax = listener; // por algun motivo desconocido por nosotros, el select necesita tener siempre apuntando al ultimo socket del master (el ultimo que se abre)
-
+*/
 
 	liberarConfiguracion();
 
 
 
-	while (1) {
+	/*while (1) {
 		read_fds = master;
 
 		if (select(fdmax + 1, &read_fds, NULL, NULL, 0) == -1) {  // Como pasa por referencia el set de leer, los modifica, por eso hay que setearlos antes
@@ -196,6 +249,6 @@ int main(void) {
 			} // END got new incoming connection
 		} // END looping through file descriptors
 	} // END while(1)--and you thought it would never end!
-
+*/
 	return 0;
 }
