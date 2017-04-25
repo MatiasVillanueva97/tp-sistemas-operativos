@@ -24,8 +24,49 @@
 
 #include "../../Nuestras/src/laGranBiblioteca/sockets.h"
 #include "../../Nuestras/src/laGranBiblioteca/config.h"
-
 #define ID 2
+int sizeOfPaginas;
+typedef struct{
+	uint32_t size;
+	bool isFree;
+}__attribute__((packed))
+HeapMetadata;
+
+#define tamanoHeader sizeof(HeapMetadata) // not sure si anda esto
+
+int escribirMemoria(void* contenido,int tamano,void* memoria){
+
+	HeapMetadata x = *((HeapMetadata*) memoria);
+	int recorrido=0;
+	while(sizeOfPaginas > recorrido){
+		recorrido = recorrido +tamanoHeader;//El recorrido se posiciona en donde termina el header.
+		if(x.isFree){
+			if(x.size>tamano+tamanoHeader){
+				HeapMetadata header;
+				header.isFree= false;
+				header.size= tamano;
+				int y = recorrido-tamanoHeader;
+				memcpy(memoria+y,&header,tamanoHeader);
+				memcpy(memoria+recorrido,contenido,tamano);
+				recorrido += tamano;//El recorrido se posiciona donde va el siguiente header
+				header.isFree= true;
+				header.size=sizeOfPaginas-recorrido -tamanoHeader ;//Calculo el puntero donde esta, es decir, el tamaño ocupado, y se lo resto a lo que queda.
+				memcpy(memoria+recorrido,&header,tamanoHeader);
+				//escribir en la memoria
+				return 0;
+			}
+		}
+		else{
+			recorrido+=x.size;//el header se posiciona para leer el siguiente header.
+		}
+		x = *((HeapMetadata*) (memoria+recorrido));
+	}
+	return 1;//no hay espacio suficiente
+
+}
+void leerMemoria(){
+
+}
 
 int main(void) {
 
@@ -49,19 +90,24 @@ int main(void) {
 	printf("Configuracion Inicial: \n");
 	configuracionInicial("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Memoria/memoria.config");
 	imprimirConfiguracion();
-
-
+	sizeOfPaginas=getConfigInt("MARCO_SIZE");
+	void* memoriaTotal = malloc(sizeOfPaginas);
 	// ******* Conexiones obligatorias y necesarias
 
 	listener = crearSocketYBindeo(getConfigString("PUERTO")); // asignar el socket principal
 	escuchar(listener); // poner a escuchar ese socket
 
-	void* memoriaTotal = malloc(getConfigInt("MARCO_SIZE"));
 
 
 	liberarConfiguracion();
+	HeapMetadata header;
+	header.isFree= true;
+	header.size= sizeOfPaginas-5;
+	memcpy(memoriaTotal,&header,tamanoHeader);
 
 
+	escribirMemoria((void*)"hola hijo de puta",strlen("hola hijo de puta")+1,memoriaTotal);
+	escribirMemoria((void*)"hijo de puta",strlen("hijo de puta")+1,memoriaTotal);
 	char *memoriav1 = string_new(); // aca se guarda el script o cualquier cosa que llega
 	int numero_pag=0; // variable que de dice el numero de pagina
 
@@ -113,3 +159,5 @@ int main(void) {
 
 	return EXIT_SUCCESS;
 }
+
+
