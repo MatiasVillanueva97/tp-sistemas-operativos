@@ -20,6 +20,7 @@
 #include <arpa/inet.h>
 #include <sys/wait.h>
 #include <signal.h>
+#include <pthread.h>
 #include "commons/config.h"
 
 #include "../../Nuestras/src/laGranBiblioteca/sockets.h"
@@ -68,6 +69,12 @@ void leerMemoria(){
 
 }
 
+void* hilosPrueba(void* id){
+	printf("1");
+	printf("soy un hilo: %s", (char*)id);
+	return NULL;
+}
+
 int main(void) {
 
 	printf("Inicializando Memoria.....\n\n");
@@ -108,7 +115,24 @@ int main(void) {
 
 	escribirMemoria((void*)"hola hijo de puta",strlen("hola hijo de puta")+1,memoriaTotal);
 	escribirMemoria((void*)"hijo de puta",strlen("hijo de puta")+1,memoriaTotal);
+	escribirMemoria((void*)"hijo de puta",strlen("hijo de puta")+1,memoriaTotal);
+
+	pthread_t hilo1, hilo2;
+
+	int id1 = 1;
+	int id2 = 2;
+	puts("pijaa");
+	pthread_create(&hilo1, NULL, hilosPrueba, (char*)"1");
+	pthread_create(&hilo2, NULL, hilosPrueba, (char*)"2");
+
+	pthread_join( hilo2, NULL);
+	pthread_join( hilo1, NULL);
+	printf("pija2");
+
+
 	char *memoriav1 = string_new(); // aca se guarda el script o cualquier cosa que llega
+
+
 	int numero_pag=0; // variable que de dice el numero de pagina
 
 	while (1) {
