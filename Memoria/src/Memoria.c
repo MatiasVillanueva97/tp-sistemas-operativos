@@ -65,13 +65,34 @@ int escribirMemoria(void* contenido,int tamano,void* memoria){
 	return 1;//no hay espacio suficiente
 
 }
-void leerMemoria(){
+void* leerMemoria(int posicion_dentro_de_la_pagina,void* pagina){
 
+	if (posicion_dentro_de_la_pagina<0){
+		perror("ingreso una posicion de la pagina negativa.");
+	}
+	int i;
+	int recorrido = 0;
+	HeapMetadata x = *((HeapMetadata*) (pagina+recorrido));
+	recorrido+= sizeof(x);
+	for (i=0;i<posicion_dentro_de_la_pagina&&recorrido<sizeOfPaginas;i++){
+		recorrido+=x.size;
+		x = *((HeapMetadata*) (pagina+recorrido));
+		recorrido+= sizeof(x);
+	}
+	if(recorrido>=sizeOfPaginas){
+		perror("pidio una posicion invalida, es decir, que es mayor al numero de posiciones dentro de la pagina"); // esto significa posicion invalida
+	}
+	else{
+		void* contenido = malloc(x.size);// hay que liberarlo dsp de mandarlo
+		memcpy(contenido,pagina+recorrido,x.size);
+		return contenido;
+	}
 }
 
 void* hilosPrueba(void* id){
 	printf("1");
-	printf("soy un hilo: %s", (char*)id);
+	int x = *((int*)id);
+	printf("soy un hilo: %i", x);
 	return NULL;
 }
 
@@ -117,13 +138,17 @@ int main(void) {
 	escribirMemoria((void*)"hijo de puta",strlen("hijo de puta")+1,memoriaTotal);
 	escribirMemoria((void*)"hijo de puta",strlen("hijo de puta")+1,memoriaTotal);
 
+
+	char* x = (char*) leerMemoria(1,memoriaTotal);
+	printf("%s", x);
 	pthread_t hilo1, hilo2;
 
 	int id1 = 1;
 	int id2 = 2;
 	puts("pijaa");
-	pthread_create(&hilo1, NULL, hilosPrueba, (char*)"1");
-	pthread_create(&hilo2, NULL, hilosPrueba, (char*)"2");
+	hilosPrueba(&id1);
+	pthread_create(&hilo1, NULL, hilosPrueba, &id1);
+	pthread_create(&hilo2, NULL, hilosPrueba, &id2);
 
 	pthread_join( hilo2, NULL);
 	pthread_join( hilo1, NULL);
