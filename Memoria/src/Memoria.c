@@ -27,6 +27,8 @@
 #include "../../Nuestras/src/laGranBiblioteca/config.h"
 #define ID 2
 int sizeOfPaginas;
+
+void* cache;
 typedef struct{
 	uint32_t size;
 	bool isFree;
@@ -88,13 +90,19 @@ void* leerMemoria(int posicion_dentro_de_la_pagina,void* pagina){
 		return contenido;
 	}
 }
+typedef struct{
+	uint32_t frame;
+	uint32_t pid;
+	uint32_t pagina;
+}columnaTablaMemoria;
 
-void* hilosPrueba(void* id){
-	printf("1");
-	int x = *((int*)id);
-	printf("soy un hilo: %i", x);
-	return NULL;
-}
+typedef struct{
+	uint32_t frame;
+	uint32_t pid;
+	uint32_t tamano;
+	char* pagina;
+}lineaCache;
+
 
 int main(void) {
 
@@ -120,11 +128,7 @@ int main(void) {
 	imprimirConfiguracion();
 	sizeOfPaginas=getConfigInt("MARCO_SIZE");
 	void* memoriaTotal = malloc(sizeOfPaginas);
-	// ******* Conexiones obligatorias y necesarias
-
-	listener = crearSocketYBindeo(getConfigString("PUERTO")); // asignar el socket principal
-	escuchar(listener); // poner a escuchar ese socket
-
+	cache = malloc(getConfigInt("ENTRADAS_CACHE")*sizeOfPaginas);
 
 
 	liberarConfiguracion();
@@ -133,6 +137,16 @@ int main(void) {
 	header.size= sizeOfPaginas-5;
 	memcpy(memoriaTotal,&header,tamanoHeader);
 
+	//Hay que crear la tabla invertida
+	//Despues, meterla en memoria en las primeros bloques.
+	//Queda hacer el sistema multihilos para recibir las distintas cpu.
+	//Hay fijarse que no escriban todos en memoria a la vez.
+	//Arreglar problemas de fragmentacion( No es para este checkpoint).
+	//meter la cache tambien en la parte administrativa.
+	//El principal problema es saber el tamaño de estas estrutcturas.
+	//Permitir que tanto kernel como cpu puedan manejar memoria segun puedan.
+	//Tiene que reservar el stack, el heap y el codigo en paginas distintas, no se pueden intercambiar.(Ahora igual es una pagina asi que no entiendo esto).
+	//
 
 	escribirMemoria((void*)"hola hijo de puta",strlen("hola hijo de puta")+1,memoriaTotal);
 	escribirMemoria((void*)"hijo de puta",strlen("hijo de puta")+1,memoriaTotal);
@@ -141,20 +155,10 @@ int main(void) {
 
 	char* x = (char*) leerMemoria(1,memoriaTotal);
 	printf("%s", x);
-	pthread_t hilo1, hilo2;
 
-	int id1 = 1;
-	int id2 = 2;
-	puts("pijaa");
-	hilosPrueba(&id1);
-	pthread_create(&hilo1, NULL, hilosPrueba, &id1);
-	pthread_create(&hilo2, NULL, hilosPrueba, &id2);
-
-	pthread_join( hilo2, NULL);
-	pthread_join( hilo1, NULL);
-	printf("pija2");
-
-
+	// ******* Conexiones obligatorias y necesarias
+	listener = crearSocketYBindeo(getConfigString("PUERTO")); // asignar el socket principal
+	escuchar(listener); // poner a escuchar ese socket
 	char *memoriav1 = string_new(); // aca se guarda el script o cualquier cosa que llega
 
 
