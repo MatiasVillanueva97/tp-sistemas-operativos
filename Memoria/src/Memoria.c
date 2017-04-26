@@ -29,6 +29,7 @@
 int sizeOfPaginas;
 
 void* cache;
+
 typedef struct{
 	uint32_t size;
 	bool isFree;
@@ -90,16 +91,31 @@ void* leerMemoria(int posicion_dentro_de_la_pagina,void* pagina){
 		return contenido;
 	}
 }
+
 typedef struct{
-	uint32_t frame;
-	uint32_t pid;
 	uint32_t pagina;
+	uint32_t pid;
+}headerCache;
+bool tieneMenosDeTresProcesosEnLaCache(int pid){
+	int i;
+	int contador = 0;
+	for(i=0;i<getConfigInt("ENTRADAS_CACHE");i++){
+		headerCache x = *((headerCache*) (cache+(sizeOfPaginas+sizeof(uint32_t)*2)*i));
+		if(x.pid == pid){
+			contador++;
+		}
+	}
+	return contador < getConfigInt("ENTRADAS_CACHE");
+}
+typedef struct{
+	uint32_t pagina;
+	uint32_t pid;
+	uint32_t frame;
 }columnaTablaMemoria;
 
 typedef struct{
 	uint32_t frame;
 	uint32_t pid;
-	uint32_t tamano;
 	char* pagina;
 }lineaCache;
 
@@ -128,9 +144,7 @@ int main(void) {
 	imprimirConfiguracion();
 	sizeOfPaginas=getConfigInt("MARCO_SIZE");
 	void* memoriaTotal = malloc(sizeOfPaginas);
-	cache = malloc(getConfigInt("ENTRADAS_CACHE")*sizeOfPaginas);
-
-
+	cache = malloc(getConfigInt("ENTRADAS_CACHE")*(sizeOfPaginas+sizeof(uint32_t)*2));
 	liberarConfiguracion();
 	HeapMetadata header;
 	header.isFree= true;
