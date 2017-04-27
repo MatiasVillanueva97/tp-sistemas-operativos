@@ -40,33 +40,54 @@ HeapMetadata;
 
 int escribirMemoria(void* contenido,int tamano,void* memoria){
 
-	HeapMetadata x = *((HeapMetadata*) memoria);
+	HeapMetadata headerAnterior = *((HeapMetadata*) memoria);
 	int recorrido=0;
 	while(sizeOfPaginas > recorrido){
 		recorrido = recorrido +tamanoHeader;//El recorrido se posiciona en donde termina el header.
-		if(x.isFree){
-			if(x.size>tamano+tamanoHeader){
+		if(headerAnterior.isFree){
+			if(headerAnterior.size>tamano+tamanoHeader){
 				HeapMetadata header;
 				header.isFree= false;
 				header.size= tamano;
 				int y = recorrido-tamanoHeader;
 				memcpy(memoria+y,&header,tamanoHeader);
 				memcpy(memoria+recorrido,contenido,tamano);
-				recorrido += tamano;//El recorrido se posiciona donde va el siguiente header
+				recorrido += tamano; //El recorrido se posiciona donde va el siguiente header
 				header.isFree= true;
-				header.size=sizeOfPaginas-recorrido -tamanoHeader ;//Calculo el puntero donde esta, es decir, el tamaño ocupado, y se lo resto a lo que queda.
+				header.size= headerAnterior.size-tamano-tamanoHeader; //Calculo el puntero donde esta, es decir, el tamaño ocupado, y se lo resto a lo que queda.
 				memcpy(memoria+recorrido,&header,tamanoHeader);
 				//escribir en la memoria
 				return 0;
 			}
 		}
 		else{
-			recorrido+=x.size;//el header se posiciona para leer el siguiente header.
+			recorrido+=headerAnterior.size;//el header se posiciona para leer el siguiente header.
 		}
-		x = *((HeapMetadata*) (memoria+recorrido));
+		headerAnterior = *((HeapMetadata*) (memoria+recorrido));
 	}
 	return 1;//no hay espacio suficiente
 
+}
+void liberarMemoria(int posicion_dentro_de_la_pagina,void* pagina){
+	if (posicion_dentro_de_la_pagina<0){
+			perror("ingreso una posicion de la pagina negativa.");
+	}
+	int i;
+	int recorrido = 0;
+	HeapMetadata x = *((HeapMetadata*) (pagina+recorrido));
+	recorrido+= sizeof(x);
+	for (i=0;i<posicion_dentro_de_la_pagina&&recorrido<sizeOfPaginas;i++){
+			recorrido+=x.size;
+			x = *((HeapMetadata*) (pagina+recorrido));
+			recorrido+= sizeof(x);
+	}
+	if(recorrido>=sizeOfPaginas){
+			perror("pidio una posicion invalida, es decir, que es mayor al numero de posiciones dentro de la pagina"); // esto significa posicion invalida
+	}
+	else{
+			x.isFree= true;
+			memcpy(pagina+recorrido-sizeof(x),&x,sizeof(x));
+	}
 }
 void* leerMemoria(int posicion_dentro_de_la_pagina,void* pagina){
 
@@ -87,7 +108,7 @@ void* leerMemoria(int posicion_dentro_de_la_pagina,void* pagina){
 	}
 	else{
 		void* contenido = malloc(x.size);// hay que liberarlo dsp de mandarlo
-		memcpy(contenido,pagina+recorrido,x.size);
+					memcpy(contenido,pagina+recorrido,x.size);
 		return contenido;
 	}
 }
@@ -151,24 +172,20 @@ int main(void) {
 	header.size= sizeOfPaginas-5;
 	memcpy(memoriaTotal,&header,tamanoHeader);
 
-	//Hay que crear la tabla invertida
-	//Despues, meterla en memoria en las primeros bloques.
-	//Queda hacer el sistema multihilos para recibir las distintas cpu.
-	//Hay fijarse que no escriban todos en memoria a la vez.
-	//Arreglar problemas de fragmentacion( No es para este checkpoint).
-	//meter la cache tambien en la parte administrativa.
-	//El principal problema es saber el tamaño de estas estrutcturas.
-	//Permitir que tanto kernel como cpu puedan manejar memoria segun puedan.
-	//Tiene que reservar el stack, el heap y el codigo en paginas distintas, no se pueden intercambiar.(Ahora igual es una pagina asi que no entiendo esto).
-	//
-
 	escribirMemoria((void*)"hola hijo de puta",strlen("hola hijo de puta")+1,memoriaTotal);
-	escribirMemoria((void*)"hijo de puta",strlen("hijo de puta")+1,memoriaTotal);
-	escribirMemoria((void*)"hijo de puta",strlen("hijo de puta")+1,memoriaTotal);
+	escribirMemoria((void*)"hola hijo de",strlen("hola hijo de")+1,memoriaTotal);
+	escribirMemoria((void*)"hola",strlen("hola")+1,memoriaTotal);
 
 
 	char* x = (char*) leerMemoria(1,memoriaTotal);
-	printf("%s", x);
+	printf("hola esto es una prueba: %s", x);
+	printf("hola esto es una prueba2: %c", *x);
+	char* y = (char*) leerMemoria(2,memoriaTotal);
+	printf("%s", y);
+	liberarMemoria(0,memoriaTotal);
+	HeapMetadata w = *((HeapMetadata*) memoriaTotal);
+	int l = escribirMemoria((void*)"hola",strlen("hola")+1,memoriaTotal);
+
 
 	// ******* Conexiones obligatorias y necesarias
 	listener = crearSocketYBindeo(getConfigString("PUERTO")); // asignar el socket principal
@@ -180,7 +197,7 @@ int main(void) {
 
 	while (1) {
 		sin_size = sizeof their_addr;
-
+//esto deberia ser una funcion en la libreria de sockets que sea aceptar sockets.
 		if ((nuevoSocket = accept(listener, (struct sockaddr *) &their_addr, &sin_size)) == -1) {
 			perror("Error en el Accept");
 			continue;

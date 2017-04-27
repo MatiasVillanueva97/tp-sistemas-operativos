@@ -14,6 +14,7 @@
 #include <arpa/inet.h>
 #include <sys/wait.h>
 #include <signal.h>
+#include <pthread.h>
 #include "commons/config.h"
 #include "commons/collections/list.h"
 
@@ -32,6 +33,18 @@ typedef struct
 	int contPags_pcb;
 }__attribute__((packed)) PCB_DATA;
 
+int compartida = 0;
+
+void *sumarMilVeces( void *argumento ){
+  char *nombre = (char *) argumento;
+
+  int i = 0;
+  for (i; i<1000; i++) {
+    compartida = compartida + 1;
+    printf("%s : %d\n",nombre,compartida);
+    //sleep(1);
+  }
+}
 
 int main(void) {
 	printf("Inicializando Kernel.....\n\n");
@@ -68,10 +81,32 @@ int main(void) {
 	configuracionInicial("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Kernel/kernel.config");
 	imprimirConfiguracion();
 
+	pthread_t h1, h2, h3, h4, h5;
+
+
+	pthread_create( &h1, NULL, sumarMilVeces,  "Hilo 1, Gabriel Maiori");
+
+	pthread_create(&h2, NULL, sumarMilVeces,  "Hilo 2, Gabriel Maiori");
+
+	pthread_create(&h3, NULL, sumarMilVeces,  "Hilo 3, Gabriel Maiori");
+
+	pthread_create(&h4, NULL, sumarMilVeces,  "Hilo 4, Gabriel Maiori");
+
+	pthread_create(&h5, NULL, sumarMilVeces,  "Hilo 5, Gabriel Maiori");
+
+
+	 pthread_join(h1 , NULL);
+	 pthread_join(h2 , NULL);
+	 pthread_join(h3 , NULL);
+	 pthread_join(h4 , NULL);
+	 pthread_join(h5 , NULL);
+
+
+
 
 
 	// ******* Conexiones obligatorias y necesarias del Kernel - FileSystem y Memoria
-
+/*
 	printf("\n\n\nEsperando conexiones:\n-FileSystem\n-Memoria\n");
 	socketMemoria = conexionConServidor(getConfigString("PUERTO_MEMORIA"),getConfigString("IP_MEMORIA")); // Asignación del socket que se conectara con la memoria
 
@@ -89,7 +124,7 @@ int main(void) {
 	}
 	printf("Conexión exitosa con el Memoria(%i)!!\n",rta_conexion);
 	FD_SET(socketMemoria, &write_fds);  // Agregamos el FileDescriptor de la Memoria al set del write (lo ponemos como que al wachin le vamos a escribir)
-
+*/
 
 /*
 	socketFS = conexionConServidor(getConfigString("PUERTO_FS"),getConfigString("IP_FS")); // Asignación del socket que se conectara con el filesytem
@@ -125,7 +160,7 @@ int main(void) {
 
 
 
-
+/*
     // 1 - llega un proceso desde la consola
 	// 2 - se le mandan los datos a memoria
 	// 3 - se recibe el ok de memoria
@@ -164,7 +199,7 @@ int main(void) {
 	pcb.contPags_pcb=nuevo_contPags_pcb;
 	printf("\n\nPcb DesPues de recibir la pagina y el ok:\nid_pcb: %d\ncontPags_pcb: %d\n\n", pcb.id_pcb, pcb.contPags_pcb);
 
-
+/*
 	// ******* Proceso de conectar al Kernel con otros modulos que le realizen peticiones
 
 /*	listener = crearSocketYBindeo(getConfigString("PUERTO_PROG"));
