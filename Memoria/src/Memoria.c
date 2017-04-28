@@ -44,8 +44,7 @@ int escribirMemoria(void* contenido,int tamano,void* memoria){
 	int recorrido=0;
 	while(sizeOfPaginas > recorrido){
 		recorrido = recorrido +tamanoHeader;//El recorrido se posiciona en donde termina el header.
-		if(headerAnterior.isFree){
-			if(headerAnterior.size>tamano+tamanoHeader){
+		if(headerAnterior.isFree &&headerAnterior.size>tamano+tamanoHeader){
 				HeapMetadata header;
 				header.isFree= false;
 				header.size= tamano;
@@ -58,7 +57,7 @@ int escribirMemoria(void* contenido,int tamano,void* memoria){
 				memcpy(memoria+recorrido,&header,tamanoHeader);
 				//escribir en la memoria
 				return 0;
-			}
+
 		}
 		else{
 			recorrido+=headerAnterior.size;//el header se posiciona para leer el siguiente header.
@@ -80,6 +79,7 @@ void liberarMemoria(int posicion_dentro_de_la_pagina,void* pagina){
 			recorrido+=x.size;
 			x = *((HeapMetadata*) (pagina+recorrido));
 			recorrido+= sizeof(x);
+
 	}
 	if(recorrido>=sizeOfPaginas){
 			perror("pidio una posicion invalida, es decir, que es mayor al numero de posiciones dentro de la pagina"); // esto significa posicion invalida
@@ -98,17 +98,21 @@ void* leerMemoria(int posicion_dentro_de_la_pagina,void* pagina){
 	int recorrido = 0;
 	HeapMetadata x = *((HeapMetadata*) (pagina+recorrido));
 	recorrido+= sizeof(x);
-	for (i=0;i<posicion_dentro_de_la_pagina&&recorrido<sizeOfPaginas;i++){
+	for (i=0;i<posicion_dentro_de_la_pagina&&recorrido<sizeOfPaginas;){
 		recorrido+=x.size;
 		x = *((HeapMetadata*) (pagina+recorrido));
 		recorrido+= sizeof(x);
+		if (!x.isFree){
+			i++;
+		}
+
 	}
 	if(recorrido>=sizeOfPaginas){
 		perror("pidio una posicion invalida, es decir, que es mayor al numero de posiciones dentro de la pagina"); // esto significa posicion invalida
 	}
 	else{
 		void* contenido = malloc(x.size);// hay que liberarlo dsp de mandarlo
-					memcpy(contenido,pagina+recorrido,x.size);
+		memcpy(contenido,pagina+recorrido,x.size);
 		return contenido;
 	}
 }
@@ -165,8 +169,7 @@ int main(void) {
 	imprimirConfiguracion();
 	sizeOfPaginas=getConfigInt("MARCO_SIZE");
 	void* memoriaTotal = malloc(sizeOfPaginas);
-	cache = malloc(getConfigInt("ENTRADAS_CACHE")*(sizeOfPaginas+sizeof(uint32_t)*2));
-	liberarConfiguracion();
+	//cache = malloc(getConfigInt("ENTRADAS_CACHE")*(sizeOfPaginas+sizeof(uint32_t)*2));
 	HeapMetadata header;
 	header.isFree= true;
 	header.size= sizeOfPaginas-5;
@@ -183,8 +186,18 @@ int main(void) {
 	char* y = (char*) leerMemoria(2,memoriaTotal);
 	printf("%s", y);
 	liberarMemoria(0,memoriaTotal);
-	HeapMetadata w = *((HeapMetadata*) memoriaTotal);
-	int l = escribirMemoria((void*)"hola",strlen("hola")+1,memoriaTotal);
+	escribirMemoria((void*)"hola",strlen("hola")+1,memoriaTotal);
+	escribirMemoria((void*)"pruebo",strlen("prueba")+1,memoriaTotal);
+
+	free(x);
+	free(y);
+	char * w = (char*) leerMemoria(0,memoriaTotal);
+
+	char * z = (char*) leerMemoria(1,memoriaTotal);
+	free(w);
+	free(z);
+
+
 
 
 	// ******* Conexiones obligatorias y necesarias
@@ -238,10 +251,14 @@ int main(void) {
 			exit(0);
 		}
 		close(nuevoSocket);  // parent doesn't need this
-	}
 
 
+
+
+	liberarConfiguracion();
+	free(memoriav1);
+	free(mensajeRecibido);
+	free(memoriaTotal);
 	return EXIT_SUCCESS;
 }
-
 
