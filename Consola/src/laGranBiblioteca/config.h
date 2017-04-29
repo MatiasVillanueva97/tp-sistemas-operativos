@@ -16,7 +16,7 @@ t_list * listaDeConfig;//Variable global para guardar las configuraciones
 void configuracionInicial(char*);
 void imprimirConfiguracion();
 void liberarConfiguracion();
-
+void liberarArray(char **);
 //-- Getters de parametros
 
 //recibe una etiqueta y un indice y devuelve el valor en tipo string
