@@ -69,37 +69,41 @@ int main(void)
 
 
 	size_t len = 0;
-	while(1){
+	while(1){//Ciclo donde se ejecutan los comandos principales.
 
 		printf("\nIngrese Comando: \n");
-		//fgets(mensaje,100,stdin);					//en algun momento hacer un realloc turbio por si 100 no fueron suficientes o estuvieron de mas
-		getline(&mensaje,&len,stdin);
 
-		char** comandoYParametros = NULL;
-		comandoYParametros = string_split(mensaje, " "); // separa la entrada en un char**
+		getline(&mensaje,&len,stdin);//Aca es donde la persona mete por teclado el archivo de programa a ejecutar
+									//Por ahora no hay directorio, se guarda en la carpeta del Debug.
+									//Para probar usar algo.txt
 
-		if(strcmp(comandoYParametros[0],"iniciarPrograma") == 0){
-			char** path= string_split(comandoYParametros[1], "\n");
-			FILE* archivo = fopen(path[0], "r");
+		char** comandoConsola = NULL;//Esta variable es para cortar el mensaje en 2.
+		comandoConsola = string_split(mensaje, " "); // separa la entrada en un char**
 
+		if(strcmp(comandoConsola[0],"iniciarPrograma") == 0){//Primer Comando iniciarPrograma
+			char** nombreDeArchivo= string_split(comandoConsola[1], "\n");//Toma el parametro que contiene el archivo y le quita el \n
+			FILE* archivo = fopen(nombreDeArchivo[0], "r");
 			fseek(archivo,0,SEEK_END);
 			len = ftell(archivo);
-			fseek(archivo,0,SEEK_SET);
+			fseek(archivo,0,SEEK_SET);//De fseek a fseek sirve para conocer el tamaño del archivo
 			char* script = malloc(len+1);
-			fread(script,len,1,archivo);
-			script[len] = '\0';
-			printf("%s   %d",script,len);
+			fread(script,len,1,archivo);//lee el archivo y lo guarda en el script AnsiSOP
+			script[len] = '\0';//Importante!
 
+
+			//printf("%s   %d",script,len);
 			fclose(archivo);
+			//Programa
+
 			free(script);
-			liberarArray(path);
-			liberarArray(comandoYParametros);
+			liberarArray(nombreDeArchivo);
+			liberarArray(comandoConsola);
 			continue;
 		}
 		//if(strcmp(comandoYParametros[0],"iniciarPrograma") == 0)
 
-		if(strcmp(comandoYParametros[0],"desconectarConsola\n") == 0){
-			liberarArray(comandoYParametros);
+		if(strcmp(comandoConsola[0],"desconectarConsola\n") == 0){
+			liberarArray(comandoConsola);
 			break;
 		}
 		puts("Comando Inválido!");
