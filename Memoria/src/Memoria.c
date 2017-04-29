@@ -23,11 +23,19 @@
 #include <pthread.h>
 #include "commons/config.h"
 
+/////////////////////
+/////////////            HACER ENUM los DIFAINS negros que estan en la biblioteca de sockets
+/////////////////
+
+
+
+
 #include "../../Nuestras/src/laGranBiblioteca/sockets.h"
 #include "../../Nuestras/src/laGranBiblioteca/config.h"
 #define ID 2
 
 int sizeOfPaginas;
+void* memoriaTotal;
 void* cache;
 
 typedef struct{
@@ -50,11 +58,11 @@ typedef struct{
 }__attribute__((packed))HeapMetadata;
 
 #define tamanoHeader sizeof(HeapMetadata) // not sure si anda esto
-
 bool tieneMenosDeTresProcesosEnLaCache(int pid){
 	int i;
 	int contador = 0;
 	for(i=0;i<getConfigInt("ENTRADAS_CACHE");i++){
+
 		headerCache x = *((headerCache*) (cache+(sizeOfPaginas+sizeof(uint32_t)*2)*i));
 		if(x.pid == pid){
 			contador++;
@@ -114,41 +122,66 @@ void liberarMemoria(int posicion_dentro_de_la_pagina,void* pagina){
 			memcpy(pagina+recorrido-sizeof(x),&x,sizeof(x));
 	}
 }
-void* leerMemoria(int posicion_dentro_de_la_pagina,void* pagina){
+void* leerMemoria(int posicion_dentro_de_la_pagina, int*tamanioStreamLeido){
 
 	if (posicion_dentro_de_la_pagina<0){
 		perror("ingreso una posicion de la pagina negativa.");
 	}
 	int i;
 	int recorrido = 0;
-	HeapMetadata x = *((HeapMetadata*) (pagina+recorrido));
+	HeapMetadata x = *((HeapMetadata*) (memoriaTotal+recorrido));
 	recorrido+= sizeof(x);
 	for (i=0;i<posicion_dentro_de_la_pagina&&recorrido<sizeOfPaginas;){
 		recorrido+=x.size;
-		x = *((HeapMetadata*) (pagina+recorrido));
+		x = *((HeapMetadata*) (memoriaTotal+recorrido));
 		recorrido+= sizeof(x);
 		if (!x.isFree){
 			i++;
 		}
-
 	}
 	if(recorrido>=sizeOfPaginas){
 		perror("pidio una posicion invalida, es decir, que es mayor al numero de posiciones dentro de la pagina"); // esto significa posicion invalida
 	}
 	else{
 		void* contenido = malloc(x.size);// hay que liberarlo dsp de mandarlo
-		memcpy(contenido,pagina+recorrido,x.size);
+		memcpy(contenido,memoriaTotal+recorrido,x.size);
+		*tamanioStreamLeido=x.size;
 		return contenido;
 	}
 }
 
+
+int buscarPidEnTablaInversa(int pidRecibido)
+{
+	return 0;
+}
+
+void *rutinaCPU( void * arg)
+{
+	int socketCPU=(int)arg;
+	int pidRecibido, tamanioDatosAEnviarCPU;
+
+	puts("Entro a la rutina CPU");
+	recibirMensaje(socketCPU,&pidRecibido);
+
+	void * datosAEnviarACPU = leerMemoria(buscarPidEnTablaInversa(pidRecibido),&tamanioDatosAEnviarCPU);
+
+	puts((char*)datosAEnviarACPU);
+
+	enviarMensaje(socketCPU,2,datosAEnviarACPU,tamanioDatosAEnviarCPU);
+
+	free(datosAEnviarACPU);
+}
+
 void *aceptarConexiones( void *arg ){ // aca le sacamos el asterisco, porque esto era un void*
-	int listener = *(int*)arg;
+	int listener = (int)arg;
 	socklen_t sin_size;
 	int nuevoSocket;
-	int aceptados[] = {0,3};
+	int aceptados[] = {0,1};
 	struct sockaddr_storage their_addr;
 	char ip[INET6_ADDRSTRLEN];
+
+	escuchar(listener); // poner a escuchar ese socket
 
 	if ((nuevoSocket = accept(listener, (struct sockaddr *) &their_addr, &sin_size)) == -1) {// estas lines tienen que ser una funcion
 		perror("Error en el Accept");
@@ -162,23 +195,28 @@ void *aceptarConexiones( void *arg ){ // aca le sacamos el asterisco, porque est
 		perror("Error con el handshake: -1");
 		close(nuevoSocket);
 	}
-	printf("Conexión exitosa con el Server(%i)!!\n",id_clienteConectado);
+	printf("Conexión exitosa con el Cliente(%i)!!\n",id_clienteConectado);
+
+	pthread_t hilo_nuevaCPU;
 
 	switch(id_clienteConectado)
 	{
 		case 0:{ // Si el cliente conectado es el kernel
-			printf("ENTRO POR EL KRENEL");
-			// haces un hilo para el krenel
+			printf("ENTRO POR EL KERNEL");
+			// haces un hilo para el kernel
 			}break;
 		case 1:{ // Si es un cliente conectado es una CPU
-			printf("ENTRO POR EL CPU");
-			// hacemos un hilo para la cpu conectada
+			printf("\nNueva CPU Conectada!\n");
+			rutinaCPU(nuevoSocket);
+			//pthread_create(&hilo_nuevaCPU, NULL, rutinaCPU, &nuevoSocket);
 			}break;
 		default:{
 			close(nuevoSocket);
 			}
 	}
+	pthread_join(hilo_nuevaCPU, NULL);
 }
+
 
 /*
  * rutina kernel
@@ -220,7 +258,7 @@ int main(void) {
 	imprimirConfiguracion();
 
 	sizeOfPaginas=getConfigInt("MARCO_SIZE");
-	void* memoriaTotal = malloc(sizeOfPaginas);
+	memoriaTotal = malloc(sizeOfPaginas);
 
 
 	HeapMetadata header;
@@ -228,12 +266,12 @@ int main(void) {
 	header.size= sizeOfPaginas-5;
 	memcpy(memoriaTotal,&header,tamanoHeader);
 
-/*
+
 	escribirMemoria((void*)"hola hijo de puta",strlen("hola hijo de puta")+1,memoriaTotal);
 	escribirMemoria((void*)"hola hijo de",strlen("hola hijo de")+1,memoriaTotal);
 	escribirMemoria((void*)"hola",strlen("hola")+1,memoriaTotal);
 
-
+/*
 	//cache = malloc(getConfigInt("ENTRADAS_CACHE")*(sizeOfPaginas+sizeof(uint32_t)*2));
 	char* x = (char*) leerMemoria(1,memoriaTotal);
 	printf("hola esto es una prueba: %s", x);
@@ -255,35 +293,23 @@ int main(void) {
 
 
 
-	// ******* Conexiones obligatorias y necesarias
-	listener = crearSocketYBindeo(getConfigString("PUERTO")); // asignar el socket principal
-	escuchar(listener); // poner a escuchar ese socket
 	char *memoriav1 = string_new(); // aca se guarda el script o cualquier cosa que llega
+	// ******* Conexiones obligatorias y necesarias
+
+	listener = crearSocketYBindeo(getConfigString("PUERTO")); // asignar el socket principal
 
 
-	int numero_pag=0; // variable que de dice el numero de pagina
+	aceptarConexiones(NULL);
 
-	pthread_t h1;
+/*	pthread_t hilo_AceptarConexiones;
 
-	aceptarConexiones(&listener);
+	pthread_create(&hilo_AceptarConexiones, NULL, aceptarConexiones,  listener);
 
-
-    //pthread_t h1, h2, h3, h4, h5;
-
-	//pthread_create(&h5, NULL, sumarMilVeces,  "Hilo 5, Gabriel Maiori");
-
-	//pthread_join(h1 , NULL);
+	pthread_join(hilo_AceptarConexiones , NULL);
 
 /*	while (1) {
 		sin_size = sizeof their_addr;
 		//esto deberia ser una funcion en la libreria de sockets que sea aceptar sockets.
-
-
-
-
-
-
-
 
 		if(recibirMensaje(nuevoSocket,mensajeRecibido)==-1){
 			perror("Error en el Reciv");
