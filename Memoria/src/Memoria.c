@@ -26,17 +26,42 @@
 #include "../../Nuestras/src/laGranBiblioteca/sockets.h"
 #include "../../Nuestras/src/laGranBiblioteca/config.h"
 #define ID 2
-int sizeOfPaginas;
 
+int sizeOfPaginas;
 void* cache;
 
 typedef struct{
+	uint32_t pagina;
+	uint32_t pid;
+}headerCache;
+typedef struct{
+	uint32_t pagina;
+	uint32_t pid;
+	uint32_t frame;
+}columnaTablaMemoria;
+typedef struct{
+	uint32_t frame;
+	uint32_t pid;
+	char* pagina;
+	}lineaCache;
+typedef struct{
 	uint32_t size;
 	bool isFree;
-}__attribute__((packed))
-HeapMetadata;
+}__attribute__((packed))HeapMetadata;
 
 #define tamanoHeader sizeof(HeapMetadata) // not sure si anda esto
+
+bool tieneMenosDeTresProcesosEnLaCache(int pid){
+	int i;
+	int contador = 0;
+	for(i=0;i<getConfigInt("ENTRADAS_CACHE");i++){
+		headerCache x = *((headerCache*) (cache+(sizeOfPaginas+sizeof(uint32_t)*2)*i));
+		if(x.pid == pid){
+			contador++;
+		}
+	}
+	return contador < getConfigInt("ENTRADAS_CACHE");
+}
 
 int escribirMemoria(void* contenido,int tamano,void* memoria){
 
@@ -117,33 +142,64 @@ void* leerMemoria(int posicion_dentro_de_la_pagina,void* pagina){
 	}
 }
 
-typedef struct{
-	uint32_t pagina;
-	uint32_t pid;
-}headerCache;
-bool tieneMenosDeTresProcesosEnLaCache(int pid){
-	int i;
-	int contador = 0;
-	for(i=0;i<getConfigInt("ENTRADAS_CACHE");i++){
-		headerCache x = *((headerCache*) (cache+(sizeOfPaginas+sizeof(uint32_t)*2)*i));
-		if(x.pid == pid){
-			contador++;
-		}
+void *aceptarConexiones( void *arg ){ // aca le sacamos el asterisco, porque esto era un void*
+	int listener = *(int*)arg;
+	socklen_t sin_size;
+	int nuevoSocket;
+	int aceptados[] = {0,3};
+	struct sockaddr_storage their_addr;
+	char ip[INET6_ADDRSTRLEN];
+
+	if ((nuevoSocket = accept(listener, (struct sockaddr *) &their_addr, &sin_size)) == -1) {// estas lines tienen que ser una funcion
+		perror("Error en el Accept");
+		//continue;
 	}
-	return contador < getConfigInt("ENTRADAS_CACHE");
+	inet_ntop(their_addr.ss_family, getSin_Addr((struct sockaddr *) &their_addr), ip, sizeof ip); // para poder imprimir la ip del server
+	printf("Conexion con %s\n", ip);
+
+	int id_clienteConectado;
+	if ((id_clienteConectado = handshakeServidor(nuevoSocket, ID, aceptados)) == -1) {
+		perror("Error con el handshake: -1");
+		close(nuevoSocket);
+	}
+	printf("Conexión exitosa con el Server(%i)!!\n",id_clienteConectado);
+
+	switch(id_clienteConectado)
+	{
+		case 0:{ // Si el cliente conectado es el kernel
+			printf("ENTRO POR EL KRENEL");
+			// haces un hilo para el krenel
+			}break;
+		case 1:{ // Si es un cliente conectado es una CPU
+			printf("ENTRO POR EL CPU");
+			// hacemos un hilo para la cpu conectada
+			}break;
+		default:{
+			close(nuevoSocket);
+			}
+	}
 }
-typedef struct{
-	uint32_t pagina;
-	uint32_t pid;
-	uint32_t frame;
-}columnaTablaMemoria;
 
-typedef struct{
-	uint32_t frame;
-	uint32_t pid;
-	char* pagina;
-}lineaCache;
+/*
+ * rutina kernel
+ * while 1
+ * {
+ * haces un reciv
+ * recivis el pid
+ * hasces weas con el pid que por ahora no hacen nada
+ * lees - escribis - liberas memoria
+ * }
+ */
 
+
+/*
+ * rutina Cpu
+ * while 1
+ * reciv --- while 0, esto viene de la mano de que cuando la cpu se vaya, te tira un close socket y de ahi aca recivis el 0 de fin de conexion
+ * lees pid
+ * de acuierdo al pid devuelve el contenido que espera
+ * chau
+ */
 
 int main(void) {
 
@@ -151,13 +207,8 @@ int main(void) {
 
 	// ******* Declaración de la mayoria de las variables a utilizar
 
-	socklen_t sin_size;
+	int listener, nuevoSocket, id_clienteConectado;
 
-	struct sockaddr_storage their_addr; // Estructura que contiene la informacion de la conexion
-
-	int listener, nuevoSocket, rta_handshake;
-	int aceptados[] = {0,3};
-	char ip[INET6_ADDRSTRLEN];
 
 	char* mensajeRecibido= string_new();
 
@@ -167,19 +218,23 @@ int main(void) {
 	printf("Configuracion Inicial: \n");
 	configuracionInicial("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Memoria/memoria.config");
 	imprimirConfiguracion();
+
 	sizeOfPaginas=getConfigInt("MARCO_SIZE");
 	void* memoriaTotal = malloc(sizeOfPaginas);
-	//cache = malloc(getConfigInt("ENTRADAS_CACHE")*(sizeOfPaginas+sizeof(uint32_t)*2));
+
+
 	HeapMetadata header;
 	header.isFree= true;
 	header.size= sizeOfPaginas-5;
 	memcpy(memoriaTotal,&header,tamanoHeader);
 
+/*
 	escribirMemoria((void*)"hola hijo de puta",strlen("hola hijo de puta")+1,memoriaTotal);
 	escribirMemoria((void*)"hola hijo de",strlen("hola hijo de")+1,memoriaTotal);
 	escribirMemoria((void*)"hola",strlen("hola")+1,memoriaTotal);
 
 
+	//cache = malloc(getConfigInt("ENTRADAS_CACHE")*(sizeOfPaginas+sizeof(uint32_t)*2));
 	char* x = (char*) leerMemoria(1,memoriaTotal);
 	printf("hola esto es una prueba: %s", x);
 	printf("hola esto es una prueba2: %c", *x);
@@ -196,7 +251,7 @@ int main(void) {
 	char * z = (char*) leerMemoria(1,memoriaTotal);
 	free(w);
 	free(z);
-
+*/
 
 
 
@@ -208,53 +263,49 @@ int main(void) {
 
 	int numero_pag=0; // variable que de dice el numero de pagina
 
-	while (1) {
+	pthread_t h1;
+
+	aceptarConexiones(&listener);
+
+
+    //pthread_t h1, h2, h3, h4, h5;
+
+	//pthread_create(&h5, NULL, sumarMilVeces,  "Hilo 5, Gabriel Maiori");
+
+	//pthread_join(h1 , NULL);
+
+/*	while (1) {
 		sin_size = sizeof their_addr;
-//esto deberia ser una funcion en la libreria de sockets que sea aceptar sockets.
-		if ((nuevoSocket = accept(listener, (struct sockaddr *) &their_addr, &sin_size)) == -1) {
-			perror("Error en el Accept");
-			continue;
+		//esto deberia ser una funcion en la libreria de sockets que sea aceptar sockets.
+
+
+
+
+
+
+
+
+		if(recibirMensaje(nuevoSocket,mensajeRecibido)==-1){
+			perror("Error en el Reciv");
 		}
 
-		inet_ntop(their_addr.ss_family, getSin_Addr((struct sockaddr *) &their_addr), ip, sizeof ip); // para poder imprimir la ip del server
+		printf("Mensaje desde el Kernel: %s\n\n", mensajeRecibido);
+		//free(mensajeRecibido);//OJO!!!!!ESTO HAY QUE MEJORARLO -- Comentario 2 esto esta omcentado tiera violacion de segmento
 
-		printf("Conexion con %s\n", ip);
+		if(mensajeRecibido[0]=='0') // leo un 0, eso quiere decir que kernel me acaba de mandar un codigo ansisop para guardar
+		{
+			memoriav1=mensajeRecibido; // abstraccion pura
+			numero_pag++;
 
-		if (!fork()) { // this is the child process
-			close(listener); // child doesn't need the listener
-
-			if ((rta_handshake = handshakeServidor(nuevoSocket, ID, aceptados)) == -1) {
-				perror("Error con el handshake: -1");
-				close(nuevoSocket);
-			}
-
-			printf("Conexión exitosa con el Server(%i)!!\n",rta_handshake);
-
-			if(recibirMensaje(nuevoSocket,mensajeRecibido)==-1){
-				perror("Error en el Reciv");
-			}
-
-			printf("Mensaje desde el Kernel: %s\n\n", mensajeRecibido);
-			//free(mensajeRecibido);//OJO!!!!!ESTO HAY QUE MEJORARLO -- Comentario 2 esto esta omcentado tiera violacion de segmento
-
-			if(mensajeRecibido[0]=='0') // leo un 0, eso quiere decir que kernel me acaba de mandar un codigo ansisop para guardar
-			{
-				memoriav1=mensajeRecibido; // abstraccion pura
-				numero_pag++;
-
-				printf("Reservado: memoriav1: %s\nEnviado: numero_pag: %d\n\n", memoriav1, numero_pag);
-
-				enviarMensaje(nuevoSocket, 1, (void *)&numero_pag, sizeof(int));
-			}
-
-			close(nuevoSocket);
-			exit(0);
+			printf("Reservado: memoriav1: %s\nEnviado: numero_pag: %d\n\n", memoriav1, numero_pag);
+			enviarMensaje(nuevoSocket, 1, (void *)&numero_pag, sizeof(int));
 		}
-		close(nuevoSocket);  // parent doesn't need this
+		close(nuevoSocket);
+		exit(0);
+	}
+*/
 
-
-
-
+	close(listener);
 	liberarConfiguracion();
 	free(memoriav1);
 	free(mensajeRecibido);
