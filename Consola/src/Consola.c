@@ -35,6 +35,7 @@ typedef struct {
 #define ID 3
 
 void* laFuncionMagicaDeConsola(void*);
+void* imprimir2veces(void* parametros);
 
 int main(void)
 {
@@ -91,18 +92,23 @@ int main(void)
 			char** nombreDeArchivo= string_split(comandoConsola[1], "\n");//Toma el parametro que contiene el archivo y le quita el \n
 			FILE* archivo = fopen(nombreDeArchivo[0], "r");
 
-			//fseek(archivo,0,SEEK_END);
-			//len = ftell(archivo);
-			//fseek(archivo,0,SEEK_SET);//De fseek a fseek sirve para conocer el tamaño del archivo
-			len = 50;
-			/*char* script = malloc(len+1);
+			fseek(archivo,0,SEEK_END);
+			len = ftell(archivo);
+			fseek(archivo,0,SEEK_SET);//De fseek a fseek sirve para conocer el tamaño del archivo
+			//len = 4;
+			char* script = malloc(len+1);
 			fread(script,len,1,archivo);//lee el archivo y lo guarda en el script AnsiSOP
-			script[len] = '\0';//Importante!*/
+			//script = "hola";
+			script[len] = '\0';//Importante!
+
+			printf("%s \n",script);
 
 			t_parametrosHiloPrograma parametrosHiloPrograma;
 			parametrosHiloPrograma.socket = socketConsola;
 			parametrosHiloPrograma.tamanioScript = len+1;
 			parametrosHiloPrograma.script = script;
+
+			printf("%s \n",parametrosHiloPrograma.script);
 
 			pthread_attr_t attr;
 			pthread_t h1 ;
@@ -118,24 +124,25 @@ int main(void)
 			        exit(EXIT_FAILURE);
 			    }
 
-			    res = pthread_create (&h1 ,&attr,laFuncionMagicaDeConsola, (void *) &parametrosHiloPrograma);
+			    res = pthread_create (&h1 ,&attr,imprimir2veces, (void *) &parametrosHiloPrograma);
 			    if (res != 0) {
 			        perror("Creation of thread failed");
 			        exit(EXIT_FAILURE);
 			    }
 			    pthread_attr_destroy(&attr);
-			//pthread_create (&h1 , NULL , laFuncionMagicaDeConsola, (void *) &script ) ;
 
-			//printf("%s   %d",script,len);
 			fclose(archivo);
-			//Programa
 
 			free(script);
 			liberarArray(nombreDeArchivo);
 			liberarArray(comandoConsola);
 			continue;
 		}
-		//if(strcmp(comandoYParametros[0],"iniciarPrograma") == 0)
+		if(strcmp(comandoConsola[0],"limpiarMensajes\n") == 0){
+			system("clear");
+			liberarArray(comandoConsola);
+			continue;
+		}
 
 		if(strcmp(comandoConsola[0],"desconectarConsola\n") == 0){
 			liberarArray(comandoConsola);
@@ -143,15 +150,48 @@ int main(void)
 		}
 		puts("Comando Inválido!");
 	}
-	// Envio del mensaje
-	/*if(enviarMensaje(socketConsola,2,(void*)mensaje,strlen(mensaje)+1)==-1){
-		perror("Error en el Send");
-	}*/
 
-	//close(socketConsola);
+	close(socketConsola);
 	free(mensaje);
 	liberarConfiguracion();
 	return 0;
+}
+
+void* imprimir2veces(void* parametros){
+
+	t_parametrosHiloPrograma *parametrosHiloPrograma = parametros;
+	//t_parametrosHiloPrograma *parametrosHiloProgramaReal;
+
+	/*parametrosHiloProgramaReal->socket = parametrosHiloPrograma->socket;
+	parametrosHiloProgramaReal->tamanioScript = parametrosHiloPrograma->tamanioScript;
+	parametrosHiloProgramaReal->script = parametrosHiloPrograma->script;*/
+
+
+	/*parametrosHiloPrograma->socket = ((t_parametrosHiloPrograma*) parametros)->socket;
+	parametrosHiloPrograma->tamanioScript = ((t_parametrosHiloPrograma*) parametros)->tamanioScript;
+	parametrosHiloPrograma->script = ((t_parametrosHiloPrograma*) parametros)->script;*/
+
+
+
+	/*int socket;
+	memcpy(&socket,parametros,4);
+	printf("%d    \n",socket);
+
+
+	size_t tamanioScript;
+	memcpy(&tamanioScript,parametros + 4,4);
+	printf("%d    \n",tamanioScript);
+
+	char* script = malloc(tamanioScript);
+	memcpy(script,parametros +8,tamanioScript);
+	script[0] = 'h';
+	script[tamanioScript] = '\0';
+	printf("%s    \n",script);*/
+
+	printf("hola\n");
+	printf("raul\n");
+	printf("%s    \n",parametrosHiloPrograma->script);
+
 }
 
 void* laFuncionMagicaDeConsola(void* parametros){
