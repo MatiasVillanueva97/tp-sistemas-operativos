@@ -101,14 +101,10 @@ int main(void)
 			//script = "hola";
 			script[len] = '\0';//Importante!
 
-			printf("%s \n",script);
-
 			t_parametrosHiloPrograma parametrosHiloPrograma;
 			parametrosHiloPrograma.socket = socketConsola;
 			parametrosHiloPrograma.tamanioScript = len+1;
 			parametrosHiloPrograma.script = script;
-
-			printf("%s \n",parametrosHiloPrograma.script);
 
 			pthread_attr_t attr;
 			pthread_t h1 ;
@@ -124,7 +120,7 @@ int main(void)
 			        exit(EXIT_FAILURE);
 			    }
 
-			    res = pthread_create (&h1 ,&attr,imprimir2veces, (void *) &parametrosHiloPrograma);
+			    res = pthread_create (&h1 ,&attr,laFuncionMagicaDeConsola, (void *) &parametrosHiloPrograma);
 			    if (res != 0) {
 			        perror("Creation of thread failed");
 			        exit(EXIT_FAILURE);
@@ -133,7 +129,7 @@ int main(void)
 
 			fclose(archivo);
 
-			free(script);
+			//free(script); 				ESTO ES LO QUE ROMPIA TO DO
 			liberarArray(nombreDeArchivo);
 			liberarArray(comandoConsola);
 			continue;
@@ -157,49 +153,14 @@ int main(void)
 	return 0;
 }
 
-void* imprimir2veces(void* parametros){
-
-	t_parametrosHiloPrograma *parametrosHiloPrograma = parametros;
-	//t_parametrosHiloPrograma *parametrosHiloProgramaReal;
-
-	/*parametrosHiloProgramaReal->socket = parametrosHiloPrograma->socket;
-	parametrosHiloProgramaReal->tamanioScript = parametrosHiloPrograma->tamanioScript;
-	parametrosHiloProgramaReal->script = parametrosHiloPrograma->script;*/
-
-
-	/*parametrosHiloPrograma->socket = ((t_parametrosHiloPrograma*) parametros)->socket;
-	parametrosHiloPrograma->tamanioScript = ((t_parametrosHiloPrograma*) parametros)->tamanioScript;
-	parametrosHiloPrograma->script = ((t_parametrosHiloPrograma*) parametros)->script;*/
-
-
-
-	/*int socket;
-	memcpy(&socket,parametros,4);
-	printf("%d    \n",socket);
-
-
-	size_t tamanioScript;
-	memcpy(&tamanioScript,parametros + 4,4);
-	printf("%d    \n",tamanioScript);
-
-	char* script = malloc(tamanioScript);
-	memcpy(script,parametros +8,tamanioScript);
-	script[0] = 'h';
-	script[tamanioScript] = '\0';
-	printf("%s    \n",script);*/
-
-	printf("hola\n");
-	printf("raul\n");
-	printf("%s    \n",parametrosHiloPrograma->script);
-
-}
-
 void* laFuncionMagicaDeConsola(void* parametros){
-	int *pid;
-	t_parametrosHiloPrograma *parametrosHiloPrograma = (t_parametrosHiloPrograma*) parametros;
+	int *pid = malloc(4);
+	t_parametrosHiloPrograma *parametrosHiloPrograma = parametros;
 	enviarMensaje(parametrosHiloPrograma->socket,2,(void *)parametrosHiloPrograma->script, parametrosHiloPrograma->tamanioScript);
 	recibirMensaje(parametrosHiloPrograma->socket,(void *)pid);
 
 	printf("%d %s",*pid,parametrosHiloPrograma->script);
 
+	free(pid);
+	free(parametrosHiloPrograma->script);
 }
