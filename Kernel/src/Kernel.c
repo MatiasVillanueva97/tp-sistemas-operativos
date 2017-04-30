@@ -181,7 +181,21 @@ int main(void) {
 						FD_CLR(socketSeleccionado, &write_fds);
 					}
 					else {
-						printf("Mensaje recibido: %s\n", mensajeRecibido);   // we got some data from a client
+
+						printf("Mensaje recibido: %s\n", mensajeRecibido);// we got some data from a client
+
+
+
+
+
+						int pid = 1;
+						enviarMensaje(socketSeleccionado,1,(void*) &pid,4);//LINEA HARCODEADA PARA PROBAR CONSOLA
+
+
+
+
+
+
 
 						for (socketAEnviarMensaje = 0; socketAEnviarMensaje <= fdmax; socketAEnviarMensaje++) {   // send to everyone!
 							if (FD_ISSET(socketAEnviarMensaje, &write_fds) && socketAEnviarMensaje != listener && socketAEnviarMensaje != socketSeleccionado){

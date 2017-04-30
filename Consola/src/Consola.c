@@ -14,6 +14,8 @@
 #include <sys/stat.h>
 #include "commons/config.h"
 #include "commons/string.h"
+#include <pthread.h>
+
 
 
 //Hola
@@ -23,11 +25,16 @@
 #include "../../Nuestras/src/laGranBiblioteca/config.h"
 
 #include <arpa/inet.h>
-
+typedef struct {
+	int socket;
+	size_t tamanioScript;
+	char * script;
+} t_parametrosHiloPrograma;
 
 #define MAXDATASIZE 100 // max number of bytes we can get at once
 #define ID 3
 
+void* laFuncionMagicaDeConsola(void*);
 
 int main(void)
 {
@@ -46,7 +53,7 @@ int main(void)
 
 
 	// ******* Procesos de Consola-  por ahora enviar mensajitos
-/*
+
 	socketConsola = conexionConServidor(getConfigString("PUERTO_KERNEL"),getConfigString("IP_KERNEL"));
 
 	// validacion de un correcto hadnshake
@@ -63,7 +70,7 @@ int main(void)
 		close(socketConsola);
 	}
 	printf("Conexión exitosa con el Servidor(%i)!!\n",rta_conexion);
-*/
+
 
 	//Verdadero codigo
 
@@ -83,13 +90,41 @@ int main(void)
 		if(strcmp(comandoConsola[0],"iniciarPrograma") == 0){//Primer Comando iniciarPrograma
 			char** nombreDeArchivo= string_split(comandoConsola[1], "\n");//Toma el parametro que contiene el archivo y le quita el \n
 			FILE* archivo = fopen(nombreDeArchivo[0], "r");
-			fseek(archivo,0,SEEK_END);
-			len = ftell(archivo);
-			fseek(archivo,0,SEEK_SET);//De fseek a fseek sirve para conocer el tamaño del archivo
-			char* script = malloc(len+1);
-			fread(script,len,1,archivo);//lee el archivo y lo guarda en el script AnsiSOP
-			script[len] = '\0';//Importante!
 
+			//fseek(archivo,0,SEEK_END);
+			//len = ftell(archivo);
+			//fseek(archivo,0,SEEK_SET);//De fseek a fseek sirve para conocer el tamaño del archivo
+			len = 50;
+			/*char* script = malloc(len+1);
+			fread(script,len,1,archivo);//lee el archivo y lo guarda en el script AnsiSOP
+			script[len] = '\0';//Importante!*/
+
+			t_parametrosHiloPrograma parametrosHiloPrograma;
+			parametrosHiloPrograma.socket = socketConsola;
+			parametrosHiloPrograma.tamanioScript = len+1;
+			parametrosHiloPrograma.script = script;
+
+			pthread_attr_t attr;
+			pthread_t h1 ;
+			int  res;
+			  res = pthread_attr_init(&attr);
+			    if (res != 0) {
+			        perror("Attribute init failed");
+			        exit(EXIT_FAILURE);
+			    }
+			    res = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+			    if (res != 0) {
+			        perror("Setting detached state failed");
+			        exit(EXIT_FAILURE);
+			    }
+
+			    res = pthread_create (&h1 ,&attr,laFuncionMagicaDeConsola, (void *) &parametrosHiloPrograma);
+			    if (res != 0) {
+			        perror("Creation of thread failed");
+			        exit(EXIT_FAILURE);
+			    }
+			    pthread_attr_destroy(&attr);
+			//pthread_create (&h1 , NULL , laFuncionMagicaDeConsola, (void *) &script ) ;
 
 			//printf("%s   %d",script,len);
 			fclose(archivo);
@@ -117,4 +152,14 @@ int main(void)
 	free(mensaje);
 	liberarConfiguracion();
 	return 0;
+}
+
+void* laFuncionMagicaDeConsola(void* parametros){
+	int *pid;
+	t_parametrosHiloPrograma *parametrosHiloPrograma = (t_parametrosHiloPrograma*) parametros;
+	enviarMensaje(parametrosHiloPrograma->socket,2,(void *)parametrosHiloPrograma->script, parametrosHiloPrograma->tamanioScript);
+	recibirMensaje(parametrosHiloPrograma->socket,(void *)pid);
+
+	printf("%d %s",*pid,parametrosHiloPrograma->script);
+
 }
