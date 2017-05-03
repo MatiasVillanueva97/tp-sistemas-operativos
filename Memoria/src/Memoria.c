@@ -27,9 +27,6 @@
 /////////////            HACER ENUM los DIFAINS negros que estan en la biblioteca de sockets
 /////////////////
 
-
-
-
 #include "../../Nuestras/src/laGranBiblioteca/sockets.h"
 #include "../../Nuestras/src/laGranBiblioteca/config.h"
 #define ID 2
@@ -58,6 +55,7 @@ typedef struct{
 }__attribute__((packed))HeapMetadata;
 
 #define tamanoHeader sizeof(HeapMetadata) // not sure si anda esto
+
 bool tieneMenosDeTresProcesosEnLaCache(int pid){
 	int i;
 	int contador = 0;
@@ -131,6 +129,7 @@ void* leerMemoria(int posicion_dentro_de_la_pagina, int*tamanioStreamLeido){
 	int recorrido = 0;
 	HeapMetadata x = *((HeapMetadata*) (memoriaTotal+recorrido));
 	recorrido+= sizeof(x);
+
 	for (i=0;i<posicion_dentro_de_la_pagina&&recorrido<sizeOfPaginas;){
 		recorrido+=x.size;
 		x = *((HeapMetadata*) (memoriaTotal+recorrido));
@@ -139,6 +138,7 @@ void* leerMemoria(int posicion_dentro_de_la_pagina, int*tamanioStreamLeido){
 			i++;
 		}
 	}
+
 	if(recorrido>=sizeOfPaginas){
 		perror("pidio una posicion invalida, es decir, que es mayor al numero de posiciones dentro de la pagina"); // esto significa posicion invalida
 	}
@@ -156,12 +156,13 @@ int buscarPidEnTablaInversa(int pidRecibido)
 	return 0;
 }
 
-void *rutinaCPU( void * arg)
+void *rutinaCPU(void * arg)
 {
-	int socketCPU=(int)arg;
+	int socketCPU = ((int*)arg)[0] ;
 	int pidRecibido, tamanioDatosAEnviarCPU;
 
-	puts("Entro a la rutina CPU");
+	printf("Entro a la rutina CPU\nSocket cpu %d\n\n", socketCPU);
+
 	recibirMensaje(socketCPU,&pidRecibido);
 
 	void * datosAEnviarACPU = leerMemoria(buscarPidEnTablaInversa(pidRecibido),&tamanioDatosAEnviarCPU);
@@ -173,14 +174,32 @@ void *rutinaCPU( void * arg)
 	free(datosAEnviarACPU);
 }
 
+void *rutinaKernel(void *arg){ // no se si tiene que ser void
+	int socketCPU = (int)arg;
+	int pidRecibido;
+	recibirMensaje(socketCPU,&pidRecibido);
+	int tamano;
+	recibirMensaje(socketCPU,&tamano);
+	void* contenido = malloc(tamano);
+	char* mensaje = "No se pudo almacenar espacio";
+
+	if (escribirMemoria(contenido, tamano, NULL)!=-1) ///  null = tamanioDatosAEnviarCPU
+	{
+		mensaje = "Se almaceno correctamente";
+	}
+	//Aca hay que almacenarlo en la tabla (Cuando lo escribis deberia ser)
+	enviarMensaje(socketCPU,2,mensaje,strlen(mensaje+1));
+	free(mensaje);
+	free(contenido);
+}
+
 void *aceptarConexiones( void *arg ){ // aca le sacamos el asterisco, porque esto era un void*
 	int listener = (int)arg;
-	socklen_t sin_size;
 	int nuevoSocket;
 	int aceptados[] = {0,1};
 	struct sockaddr_storage their_addr;
 	char ip[INET6_ADDRSTRLEN];
-
+	socklen_t sin_size = sizeof their_addr;
 	escuchar(listener); // poner a escuchar ese socket
 
 	if ((nuevoSocket = accept(listener, (struct sockaddr *) &their_addr, &sin_size)) == -1) {// estas lines tienen que ser una funcion
@@ -197,18 +216,18 @@ void *aceptarConexiones( void *arg ){ // aca le sacamos el asterisco, porque est
 	}
 	printf("Conexión exitosa con el Cliente(%i)!!\n",id_clienteConectado);
 
-	pthread_t hilo_nuevaCPU;
+	pthread_t hilo_nuevaCPU,hilo_kernel;
 
 	switch(id_clienteConectado)
 	{
 		case 0:{ // Si el cliente conectado es el kernel
 			printf("ENTRO POR EL KERNEL");
-			// haces un hilo para el kernel
+			pthread_create(&hilo_kernel, NULL, rutinaKernel, &nuevoSocket);
 			}break;
 		case 1:{ // Si es un cliente conectado es una CPU
-			printf("\nNueva CPU Conectada!\n");
-			rutinaCPU(nuevoSocket);
-			//pthread_create(&hilo_nuevaCPU, NULL, rutinaCPU, &nuevoSocket);
+			printf("\nNueva CPU Conectada!\nSocket cpu %d\n\n", nuevoSocket);
+		//	rutinaCPU(nuevoSocket);
+			pthread_create(&hilo_nuevaCPU, NULL, rutinaCPU, &nuevoSocket);
 			}break;
 		default:{
 			close(nuevoSocket);
@@ -218,27 +237,6 @@ void *aceptarConexiones( void *arg ){ // aca le sacamos el asterisco, porque est
 }
 
 
-/*
- * rutina kernel
- * while 1
- * {
- * haces un reciv
- * recivis el pid
- * hasces weas con el pid que por ahora no hacen nada
- * lees - escribis - liberas memoria
- * }
- */
-
-
-/*
- * rutina Cpu
- * while 1
- * reciv --- while 0, esto viene de la mano de que cuando la cpu se vaya, te tira un close socket y de ahi aca recivis el 0 de fin de conexion
- * lees pid
- * de acuierdo al pid devuelve el contenido que espera
- * chau
- */
-
 int main(void) {
 
 	printf("Inicializando Memoria.....\n\n");
@@ -246,8 +244,6 @@ int main(void) {
 	// ******* Declaración de la mayoria de las variables a utilizar
 
 	int listener, nuevoSocket, id_clienteConectado;
-
-
 	char* mensajeRecibido= string_new();
 
 
@@ -291,22 +287,64 @@ int main(void) {
 	free(z);
 */
 
-
-
 	char *memoriav1 = string_new(); // aca se guarda el script o cualquier cosa que llega
 	// ******* Conexiones obligatorias y necesarias
 
 	listener = crearSocketYBindeo(getConfigString("PUERTO")); // asignar el socket principal
 
 
-	aceptarConexiones(NULL);
+//	aceptarConexiones(NULL);
 
-/*	pthread_t hilo_AceptarConexiones;
+	pthread_t hilo_AceptarConexiones;
 
 	pthread_create(&hilo_AceptarConexiones, NULL, aceptarConexiones,  listener);
 
 	pthread_join(hilo_AceptarConexiones , NULL);
 
+
+
+/*		int id_clienteConectado;
+
+	  int listener = (int)arg;
+		int nuevoSocket;
+		int aceptados[] = {0,1};
+		struct sockaddr_storage their_addr;
+		char ip[INET6_ADDRSTRLEN];
+		socklen_t sin_size = sizeof their_addr;
+		escuchar(listener); // poner a escuchar ese socket
+
+		if ((nuevoSocket = accept(listener, (struct sockaddr *) &their_addr, &sin_size)) == -1) {// estas lines tienen que ser una funcion
+			perror("Error en el Accept");
+			//continue;
+		}
+		inet_ntop(their_addr.ss_family, getSin_Addr((struct sockaddr *) &their_addr), ip, sizeof ip); // para poder imprimir la ip del server
+		printf("Conexion con %s\n", ip);
+
+		if ((id_clienteConectado = handshakeServidor(nuevoSocket, ID, aceptados)) == -1) {
+			perror("Error con el handshake: -1");
+			close(nuevoSocket);
+		}
+		printf("Conexión exitosa con el Cliente(%i)!!\n",id_clienteConectado);
+
+		pthread_t hilo_nuevaCPU,hilo_kernel;
+
+		switch(id_clienteConectado)
+		{
+			case 0:{ // Si el cliente conectado es el kernel
+				printf("ENTRO POR EL KERNEL");
+				pthread_create(&hilo_kernel, NULL, rutinaKernel, &nuevoSocket);
+				}break;
+			case 1:{ // Si es un cliente conectado es una CPU
+				printf("\nNueva CPU Conectada!\n");
+				//rutinaCPU(nuevoSocket);
+				pthread_create(&hilo_nuevaCPU, NULL, rutinaCPU, &nuevoSocket);
+				pthread_join(hilo_nuevaCPU, NULL);
+				}break;
+			default:{
+				close(nuevoSocket);
+				}
+		}
+*/
 /*	while (1) {
 		sin_size = sizeof their_addr;
 		//esto deberia ser una funcion en la libreria de sockets que sea aceptar sockets.
@@ -330,6 +368,7 @@ int main(void) {
 		exit(0);
 	}
 */
+
 
 	close(listener);
 	liberarConfiguracion();
