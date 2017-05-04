@@ -46,9 +46,9 @@ void *rutinaCPU(void * arg)
 	int socketCPU = ((int*)arg)[0];
 	while(1){//Villereada
 		while(!queue_is_empty(colaDeReady)){
-			PCB_DATA pcbAEjecutar = queue_pop(colaDeReady);
-			enviarMensaje(socketCPU,3,&pcbAEjecutar,sizeof(PCB_DATA)); // falta hacer este tipo.
-			recibirMensaje(socketCPU, &pcbAEjecutar);
+			PCB_DATA *pcbAEjecutar = queue_pop(colaDeReady);
+			enviarMensaje(socketCPU,3,pcbAEjecutar,sizeof(PCB_DATA)); // falta hacer este tipo.
+			recibirMensaje(socketCPU, pcbAEjecutar);
 		}
 	}
 
