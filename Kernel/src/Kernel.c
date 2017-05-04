@@ -17,6 +17,8 @@
 #include <pthread.h>
 #include "commons/config.h"
 #include "commons/collections/list.h"
+#include "commons/collections/queue.h"
+ #include <semaphore.h>
 
 #include "../../Nuestras/src/laGranBiblioteca/sockets.h"
 #include "../../Nuestras/src/laGranBiblioteca/config.h"
@@ -27,25 +29,101 @@
 
 #define ID 0
 
+int socketMemoria;
+int pcbHistorico = 0;
+t_queue* colaDeReady ;
+
 typedef struct
 {
 	int id_pcb;
 	int contPags_pcb;
 }__attribute__((packed)) PCB_DATA;
 
-int compartida = 0;
 
-void *sumarMilVeces( void *argumento ){
-  char *nombre = (char *) argumento;
+sem_t* contadorDeCpus = 0;
+void *rutinaCPU(void * arg)
+{
+	int socketCPU = ((int*)arg)[0];
+	while(1){//Villereada
+		while(!queue_is_empty(colaDeReady)){
+			PCB_DATA pcbAEjecutar = queue_pop(colaDeReady);
+			enviarMensaje(socketCPU,3,&pcbAEjecutar,sizeof(PCB_DATA)); // falta hacer este tipo.
+			recibirMensaje(socketCPU, &pcbAEjecutar);
+		}
+	}
 
-  int i = 0;
-  for (i; i<1000; i++) {
-    compartida = compartida + 1;
-    printf("%s : %d\n",nombre,compartida);
-    //sleep(1);
-  }
+}
+void *rutinaConsola(void * arg)
+{
+	int socketConsola = ((int*)arg)[0] ;
+	char* mensajeDeConsola = malloc(20);
+	recibirMensaje(socketConsola, mensajeDeConsola);
+	enviarMensaje(socketMemoria,2,mensajeDeConsola,strlen(mensajeDeConsola)+1);
+	free(mensajeDeConsola);
+	//aca spisso dice que van los diccionarios.
+	char* respuestaDeMemoria = malloc(3);
+	recibirMensaje(socketMemoria,respuestaDeMemoria);
+	if(strcmp(respuestaDeMemoria,"Ok")== 0){
+		PCB_DATA pcb;
+		pcb.id_pcb = pcbHistorico;
+		pcbHistorico++;
+		enviarMensaje(socketMemoria,2,&pcb,sizeof(pcb));
+		enviarMensaje(socketConsola,1,&(pcb.id_pcb),sizeof(int));
+		queue_push(colaDeReady,&pcb);
+		sem_wait(contadorDeCpus);
+		sem_post(contadorDeCpus);
+
+
+		//wait();
+		//signal();
+	}
+	else{
+		enviarMensaje(socketConsola,1,-1,sizeof(int));
+	}
 }
 
+void *aceptarConexiones( void *arg ){ // aca le sacamos el asterisco, porque esto era un void*
+	int listener = (int)arg;
+	int nuevoSocket;
+	int aceptados[] = {3,1};
+	struct sockaddr_storage their_addr;
+	char ip[INET6_ADDRSTRLEN];
+	socklen_t sin_size = sizeof their_addr;
+	escuchar(listener); // poner a escuchar ese socket
+
+	if ((nuevoSocket = accept(listener, (struct sockaddr *) &their_addr, &sin_size)) == -1) {// estas lines tienen que ser una funcion
+		perror("Error en el Accept");
+		//continue;
+	}
+	inet_ntop(their_addr.ss_family, getSin_Addr((struct sockaddr *) &their_addr), ip, sizeof ip); // para poder imprimir la ip del server
+	printf("Conexion con %s\n", ip);
+
+	int id_clienteConectado;
+	if ((id_clienteConectado = handshakeServidor(nuevoSocket, ID, aceptados)) == -1) {
+		perror("Error con el handshake: -1");
+		close(nuevoSocket);
+	}
+	printf("Conexión exitosa con el Cliente(%i)!!\n",id_clienteConectado);
+
+	pthread_t hilo_M;
+
+	switch(id_clienteConectado)
+	{
+		case 3:{ // Si el cliente conectado es el kernel
+			printf("ENTRO POR EL KERNEL");
+			pthread_create(&hilo_M, NULL, rutinaConsola, &nuevoSocket);
+			}break;
+		case 1:{ // Si es un cliente conectado es una CPU
+			printf("\nNueva CPU Conectada!\nSocket cpu %d\n\n", nuevoSocket);
+		//	rutinaCPU(nuevoSocket);
+			pthread_create(&hilo_M, NULL, rutinaCPU, &nuevoSocket);
+			}break;
+		default:{
+			//close(nuevoSocket);
+			}
+	}
+	pthread_join(hilo_M, NULL);
+}
 int main(void) {
 	printf("Inicializando Kernel.....\n\n");
 
@@ -55,7 +133,7 @@ int main(void) {
 
 	struct sockaddr_storage their_addr; // connector's address information
 
-	int id_cliente, socketFS, socketMemoria, rta_conexion, nbytes, socketAEnviarMensaje = 0, socketSeleccionado = 0;
+	int id_cliente, socketFS, rta_conexion, nbytes, socketAEnviarMensaje = 0, socketSeleccionado = 0;
 	int aceptados[] = { 1, 2, 3, 4 };
 
 	char ip_suponemos[INET6_ADDRSTRLEN]; // esto es una ip
@@ -106,9 +184,20 @@ int main(void) {
 	}
 	printf("Conexión exitosa con el Memoria(%i)!!\n",rta_conexion);
 	//int x = 4141;
-	char *x = "hola pt";
-	enviarMensaje(socketMemoria,2,x,strlen(x)+1);
-	FD_SET(socketMemoria, &write_fds);  // Agregamos el FileDescriptor de la Memoria al set del write (lo ponemos como que al wachin le vamos a escribir)
+	//char *x = "hola pt";
+	//enviarMensaje(socketMemoria,2,x,strlen(x)+1);
+	//FD_SET(socketMemoria, &write_fds);  // Agregamos el FileDescriptor de la Memoria al set del write (lo ponemos como que al wachin le vamos a escribir)
+
+
+	//Llega la consola
+	//hago toda la mierda y queda esperando una cpu (queue de proceso)
+
+	//llega la cpu
+	//tengo que darle el pid a la cpu
+	// esperar a que termine
+
+
+
 
 
 /*
@@ -194,7 +283,7 @@ int main(void) {
 
 	fdmax = listener; // por algun motivo desconocido por nosotros, el select necesita tener siempre apuntando al ultimo socket del master (el ultimo que se abre)
 */
-	while(1);
+
 	liberarConfiguracion();
 
 
