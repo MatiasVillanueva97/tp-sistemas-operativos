@@ -175,8 +175,10 @@ void *rutinaCPU(void * arg)
 }
 
 void *rutinaKernel(void *arg){ // no se si tiene que ser void
-	int socketCPU = (int)arg;
+	int socketCPU = ((int*)arg)[0] ;
 	int pidRecibido;
+	char* x = malloc(10);
+	recibirMensaje(socketCPU,x);
 	recibirMensaje(socketCPU,&pidRecibido);
 	int tamano;
 	recibirMensaje(socketCPU,&tamano);
@@ -216,24 +218,24 @@ void *aceptarConexiones( void *arg ){ // aca le sacamos el asterisco, porque est
 	}
 	printf("Conexión exitosa con el Cliente(%i)!!\n",id_clienteConectado);
 
-	pthread_t hilo_nuevaCPU,hilo_kernel;
+	pthread_t hilo_M;
 
 	switch(id_clienteConectado)
 	{
 		case 0:{ // Si el cliente conectado es el kernel
 			printf("ENTRO POR EL KERNEL");
-			pthread_create(&hilo_kernel, NULL, rutinaKernel, &nuevoSocket);
+			pthread_create(&hilo_M, NULL, rutinaKernel, &nuevoSocket);
 			}break;
 		case 1:{ // Si es un cliente conectado es una CPU
 			printf("\nNueva CPU Conectada!\nSocket cpu %d\n\n", nuevoSocket);
 		//	rutinaCPU(nuevoSocket);
-			pthread_create(&hilo_nuevaCPU, NULL, rutinaCPU, &nuevoSocket);
+			pthread_create(&hilo_M, NULL, rutinaCPU, &nuevoSocket);
 			}break;
 		default:{
-			close(nuevoSocket);
+			//close(nuevoSocket);
 			}
 	}
-	pthread_join(hilo_nuevaCPU, NULL);
+	pthread_join(hilo_M, NULL);
 }
 
 

@@ -26,7 +26,7 @@ int main(void)
 	printf("Inicializando CPU.....\n\n");
 
 	int socketCPU, rta_conexion;
-	char* mensajeRecibido =string_new();
+	char* mensajeRecibido =malloc(100);
 
 	// ******* Configuracion Inicial de CPU
 
@@ -39,7 +39,7 @@ int main(void)
 
 	printf("\n\nHola! Soy una cpu! Aca estan mis procesos:\n\n");
 
-	socketCPU = conexionConServidor(getConfigString("PUERTO_KERNEL"),getConfigString("IP_KERNEL")); // Asignación del socket que se conectara con el filesytem
+	socketCPU = conexionConServidor(getConfigString("PUERTO_MEMORIA"),getConfigString("IP_MEMORIA")); // Asignación del socket que se conectara con el filesytem
 
 	// validacion de un correcto hadnshake
 	if (socketCPU == 1){
@@ -57,6 +57,8 @@ int main(void)
 	printf("Conexión exitosa con el Servidor(%i)!!\n",rta_conexion);
 
 	// Recepcion del mensaje
+	int pcb = 42;
+	enviarMensaje(socketCPU,1,&pcb,sizeof(int));
 	if(recibirMensaje(socketCPU,(void*)mensajeRecibido)==-1){
 		perror("Error en el Reciv");
 	}
