@@ -71,16 +71,15 @@ int main(void) {
 		perror("Error con el handshake: -1");
 		close(nuevoSocket);
 	}
+	printf("Conexión exitosa con el Kernel(%i)!!\n",rta_handshake);
 
-	printf("Conexión exitosa con el Server(%i)!!\n",rta_handshake);
-
-
+/*
 	char* mensaje;
 	if(recibirMensaje(nuevoSocket,(void *)mensajeRecibido)==-1){
 		perror("Error en el Reciv");
 	}
 	printf("Mensaje desde el Kernel: %s\n\n", mensaje);
-
+*/
 	close(nuevoSocket);  // parent doesn't need this
 
 	liberarConfiguracion();
