@@ -180,8 +180,7 @@ void escuchar(int sockfd)
 		if (sigaction(SIGCHLD, &sa, NULL) == -1) {
 			perror("sigaction");
 			exit(1);
-		}
-		*/
+		}*/
 		printf("\n\nEstableciendo Conexiones:\n\n");
 }
 

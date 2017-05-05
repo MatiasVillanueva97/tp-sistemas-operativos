@@ -18,7 +18,7 @@
 #include "commons/config.h"
 #include "commons/collections/list.h"
 #include "commons/collections/queue.h"
- #include <semaphore.h>
+#include <semaphore.h>
 
 #include "../../Nuestras/src/laGranBiblioteca/sockets.h"
 #include "../../Nuestras/src/laGranBiblioteca/config.h"
@@ -35,13 +35,13 @@ int pcbHistorico = 0;
 t_queue* colaDeReady ;
 sem_t* contadorDeCpus = 0;
 
-typedef enum {
-	Kernel, // 0
-	CPU, // 1
-	Memoria, // 2
-	Consola, // 3
-	FileSystem, //  4
-}modulos;
+enum id_Modulos{
+	Kernel = 0,
+	CPU = 1,
+	Memoria = 2,
+	Consola = 3,
+	FileSystem = 4
+};
 
 
 typedef struct
@@ -136,7 +136,6 @@ int main(void) {
 
 	int	historico_pcb = 0;
 	socklen_t sin_size;
-	modulos id_mod;
 	struct sockaddr_storage their_addr; // connector's address information
 
 	int id_cliente, rta_conexion, nbytes, socketAEnviarMensaje = 0, socketSeleccionado = 0;
@@ -173,7 +172,7 @@ int main(void) {
 
 	printf("\n\n\nEsperando conexiones:\n-FileSystem\n-Memoria\n");
 	conectarConMemoria();
-	conectarConFS();
+//	conectarConFS();
 
 	listener = crearSocketYBindeo(getConfigString("PUERTO_PROG"));
 //	escuchar(listener);	 // Pone el listener (socket principal) a escuchar las peticiones
@@ -196,7 +195,9 @@ int main(void) {
 	// ******* Enviar Datos a Memoria
 
 	int sizeCodigoAnsisop= strlen(scripAnsisop)+1;
+
 	enviarMensaje(socketMemoria,2,scripAnsisop,sizeCodigoAnsisop); // Le envio el stream a memoria
+	enviarMensaje(socketMemoria,1,&sizeCodigoAnsisop,sizeof(int)); // Enviamos el size del stream a memoria
 
 	int ok=0;
 	recibirMensaje(socketMemoria, &ok); // Esperamos a que memoria me indique si puede guardar o no el stream
@@ -209,7 +210,6 @@ int main(void) {
 		pcb.id_pcb=historico_pcb; // asigno un pid al pcb
 		enviarMensaje(socketMemoria,2,&pcb.id_pcb,sizeof(int)); // Enviamos el pid a memoria
 
-		enviarMensaje(socketMemoria,1,&sizeCodigoAnsisop,sizeof(int)); // Enviamos el size del stream a memoria
 
 		int nuevo_contPags_pcb;
 		if(recibirMensaje(socketMemoria, &nuevo_contPags_pcb)==-1) // REcibimos el numero de pagina o contador de pagina o lo que sea necesario de pagina
@@ -220,6 +220,9 @@ int main(void) {
 		pcb.contPags_pcb=nuevo_contPags_pcb; // asigno el contador de pagns al pcb
 
 		printf("Pcb Despues de recibir la pagina y el ok:\n*-id_pcb: %d\n*-contPags_pcb: %d\n\n", pcb.id_pcb, pcb.contPags_pcb);
+	}
+	else{
+		printf("No hubo espacio para guardar en memoria!\n");
 	}
 
 

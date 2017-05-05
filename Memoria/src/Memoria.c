@@ -21,6 +21,7 @@
 #include <sys/wait.h>
 #include <signal.h>
 #include <pthread.h>
+#include <semaphore.h>
 #include "commons/config.h"
 
 #include "../../Nuestras/src/laGranBiblioteca/sockets.h"
@@ -31,8 +32,7 @@ int sizeOfPaginas;
 void* memoriaTotal;
 void* cache;
 
-int semaforoTrucho;
-pthread_mutex_t sem_isKernelConectado; // meparece que es otro tipo de semaforo, no mutex
+sem_t sem_isKernelConectado; // meparece que es otro tipo de semaforo, no mutex
 
 typedef struct{
 	uint32_t pagina;
@@ -86,15 +86,14 @@ int escribirMemoria(void* contenido,int tamano,void* memoria){
 				header.size= headerAnterior.size-tamano-tamanoHeader; //Calculo el puntero donde esta, es decir, el tamaño ocupado, y se lo resto a lo que queda.
 				memcpy(memoria+recorrido,&header,tamanoHeader);
 				//escribir en la memoria
-				return 0;
+				return 1;
 		}
 		else{
 			recorrido+=headerAnterior.size;//el header se posiciona para leer el siguiente header.
 		}
 		headerAnterior = *((HeapMetadata*) (memoria+recorrido));
 	}
-	return 1;//no hay espacio suficiente
-
+	return 0;//no hay espacio suficiente
 }
 void liberarMemoria(int posicion_dentro_de_la_pagina,void* pagina){
 	if (posicion_dentro_de_la_pagina<0){
@@ -174,12 +173,12 @@ void *rutinaCPU(void * arg)
 }
 
 /*
-     pthread_mutex_lock( &mutex_isKernelConectado );
-	 pthread_mutex_init()
-pthread_mutex_lock()
-pthread_mutex_unlock()
-pthread_mutex_destroy()
-	  pthread_mutex_unlock( &mutex );
+    pthread_mutex_lock( &mutex_isKernelConectado );
+	pthread_mutex_init()
+	pthread_mutex_lock()
+	pthread_mutex_unlock()
+	pthread_mutex_destroy()
+	pthread_mutex_unlock( &mutex );
 */
 
 
@@ -208,14 +207,23 @@ void *rutinaKernel(void *arg){ // no se si tiene que ser void
 	}
 	printf("[Rutina Kernel] - Kernel conectado exitosamente\n");
 
-	semaforoTrucho = 1;
-//	sem_post(&sem_isKernelConectado);
+	sem_post(&sem_isKernelConectado);
 
 	char* stream = malloc(100);
-	recibirMensaje(socketKernel,stream);
+	recibirMensaje(socketKernel,stream); // recibir el stream
 	printf("[Rutina Kernel] - Mensaje Enviado desde Kernel: %s\n",stream);
 
-	int okSePuedeGuardarEsteCodigo =1 ;
+	int tamano;
+	recibirMensaje(socketKernel,&tamano); // El Kernel me envia al tamanio del stream
+	printf("[Rutina Kernel] - Tamanio Enviado desde Kernel: %d\n",tamano);
+
+    int okSePuedeGuardarEsteCodigo; // hay que validar que se pueda guardar en memoria
+
+	if ((okSePuedeGuardarEsteCodigo=escribirMemoria(stream, tamano, memoriaTotal)))
+		printf("[Rutina Kernel] - Se Almaceno Correctamente el mensaje en memoria\n");
+	else
+		printf("[Rutina Kernel] - No se pudo almacenar espacio\n");
+
 	enviarMensaje(socketKernel,1,&okSePuedeGuardarEsteCodigo,sizeof(int));   //Respuesta de que salio todo ok en memoria asi el kernel puede avanzar
 	printf("[Rutina Kernel] - Respuesta Enviada a Kernel: %d\n",okSePuedeGuardarEsteCodigo);
 
@@ -223,30 +231,20 @@ void *rutinaKernel(void *arg){ // no se si tiene que ser void
 	recibirMensaje(socketKernel,&pidRecibido); // El Kernel Me envia el pid
 	printf("[Rutina Kernel] - Pid Enviado desde Kernel: %d\n",pidRecibido);
 
-	int tamano;
-	recibirMensaje(socketKernel,&tamano); // El Kernel me envia al tamanio del stream
-	printf("[Rutina Kernel] - Tamanio Enviado desde Kernel: %d\n",tamano);
-
-//	void* contenido = malloc(tamano); // estos pequeñines tiran segmenteishon fold
-//	char* mensaje = "No se pudo almacenar espacio";
-
 	//Hay que hacer que se guarden cosas en la memoria!
-/*	if (escribirMemoria(contenido, tamano, NULL)!=-1) ///  null = tamanioDatosAEnviarCPU
-	{
-		mensaje = "Se almaceno correctamente";
-	}
+	if (escribirMemoria(stream, tamano, memoriaTotal)!=-1)		//mensaje = "Se almaceno correctamente";
+		printf("[Rutina Kernel] - Se Almaceno Correctamente el mensaje en memoria\n");
+	else
+		printf("[Rutina Kernel] - No se pudo almacenar espacio\n");
 
 	//Aca hay que almacenarlo en la tabla (Cuando lo escribis deberia ser)
-	enviarMensaje(socketKernel,2,mensaje,strlen(mensaje+1));
-*/
+	//enviarMensaje(socketKernel,2,mensaje,strlen(mensaje+1));
 
-	int nroPagina = 53;
+	int nroPagina = 1; // devolvemos 1 porque solo hay una pagina por ahora
 	enviarMensaje(socketKernel,1,&nroPagina,sizeof(int));   //Respuesta de que salio todo ok en memoria asi el kernel puede avanzar
 	printf("[Rutina Kernel] - nroPagina Enviada a Kernel: %d\n",nroPagina);
 
-
-//	free(mensaje);
-//	free(contenido);
+	free(stream);
 }
 
 void *aceptarConexionesCpu( void *arg ){ // aca le sacamos el asterisco, porque esto era un void*
@@ -260,11 +258,7 @@ void *aceptarConexionesCpu( void *arg ){ // aca le sacamos el asterisco, porque 
 
 	pthread_t hilo_nuevaCPU;
 
-	while(semaforoTrucho<0){
-		printf("[AceptarConexionesCPU] - Esperando a que se conecte un Kernel...\n");
-		sleep(2);
-	} //Implementacion negrisima de un semaforo
-	//sem_wait(&sem_isKernelConectado);
+	sem_wait(&sem_isKernelConectado);
 	printf("[AceptarConexionesCPU] - Ya se ha establecido Conexion con un Kernel, ahora si se pueden conectar CPUs: \n");
 
 	while (1)
@@ -327,16 +321,16 @@ int main(void) {
 
 	pthread_t hilo_AceptarConexionesCPU, hilo_Kernel;
 
-	semaforoTrucho = -100;
-	//sem_init(&sem_isKernelConectado,-1,1);
+	//semaforoTrucho = -100;
+	sem_init(&sem_isKernelConectado,0,0);
 
 	pthread_create(&hilo_Kernel, NULL, rutinaKernel,  listener);
 	pthread_create(&hilo_AceptarConexionesCPU, NULL, aceptarConexionesCpu, listener);
 
-	printf("Mensaje desde la ram principal del programa!\n");
+	printf("\nMensaje desde la ram principal del programa!\n");
 
-	pthread_join(hilo_AceptarConexionesCPU , NULL);
 	pthread_join(hilo_Kernel, NULL);
+	pthread_join(hilo_AceptarConexionesCPU , NULL);
 	close(listener);
 	liberarConfiguracion();
 	free(memoriav1);
