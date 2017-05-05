@@ -211,31 +211,42 @@ void *rutinaKernel(void *arg){ // no se si tiene que ser void
 	semaforoTrucho = 1;
 //	sem_post(&sem_isKernelConectado);
 
-	int pidRecibido =1 ;
-	char* x = malloc(100);
+	char* stream = malloc(100);
+	recibirMensaje(socketKernel,stream);
+	printf("[Rutina Kernel] - Mensaje Enviado desde Kernel: %s\n",stream);
 
-	recibirMensaje(socketKernel,x);
+	int okSePuedeGuardarEsteCodigo =1 ;
+	enviarMensaje(socketKernel,1,&okSePuedeGuardarEsteCodigo,sizeof(int));   //Respuesta de que salio todo ok en memoria asi el kernel puede avanzar
+	printf("[Rutina Kernel] - Respuesta Enviada a Kernel: %d\n",okSePuedeGuardarEsteCodigo);
 
-	printf("[Rutina Kernel] - Mensaje Enviado desde Kernel: %s\n",x);
+	int pidRecibido;
+	recibirMensaje(socketKernel,&pidRecibido); // El Kernel Me envia el pid
+	printf("[Rutina Kernel] - Pid Enviado desde Kernel: %d\n",pidRecibido);
 
-	//Respuesta de que salio todo ok en memoria asi el kernel puede avanzar
-	enviarMensaje(socketKernel,1,&pidRecibido,sizeof(int));
-
-/*	recibirMensaje(socketKernel,&pidRecibido);
 	int tamano;
-	recibirMensaje(socketKernel,&tamano);
-	void* contenido = malloc(tamano);
-	char* mensaje = "No se pudo almacenar espacio";
+	recibirMensaje(socketKernel,&tamano); // El Kernel me envia al tamanio del stream
+	printf("[Rutina Kernel] - Tamanio Enviado desde Kernel: %d\n",tamano);
 
-	if (escribirMemoria(contenido, tamano, NULL)!=-1) ///  null = tamanioDatosAEnviarCPU
+//	void* contenido = malloc(tamano); // estos pequeñines tiran segmenteishon fold
+//	char* mensaje = "No se pudo almacenar espacio";
+
+	//Hay que hacer que se guarden cosas en la memoria!
+/*	if (escribirMemoria(contenido, tamano, NULL)!=-1) ///  null = tamanioDatosAEnviarCPU
 	{
 		mensaje = "Se almaceno correctamente";
 	}
+
 	//Aca hay que almacenarlo en la tabla (Cuando lo escribis deberia ser)
 	enviarMensaje(socketKernel,2,mensaje,strlen(mensaje+1));
-	free(mensaje);
-	free(contenido);
 */
+
+	int nroPagina = 53;
+	enviarMensaje(socketKernel,1,&nroPagina,sizeof(int));   //Respuesta de que salio todo ok en memoria asi el kernel puede avanzar
+	printf("[Rutina Kernel] - nroPagina Enviada a Kernel: %d\n",nroPagina);
+
+
+//	free(mensaje);
+//	free(contenido);
 }
 
 void *aceptarConexionesCpu( void *arg ){ // aca le sacamos el asterisco, porque esto era un void*
