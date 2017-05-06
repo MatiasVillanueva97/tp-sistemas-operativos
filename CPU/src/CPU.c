@@ -18,7 +18,7 @@
 #include "commons/string.h"
 #include <parser/metadata_program.h>
 #include <parser/parser.h>
-
+#include <parser/sintax.h>
 #include "primitivas.h"
 #include "compartidas.h"
 
@@ -109,14 +109,26 @@ int main(void)
 
 		char** lineasDelScript= string_split(script,"\n");
 		i = 0;
-		while(lineasDelScript[i] != NULL){
+		/*while(lineasDelScript[i] != NULL){
 			analizadorLinea(lineasDelScript[i],AnSISOP_funciones,AnSISOP_funciones_kernel);
 			i++;
-		}
+		}*/
+		/*if (strcmp(lineasDelScript[1],TEXT_BEGIN)){
+		      perror("Error en el begin");
+		  }
+		  while(lineasDelScript[i]!= NULL){
+			  char ** algo = string_split(lineasDelScript[i]," s");
+			  if(algo[2]!=NULL){
+				  puts(algo[2]);
+
+			  }
 
 
 
-		free(script);
+		   i++;
+		  }
+		  */
+		puts(script);
 	}
 	close(socketKernel);
 	liberarConfiguracion();

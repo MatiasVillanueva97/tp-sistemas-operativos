@@ -178,7 +178,7 @@ void* laFuncionMagicaDeConsola(void* parametros){
 
 	pthread_mutex_lock( &mutex );
 
-	if(hayMensajeNuevo){
+	/*if(hayMensajeNuevo){
 		recibirMensaje(parametrosHiloPrograma->socket,(void *)&mensajeDeProceso);
 		hayMensajeNuevo = 0;
 	}
@@ -186,7 +186,7 @@ void* laFuncionMagicaDeConsola(void* parametros){
 		printf("%s",mensajeDeProceso.mensaje);
 		hayMensajeNuevo = 1;
 	}
-
+	*/
 	pthread_mutex_unlock( &mutex );
 
 	free(pid);

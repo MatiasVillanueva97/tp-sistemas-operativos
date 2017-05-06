@@ -92,12 +92,12 @@ void *rutinaCPU(void * arg)
 			enviarMensaje(socketCPU,3,pcbGlobal,sizeof(PCB_DATA)); // falta hacer este tipo.
 			void* resultado = malloc(100);
 
-			int tamano = recibirMensaje(socketCPU, resultado);
+			//int tamano = recibirMensaje(socketCPU, resultado);
 
 
 			if(socketConsola2!= 0){
-				enviarMensaje(socketConsola2,1,&(pcbGlobal->pid),sizeof(int));//esto no estoy seguro si anda
-				enviarMensaje(socketConsola2,2,resultado,tamano); // falta hacer este tipo.
+				//enviarMensaje(socketConsola2,1,&(pcbGlobal->pid),sizeof(int));//esto no estoy seguro si anda
+				//enviarMensaje(socketConsola2,2,resultado,tamano); // falta hacer este tipo.
 				printf("Termine la cpu, buscando nuevos procesos para realizar");
 			}
 			else{
