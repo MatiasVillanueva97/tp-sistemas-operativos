@@ -52,8 +52,30 @@ typedef struct
 	int contPags_pcb;
 }__attribute__((packed)) PCB_DATA;
 
+typedef struct{
+	PCB_DATA pcb;
+	int socket;
+}pcb_Consola;
 
+t_list* tablaConsolaPcb;
+void agregarATablaConsolaPcb(PCB_DATA* pcb, int* socket){
+	pcb_Consola pcb_Consola;
+	pcb_Consola.pcb = *pcb;
+	pcb_Consola.socket = *socket;
+	list_add(tablaConsolaPcb, &pcb_Consola);
+}
 
+int obtenerSocketConsola(PCB_DATA* pcb){
+	bool busqueda(PCB_DATA* pcb2){
+		return pcb->pid == pcb2->pid;
+	}
+	if (!list_any_satisfy(tablaConsolaPcb,busqueda)){
+		pcb_Consola* pcbActual =list_find(tablaConsolaPcb,busqueda);
+		return pcbActual->socket;
+	}
+	else
+		return -1;
+}
 void *rutinaCPU(void * arg)
 {
 	int listener = (int)arg ;
@@ -85,7 +107,18 @@ void *rutinaCPU(void * arg)
 		while(!queue_is_empty(colaDeReady)){
 			PCB_DATA *pcbAEjecutar = queue_pop(colaDeReady);
 			enviarMensaje(socketCPU,3,pcbAEjecutar,sizeof(PCB_DATA)); // falta hacer este tipo.
-			recibirMensaje(socketCPU, pcbAEjecutar);
+			void* resultado = malloc(100);
+			int tamano = recibirMensaje(socketCPU, resultado);
+			int socketConsola = obtenerSocketConsola(pcbAEjecutar);
+			if(socketConsola!= -1){
+				enviarMensaje(socketConsola,1,&(pcbAEjecutar->pid),sizeof(int));//esto no estoy seguro si anda
+				enviarMensaje(socketConsola,2,resultado,tamano); // falta hacer este tipo.
+				printf("Termine la cpu, buscando nuevos procesos para realizar");
+			}
+			else{
+				printf("No pude obtener el socketConsola de la lista de sockets");
+				exit(-56);
+			}
 		}
 	}
 }
@@ -99,8 +132,9 @@ void *rutinaConsola(void * arg)
 	struct sockaddr_storage their_addr;
 	char ip[INET6_ADDRSTRLEN];
 	socklen_t sin_size = sizeof their_addr;
-
 	escuchar(listener); // poner a escuchar ese socket
+
+
 
 	if ((socketConsola = accept(listener, (struct sockaddr *) &their_addr, &sin_size)) == -1) {// estas lines tienen que ser una funcion
 		perror("Error en el Accept");
@@ -143,7 +177,7 @@ void *rutinaConsola(void * arg)
 		printf("\n\nMemoria dio el Ok para el proceso recien enviado\n");
 		PCB_DATA pcb;
 		historico_pcb++;
-
+		agregarATablaConsolaPcb(&pcb,&socketConsola);
 		pcb.pid=historico_pcb; // asigno un pid al pcb
 		enviarMensaje(socketMemoria,2,&pcb.pid,sizeof(int)); // Enviamos el pid a memoria
 
