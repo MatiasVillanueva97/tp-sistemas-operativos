@@ -1,0 +1,4 @@
+#!/usr/bin/ansisop
+begin
+	prints "algo"
+end

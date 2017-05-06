@@ -33,7 +33,7 @@ int socketMemoria;
 int socketFS;
 int	historico_pcb = 0;
 
-t_queue* colaDeReady ;
+t_queue* colaDeReady;
 
 sem_t* contadorDeCpus = 0;
 
@@ -58,6 +58,7 @@ typedef struct{
 }pcb_Consola;
 
 t_list* tablaConsolaPcb;
+
 void agregarATablaConsolaPcb(PCB_DATA* pcb, int* socket){
 	pcb_Consola pcb_Consola;
 	pcb_Consola.pcb = *pcb;
@@ -69,7 +70,7 @@ int obtenerSocketConsola(PCB_DATA* pcb){
 	bool busqueda(PCB_DATA* pcb2){
 		return pcb->pid == pcb2->pid;
 	}
-	if (!list_any_satisfy(tablaConsolaPcb,busqueda)){
+	if (list_any_satisfy(tablaConsolaPcb,busqueda)){
 		pcb_Consola* pcbActual =list_find(tablaConsolaPcb,busqueda);
 		return pcbActual->socket;
 	}
@@ -78,38 +79,17 @@ int obtenerSocketConsola(PCB_DATA* pcb){
 }
 void *rutinaCPU(void * arg)
 {
-	int listener = (int)arg ;
-	int socketCPU;
-	int aceptados[] = {CPU};
-	struct sockaddr_storage their_addr;
-	char ip[INET6_ADDRSTRLEN];
-	socklen_t sin_size = sizeof their_addr;
-
-	escuchar(listener); // poner a escuchar ese socket
-
-	if ((socketCPU = accept(listener, (struct sockaddr *) &their_addr, &sin_size)) == -1) {// estas lines tienen que ser una funcion
-		perror("Error en el Accept");
-		//continue;
-	}
-	inet_ntop(their_addr.ss_family, getSin_Addr((struct sockaddr *) &their_addr), ip, sizeof ip); // para poder imprimir la ip del server
-	printf("[Rutina CPU] - Conexion con %s\n", ip);
-
-	int id_clienteConectado;
-
-	if ((id_clienteConectado = handshakeServidor(socketCPU, ID, aceptados)) == -1) {
-		perror("Error con el handshake: -1");
-		close(socketCPU);
-	}
-	printf("[Rutina CPU] - CPU conectado exitosamente\n");
-
+	int socketCPU = (int)arg ;
 
 	while(1){  //Villereada
 		while(!queue_is_empty(colaDeReady)){
 			PCB_DATA *pcbAEjecutar = queue_pop(colaDeReady);
 			enviarMensaje(socketCPU,3,pcbAEjecutar,sizeof(PCB_DATA)); // falta hacer este tipo.
 			void* resultado = malloc(100);
+
 			int tamano = recibirMensaje(socketCPU, resultado);
-			int socketConsola = obtenerSocketConsola(pcbAEjecutar);
+			int socketConsola = obtenerSocketConsola(&pcbAEjecutar);
+
 			if(socketConsola!= -1){
 				enviarMensaje(socketConsola,1,&(pcbAEjecutar->pid),sizeof(int));//esto no estoy seguro si anda
 				enviarMensaje(socketConsola,2,resultado,tamano); // falta hacer este tipo.
@@ -126,44 +106,9 @@ void *rutinaCPU(void * arg)
 
 void *rutinaConsola(void * arg)
 {
-	int listener = (int)arg ;
-	int socketConsola;
-	int aceptados[] = {CPU};
-	struct sockaddr_storage their_addr;
-	char ip[INET6_ADDRSTRLEN];
-	socklen_t sin_size = sizeof their_addr;
-	escuchar(listener); // poner a escuchar ese socket
-
-
-
-	if ((socketConsola = accept(listener, (struct sockaddr *) &their_addr, &sin_size)) == -1) {// estas lines tienen que ser una funcion
-		perror("Error en el Accept");
-		//continue;
-	}
-	inet_ntop(their_addr.ss_family, getSin_Addr((struct sockaddr *) &their_addr), ip, sizeof ip); // para poder imprimir la ip del server
-	printf("[Rutina Consola] - Conexion con %s\n", ip);
-
-	int id_clienteConectado;
-
-	if ((id_clienteConectado = handshakeServidor(socketConsola, ID, aceptados)) == -1) {
-		perror("Error con el handshake: -1");
-		close(socketConsola);
-	}
-	printf("[Rutina Consola] - Consola conectada exitosamente\n");
-
+	int socketConsola = (int)arg ;
 
 	char* scripAnsisop = malloc(120);
-
-	// Consola:
-	// Nos tiene que mandar un script - chorrrodebytes
-	// le devolvemos al pid
-	// -------- viene todo el proceso
-	// le enviamos el "resultad" , un stream - chorrodebytes
-
-	// CPU:
-	// Nosotros le mandamos el pcb a la cpu
-	// ---- proceso ---
-	// esperamos que nos mande el resultado , con el pid
 
 	int sizeCodigoAnsisop = recibirMensaje(socketConsola, scripAnsisop);
 
@@ -179,6 +124,8 @@ void *rutinaConsola(void * arg)
 		historico_pcb++;
 		agregarATablaConsolaPcb(&pcb,&socketConsola);
 		pcb.pid=historico_pcb; // asigno un pid al pcb
+
+		printf("Pid enviado a memoria: %d", pcb.pid);
 		enviarMensaje(socketMemoria,2,&pcb.pid,sizeof(int)); // Enviamos el pid a memoria
 
 		int nuevo_contPags_pcb;
@@ -205,7 +152,7 @@ void *aceptarConexiones( void *arg ){
 	socklen_t sin_size = sizeof their_addr;
 
 
-	escuchar(listener); // poner a escuchar ese socket
+//	escuchar(listener); // poner a escuchar ese socket
 
 	while(1)
 	{
@@ -228,12 +175,12 @@ void *aceptarConexiones( void *arg ){
 		{
 			case CPU: // Si el cliente conectado es el cpu
 			{
-				printf("Entro una CPU\n");
+				printf("Nueva CPU Conectada\nSocket CPU %d\n\n", nuevoSocket);
 				pthread_create(&hilo_M, NULL, rutinaCPU, nuevoSocket);
 			}break;
 			case Consola: // Si es un cliente conectado es una CPU
 			{
-				printf("\nNueva CPU Conectada!\nSocket cpu %d\n\n", nuevoSocket);
+				printf("\nNueva Consola Conectada!\nSocket Consola %d\n\n", nuevoSocket);
 				pthread_create(&hilo_M, NULL, rutinaConsola, nuevoSocket);
 			}break;
 			default:
@@ -296,19 +243,10 @@ int main(void) {
 	char ip_suponemos[INET6_ADDRSTRLEN]; // esto es una ip
 	char mensajeRecibido[100];
 
-	// Variables para el while que contiene el select
-	fd_set master;    // master file descriptor list
-	fd_set read_fds;  // temp file descriptor list for select()
-	fd_set write_fds;
+	colaDeReady = queue_create();
+	tablaConsolaPcb = list_create();
 
-	int fdmax;        // Maximo numero del FileDescriptor
 	int listener;     // Socket principal
-	int nuevoSocket;  // Socket donde se asignan las peticiones
-	FD_ZERO(&master);    // clear the master and temp sets
-	FD_ZERO(&read_fds);
-	FD_ZERO(&write_fds);
-
-
 
 	// ******* Configuracion del Kernel a partir de un archivo
 
@@ -330,12 +268,13 @@ int main(void) {
 
 
 
+	escuchar(listener); // poner a escuchar ese socket
 
 	// ******* Recibir datos desde las Consolas -- rutina consola
 
-	pthread_t hilo_rutinaConsola;
+	pthread_t hilo_aceptarConexiones;
 
-	pthread_create(&hilo_rutinaConsola, NULL, rutinaConsola, listener);
+	pthread_create(&hilo_aceptarConexiones, NULL, aceptarConexiones, listener);
 
 
 
@@ -347,13 +286,12 @@ int main(void) {
 
 	// ******* Planificar procesos para las CPUs
 
-	pthread_t hilo_rutinaCPU;
-	pthread_create(&hilo_rutinaCPU, NULL, rutinaConsola, listener);
 
 
 
-	pthread_join(hilo_rutinaCPU, NULL);
-	pthread_join(hilo_rutinaConsola, NULL);
+
+	pthread_join(hilo_aceptarConexiones, NULL);
+
 	liberarConfiguracion();
 
 

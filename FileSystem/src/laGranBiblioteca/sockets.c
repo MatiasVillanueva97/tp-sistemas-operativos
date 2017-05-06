@@ -180,7 +180,8 @@ void escuchar(int sockfd)
 		if (sigaction(SIGCHLD, &sa, NULL) == -1) {
 			perror("sigaction");
 			exit(1);
-		}*/
+		}
+		*/
 		printf("\n\nEstableciendo Conexiones:\n\n");
 }
 
@@ -214,6 +215,36 @@ void *deserializador(Header header,int socket)
 				break;
 			}
 			return contenido;
+		case 3:{
+					struct{
+						int pid;
+						int contPags_pcb;
+					}__attribute__((packed)) *PCB_DATA = malloc(sizeof(int)*2);
+					if(recv(socket,&PCB_DATA->pid,sizeof(int),0)==-1){
+						perror("Error al recibir mensajes dinamicos");
+						break;
+					}
+					if(recv(socket,&PCB_DATA->contPags_pcb,sizeof(int),0)==-1){
+						perror("Error al recibir mensajes dinamicos");
+						break;
+					}
+					return PCB_DATA;
+				}
+				case 4:{
+					struct{
+						int pid;
+						char* mensaje;
+					}*paraImprimir = malloc(header.tamano);
+					if(recv(socket,&paraImprimir->pid,sizeof(int),0)==-1){
+						perror("Error al recibir mensajes dinamicos");
+						break;
+					}
+					if(recv(socket,&paraImprimir->mensaje,header.tamano-sizeof(int),0)==-1){
+						perror("Error al recibir mensajes dinamicos");
+						break;
+					}
+					return paraImprimir;
+				}
 		}
 		default:
 			perror("Error al recibir mensajes");
@@ -265,10 +296,21 @@ void* serializar (int tipoMensaje, void* contenido, int tamanioMensaje){
 			memcpy(stream+sizeof(int), &tamanioMensaje, sizeof(int));
 			memcpy(stream+(sizeof(int)*2), contenido, tamanioMensaje);
 		}break;
+		case 3:{
+				memcpy(stream+sizeof(int), &tamanioMensaje, sizeof(int));
+				memcpy(stream+(sizeof(int)*2), contenido, tamanioMensaje);
+				break;
+			}
+			case 4:{
+				memcpy(stream+sizeof(int), &tamanioMensaje, sizeof(int));
+				memcpy(stream+(sizeof(int)*2), contenido, tamanioMensaje);
+				break;
+			}
 		default:{
 			perror("Error al serializar el chorro de bytes");
 			exit(-1);
 		}break;
+
 
 	}
 	return stream;

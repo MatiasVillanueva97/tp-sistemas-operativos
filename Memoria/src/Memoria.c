@@ -308,11 +308,6 @@ int main(void) {
 	header.size= sizeOfPaginas-5;
 	memcpy(memoriaTotal,&header,tamanoHeader);
 
-	// Seteamos algo dentro de la memoria para poder realizar pruebas
-	escribirMemoria((void*)"hola hijo de puta",strlen("hola hijo de puta")+1,memoriaTotal);
-	escribirMemoria((void*)"hola hijo de",strlen("hola hijo de")+1,memoriaTotal);
-	escribirMemoria((void*)"hola",strlen("hola")+1,memoriaTotal);
-
 	char *memoriav1 = string_new();
 
 	// ******* Conexiones obligatorias y necesarias
