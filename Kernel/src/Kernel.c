@@ -32,8 +32,9 @@
 int socketMemoria;
 int socketFS;
 int	historico_pcb = 0;
+int socketConsola2=0;
 
-t_queue* colaDeReady;
+//t_queue* colaDeReady;
 
 sem_t* contadorDeCpus = 0;
 
@@ -57,13 +58,14 @@ typedef struct{
 	int socket;
 }pcb_Consola;
 
-t_list* tablaConsolaPcb;
-
+//t_list* tablaConsolaPcb;
+PCB_DATA* pcbGlobal;
+/*
 void agregarATablaConsolaPcb(PCB_DATA* pcb, int* socket){
-	pcb_Consola pcb_Consola;
-	pcb_Consola.pcb = *pcb;
-	pcb_Consola.socket = *socket;
-	list_add(tablaConsolaPcb, &pcb_Consola);
+	pcb_Consola* pcb_Consola = malloc(15);
+	pcb_Consola->pcb = *pcb;
+	pcb_Consola->socket = *socket;
+	list_add(tablaConsolaPcb, pcb_Consola);
 }
 
 int obtenerSocketConsola(PCB_DATA* pcb){
@@ -77,34 +79,33 @@ int obtenerSocketConsola(PCB_DATA* pcb){
 	else
 		return -1;
 }
+*/
 void *rutinaCPU(void * arg)
 {
 	int socketCPU = (int)arg ;
 
-	while(1){  //Villereada
-		while(!queue_is_empty(colaDeReady)){
-			printf("[Rutina CPU] - arriba del pop - Pcb Guardado en la cola:\n*-id_pcb: %d\n*-contPags_pcb: %d\n\n", ((PCB_DATA*)colaDeReady->elements->head->data)->pid, ((PCB_DATA*)colaDeReady->elements->head->data)->contPags_pcb);
+	//while(1){  //Villereada
+	//	while(!queue_is_empty(colaDeReady)){
+	while(socketConsola2 == 0);
 
-			PCB_DATA *pcbAEjecutar = (PCB_DATA*)queue_pop(colaDeReady);
 
-			printf("[Rutina CPU] - abajo del pop Pcb Guardado en la cola:\n*-id_pcb: %d\n*-contPags_pcb: %d\n\n", pcbAEjecutar->pid, pcbAEjecutar->contPags_pcb);
-			enviarMensaje(socketCPU,3,pcbAEjecutar,sizeof(PCB_DATA)); // falta hacer este tipo.
+			enviarMensaje(socketCPU,3,pcbGlobal,sizeof(PCB_DATA)); // falta hacer este tipo.
 			void* resultado = malloc(100);
 
 			int tamano = recibirMensaje(socketCPU, resultado);
-			int socketConsola = obtenerSocketConsola(&pcbAEjecutar);
 
-			if(socketConsola!= -1){
-				enviarMensaje(socketConsola,1,&(pcbAEjecutar->pid),sizeof(int));//esto no estoy seguro si anda
-				enviarMensaje(socketConsola,2,resultado,tamano); // falta hacer este tipo.
+
+			if(socketConsola2!= 0){
+				enviarMensaje(socketConsola2,1,&(pcbGlobal->pid),sizeof(int));//esto no estoy seguro si anda
+				enviarMensaje(socketConsola2,2,resultado,tamano); // falta hacer este tipo.
 				printf("Termine la cpu, buscando nuevos procesos para realizar");
 			}
 			else{
 				printf("No pude obtener el socketConsola de la lista de sockets");
 				exit(-56);
 			}
-		}
-	}
+	//	}
+	//}
 }
 
 
@@ -126,11 +127,12 @@ void *rutinaConsola(void * arg)
 	{
 		printf("\n\nMemoria dio el Ok para el proceso recien enviado\n");
 		historico_pcb++;
-		agregarATablaConsolaPcb(pcb,&socketConsola);
+//		agregarATablaConsolaPcb(pcb,&socketConsola);
 		pcb->pid=historico_pcb; // asigno un pid al pcb
 
 		printf("Pid enviado a memoria: %d", pcb->pid);
-		enviarMensaje(socketMemoria,2, pcb->pid,sizeof(int)); // Enviamos el pid a memoria
+		int aux = pcb->pid;
+		enviarMensaje(socketMemoria,2, &aux,sizeof(int)); // Enviamos el pid a memoria
 
 		int nuevo_contPags_pcb;
 		if(recibirMensaje(socketMemoria, &nuevo_contPags_pcb)==-1) // REcibimos el numero de pagina o contador de pagina o lo que sea necesario de pagina
@@ -140,9 +142,9 @@ void *rutinaConsola(void * arg)
 
 		printf("Pcb Despues de recibir la pagina y el ok:\n*-id_pcb: %d\n*-contPags_pcb: %d\n\n", pcb->pid, pcb->contPags_pcb);
 
-		queue_push(colaDeReady,pcb); // agregamos el pcb a la cola de redys
-
-		printf("Pcb Guardado en la cola:\n*-id_pcb: %d\n*-contPags_pcb: %d\n\n", ((PCB_DATA*)colaDeReady->elements->head->data)->pid, ((PCB_DATA*)colaDeReady->elements->head->data)->contPags_pcb);
+		//queue_push(colaDeReady,pcb); // agregamos el pcb a la cola de redys
+		pcbGlobal = pcb;
+		socketConsola2 = socketConsola;
 	}
 	else
 		printf("No hubo espacio para guardar en memoria!\n");
@@ -237,7 +239,7 @@ void conectarConFS()
 
 int main(void) {
 	printf("Inicializando Kernel.....\n\n");
-
+	pcbGlobal = malloc(10);
 	// ******* Declaración de la mayoria de las variables a utilizar
 
 	socklen_t sin_size;
@@ -249,8 +251,8 @@ int main(void) {
 	char ip_suponemos[INET6_ADDRSTRLEN]; // esto es una ip
 	char mensajeRecibido[100];
 
-	colaDeReady = queue_create();
-	tablaConsolaPcb = list_create();
+	//colaDeReady = queue_create();
+	//tablaConsolaPcb = list_create();
 
 	int listener;     // Socket principal
 
