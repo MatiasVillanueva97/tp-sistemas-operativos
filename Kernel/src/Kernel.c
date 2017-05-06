@@ -83,7 +83,11 @@ void *rutinaCPU(void * arg)
 
 	while(1){  //Villereada
 		while(!queue_is_empty(colaDeReady)){
-			PCB_DATA *pcbAEjecutar = queue_pop(colaDeReady);
+			printf("[Rutina CPU] - arriba del pop - Pcb Guardado en la cola:\n*-id_pcb: %d\n*-contPags_pcb: %d\n\n", ((PCB_DATA*)colaDeReady->elements->head->data)->pid, ((PCB_DATA*)colaDeReady->elements->head->data)->contPags_pcb);
+
+			PCB_DATA *pcbAEjecutar = (PCB_DATA*)queue_pop(colaDeReady);
+
+			printf("[Rutina CPU] - abajo del pop Pcb Guardado en la cola:\n*-id_pcb: %d\n*-contPags_pcb: %d\n\n", pcbAEjecutar->pid, pcbAEjecutar->contPags_pcb);
 			enviarMensaje(socketCPU,3,pcbAEjecutar,sizeof(PCB_DATA)); // falta hacer este tipo.
 			void* resultado = malloc(100);
 
@@ -115,28 +119,30 @@ void *rutinaConsola(void * arg)
 	enviarMensaje(socketMemoria,2,scripAnsisop,sizeCodigoAnsisop); // Le envio el stream a memoria
 	enviarMensaje(socketMemoria,1,&sizeCodigoAnsisop,sizeof(int)); // Enviamos el size del stream a memoria
 
+	PCB_DATA* pcb = malloc(10);
 	int ok=0;
 	recibirMensaje(socketMemoria, &ok); // Esperamos a que memoria me indique si puede guardar o no el stream
 	if(ok)
 	{
 		printf("\n\nMemoria dio el Ok para el proceso recien enviado\n");
-		PCB_DATA pcb;
 		historico_pcb++;
-		agregarATablaConsolaPcb(&pcb,&socketConsola);
-		pcb.pid=historico_pcb; // asigno un pid al pcb
+		agregarATablaConsolaPcb(pcb,&socketConsola);
+		pcb->pid=historico_pcb; // asigno un pid al pcb
 
-		printf("Pid enviado a memoria: %d", pcb.pid);
-		enviarMensaje(socketMemoria,2,&pcb.pid,sizeof(int)); // Enviamos el pid a memoria
+		printf("Pid enviado a memoria: %d", pcb->pid);
+		enviarMensaje(socketMemoria,2, pcb->pid,sizeof(int)); // Enviamos el pid a memoria
 
 		int nuevo_contPags_pcb;
 		if(recibirMensaje(socketMemoria, &nuevo_contPags_pcb)==-1) // REcibimos el numero de pagina o contador de pagina o lo que sea necesario de pagina
 			perror("Error en el reciv del contador de paginas del pcb desde memoria");
 
-		pcb.contPags_pcb=nuevo_contPags_pcb; // asigno el contador de pagns al pcb
+		pcb->contPags_pcb=nuevo_contPags_pcb; // asigno el contador de pagns al pcb
 
-		printf("Pcb Despues de recibir la pagina y el ok:\n*-id_pcb: %d\n*-contPags_pcb: %d\n\n", pcb.pid, pcb.contPags_pcb);
+		printf("Pcb Despues de recibir la pagina y el ok:\n*-id_pcb: %d\n*-contPags_pcb: %d\n\n", pcb->pid, pcb->contPags_pcb);
 
-		queue_push(colaDeReady, &pcb); // agregamos el pcb a la cola de redys
+		queue_push(colaDeReady,pcb); // agregamos el pcb a la cola de redys
+
+		printf("Pcb Guardado en la cola:\n*-id_pcb: %d\n*-contPags_pcb: %d\n\n", ((PCB_DATA*)colaDeReady->elements->head->data)->pid, ((PCB_DATA*)colaDeReady->elements->head->data)->contPags_pcb);
 	}
 	else
 		printf("No hubo espacio para guardar en memoria!\n");
