@@ -31,9 +31,14 @@
 int sizeOfPaginas;
 void* memoriaTotal;
 void* cache;
+typedef struct{
+	int pid;
+	int pagina;
+	int frame;
+}filaDeTablaPaginaInvertida;
 
 sem_t sem_isKernelConectado; // meparece que es otro tipo de semaforo, no mutex
-
+filaDeTablaPaginaInvertida* tablaDePaginacionInvertida; //Podria ser un t_list
 typedef struct{
 	uint32_t pagina;
 	uint32_t pid;
@@ -67,7 +72,7 @@ bool tieneMenosDeTresProcesosEnLaCache(int pid){
 	}
 	return contador < getConfigInt("ENTRADAS_CACHE");
 }
-
+//Esto es para heap y sufrira modificaciones
 int escribirMemoria(void* contenido,int tamano,void* memoria){
 
 	HeapMetadata headerAnterior = *((HeapMetadata*) memoria);
@@ -95,6 +100,7 @@ int escribirMemoria(void* contenido,int tamano,void* memoria){
 	}
 	return 0;//no hay espacio suficiente
 }
+//Esto es para heap y sufrira modificaciones
 void liberarMemoria(int posicion_dentro_de_la_pagina,void* pagina){
 	if (posicion_dentro_de_la_pagina<0){
 			perror("ingreso una posicion de la pagina negativa.");
@@ -117,6 +123,7 @@ void liberarMemoria(int posicion_dentro_de_la_pagina,void* pagina){
 			memcpy(pagina+recorrido-sizeof(x),&x,sizeof(x));
 	}
 }
+//Esto es para heap y sufrira modificaciones
 void* leerMemoria(int posicion_dentro_de_la_pagina, int*tamanioStreamLeido){
 
 	if (posicion_dentro_de_la_pagina<0){
@@ -147,11 +154,27 @@ void* leerMemoria(int posicion_dentro_de_la_pagina, int*tamanioStreamLeido){
 	}
 }
 
-int buscarPidEnTablaInversa(int pidRecibido)
+int funcionHash (int pid, int pagina){
+	return 0; //Falta hacer una funcion de hash
+}
+int buscarFrameCorrespondiente(int pidRecibido,int pagina)
+{
+	int posicionDadaPorElHash = funcionHash(pidRecibido,pagina);
+	filaDeTablaPaginaInvertida filaActual;
+	while (posicionDadaPorElHash < getConfigInt("MARCOS")){
+		filaActual =tablaDePaginacionInvertida[posicionDadaPorElHash];
+		if (filaActual.pid == pidRecibido && filaActual.pagina == pagina ){
+			return filaActual.frame;
+		}
+		posicionDadaPorElHash++;
+	}
+	return -1;
+}
+
+int buscarPidEnTablaInversa(int pidRecibido) //DEJO ESTA PORQUE SINO SE ROMPE TODO MIENTRAS SE VA IMPLEMENTANDO LO OTRO.
 {
 	return 0;
 }
-
 void *rutinaCPU(void * arg)
 {
 	int socketCPU = ((int*)arg)[0] ;
@@ -283,21 +306,50 @@ void *aceptarConexionesCpu( void *arg ){ // aca le sacamos el asterisco, porque 
 	}
 }
 
+void iniciarTablaDePaginacionInvertida(){
+	//tablaDePaginacionInvertida = malloc (sizeof(filaDeTablaPaginaInvertida)*getConfigInt("MARCOS"));//falta calcular la cantidadDe filas que tiene la tabla.
+	tablaDePaginacionInvertida = malloc(getConfigInt("MARCOS")*sizeof(filaDeTablaPaginaInvertida));
+	int i;
+	for(i = 0;getConfigInt("MARCOS")> i;i++){
+		tablaDePaginacionInvertida[i].frame = i;
+		tablaDePaginacionInvertida[i].pid = -1;
+		tablaDePaginacionInvertida[i].pagina = -1;
+
+
+	}
+
+}
 
 int main(void) {
 
+
+
+	//
+
+
+
 	printf("Inicializando Memoria.....\n\n");
-
-	// ******* Declaración de la mayoria de las variables a utilizar
-
-	int listener;
-	char* mensajeRecibido= string_new();
-
 	// ******* Configuracion de la Memoria a partir de un archivo
 
 	printf("Configuracion Inicial: \n");
 	configuracionInicial("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Memoria/memoria.config");
 	imprimirConfiguracion();
+
+	// PRUEBAS
+	iniciarTablaDePaginacionInvertida();
+	printf("El frame es %i, la pagina es %i, y  la pagina del pid es %i\n",tablaDePaginacionInvertida[0].frame,tablaDePaginacionInvertida[0].pagina,tablaDePaginacionInvertida[0].pid);
+	printf("El frame es %i, la pagina es %i, y  la pagina del pid es %i\n",tablaDePaginacionInvertida[1].frame,tablaDePaginacionInvertida[1].pagina,tablaDePaginacionInvertida[1].pid);
+	printf("El frame es %i, la pagina es %i, y  la pagina del pid es %i\n",tablaDePaginacionInvertida[2].frame,tablaDePaginacionInvertida[2].pagina,tablaDePaginacionInvertida[2].pid);
+
+
+
+
+	// ******* Declaración de la mayoria de las variables a utilizar
+
+
+	int listener;
+	char* mensajeRecibido= string_new();
+
 
 	sizeOfPaginas=getConfigInt("MARCO_SIZE");
 	memoriaTotal = malloc(sizeOfPaginas);
@@ -331,6 +383,8 @@ int main(void) {
 	free(memoriav1);
 	free(mensajeRecibido);
 	free(memoriaTotal);
+
 	return EXIT_SUCCESS;
+
 }
 

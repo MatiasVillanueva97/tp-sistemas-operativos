@@ -174,7 +174,9 @@ void* laFuncionMagicaDeConsola(void* parametros){
 	t_parametrosHiloPrograma *parametrosHiloPrograma = parametros;
 	enviarMensaje(parametrosHiloPrograma->socket,2,(void *)parametrosHiloPrograma->script, parametrosHiloPrograma->tamanioScript);
 	recibirMensaje(parametrosHiloPrograma->socket,(void *)pid);
-	printf("%d",*pid);
+	int aux = *pid;
+
+	printf("%d\n",aux);
 
 	pthread_mutex_lock( &mutex );
 

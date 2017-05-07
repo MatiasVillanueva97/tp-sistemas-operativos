@@ -93,11 +93,11 @@ int main(void)
 	while(1){
 		char* script = string_new();
 		// Recepcion del pcb
-		puts("esperando pcb");
+		puts("esperando pcb\n");
 		if(recibirMensaje(socketKernel,(void*)&pcb)==-1){
 			perror("Error en el Reciv");
 		}
-		printf("%d",pcb.pid);
+		printf("%d\n",pcb.pid);
 
 		// Pedido de Codigo
 		enviarMensaje(socketMemoria,1,(void *)&pcb.pid, sizeof(int));
