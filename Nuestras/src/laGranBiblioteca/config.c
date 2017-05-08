@@ -25,6 +25,8 @@ char* getStringFromConfig(t_config *config, char*valor){
 	return aux;
 }
 
+
+
 char** getStringArrayFromConfig(t_config *config, char*valor){
 	char** aux;
 

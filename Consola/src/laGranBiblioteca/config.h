@@ -49,6 +49,6 @@ void setConfigInt(char * etiqueta, int valor);
 //Sirve para editar un int dentro de un array
 void setConfigIntArrayElement(char * etiqueta, int indice, int valor);
 
-
+void liberarArray(char ** lista);
 
 #endif /* CARPETA_CONFIG2_H_ */

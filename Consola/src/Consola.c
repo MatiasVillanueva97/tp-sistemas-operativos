@@ -32,10 +32,18 @@ typedef struct {
 } t_parametrosHiloPrograma;
 
 #define MAXDATASIZE 100 // max number of bytes we can get at once
-#define ID 3
+#define ID 1
 
 void* laFuncionMagicaDeConsola(void*);
-void* imprimir2veces(void* parametros);
+
+int hayMensajeNuevo = 1;
+
+struct{
+	int pid;
+	char* mensaje;
+} mensajeDeProceso;
+
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 int main(void)
 {
@@ -81,7 +89,7 @@ int main(void)
 
 		printf("\nIngrese Comando: \n");
 
-		getline(&mensaje,&len,stdin);//Aca es donde la persona mete por teclado el archivo de programa a ejecutar
+		getline(&mensaje,&len,stdin);//Aca es donde la persona mete por teclado el comando que desea ejecutar
 									//Por ahora no hay directorio, se guarda en la carpeta del Debug.
 									//Para probar usar algo.txt
 
@@ -100,6 +108,9 @@ int main(void)
 			fread(script,len,1,archivo);//lee el archivo y lo guarda en el script AnsiSOP
 			//script = "hola";
 			script[len] = '\0';//Importante!
+
+			printf("%s",script);
+
 
 			t_parametrosHiloPrograma parametrosHiloPrograma;
 			parametrosHiloPrograma.socket = socketConsola;
@@ -158,8 +169,20 @@ void* laFuncionMagicaDeConsola(void* parametros){
 	t_parametrosHiloPrograma *parametrosHiloPrograma = parametros;
 	enviarMensaje(parametrosHiloPrograma->socket,2,(void *)parametrosHiloPrograma->script, parametrosHiloPrograma->tamanioScript);
 	recibirMensaje(parametrosHiloPrograma->socket,(void *)pid);
+	printf("%d",*pid);
 
-	printf("%d %s",*pid,parametrosHiloPrograma->script);
+	pthread_mutex_lock( &mutex );
+
+	if(hayMensajeNuevo){
+		recibirMensaje(parametrosHiloPrograma->socket,(void *)&mensajeDeProceso);
+		hayMensajeNuevo = 0;
+	}
+	if(mensajeDeProceso.pid == *pid){
+		printf("%s",mensajeDeProceso.mensaje);
+		hayMensajeNuevo = 1;
+	}
+
+	pthread_mutex_unlock( &mutex );
 
 	free(pid);
 	free(parametrosHiloPrograma->script);

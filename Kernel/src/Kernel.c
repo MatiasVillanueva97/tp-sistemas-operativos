@@ -14,8 +14,11 @@
 #include <arpa/inet.h>
 #include <sys/wait.h>
 #include <signal.h>
+#include <pthread.h>
 #include "commons/config.h"
 #include "commons/collections/list.h"
+#include "commons/collections/queue.h"
+#include <semaphore.h>
 
 #include "../../Nuestras/src/laGranBiblioteca/sockets.h"
 #include "../../Nuestras/src/laGranBiblioteca/config.h"
@@ -26,48 +29,183 @@
 
 #define ID 0
 
-int main(void) {
-	printf("Inicializando Kernel.....\n\n");
+int socketMemoria;
+int socketFS;
+int	historico_pcb = 0;
+int socketConsola2=0;
 
-	// ******* Declaración de la mayoria de las variables a utilizar
+//t_queue* colaDeReady;
 
-	socklen_t sin_size;
+sem_t* contadorDeCpus = 0;
 
-	struct sockaddr_storage their_addr; // connector's address information
-
-	int id_cliente, socketFS, socketMemoria, rta_conexion, nbytes, socketAEnviarMensaje = 0, socketSeleccionado = 0;
-	int aceptados[] = { 1, 2, 3, 4 };
-
-	char ip_suponemos[INET6_ADDRSTRLEN]; // esto es una ip
-	char mensajeRecibido[100];
-
-	// Variables para el while que contiene el select
-	fd_set master;    // master file descriptor list
-	fd_set read_fds;  // temp file descriptor list for select()
-	fd_set write_fds;
-
-	int fdmax;        // Maximo numero del FileDescriptor
-	int listener;     // Socket principal
-	int nuevoSocket;  // Socket donde se asignan las peticiones
-	FD_ZERO(&master);    // clear the master and temp sets
-	FD_ZERO(&read_fds);
-	FD_ZERO(&write_fds);
+enum id_Modulos{
+	Kernel = 0,
+	CPU = 1,
+	Memoria = 2,
+	Consola = 3,
+	FileSystem = 4
+};
 
 
+typedef struct
+{
+	int pid;
+	int contPags_pcb;
+}__attribute__((packed)) PCB_DATA;
 
-	// ******* Configuracion del Kernel a partir de un archivo
+typedef struct{
+	PCB_DATA pcb;
+	int socket;
+}pcb_Consola;
 
-	printf("Configuracion Inicial: \n");
-	configuracionInicial("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Kernel/kernel.config");
-	imprimirConfiguracion();
+//t_list* tablaConsolaPcb;
+PCB_DATA* pcbGlobal;
+
+/*
+void agregarATablaConsolaPcb(PCB_DATA* pcb, int* socket){
+	pcb_Consola* pcb_Consola = malloc(15);
+	pcb_Consola->pcb = *pcb;
+	pcb_Consola->socket = *socket;
+	list_add(tablaConsolaPcb, pcb_Consola);
+}
+
+int obtenerSocketConsola(PCB_DATA* pcb){
+	bool busqueda(PCB_DATA* pcb2){
+		return pcb->pid == pcb2->pid;
+	}
+	if (list_any_satisfy(tablaConsolaPcb,busqueda)){
+		pcb_Consola* pcbActual =list_find(tablaConsolaPcb,busqueda);
+		return pcbActual->socket;
+	}
+	else
+		return -1;
+}
+*/
+
+void *rutinaCPU(void * arg)
+{
+	int socketCPU = (int)arg ;
+
+	//while(1){  //Villereada
+	//	while(!queue_is_empty(colaDeReady)){
+	while(socketConsola2 == 0);
 
 
+			enviarMensaje(socketCPU,3,pcbGlobal,sizeof(PCB_DATA)); // falta hacer este tipo.
+			void* resultado = malloc(100);
 
-	// ******* Conexiones obligatorias y necesarias del Kernel - FileSystem y Memoria
+			//int tamano = recibirMensaje(socketCPU, resultado);
 
-	printf("\n\n\nEsperando conexiones:\n-FileSystem\n-Memoria\n");
+
+			if(socketConsola2!= 0){
+				//enviarMensaje(socketConsola2,1,&(pcbGlobal->pid),sizeof(int));//esto no estoy seguro si anda
+				//enviarMensaje(socketConsola2,2,resultado,tamano); // falta hacer este tipo.
+				printf("Termine la cpu, buscando nuevos procesos para realizar");
+			}
+			else{
+				printf("No pude obtener el socketConsola de la lista de sockets");
+				exit(-56);
+			}
+	//	}
+	//}
+}
+
+
+void *rutinaConsola(void * arg)
+{
+	int socketConsola = (int)arg ;
+
+	char* scripAnsisop = malloc(120);
+
+	int sizeCodigoAnsisop = recibirMensaje(socketConsola, scripAnsisop);
+
+	enviarMensaje(socketMemoria,2,scripAnsisop,sizeCodigoAnsisop); // Le envio el stream a memoria
+	enviarMensaje(socketMemoria,1,&sizeCodigoAnsisop,sizeof(int)); // Enviamos el size del stream a memoria
+
+	PCB_DATA* pcb = malloc(10);
+	int ok=0;
+	recibirMensaje(socketMemoria, &ok); // Esperamos a que memoria me indique si puede guardar o no el stream
+	if(ok)
+	{
+		printf("\n\nMemoria dio el Ok para el proceso recien enviado\n");
+		historico_pcb++;
+//		agregarATablaConsolaPcb(pcb,&socketConsola);
+		pcb->pid=historico_pcb; // asigno un pid al pcb
+
+		printf("Pid enviado a memoria: %d", pcb->pid);
+		int aux = pcb->pid;
+		enviarMensaje(socketMemoria,2, &aux,sizeof(int)); // Enviamos el pid a memoria
+
+		int nuevo_contPags_pcb;
+		if(recibirMensaje(socketMemoria, &nuevo_contPags_pcb)==-1) // REcibimos el numero de pagina o contador de pagina o lo que sea necesario de pagina
+			perror("Error en el reciv del contador de paginas del pcb desde memoria");
+
+		pcb->contPags_pcb=nuevo_contPags_pcb; // asigno el contador de pagns al pcb
+
+		printf("Pcb Despues de recibir la pagina y el ok:\n*-id_pcb: %d\n*-contPags_pcb: %d\n\n", pcb->pid, pcb->contPags_pcb);
+
+		//queue_push(colaDeReady,pcb); // agregamos el pcb a la cola de redys
+		pcbGlobal = pcb;
+		socketConsola2 = socketConsola;
+	}
+	else
+		printf("No hubo espacio para guardar en memoria!\n");
+
+}
+
+void *aceptarConexiones( void *arg ){
+	int listener = (int)arg;
+	int nuevoSocket;
+	int aceptados[] = {CPU, Consola};
+	struct sockaddr_storage their_addr;
+	char ip[INET6_ADDRSTRLEN];
+	socklen_t sin_size = sizeof their_addr;
+
+
+//	escuchar(listener); // poner a escuchar ese socket
+
+	while(1)
+	{
+		socklen_t sin_size = sizeof their_addr;
+
+		if ((nuevoSocket = accept(listener, (struct sockaddr *) &their_addr, &sin_size)) == -1) {// estas lines tienen que ser una funcion
+			perror("Error en el Accept");
+			//continue;
+		}
+
+		inet_ntop(their_addr.ss_family, getSin_Addr((struct sockaddr *) &their_addr), ip, sizeof ip); // para poder imprimir la ip del server
+		printf("Conexion con %s\n", ip);
+
+		int id_clienteConectado;
+		id_clienteConectado = handshakeServidor(nuevoSocket, ID, aceptados);
+
+		pthread_t hilo_M;
+
+		switch(id_clienteConectado)
+		{
+			case CPU: // Si el cliente conectado es el cpu
+			{
+				printf("Nueva CPU Conectada\nSocket CPU %d\n\n", nuevoSocket);
+				pthread_create(&hilo_M, NULL, rutinaCPU, nuevoSocket);
+			}break;
+			case Consola: // Si es un cliente conectado es una CPU
+			{
+				printf("\nNueva Consola Conectada!\nSocket Consola %d\n\n", nuevoSocket);
+				pthread_create(&hilo_M, NULL, rutinaConsola, nuevoSocket);
+			}break;
+			default:
+			{
+				printf("Papi, fijate se te esta conectado cualquier cosa\n");
+				close(nuevoSocket);
+			}
+		}
+	}
+}
+
+void conectarConMemoria()
+{
+	int rta_conexion;
 	socketMemoria = conexionConServidor(getConfigString("PUERTO_MEMORIA"),getConfigString("IP_MEMORIA")); // Asignación del socket que se conectara con la memoria
-
 	if (socketMemoria == 1){
 			perror("Falla en el protocolo de comunicación");
 			exit(1);
@@ -81,10 +219,11 @@ int main(void) {
 				close(socketMemoria);
 	}
 	printf("Conexión exitosa con el Memoria(%i)!!\n",rta_conexion);
-	FD_SET(socketMemoria, &write_fds);  // Agregamos el FileDescriptor de la Memoria al set del write (lo ponemos como que al wachin le vamos a escribir)
+}
+void conectarConFS()
+{
 
-
-
+	int rta_conexion;
 	socketFS = conexionConServidor(getConfigString("PUERTO_FS"),getConfigString("IP_FS")); // Asignación del socket que se conectara con el filesytem
 	if (socketFS == 1){
 		perror("Falla en el protocolo de comunicación");
@@ -95,121 +234,83 @@ int main(void) {
 		exit(1);
 	}
 	if ( (rta_conexion = handshakeCliente(socketFS, ID)) == -1) {
-			perror("Error en el handshake con FileSystem");
-			close(socketFS);
+		perror("Error en el handshake con FileSystem");
+		close(socketFS);
 	}
 	printf("Conexión exitosa con el FileSystem(%i)!!\n",rta_conexion);
+}
 
-	FD_SET(socketFS, &write_fds); // Agregamos el FileDescriptor del fileSystem al set del write (lo ponemos como que al wachin le vamos a escribir)
+int main(void) {
+	printf("Inicializando Kernel.....\n\n");
+	pcbGlobal = malloc(10);
+	// ******* Declaración de la mayoria de las variables a utilizar
 
-	//Delegar aca.
+	socklen_t sin_size;
+	struct sockaddr_storage their_addr; // connector's address information
+
+	int id_cliente, rta_conexion, nbytes, socketAEnviarMensaje = 0, socketSeleccionado = 0;
+	int aceptados[] = { 1, 2, 3, 4 };
+
+	char ip_suponemos[INET6_ADDRSTRLEN]; // esto es una ip
+	char mensajeRecibido[100];
+
+	//colaDeReady = queue_create();
+	//tablaConsolaPcb = list_create();
+
+	int listener;     // Socket principal
+
+	// ******* Configuracion del Kernel a partir de un archivo
+
+	printf("Configuracion Inicial: \n");
+	configuracionInicial("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Kernel/kernel.config");
+	imprimirConfiguracion();
 
 
-	//int x= 3;
-	//enviarMensaje(socketFS, 2,(void*)&x, sizeof(int));
-
-	//enviarMensaje(socketFS, 2,(void*)"hola negro, esto deberia anda", strlen("hola negro, esto deberia anda")+1);
 
 
+	// ******* Conexiones obligatorias y necesarias del Kernel - FileSystem y Memoria y preparar listener para poder oir consolas y cpus
 
-	// ******* Proceso de conectar al Kernel con otros modulos que le realizen peticiones
+	printf("\n\n\nEsperando conexiones:\n-FileSystem\n-Memoria\n");
+	conectarConMemoria();
+//	conectarConFS();
 
 	listener = crearSocketYBindeo(getConfigString("PUERTO_PROG"));
 
-	escuchar(listener);	 // Pone el listener (socket principal) a escuchar las peticiones
-	FD_SET(listener, &master); // agrega al master el socket
 
-	fdmax = listener; // por algun motivo desconocido por nosotros, el select necesita tener siempre apuntando al ultimo socket del master (el ultimo que se abre)
 
+
+	escuchar(listener); // poner a escuchar ese socket
+
+	// ******* Recibir datos desde las Consolas -- rutina consola
+
+	pthread_t hilo_aceptarConexiones;
+
+	pthread_create(&hilo_aceptarConexiones, NULL, aceptarConexiones, listener);
+
+
+
+
+	// ******* Enviar Datos a Memoria
+
+
+
+
+	// ******* Planificar procesos para las CPUs
+
+
+
+
+
+	pthread_join(hilo_aceptarConexiones, NULL);
 
 	liberarConfiguracion();
 
 
-
-	while (1) {
-		read_fds = master;
-
-		if (select(fdmax + 1, &read_fds, NULL, NULL, 0) == -1) {  // Como pasa por referencia el set de leer, los modifica, por eso hay que setearlos antes
-			// aca esta el Select que recibe : el ultimo socket abierto+1, el set de todos los que lee, el set de los que escribe(no implementado), execpciones no implementados y 0 .Cap 7.2 beej en ingles
-			perror("Error en el Select");
-			exit(4);
-		}
-
-		for (socketSeleccionado = 0; socketSeleccionado <= fdmax; socketSeleccionado++) {  // Este for corre mientras este buscando a alguien para leer
-			if (FD_ISSET(socketSeleccionado, &read_fds)){ // entra a este if cuando encuentra uno
-					if (socketSeleccionado == listener){
-					sin_size = sizeof their_addr;
-					nuevoSocket = accept(listener, (struct sockaddr *) &their_addr,&sin_size); // Aqui esta el accept
-
-					if (nuevoSocket == -1) {
-						perror("Error en el Accept");
-					}
-					else {
-						FD_SET(nuevoSocket, &master); // Se agrega al master el socket creado
-						if (nuevoSocket > fdmax) {    // keep track of the max
-							fdmax = nuevoSocket;
-						}
-						if ((id_cliente = handshakeServidor(nuevoSocket, ID, aceptados)) == -1) {
-							perror("Error en el handshake");
-							close(nuevoSocket);
-						}
-						else{
-							printf("Nueva conexión de:\nIP = %s\nSocket = %d\n", inet_ntop(their_addr.ss_family,getSin_Addr((struct sockaddr *)&their_addr), ip_suponemos, INET6_ADDRSTRLEN), nuevoSocket);
-						}
-						if(id_cliente != 0 && id_cliente != 3){ // valida si el cliente es o no una consola o el mismo kernel (Quienes NO deben recibir el mensaje)- Para la primer entrega
-							FD_SET(nuevoSocket, &write_fds);
-						}
-						else{
-							FD_SET(nuevoSocket, &read_fds);
-						}
-					}
-				}
-				else {
-					// handle data from a client
-					if ((nbytes = recibirMensaje(socketSeleccionado, (void*)mensajeRecibido)) <= 0) { // aca esta el reciv // got error or connection closed by client
-						if (nbytes == 0) {  // Solo se cumplira esta condicion cuando se haya cerrado el socket del lado del cliente
-							printf("Fin de conexion con socket %d.\n", socketSeleccionado);
-						}
-						else {
-							perror("Error en el Reciv");
-						}
-
-						close(socketSeleccionado); // Se cierra el socket Seleccionado
-
-						FD_CLR(socketSeleccionado, &master);
-						FD_CLR(socketSeleccionado, &read_fds);// remove from master set
-						FD_CLR(socketSeleccionado, &write_fds);
-					}
-					else {
-
-						printf("Mensaje recibido: %s\n", mensajeRecibido);// we got some data from a client
-
-
-
-
-
-						int pid = 1;
-						enviarMensaje(socketSeleccionado,1,(void*) &pid,4);//LINEA HARCODEADA PARA PROBAR CONSOLA
-
-
-
-
-
-
-
-						for (socketAEnviarMensaje = 0; socketAEnviarMensaje <= fdmax; socketAEnviarMensaje++) {   // send to everyone!
-							if (FD_ISSET(socketAEnviarMensaje, &write_fds) && socketAEnviarMensaje != listener && socketAEnviarMensaje != socketSeleccionado){
-								if( enviarMensaje(socketAEnviarMensaje,2,(void*)mensajeRecibido,strlen(mensajeRecibido)+1)==-1 ){  //valida cosas except the listener and ourselves
-									perror("send");
-									}
-								FD_CLR(socketAEnviarMensaje, &write_fds);
-								}
-						}
-					}
-				} // END handle data from client
-			} // END got new incoming connection
-		} // END looping through file descriptors
-	} // END while(1)--and you thought it would never end!
+	while(1)
+	{
+		printf("Hola hago tiempo!\n");
+		sleep(5);
+	}
 
 	return 0;
 }

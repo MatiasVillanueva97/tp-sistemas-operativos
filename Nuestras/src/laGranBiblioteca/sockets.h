@@ -13,6 +13,7 @@ int crearSocketYBindeo(char*);
 
 void escuchar(int);
 
+
 int recibirMensaje(int ,void* ); // Toda esta funcion deberá ccambiar en el momento qeu defininamos el protocolo de paquetes de mensajes :)
 
 int enviarMensaje(int , int , void* , int );
