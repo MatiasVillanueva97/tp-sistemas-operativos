@@ -18,6 +18,7 @@
 #include "../../Nuestras/src/laGranBiblioteca/sockets.h"
 #include "compartidas.h"
 
+
 typedef struct{
  int pid;
  char* mensaje;

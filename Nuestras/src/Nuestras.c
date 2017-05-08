@@ -26,6 +26,7 @@ void copiarEnProyecto(char * proyecto){
 	copiar(comando);
 	puts("Proceso terminado maquinola");
 }
+
 int main(void) {
 
 

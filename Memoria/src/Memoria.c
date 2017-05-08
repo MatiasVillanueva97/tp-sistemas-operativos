@@ -43,6 +43,7 @@ typedef struct{
 	uint32_t pagina;
 	uint32_t pid;
 }headerCache;
+
 typedef struct{
 	uint32_t pagina;
 	uint32_t pid;

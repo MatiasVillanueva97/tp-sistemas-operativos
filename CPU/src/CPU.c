@@ -22,7 +22,6 @@
 #include "primitivas.h"
 #include "compartidas.h"
 
-
 #include "../../Nuestras/src/laGranBiblioteca/sockets.h"
 #include "../../Nuestras/src/laGranBiblioteca/config.h"
 

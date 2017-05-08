@@ -60,6 +60,7 @@ typedef struct{
 
 //t_list* tablaConsolaPcb;
 PCB_DATA* pcbGlobal;
+
 /*
 void agregarATablaConsolaPcb(PCB_DATA* pcb, int* socket){
 	pcb_Consola* pcb_Consola = malloc(15);
@@ -80,6 +81,7 @@ int obtenerSocketConsola(PCB_DATA* pcb){
 		return -1;
 }
 */
+
 void *rutinaCPU(void * arg)
 {
 	int socketCPU = (int)arg ;
@@ -220,6 +222,7 @@ void conectarConMemoria()
 }
 void conectarConFS()
 {
+
 	int rta_conexion;
 	socketFS = conexionConServidor(getConfigString("PUERTO_FS"),getConfigString("IP_FS")); // Asignación del socket que se conectara con el filesytem
 	if (socketFS == 1){

@@ -59,6 +59,7 @@ int main(void)
 	//char s[INET6_ADDRSTRLEN];
 
 
+
 	// ******* Configuración inicial Consola
 
 	printf("Configuracion Inicial:\n");

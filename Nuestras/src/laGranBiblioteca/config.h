@@ -17,6 +17,7 @@ void configuracionInicial(char*);
 void imprimirConfiguracion();
 void liberarConfiguracion();
 
+
 //-- Getters de parametros
 
 //recibe una etiqueta y un indice y devuelve el valor en tipo string
