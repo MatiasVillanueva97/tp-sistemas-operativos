@@ -14,6 +14,8 @@
 #include <sys/stat.h>
 #include "commons/config.h"
 #include "commons/string.h"
+#include "commons/temporal.h"
+
 #include <pthread.h>
 
 #include "../../Nuestras/src/laGranBiblioteca/sockets.c"
@@ -30,6 +32,8 @@ typedef struct {
 #define ID 1
 
 void* laFuncionMagicaDeConsola(void*);
+char* diferencia(char*,char*);
+
 
 int hayMensajeNuevo = 1;
 
@@ -161,6 +165,7 @@ int main(void)
 
 void* laFuncionMagicaDeConsola(void* parametros){
 	int *pid = malloc(4);
+	char* tiempoInicio = temporal_get_string_time();
 	t_parametrosHiloPrograma *parametrosHiloPrograma = parametros;
 	enviarMensaje(parametrosHiloPrograma->socket,2,(void *)parametrosHiloPrograma->script, parametrosHiloPrograma->tamanioScript);
 	recibirMensaje(parametrosHiloPrograma->socket,(void *)pid);
@@ -179,6 +184,39 @@ void* laFuncionMagicaDeConsola(void* parametros){
 
 	pthread_mutex_unlock( &mutex );
 
+	printf("%s\n",tiempoInicio);
+
+	char* tiempoFin = temporal_get_string_time();
+	printf("%s\n",tiempoFin);
+
+	printf("%s\n",diferencia(tiempoInicio,tiempoFin));
+
 	free(pid);
 	free(parametrosHiloPrograma->script);
+}
+
+
+//FALTA TERMINAR Y HACER MAS LINDA CUANDO NO SEAN LAS 5 AM
+
+char* diferencia(char* tiempoInicio,char* tiempoFin){
+	char* resultado[4];
+	char** arrayInicio = string_split(tiempoInicio,":");
+	char** arrayFin = string_split(tiempoInicio,":");
+	int i;
+	for(i=0;i<4;i++){
+		resultado[i] = string_itoa(atoi(arrayFin[i])-atoi(arrayInicio[i]));
+		if(resultado[i] < 0){
+			resultado[i-1]--;
+			if(i != 3) {
+				resultado[i] = 60 + resultado[i];
+			}else {
+				resultado[i] = 1000 + resultado[i];
+			};
+		}
+	}
+
+	//HACELO CON GANAS NO SEAS FORRO
+
+	char* diferencia = strcat(strcat(strcat(strcat(resultado[0], ":"), strcat(resultado[1], ":")), strcat(resultado[2], ":")), resultado[3]);
+	return diferencia;
 }
