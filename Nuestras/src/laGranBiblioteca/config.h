@@ -13,7 +13,7 @@
 
 t_list * listaDeConfig;//Variable global para guardar las configuraciones
 
-void configuracionInicial(char*);
+void configuracionInicial(char*PATH);
 void imprimirConfiguracion();
 void liberarConfiguracion();
 

@@ -23,7 +23,9 @@
 #include "commons/config.h"
 #include "commons/string.h"
 
+#include "../../Nuestras/src/laGranBiblioteca/sockets.c"
 #include "../../Nuestras/src/laGranBiblioteca/sockets.h"
+#include "../../Nuestras/src/laGranBiblioteca/config.c"
 #include "../../Nuestras/src/laGranBiblioteca/config.h"
 
 #define ID 4

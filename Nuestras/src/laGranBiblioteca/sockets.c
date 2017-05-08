@@ -276,7 +276,8 @@ int recibirMensaje(int socket,void* stream) // Toda esta funcion deberá ccambia
 
 //
 
-void* serializar (int tipoMensaje, void* contenido, int tamanioMensaje){
+void* serializar (int tipoMensaje, void* contenido, int tamanioMensaje)
+{
 
 	void * stream=malloc(tamanioMensaje+(sizeof(int)*2));
 	memcpy(stream, &tipoMensaje, sizeof(int));

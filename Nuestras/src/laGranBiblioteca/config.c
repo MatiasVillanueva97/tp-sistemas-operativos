@@ -8,8 +8,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "commons/config.h"
-#include "commons/collections/list.h"
 #include "config.h"
 
 //--------FUNCIONES DE SEGURIDAD-----

@@ -15,8 +15,9 @@
 #include <parser/metadata_program.h>
 #include <parser/parser.h>
 
-#include "../../Nuestras/src/laGranBiblioteca/sockets.h"
+
 #include "compartidas.h"
+#include "primitivas.h"
 
 
 typedef struct{
@@ -28,5 +29,7 @@ void AnSISOP_escribir(t_descriptor_archivo descriptor_archivo,void* informacion,
  t_mensajeDeProceso mensajeDeProceso;
  mensajeDeProceso.pid = pcb.pid;
  mensajeDeProceso.mensaje = informacion;
- enviarMensaje(socketKernel,4,&mensajeDeProceso,tamanio + sizeof(int));
+ //enviarMensaje(socketKernel,4,&mensajeDeProceso,tamanio + sizeof(int));
+
+ //intentar arreglar esto de otra forma
 }
