@@ -52,8 +52,31 @@ int main(void)
 	int rta_conexion;
 	int i;
 	PCB_DATA pcb;
-	AnSISOP_funciones *AnSISOP_funciones;
-	AnSISOP_kernel *AnSISOP_funciones_kernel;
+	AnSISOP_funciones AnSISOP_funciones = {
+			.AnSISOP_definirVariable = AnSISOP_definirVariable,
+			.AnSISOP_obtenerPosicionVariable = AnSISOP_obtenerPosicionVariable,
+			.AnSISOP_dereferenciar = AnSISOP_dereferenciar,
+			.AnSISOP_asignar = AnSISOP_asignar,
+			.AnSISOP_obtenerValorCompartida = AnSISOP_obtenerValorCompartida,
+			.AnSISOP_asignarValorCompartida = AnSISOP_asignarValorCompartida,
+			.AnSISOP_irAlLabel = AnSISOP_irAlLabel,
+			.AnSISOP_llamarSinRetorno = AnSISOP_llamarSinRetorno,
+			.AnSISOP_llamarConRetorno = AnSISOP_llamarConRetorno,
+			.AnSISOP_finalizar = AnSISOP_finalizar,
+			.AnSISOP_retornar = AnSISOP_retornar
+	};
+	AnSISOP_kernel AnSISOP_funciones_kernel = {
+			.AnSISOP_wait = AnSISOP_wait,
+			.AnSISOP_signal = AnSISOP_signal,
+			.AnSISOP_reservar = AnSISOP_reservar,
+			.AnSISOP_liberar = AnSISOP_liberar,
+			.AnSISOP_abrir = AnSISOP_abrir,
+			.AnSISOP_borrar = AnSISOP_borrar,
+			.AnSISOP_cerrar = AnSISOP_cerrar,
+			.AnSISOP_moverCursor = AnSISOP_moverCursor,
+			.AnSISOP_escribir = AnSISOP_escribir,
+			.AnSISOP_leer = AnSISOP_leer
+	};
 	// ******* Configuracion Inicial de CPU
 
  	printf("Configuracion Inicial: \n");
