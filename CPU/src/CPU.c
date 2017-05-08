@@ -17,16 +17,12 @@
 
 #include "parser/metadata_program.h"
 #include "parser/parser.h"
-#include "parser/sintax.h"
 #include "commons/string.h"
 
-#include "primitivas.c"
 #include "primitivas.h"
 
 #include "../../Nuestras/src/laGranBiblioteca/sockets.c"
-#include "../../Nuestras/src/laGranBiblioteca/sockets.h"
 #include "../../Nuestras/src/laGranBiblioteca/config.c"
-#include "../../Nuestras/src/laGranBiblioteca/config.h"
 
 #define ID 1
 
@@ -38,6 +34,11 @@ enum id_Modulos{
 	FileSystem = 4
 };
 
+typedef struct
+{
+	int pid;
+	int contPags_pcb;
+}__attribute__((packed)) PCB_DATA;
 
 int socketKernel;
 int socketMemoria;
@@ -50,6 +51,7 @@ int main(void)
 
 	int rta_conexion;
 	int i;
+	PCB_DATA pcb;
 	AnSISOP_funciones *AnSISOP_funciones;
 	AnSISOP_kernel *AnSISOP_funciones_kernel;
 	// ******* Configuracion Inicial de CPU

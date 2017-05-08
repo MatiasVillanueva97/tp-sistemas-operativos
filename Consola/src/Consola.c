@@ -17,9 +17,7 @@
 #include <pthread.h>
 
 #include "../../Nuestras/src/laGranBiblioteca/sockets.c"
-#include "../../Nuestras/src/laGranBiblioteca/sockets.h"
 #include "../../Nuestras/src/laGranBiblioteca/config.c"
-#include "../../Nuestras/src/laGranBiblioteca/config.h"
 
 #include <arpa/inet.h>
 typedef struct {

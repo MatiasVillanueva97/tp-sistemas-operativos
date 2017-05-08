@@ -12,12 +12,10 @@
 #include <signal.h>
 #include "commons/config.h"
 #include "commons/string.h"
-#include <parser/metadata_program.h>
 #include <parser/parser.h>
 
 
 #include "compartidas.h"
-#include "primitivas.h"
 
 
 typedef struct{
@@ -25,7 +23,7 @@ typedef struct{
  char* mensaje;
 } t_mensajeDeProceso;
 
-void AnSISOP_escribir(t_descriptor_archivo descriptor_archivo,void* informacion, t_valor_variable tamanio){
+void AnSISOP_escribir(t_descriptor_archivo descriptor_archivo, void* informacion, t_valor_variable tamanio){
  t_mensajeDeProceso mensajeDeProceso;
  mensajeDeProceso.pid = pcb.pid;
  mensajeDeProceso.mensaje = informacion;

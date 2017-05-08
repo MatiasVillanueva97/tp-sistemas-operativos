@@ -20,8 +20,6 @@
 #include <semaphore.h>
 
 #include "../../Nuestras/src/laGranBiblioteca/sockets.c"
-#include "../../Nuestras/src/laGranBiblioteca/sockets.h"
-#include "../../Nuestras/src/laGranBiblioteca/config.h"
 #include "../../Nuestras/src/laGranBiblioteca/config.c"
 
 #define PORT "3490"  // the port users will be connecting to
