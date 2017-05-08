@@ -142,7 +142,7 @@ int main(void)
 		char** lineasDelScript= string_split(script,"\n");
 		i = 0;
 		/*while(lineasDelScript[i] != NULL){
-			analizadorLinea(lineasDelScript[i],AnSISOP_funciones,AnSISOP_funciones_kernel);
+		analizadorLinea(lineasDelScript[2],&AnSISOP_funciones,&AnSISOP_funciones_kernel);
 			i++;
 		}*/
 		/*if (strcmp(lineasDelScript[1],TEXT_BEGIN)){

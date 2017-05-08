@@ -122,10 +122,11 @@ void AnSISOP_moverCursor(t_descriptor_archivo descriptor_archivo,t_valor_variabl
 }
 
 void AnSISOP_escribir(t_descriptor_archivo descriptor_archivo, void* informacion, t_valor_variable tamanio){
-	puts("AnSISOP_moverCursor");
+	puts("AnSISOP_escribir");
 	t_mensajeDeProceso mensajeDeProceso;
 	mensajeDeProceso.pid = pcb.pid;
 	mensajeDeProceso.mensaje = informacion;
+	printf("%d   %s",mensajeDeProceso.pid,mensajeDeProceso.mensaje);
 	//enviarMensaje(socketKernel,4,&mensajeDeProceso,tamanio + sizeof(int));
 
 	//intentar arreglar esto de otra forma
