@@ -133,25 +133,25 @@ void* leerMemoria(int posicion_dentro_de_la_pagina, int*tamanioStreamLeido){
 	}
 	int i;
 	int recorrido = 0;
-	HeapMetadata x = *((HeapMetadata*) (memoriaTotal+recorrido));
-	recorrido+= sizeof(x);
+	HeapMetadata x = *((HeapMetadata*) (memoriaTotal+recorrido));// Esto lee la primera el header de la pagina
+	recorrido+= sizeof(x);//Tamanio del heap
 
-	for (i=0;i<posicion_dentro_de_la_pagina&&recorrido<sizeOfPaginas;){
-		recorrido+=x.size;
-		x = *((HeapMetadata*) (memoriaTotal+recorrido));
+	for (i=0;i<posicion_dentro_de_la_pagina&&recorrido<sizeOfPaginas;){//esto sigue hasta que llegue a la posicion de la pagina actual requerida o se pese del size
+		recorrido+=x.size;// Al recorrido le aumento el tamanio con el heap
+		x = *((HeapMetadata*) (memoriaTotal+recorrido)); // se mueve el heap
 		recorrido+= sizeof(x);
 		if (!x.isFree){
 			i++;
 		}
 	}
 
-	if(recorrido>=sizeOfPaginas){
+	if(recorrido>=sizeOfPaginas){// manejo de error
 		perror("pidio una posicion invalida, es decir, que es mayor al numero de posiciones dentro de la pagina"); // esto significa posicion invalida
 	}
 	else{
-		void* contenido = malloc(x.size);// hay que liberarlo dsp de mandarlo
-		memcpy(contenido,memoriaTotal+recorrido,x.size);
-		*tamanioStreamLeido=x.size;
+		void* contenido = malloc(x.size);//Reservo memoria para poder retornarlo
+		memcpy(contenido,memoriaTotal+recorrido,x.size);//Agarro la memtotal y la copio en el contenido
+		*tamanioStreamLeido=x.size;//modificas la posicion de memoria donde esta el tamaño
 		return contenido;
 	}
 }
@@ -274,7 +274,7 @@ void *rutinaKernel(void *arg){ // no se si tiene que ser void
 	}
 	printf("[Rutina Kernel] - Kernel conectado exitosamente\n");
 
-	sem_post(&sem_isKernelConectado);
+	sem_post(&sem_isKernelConectado);//Semaforo que indica si solo hay un kernel conectado
 
 	char* stream = malloc(100);
 	recibirMensaje(socketKernel,stream); // recibir el stream
