@@ -156,6 +156,7 @@ void* leerMemoria(int posicion_dentro_de_la_pagina, int*tamanioStreamLeido){
 	}
 }
 
+
 int funcionHash (int pid, int pagina){
 	return 0; //Falta hacer una funcion de hash
 }
@@ -171,6 +172,47 @@ int buscarFrameCorrespondiente(int pidRecibido,int pagina)
 		posicionDadaPorElHash++;
 	}
 	return -1;
+}
+int reservarFrame(int pid, int pagina){
+	int i;
+	for(i=funcionHash(pid,pagina);getConfigInt("MARCOS") > i;i++){
+		filaDeTablaPaginaInvertida filaActual = tablaDePaginacionInvertida[i];
+		if(filaActual.frame == -1){
+			tablaDePaginacionInvertida[i].pagina = pagina;
+			tablaDePaginacionInvertida[i].pid = pid;
+			return 1;
+		}
+	}
+	return -1;
+}
+
+int liberarPagina(int pid, int pagina){
+	int i;
+	for(i=funcionHash(pid,pagina);getConfigInt("MARCOS") > i;i++){
+		filaDeTablaPaginaInvertida filaActual = tablaDePaginacionInvertida[i];
+		if(filaActual.pagina == pagina && filaActual.pid == pid){
+			tablaDePaginacionInvertida[i].pagina = -1;
+			tablaDePaginacionInvertida[i].pid = -1;
+			return 1;
+		}
+	}
+	return -1;
+}
+void* leerMemoriaPosta (int pid, int pagina ){
+	int frame = buscarFrameCorrespondiente(pid,pagina); //checkear que no haya errores en buscarFrame.
+	void * contenido = malloc(getConfigInt("MARCO_SIZE"));
+	memcpy(contenido,memoriaTotal+frame*getConfigInt("MARCO_SIZE"),getConfigInt("MARCO_SIZE"));
+	return contenido;
+}
+int escribirMemoriaPosta(int pid,int pagina,void* contenido){
+	//Antes de poder escribir, se deben haber reservado los frame.
+	if(strlen(contenido)>getConfigInt("MARCO_SIZE")){
+		perror("El tamaño del contenido es mayor al tamaño de una pagina con la configuracion actual");
+		return -1;
+	}
+	int frame = buscarFrameCorrespondiente(pid,pagina);
+	memcpy(memoriaTotal+frame*getConfigInt("MARCO_SIZE"),contenido,getConfigInt("MARCO_SIZE"));
+	return 0;
 }
 
 int buscarPidEnTablaInversa(int pidRecibido) //DEJO ESTA PORQUE SINO SE ROMPE TODO MIENTRAS SE VA IMPLEMENTANDO LO OTRO.
