@@ -1,4 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <ctype.h>
+#include <errno.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <arpa/inet.h>
+#include <sys/wait.h>
+#include <signal.h>
+#include "commons/string.h"
+#include "commons/collections/list.h"
+
 #include <parser/parser.h>
+#include <parser/metadata_program.h>
+#include "compartidas.h"
+
+#include "../../Nuestras/src/laGranBiblioteca/sockets.h"
+
+int a,b;
+t_direccion dirA,dirB;
+
+//HARDCODEADISIMO PAPU
+#define tamanioPagina 64
+
+typedef struct{
+ int pid;
+ char* mensaje;
+} t_mensajeDeProceso;
+
+typedef struct{
+	int id;
+	t_direccion direccion;
+}t_pedidoMemoria;
+
+typedef struct{
+	int id;
+	t_direccion direccion;
+	t_valor_variable valor;
+}t_escrituraMemoria;
+
+	t_direccion calcularDireccion(t_puntero puntero);
 
 	t_puntero AnSISOP_definirVariable(t_nombre_variable identificador_variable);
 

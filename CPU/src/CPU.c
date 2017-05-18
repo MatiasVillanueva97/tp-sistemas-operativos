@@ -18,8 +18,10 @@
 #include "parser/metadata_program.h"
 #include "parser/parser.h"
 #include "commons/string.h"
+#include "commons/collections/list.h"
 
 #include "primitivas.h"
+#include "compartidas.h"
 
 #include "../../Nuestras/src/laGranBiblioteca/sockets.c"
 #include "../../Nuestras/src/laGranBiblioteca/config.c"
@@ -34,15 +36,14 @@ enum id_Modulos{
 	FileSystem = 4
 };
 
-typedef struct
-{
-	int pid;
-	int contPags_pcb;
-}__attribute__((packed)) PCB_DATA;
-
-int socketKernel;
-int socketMemoria;
-
+char* script =
+		"begin\n"
+		"variables a, b\n"
+		"a = 3\n"
+		"b = 5\n"
+		"a = b + 12\n"
+		"end\n"
+		"\n";
 
 
 int main(void)
@@ -50,8 +51,6 @@ int main(void)
 	printf("Inicializando CPU.....\n\n");
 
 	int rta_conexion;
-	int i;
-	PCB_DATA pcb;
 	AnSISOP_funciones AnSISOP_funciones = {
 			.AnSISOP_definirVariable = AnSISOP_definirVariable,
 			.AnSISOP_obtenerPosicionVariable = AnSISOP_obtenerPosicionVariable,
@@ -77,6 +76,7 @@ int main(void)
 			.AnSISOP_escribir = AnSISOP_escribir,
 			.AnSISOP_leer = AnSISOP_leer
 	};
+
 	// ******* Configuracion Inicial de CPU
 
  	printf("Configuracion Inicial: \n");
@@ -123,44 +123,69 @@ int main(void)
 	printf("Conexión exitosa con el Servidor(%i)!!\n",rta_conexion);
 
 	while(1){
-		char* script = string_new();
+		terminoPrograma = false;
 		// Recepcion del pcb
 		puts("esperando pcb\n");
+
+		/*
 		if(recibirMensaje(socketKernel,(void*)&pcb)==-1){
 			perror("Error en el Reciv");
 		}
-		printf("%d\n",pcb.pid);
+		*/
 
+		t_metadata_program *metadata = metadata_desde_literal(script);
+
+		pcb.pid = 0;
+		pcb.contPags_pcb = 1;
+		pcb.contextoActual = -1;
+		pcb.exitCode = 0;
+		pcb.indiceCodigo = metadata->instrucciones_serializado;
+		pcb.indiceEtiquetas = metadata->etiquetas;
+		pcb.cantidadEtiquetas = metadata->cantidad_de_etiquetas;
+		pcb.indiceStack = malloc(sizeof(t_entrada));
+		pcb.indiceStack->argumentos = list_create();
+		pcb.indiceStack->variables = list_create();
+
+		printf("%d\n",pcb.pid);
+/*
 		// Pedido de Codigo
 		enviarMensaje(socketMemoria,1,(void *)&pcb.pid, sizeof(int));
 		//Recepcion del codigo ANSISOP
 		if(recibirMensaje(socketMemoria,(void*)script)==-1){
 			perror("Error en el Reciv");
 		}
-//Lo siguiente es provisorio y será reemplazado por un codigo similar al que hay en el dummy-cpu en el runner.c
+*/
+		char** lineas = string_split(script,"\n");
+		int i = 0;
 
-		char** lineasDelScript= string_split(script,"\n");
-		i = 0;
-		/*while(lineasDelScript[i] != NULL){
-		analizadorLinea(lineasDelScript[2],&AnSISOP_funciones,&AnSISOP_funciones_kernel);
+		while(!terminoPrograma){
+
+			char* instruccion = lineas[i];
+			puts(instruccion);
+			/*t_pedidoMemoria pedido;
+			pedido.id = pcb.pid;
+			pedido.direccion = calcularDireccion(pcb.indiceCodigo[pcb.programCounter].start);
+			pedido.direccion.size = pcb.indiceCodigo[pcb.programCounter].offset;
+*/
+/*
+			// Pedido de Codigo
+			//Falta crear un caso de enviarMensaje para este tipo de pedidos
+			enviarMensaje(socketMemoria,5,(void *)&pedido, sizeof(pedido));
+			//Recepcion del codigo ANSISOP
+			if(recibirMensaje(socketMemoria,(void*)instruccion)==-1){
+				perror("Error en el Reciv");
+			}
+*/
+
+
+
+			//Magia del Parser para llamar a las primitivas
+			analizadorLinea(instruccion,&AnSISOP_funciones,&AnSISOP_funciones_kernel);
+
+			free(instruccion);
 			i++;
-		}*/
-		/*if (strcmp(lineasDelScript[1],TEXT_BEGIN)){
-		      perror("Error en el begin");
-		  }
-		  while(lineasDelScript[i]!= NULL){
-			  char ** algo = string_split(lineasDelScript[i]," s");
-			  if(algo[2]!=NULL){
-				  puts(algo[2]);
-
-			  }
-
-
-
-		   i++;
-		  }
-		  */
-		puts(script);
+		}
+		free(script);
 	}
 	close(socketKernel);
 	liberarConfiguracion();
