@@ -264,6 +264,7 @@ int recibirMensaje(int socket,void* stream) // Toda esta funcion deberá ccambia
 
 	if(cantidad == 0) return 0;
 
+	stream = malloc(header.tamano); ////ACA HICE UN MALLOC
 	memcpy(stream, deserializador(header,socket), header.tamano);
 	return header.tamano;
 }
@@ -387,8 +388,7 @@ int handshakeServidor(int socket,int id, int permitidos[])
 	//Se recibe el id del emisor mediante la conexion
 
 	if ((recv(socket, &id_cliente, sizeof(id_cliente), 0)) == -1) {
-		perror("recv");
-		exit(1);
+		perror("Error en el recv del HandshakeServidor");
 	}
 
 	rta = conexionPosible(id_cliente,permitidos) ? id : -1; // se comprueba que puedan conectarse
@@ -396,8 +396,7 @@ int handshakeServidor(int socket,int id, int permitidos[])
 	//Se envia el id del servidor al cliente en caso de que se acepte la conexion
 
 	if (send(socket, &rta, sizeof(rta), 0) == -1){
-			perror("send");
-			exit(1);
+			perror("Error en el send del HandshakeServidor");
 	}
 
 	if(rta == -1)

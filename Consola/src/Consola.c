@@ -29,7 +29,7 @@ typedef struct {
 } t_parametrosHiloPrograma;
 
 #define MAXDATASIZE 100 // max number of bytes we can get at once
-#define ID 1
+#define ID 3
 
 void* laFuncionMagicaDeConsola(void*);
 char* diferencia(char*,char*);

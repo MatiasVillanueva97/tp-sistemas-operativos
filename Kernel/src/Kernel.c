@@ -17,181 +17,376 @@
 #include <pthread.h>
 #include "commons/collections/list.h"
 #include "commons/collections/queue.h"
+#include "commons/collections/dictionary.h"
 #include <semaphore.h>
+
+#include <parser/parser.h>
+#include <parser/metadata_program.h>
 
 #include "../../Nuestras/src/laGranBiblioteca/sockets.c"
 #include "../../Nuestras/src/laGranBiblioteca/config.c"
 
-#define PORT "3490"  // the port users will be connecting to
+#include "datosGlobales.h"
+#include "funcionesPCB.h"
 
-#define BACKLOG 10// how many pending connections queue will hold
+enum tiposMensajes{
+	enviarPid = 1,
+	enviarCantidadPaginas = 2,
+	enviarPaginaMemoria = 3
+};
 
-#define ID 0
-
-int socketMemoria;
-int socketFS;
-int	historico_pcb = 0;
-int socketConsola2=0;
-
-//t_queue* colaDeReady;
+///----INICIO SEMAFOROS----///
+pthread_mutex_t mutex_HistoricoPcb; // deberia ser historico pid
+pthread_mutex_t mutex_ListaDeAvisos;
+pthread_mutex_t mutex_cola_New;
 
 sem_t* contadorDeCpus = 0;
 
-enum id_Modulos{
-	Kernel = 0,
-	CPU = 1,
-	Memoria = 2,
-	Consola = 3,
-	FileSystem = 4
-};
+void inicializarSemaforo(){
+	sem_init(&mutex_HistoricoPcb,0,1);
+	sem_init(&mutex_ListaDeAvisos,0,1);
+	sem_init(&mutex_cola_New,0,1);
+}
+///----FIN SEMAFOROS----///
 
 
-typedef struct
-{
-	int pid;
-	int contPags_pcb;
-}__attribute__((packed)) PCB_DATA;
 
-typedef struct{
-	PCB_DATA pcb;
-	int socket;
-}pcb_Consola;
-
-//t_list* tablaConsolaPcb;
-PCB_DATA* pcbGlobal;
-
-/*
-void agregarATablaConsolaPcb(PCB_DATA* pcb, int* socket){
-	pcb_Consola* pcb_Consola = malloc(15);
-	pcb_Consola->pcb = *pcb;
-	pcb_Consola->socket = *socket;
-	list_add(tablaConsolaPcb, pcb_Consola);
+///------FUNCIONES Y PROTOCOLOS COMUNES----//
+void errorEn(int valor,char * donde){
+	if(valor == -1)
+		printf("%s\n", donde);
 }
 
-int obtenerSocketConsola(PCB_DATA* pcb){
-	bool busqueda(PCB_DATA* pcb2){
-		return pcb->pid == pcb2->pid;
+int socketKernel;
+
+void teDigoQueHayQueHacer(int queHaces){
+	enviarMensaje(socketKernel,1,queHaces,sizeof(int));
+}
+
+int queHago(int socket){
+	int recibido;
+	recibirMensaje(socket,&recibido);
+	return recibido;
+}
+//---FIN FUNCIONES COMUNES---//
+
+t_list * avisosDeConsola(int socketConsola){
+	bool buscarPorSocket(AVISO_FINALIZACION * aviso){
+		return (aviso->socketConsola == socketConsola);
 	}
-	if (list_any_satisfy(tablaConsolaPcb,busqueda)){
-		pcb_Consola* pcbActual =list_find(tablaConsolaPcb,busqueda);
-		return pcbActual->socket;
+	return list_filter(avisos, buscarPorSocket);
+}
+
+///-----FUNCIONES CONSOLA-------//
+
+void consola_enviarAvisoDeFinalizacion(int socketConsola, int pid){
+	char * mensaje = string_from_format("El Proceso con pid %d, ha finalizado",pid);
+	enviarMensaje(socketConsola,2,mensaje,strlen(mensaje)+1);
+	free(mensaje);
+}
+
+    ///***Me falto borrarlo de la lista de avisos
+void consola_finalizacionPorDirectiva(int socketConsola, int pid, int idError){
+
+	PCB_DATA * pcb = buscarPCBPorPidYBorrar(pid);
+	if(pcb != NULL){
+		pcb->exitCode = idError;
+		queue_push(cola_Finished,pcb);
+		//**Le mando un 1 diciendo que salio todao ok
+		enviarMensaje(socketConsola,1,1,sizeof(int));
+		consola_enviarAvisoDeFinalizacion(socketConsola, pid);
 	}
 	else
-		return -1;
+		//***Le mando un 0 diciendo que no pude encontrar el pcb
+		enviarMensaje(socketConsola,1,0,sizeof(int));
 }
-*/
+
+void consola_finalizarTodosLosProcesos(int socketConsola){
+	t_list * avisosConsola = avisosDeConsola(socketConsola);
+	void modificar(AVISO_FINALIZACION * aviso){
+		aviso->finalizado = true;
+		consola_finalizacionPorDirectiva(socketConsola, aviso->pid, -6);
+	}
+	list_map(avisosConsola, modificar);
+}
+////----FIN FUNCIONES CONSOLA-----///
+
+///---FUNCIONES DEL KERNEL----//
+
+//***Funciones de Avisos a Consola
+
+
+int size_pagina=256;
+
+void liberar_Programa_En_New(PROGRAMAS_EN_NEW * programaNuevo)
+{
+	//free(programaNuevo->scriptAnsisop); El que no este esta cosa puede traer memory leaks
+	free(programaNuevo);
+}
+unsigned int redondearDivison(unsigned int dividend, unsigned int divisor)
+{
+    return (dividend + (divisor / 2)) / divisor; /// revisar laburo para santi
+}
+
+char ** memoria_dividirScriptEnPaginas(int cant_paginas, char *copiaScriptAnsisop)
+{
+	char ** scriptParticionado= malloc(strlen(copiaScriptAnsisop)+(sizeof(char*)*cant_paginas));
+
+	//while(){}
+
+	return 15;
+}
+
+int memoria_CalcularCantidadPaginas(char * scriptAnsisop)
+{
+	return 11;// redondearDivision((strlen(scriptAnsisop)+1), 256) + getConfigInt("STACK_SIZE");
+}
+
+
+//***Funciones de Planificador
+void newToReady(){
+
+	printf("\n\n\nEstamos en el planificador a largo plazo!\n\n");
+
+	//***Tomo el primer elemento de la cola sin sacarlo de ella
+	sem_wait(&mutex_cola_New);
+	PROGRAMAS_EN_NEW* programaAnsisop = queue_peek(cola_New);
+
+	printf("Estructura:--\nPid: %d\nScript: %s\nSocketConsola:%d\n\n",programaAnsisop->pid_provisorio,programaAnsisop->scriptAnsisop,programaAnsisop->socketConsola);
+
+
+	//***Le Enviamos a memoria el pid con el que vamos a trabajar - Junto a la accion que vamos a realizar
+//	enviarMensaje(socketMemoria,enviarPid, &programaAnsisop->pid_provisorio, sizeof(int)); // Enviamos el pid a memoria
+	printf("Pid Enviado a memoria, pid: %d\n", programaAnsisop->pid_provisorio);
+
+	//***Calculo cuantas paginas necesitara la memoria para este script
+	int cant_paginas = memoria_CalcularCantidadPaginas(programaAnsisop->scriptAnsisop); // hacer esta funcion-------------------------------------------------FALTA
+
+	//***Le envio a memeoria la cantidad de paginas que necesitaré reservar
+//	enviarMensaje(socketMemoria,enviarCantidadPaginas,&cant_paginas,sizeof(int));
+	printf("Cantidad De Paginas Enviadas a memoria, cantidad de paginas: %d\n", cant_paginas);
+
+	int ok=0;
+	//recibirMensaje(socketMemoria, &ok); // Esperamos a que memoria me indique si puede guardar o no el stream
+	//printf("Recibimos el Ok de memoria\n");
+	//ok=1;
+
+	if(ok)
+	{
+		char* copiaScriptAnsisop = strdup(programaAnsisop->scriptAnsisop);
+		int pid= programaAnsisop->pid_provisorio;
+		int copiasocketConsola = programaAnsisop->socketConsola;
+
+		//***Quito el script de la cola de new
+		queue_pop(cola_New);
+		liberar_Programa_En_New(programaAnsisop);
+		sem_post(&mutex_cola_New);
+
+		printf("\n\n[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado\n");
+
+		//*** Divido el script en la cantidad de paginas necesarias
+		//char** scriptEnPaginas = memoria_dividirScriptEnPaginas(cant_paginas, copiaScriptAnsisop); // hacer esta otra funcion-------------------------------------------FALTA
+
+		//***Le envio a memoria todo el scrip pagina a pagina
+		int i=0;
+		for(i; i<cant_paginas; i++)
+		{
+			//enviarMensaje(socketMemoria,enviarPaginaMemoria,scriptEnPaginas[i],sizeof(int));
+			printf("Envio una pagina: %d\n", i);
+		}
+
+		//***Creo el PCB
+		PCB_DATA * pcbNuevo = crearPCB(copiaScriptAnsisop, cant_paginas, pid);
+		free(copiaScriptAnsisop);
+
+		//***Añado el pcb a la cola de Ready
+		queue_push(cola_Ready,pcbNuevo);
+
+		//***Añado al proceso a la cola de avisos
+		AVISO_FINALIZACION * aviso = malloc(sizeof(AVISO_FINALIZACION));
+
+		aviso->pid = pcbNuevo->pid;
+		aviso->socketConsola = copiasocketConsola;
+		aviso->finalizado = false;
+
+		list_add(avisos,aviso);
+
+		printf("Se agrego en la lista de avisos: pid- %d , socketConsola-%d \n", aviso->pid,aviso->socketConsola);
+	}
+	else
+	{
+		PROGRAMAS_EN_NEW * programaNuevoABorrar = queue_peek(cola_New);
+		queue_pop(cola_New);
+
+		printf("Estructura a borrar:--\nPid: %d\nScript: %s\nSocketConsola:%d\n\n",programaNuevoABorrar->pid_provisorio,programaNuevoABorrar->scriptAnsisop,programaNuevoABorrar->socketConsola);
+
+
+	//	consola_finalizacionPorNoMemoria(programaNuevoABorrar->socketConsola, programaNuevoABorrar->pid_provisorio, -1); /// arreglar esto
+
+		liberar_Programa_En_New(programaNuevoABorrar);
+
+		sem_post(&mutex_cola_New);
+
+
+		printf("[Funcion consola_recibirScript] - No hubo espacio para guardar en memoria!\n");
+	}
+}
+
+
+///---FIN FUNCIONES DEL KERNEL----//
+
+//// El recibir mensaje recibe (int socketk, void stream) y devuelve el tipo de mensaje
+
+///---RUTINAS DE HILOS----///
+void *rutinaConsola(void * arg)
+{
+
+	int socketConsola = (int)arg;
+	bool todaviaHayTrabajo = true;
+	void * stream;
+
+	printf("[Rutina rutinaConsola] - Entramos al hilo de la consola: %d!\n", socketConsola);
+
+	while(todaviaHayTrabajo){
+		switch(recibirMensaje(socketConsola,&stream)){
+			case recibirScript:{
+
+				//***Como para el caso de recibir un script
+				char* scripAnsisop = (char *)stream;
+				int sizeCodigoAnsisop = strlen(scripAnsisop);
+
+				/* Ni bien llega un programa, ya tengo que ponerlo una estructura que tiene a los programitas dando vuelta,
+				 * fijate que ya necesitariamos un pid, porque ya en cualquier momento este proceso se puede finalizar y para eso
+				 * tengo qeu podes avisarle a una consola que su proceso finalizó, justamente para esto tenemos esta estructura. aviso qe esta re peruano esto
+				 */
+
+				PROGRAMAS_EN_NEW * nuevoPrograma;
+
+				sem_wait(&mutex_HistoricoPcb);
+					nuevoPrograma->pid_provisorio= historico_pid;
+					historico_pid++;
+				sem_post(&mutex_HistoricoPcb);
+
+				nuevoPrograma->scriptAnsisop = scripAnsisop;
+				nuevoPrograma->socketConsola = socketConsola;
+
+				//***Lo Agrego a la Cola de New - Aca hay que poner un semaforo
+				sem_wait(&mutex_cola_New);
+					queue_push(cola_New,nuevoPrograma);
+				sem_post(&mutex_cola_New);
+			}break;
+
+			case finalizarScript:{
+				int pid;
+				int respuesta = (int)stream;
+
+				//***Le digo a memoria que mate a este programa
+				enviarMensaje(socketMemoria,1, &pid,sizeof(int));
+
+				//***Memoria me avisa que salio todobon
+				respuesta = recibirMensaje(socketConsola, &pid);
+				errorEn(respuesta, "[Funcion consola_FinalizacionPorDirectiva] - La Memoria no pudo finalizar el proceso"); // y algo mas deveriamos hacer
+
+				consola_finalizacionPorDirectiva(socketConsola, pid, -7);
+			}break;
+			case desconectar:{
+
+				todaviaHayTrabajo = false;
+				consola_finalizarTodosLosProcesos(socketConsola);
+
+				// matar todos los procesos en memoria tambien
+			}break;
+
+			default:{
+				perror("Se recibio una accion que no esta contemplada, se cerrara el socket\n");
+				close(socketConsola);
+			}
+		}
+	}
+	close(socketConsola);
+}
 
 void *rutinaCPU(void * arg)
 {
-	int socketCPU = (int)arg ;
-
-	//while(1){  //Villereada
-	//	while(!queue_is_empty(colaDeReady)){
-	while(socketConsola2 == 0);
-
-
-			enviarMensaje(socketCPU,3,pcbGlobal,sizeof(PCB_DATA)); // falta hacer este tipo.
-			void* resultado = malloc(100);
-
-			//int tamano = recibirMensaje(socketCPU, resultado);
-
-
-			if(socketConsola2!= 0){
-				//enviarMensaje(socketConsola2,1,&(pcbGlobal->pid),sizeof(int));//esto no estoy seguro si anda
-				//enviarMensaje(socketConsola2,2,resultado,tamano); // falta hacer este tipo.
-				printf("Termine la cpu, buscando nuevos procesos para realizar");
-			}
-			else{
-				printf("No pude obtener el socketConsola de la lista de sockets");
-				exit(-56);
-			}
-	//	}
-	//}
+	int socketCPU = (int)arg;
 }
 
 
-void *rutinaConsola(void * arg)
-{
-	int socketConsola = (int)arg ;
+//***Esta rutina solo revisa una lista de procesos y si algun terminó, se lo avisa a su consola correspondiente
+void * revisarFinalizados(){
+	while(1){
 
-	char* scripAnsisop = malloc(120);
+		sleep(10);
+		printf("[Rutina revisarFinalizados] - Entro al while 1 de la rutina de finalizados\n");
 
-	int sizeCodigoAnsisop = recibirMensaje(socketConsola, scripAnsisop);
+		int pos = 0;
 
-	enviarMensaje(socketMemoria,2,scripAnsisop,sizeCodigoAnsisop); // Le envio el stream a memoria
-	enviarMensaje(socketMemoria,1,&sizeCodigoAnsisop,sizeof(int)); // Enviamos el size del stream a memoria
+		bool busqueda(AVISO_FINALIZACION * aviso)
+		{
+			if(aviso->finalizado){
+				return true;
+			}
+			pos++;
+			return false;
+		}
 
-	PCB_DATA* pcb = malloc(10);
-	int ok=0;
-	recibirMensaje(socketMemoria, &ok); // Esperamos a que memoria me indique si puede guardar o no el stream
-	if(ok)
-	{
-		printf("\n\nMemoria dio el Ok para el proceso recien enviado\n");
-		historico_pcb++;
-//		agregarATablaConsolaPcb(pcb,&socketConsola);
-		pcb->pid=historico_pcb; // asigno un pid al pcb
+		sem_wait(&mutex_ListaDeAvisos);
+		//**Si algun elemento de la lista se encuentra en estado finalizado, se avisa a la consola y se elimina el proceso de la lista
+		if(list_any_satisfy(avisos, busqueda)){
+			AVISO_FINALIZACION* aux =(AVISO_FINALIZACION*)list_find(avisos, busqueda);
+			//**Le avisamos a la consola apropiada a traves del socket que esta en la estructura de avisos, que cierto pid esta en estado finalizado
+			consola_enviarAvisoDeFinalizacion(aux->socketConsola, aux->pid);
 
-		printf("Pid enviado a memoria: %d", pcb->pid);
-		int aux = pcb->pid;
-		enviarMensaje(socketMemoria,2, &aux,sizeof(int)); // Enviamos el pid a memoria
-
-		int nuevo_contPags_pcb;
-		if(recibirMensaje(socketMemoria, &nuevo_contPags_pcb)==-1) // REcibimos el numero de pagina o contador de pagina o lo que sea necesario de pagina
-			perror("Error en el reciv del contador de paginas del pcb desde memoria");
-
-		pcb->contPags_pcb=nuevo_contPags_pcb; // asigno el contador de pagns al pcb
-
-		printf("Pcb Despues de recibir la pagina y el ok:\n*-id_pcb: %d\n*-contPags_pcb: %d\n\n", pcb->pid, pcb->contPags_pcb);
-
-		//queue_push(colaDeReady,pcb); // agregamos el pcb a la cola de redys
-		pcbGlobal = pcb;
-		socketConsola2 = socketConsola;
+			//**Eliminamos el nodo de la lista
+			list_remove_and_destroy_element(avisos,pos,free);//***No se si esto tiene memory leaks-- revisar
+		}
+		sem_post(&mutex_ListaDeAvisos);
 	}
-	else
-		printf("No hubo espacio para guardar en memoria!\n");
-
 }
 
 void *aceptarConexiones( void *arg ){
+	//----DECLARACION DE VARIABLES ------//
 	int listener = (int)arg;
 	int nuevoSocket;
 	int aceptados[] = {CPU, Consola};
 	struct sockaddr_storage their_addr;
 	char ip[INET6_ADDRSTRLEN];
 	socklen_t sin_size = sizeof their_addr;
-
-
-//	escuchar(listener); // poner a escuchar ese socket
+	int id_clienteConectado;
+	///-----FIN DECLARACION----///
 
 	while(1)
 	{
-		socklen_t sin_size = sizeof their_addr;
+		socklen_t sin_size = sizeof their_addr;//No preguntes porque, pero sin esto no anda nada
 
-		if ((nuevoSocket = accept(listener, (struct sockaddr *) &their_addr, &sin_size)) == -1) {// estas lines tienen que ser una funcion
-			perror("Error en el Accept");
-			//continue;
-		}
+		//***Acepto una conexion
+		nuevoSocket = accept(listener, (struct sockaddr *) &their_addr, &sin_size);
+		errorEn(nuevoSocket,"ACCEPT");
 
-		inet_ntop(their_addr.ss_family, getSin_Addr((struct sockaddr *) &their_addr), ip, sizeof ip); // para poder imprimir la ip del server
+
+		//***Toda esta negrada para imprimir una ip
+		inet_ntop(their_addr.ss_family, getSin_Addr((struct sockaddr *) &their_addr), ip, sizeof ip);
 		printf("Conexion con %s\n", ip);
 
-		int id_clienteConectado;
-		id_clienteConectado = handshakeServidor(nuevoSocket, ID, aceptados);
+		//***Hago el handShake con la nueva conexion
+		id_clienteConectado = handshakeServidor(nuevoSocket, Kernel, aceptados);
 
 		pthread_t hilo_M;
 
 		switch(id_clienteConectado)
 		{
-			case CPU: // Si el cliente conectado es el cpu
-			{
-				printf("Nueva CPU Conectada\nSocket CPU %d\n\n", nuevoSocket);
-				pthread_create(&hilo_M, NULL, rutinaCPU, nuevoSocket);
-			}break;
 			case Consola: // Si es un cliente conectado es una CPU
 			{
 				printf("\nNueva Consola Conectada!\nSocket Consola %d\n\n", nuevoSocket);
 				pthread_create(&hilo_M, NULL, rutinaConsola, nuevoSocket);
 			}break;
+
+			case CPU: // Si el cliente conectado es el cpu
+			{
+				printf("Nueva CPU Conectada\nSocket CPU %d\n\n", nuevoSocket);
+				//pthread_create(&hilo_M, NULL, rutinaCPU, nuevoSocket);
+			}break;
+
 			default:
 			{
 				printf("Papi, fijate se te esta conectado cualquier cosa\n");
@@ -200,6 +395,9 @@ void *aceptarConexiones( void *arg ){
 		}
 	}
 }
+///--- FIN RUTINAS DE HILOS----///
+
+
 
 void conectarConMemoria()
 {
@@ -213,7 +411,7 @@ void conectarConMemoria()
 		perror("No se conectado con el FileSystem, asegurese de que este abierto el proceso");
 		exit(1);
 	}
-	if ( (rta_conexion = handshakeCliente(socketMemoria, ID)) == -1) {
+	if ( (rta_conexion = handshakeCliente(socketMemoria, Kernel)) == -1) {
 				perror("Error en el handshake con Memoria");
 				close(socketMemoria);
 	}
@@ -232,77 +430,64 @@ void conectarConFS()
 		perror("No se conectado con el FileSystem, asegurese de que este abierto el proceso");
 		exit(1);
 	}
-	if ( (rta_conexion = handshakeCliente(socketFS, ID)) == -1) {
+	if ( (rta_conexion = handshakeCliente(socketFS, Kernel)) == -1) {
 		perror("Error en el handshake con FileSystem");
 		close(socketFS);
 	}
 	printf("Conexión exitosa con el FileSystem(%i)!!\n",rta_conexion);
 }
 
+
 int main(void) {
 	printf("Inicializando Kernel.....\n\n");
-	pcbGlobal = malloc(10);
-	// ******* Declaración de la mayoria de las variables a utilizar
 
-	socklen_t sin_size;
-	struct sockaddr_storage their_addr; // connector's address information
+	///------INICIALIZO TODO-------------///
+		historico_pid=0;
 
-	int id_cliente, rta_conexion, nbytes, socketAEnviarMensaje = 0, socketSeleccionado = 0;
-	int aceptados[] = { 1, 2, 3, 4 };
+		//***Inicializo las listas
+		avisos = list_create();
 
-	char ip_suponemos[INET6_ADDRSTRLEN]; // esto es una ip
-	char mensajeRecibido[100];
+		//***Inicializo las colas
+		cola_New = queue_create();
+		cola_Ready = queue_create();
+		cola_Wait = queue_create();
+		cola_Exec = queue_create();
+		cola_Finished = queue_create();
 
-	//colaDeReady = queue_create();
-	//tablaConsolaPcb = list_create();
+		//***Inicializo los semaforos
+		inicializarSemaforo();
 
-	int listener;     // Socket principal
+		//***Lectura e impresion de los archivos de configuracion
+		printf("Configuracion Inicial: \n");
+		configuracionInicial("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Kernel/kernel.config");
+		imprimirConfiguracion();
 
-	// ******* Configuracion del Kernel a partir de un archivo
-
-	printf("Configuracion Inicial: \n");
-	configuracionInicial("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Kernel/kernel.config");
-	imprimirConfiguracion();
-
+	///-----------------------------////
 
 
 
-	// ******* Conexiones obligatorias y necesarias del Kernel - FileSystem y Memoria y preparar listener para poder oir consolas y cpus
-
+	//---CONECTANDO CON FILESYSTEM Y MEMORIA
 	printf("\n\n\nEsperando conexiones:\n-FileSystem\n-Memoria\n");
 	conectarConMemoria();
 //	conectarConFS();
+	///----------------------///
 
+	///---CREO EL LISTENER Y LO PONGO A ESCUCHAR POR PRIMERA VEZ-----///
+	int listener;     // Socket principal
 	listener = crearSocketYBindeo(getConfigString("PUERTO_PROG"));
-
-
-
-
 	escuchar(listener); // poner a escuchar ese socket
+	///----------------------//
 
-	// ******* Recibir datos desde las Consolas -- rutina consola
+	//---ABRO EL HILO DE PROCESOS FINALIZADOS---//
+	pthread_t hilo_revisarFinalizados;
+	pthread_create(&hilo_revisarFinalizados, NULL, revisarFinalizados, NULL);
 
+	//----ME PONGO A ESCUCHAR CONEXIONES---//
 	pthread_t hilo_aceptarConexiones;
-
 	pthread_create(&hilo_aceptarConexiones, NULL, aceptarConexiones, listener);
-
-
-
-
-	// ******* Enviar Datos a Memoria
-
-
-
-
-	// ******* Planificar procesos para las CPUs
-
-
-
-
-
 	pthread_join(hilo_aceptarConexiones, NULL);
 
-	liberarConfiguracion();
+	pthread_join(hilo_revisarFinalizados, NULL);
 
 
 	while(1)
@@ -310,6 +495,9 @@ int main(void) {
 		printf("Hola hago tiempo!\n");
 		sleep(5);
 	}
+
+	///-----LIBERO LA CONFIGURACION
+	liberarConfiguracion();
 
 	return 0;
 }
