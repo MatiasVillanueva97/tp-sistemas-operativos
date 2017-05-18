@@ -31,27 +31,6 @@ int socketFS;
 int historico_pid;
 
 ///------ESTRUCTURAS AUXILIARES ADMNISTRATIVAS------///
-enum id_Modulos{
-	Kernel = 0,
-	CPU = 1,
-	Memoria = 2,
-	Consola = 3,
-	FileSystem = 4
-};
-
-enum directivasConsola{
-	recibirScript = 1,
-	finalizarScript = 2,
-	desconectar = 3
-};
-
-enum directivasMemoria{
-	inicializarPrograma = 1,
-	solicitarBytes = 2,
-	almacenarBytes = 3,
-	asignarPaginas = 4, /// asigna paginas a un proceso, esto es mas que nada para el heap
-	finalizarPrograma = 5
-};
 
 //*** Estructura que utilizamos para manjear el tema de tener que avisarle a la consola cuando su proceso finalizó
 //*** Como los procesos pueden finalizar en cualquier momento, y en el pcb no contenemos a que consola pertenece cierto proceso

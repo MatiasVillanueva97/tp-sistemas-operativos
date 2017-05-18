@@ -20,21 +20,15 @@
 #include "commons/string.h"
 #include "commons/collections/list.h"
 
+#include "../../Nuestras/src/laGranBiblioteca/datosGobalesGenerales.h"
+//#include "../../Nuestras/src/laGranBiblioteca/ProcessControlBlock.h"
+
 #include "primitivas.h"
 #include "compartidas.h"
 
 #include "../../Nuestras/src/laGranBiblioteca/sockets.c"
 #include "../../Nuestras/src/laGranBiblioteca/config.c"
 
-#define ID 1
-
-enum id_Modulos{
-	Kernel = 0,
-	CPU = 1,
-	Memoria = 2,
-	Consola = 3,
-	FileSystem = 4
-};
 
 char* script =
 		"begin\n"
@@ -99,7 +93,7 @@ int main(void)
 		perror("No se conectado con el Kernel, asegurese de que este abierto el proceso");
 		exit(1);
 	}
-	if ( (rta_conexion = handshakeCliente(socketKernel, ID)) == -1) {
+	if ( (rta_conexion = handshakeCliente(socketKernel, CPU)) == -1) {
 		perror("Error en el handshake con el Servidor");
 		close(socketKernel);
 	}
@@ -116,7 +110,7 @@ int main(void)
 		perror("No se conectado con el Kernel, asegurese de que este abierto el proceso");
 		exit(1);
 	}
-	if ( (rta_conexion = handshakeCliente(socketMemoria, ID)) == -1) {
+	if ( (rta_conexion = handshakeCliente(socketMemoria, CPU)) == -1) {
 		perror("Error en el handshake con el Servidor");
 		close(socketMemoria);
 	}
@@ -141,7 +135,7 @@ int main(void)
 		pcb.exitCode = 0;
 		pcb.indiceCodigo = metadata->instrucciones_serializado;
 		pcb.indiceEtiquetas = metadata->etiquetas;
-		pcb.cantidadEtiquetas = metadata->cantidad_de_etiquetas;
+		pcb.cantidadEtiquetas = metadata->cantidad_de_etiquetas; /// HAY QUE VER ESTO; ACAAAAAAA MIRENME SOY UN COMENTARIO WUOWUOWUWOUWOWUOWUWOWWWOOO
 		pcb.indiceStack = malloc(sizeof(t_entrada));
 		pcb.indiceStack->argumentos = list_create();
 		pcb.indiceStack->variables = list_create();

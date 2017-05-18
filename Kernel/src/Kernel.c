@@ -15,6 +15,7 @@
 #include <sys/wait.h>
 #include <signal.h>
 #include <pthread.h>
+#include <math.h>
 #include "commons/collections/list.h"
 #include "commons/collections/queue.h"
 #include "commons/collections/dictionary.h"
@@ -25,15 +26,12 @@
 
 #include "../../Nuestras/src/laGranBiblioteca/sockets.c"
 #include "../../Nuestras/src/laGranBiblioteca/config.c"
+#include "../../Nuestras/src/laGranBiblioteca/datosGobalesGenerales.h"
 
 #include "datosGlobales.h"
 #include "funcionesPCB.h"
 
-enum tiposMensajes{
-	enviarPid = 1,
-	enviarCantidadPaginas = 2,
-	enviarPaginaMemoria = 3
-};
+
 
 ///----INICIO SEMAFOROS----///
 pthread_mutex_t mutex_HistoricoPcb; // deberia ser historico pid
@@ -52,24 +50,22 @@ void inicializarSemaforo(){
 
 
 ///------FUNCIONES Y PROTOCOLOS COMUNES----//
+/// *** Esto Funciona
 void errorEn(int valor,char * donde){
 	if(valor == -1)
 		printf("%s\n", donde);
 }
 
-int socketKernel;
-
-void teDigoQueHayQueHacer(int queHaces){
-	enviarMensaje(socketKernel,1,queHaces,sizeof(int));
-}
-
-int queHago(int socket){
-	int recibido;
-	recibirMensaje(socket,&recibido);
-	return recibido;
-}
 //---FIN FUNCIONES COMUNES---//
 
+
+
+
+
+///-----FUNCIONES CONSOLA-------//
+
+/// *** Falta probar!
+//***Esta funcion busca todos los procesos que tiene una consola
 t_list * avisosDeConsola(int socketConsola){
 	bool buscarPorSocket(AVISO_FINALIZACION * aviso){
 		return (aviso->socketConsola == socketConsola);
@@ -77,15 +73,14 @@ t_list * avisosDeConsola(int socketConsola){
 	return list_filter(avisos, buscarPorSocket);
 }
 
-///-----FUNCIONES CONSOLA-------//
-
+/// *** Falta probar! Necesitamos que ande el enviar mensajes
 void consola_enviarAvisoDeFinalizacion(int socketConsola, int pid){
-	char * mensaje = string_from_format("El Proceso con pid %d, ha finalizado",pid);
-	enviarMensaje(socketConsola,2,mensaje,strlen(mensaje)+1);
-	free(mensaje);
+	printf("[Función consola_enviarAvisoDeFinalizacion] - Se Envía a Consola el pid: %d, porque ha finalizado!\n", pid);
+	enviarMensaje(socketConsola,envioDelPidEnSeco,&pid,sizeof(int));
 }
 
-    ///***Me falto borrarlo de la lista de avisos
+/// *** Falta probar! Necesitamos que ande el enviar mensajes
+///***Me falto borrarlo de la lista de avisos
 void consola_finalizacionPorDirectiva(int socketConsola, int pid, int idError){
 
 	PCB_DATA * pcb = buscarPCBPorPidYBorrar(pid);
@@ -101,6 +96,7 @@ void consola_finalizacionPorDirectiva(int socketConsola, int pid, int idError){
 		enviarMensaje(socketConsola,1,0,sizeof(int));
 }
 
+/// *** Falta probar! Necesitamos que ande el enviar mensajes
 void consola_finalizarTodosLosProcesos(int socketConsola){
 	t_list * avisosConsola = avisosDeConsola(socketConsola);
 	void modificar(AVISO_FINALIZACION * aviso){
@@ -111,38 +107,44 @@ void consola_finalizarTodosLosProcesos(int socketConsola){
 }
 ////----FIN FUNCIONES CONSOLA-----///
 
+
+
+
 ///---FUNCIONES DEL KERNEL----//
-
-//***Funciones de Avisos a Consola
-
 
 int size_pagina=256;
 
+/// *** Esta función esta probada y quasi-anda --- no anda uno de los freee de de adentro, que ahora esta comentado.. El programa sigue andando pero podemos tener memory leaks
 void liberar_Programa_En_New(PROGRAMAS_EN_NEW * programaNuevo)
 {
 	//free(programaNuevo->scriptAnsisop); El que no este esta cosa puede traer memory leaks
 	free(programaNuevo);
 }
-unsigned int redondearDivison(unsigned int dividend, unsigned int divisor)
+
+
+/// *** Esta función esta probada y anda
+//*** Esta funcion te divide el scriptAnsisop en una cantidad de paginas dadas, el size de cada pagina esta en el config
+char * memoria_dividirScriptEnPaginas(int cant_paginas, char copiaScriptAnsisop)
 {
-    return (dividend + (divisor / 2)) / divisor; /// revisar laburo para santi
+	char * scriptDivididoEnPaginas[cant_paginas] ;
+	int i;
+	for(i=0;i<cant_paginas;i++){
+		scriptDivididoEnPaginas[i] = malloc(size_pagina);
+		memcpy(scriptDivididoEnPaginas[i],copiaScriptAnsisop+i*size_pagina,size_pagina);
+		puts(scriptDivididoEnPaginas[i]);
+	}
+ return scriptDivididoEnPaginas;
 }
 
-char ** memoria_dividirScriptEnPaginas(int cant_paginas, char *copiaScriptAnsisop)
-{
-	char ** scriptParticionado= malloc(strlen(copiaScriptAnsisop)+(sizeof(char*)*cant_paginas));
-
-	//while(){}
-
-	return 15;
-}
-
+/// *** Esta función esta probada y anda
+//***Esta Funcion te devuelve la cantidad de paginas que se van a requerir para un scriptAsisop dado
 int memoria_CalcularCantidadPaginas(char * scriptAnsisop)
 {
-	return 11;// redondearDivision((strlen(scriptAnsisop)+1), 256) + getConfigInt("STACK_SIZE");
+  return  ceil(((double)(strlen(scriptAnsisop))/((double) size_pagina)));
 }
 
 
+/// *** A esta función solo le faltan dos cosas, 1- la funcion consola_finalizacionPorNoMemoria ; (no esta desarrollada) y porbar tuodos los enviar y recibir mensajes con memoria
 //***Funciones de Planificador
 void newToReady(){
 
@@ -156,20 +158,18 @@ void newToReady(){
 
 
 	//***Le Enviamos a memoria el pid con el que vamos a trabajar - Junto a la accion que vamos a realizar
-//	enviarMensaje(socketMemoria,enviarPid, &programaAnsisop->pid_provisorio, sizeof(int)); // Enviamos el pid a memoria
+	enviarMensaje(socketMemoria,envioDelPidEnSeco, &programaAnsisop->pid_provisorio, sizeof(int)); // Enviamos el pid a memoria
 	printf("Pid Enviado a memoria, pid: %d\n", programaAnsisop->pid_provisorio);
 
 	//***Calculo cuantas paginas necesitara la memoria para este script
 	int cant_paginas = memoria_CalcularCantidadPaginas(programaAnsisop->scriptAnsisop); // hacer esta funcion-------------------------------------------------FALTA
 
 	//***Le envio a memeoria la cantidad de paginas que necesitaré reservar
-//	enviarMensaje(socketMemoria,enviarCantidadPaginas,&cant_paginas,sizeof(int));
+	enviarMensaje(socketMemoria,envioCantidadPaginas,&cant_paginas,sizeof(int));
 	printf("Cantidad De Paginas Enviadas a memoria, cantidad de paginas: %d\n", cant_paginas);
 
 	int ok=0;
-	//recibirMensaje(socketMemoria, &ok); // Esperamos a que memoria me indique si puede guardar o no el stream
-	//printf("Recibimos el Ok de memoria\n");
-	//ok=1;
+	recibirMensaje(socketMemoria, &ok); // Esperamos a que memoria me indique si puede guardar o no el stream
 
 	if(ok)
 	{
@@ -185,7 +185,7 @@ void newToReady(){
 		printf("\n\n[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado\n");
 
 		//*** Divido el script en la cantidad de paginas necesarias
-		//char** scriptEnPaginas = memoria_dividirScriptEnPaginas(cant_paginas, copiaScriptAnsisop); // hacer esta otra funcion-------------------------------------------FALTA
+		char** scriptEnPaginas = memoria_dividirScriptEnPaginas(cant_paginas, copiaScriptAnsisop); // hacer esta otra funcion-------------------------------------------FALTA
 
 		//***Le envio a memoria todo el scrip pagina a pagina
 		int i=0;
@@ -220,13 +220,11 @@ void newToReady(){
 
 		printf("Estructura a borrar:--\nPid: %d\nScript: %s\nSocketConsola:%d\n\n",programaNuevoABorrar->pid_provisorio,programaNuevoABorrar->scriptAnsisop,programaNuevoABorrar->socketConsola);
 
-
 	//	consola_finalizacionPorNoMemoria(programaNuevoABorrar->socketConsola, programaNuevoABorrar->pid_provisorio, -1); /// arreglar esto
 
 		liberar_Programa_En_New(programaNuevoABorrar);
 
 		sem_post(&mutex_cola_New);
-
 
 		printf("[Funcion consola_recibirScript] - No hubo espacio para guardar en memoria!\n");
 	}
@@ -235,9 +233,16 @@ void newToReady(){
 
 ///---FIN FUNCIONES DEL KERNEL----//
 
+
+
 //// El recibir mensaje recibe (int socketk, void stream) y devuelve el tipo de mensaje
 
+
+
 ///---RUTINAS DE HILOS----///
+
+/// *** A esta función hay que probarle tuodo el sistema de envio de mensajes entre consola y kernel
+//***Esta rutina se levanta por cada consola que se cree. Donde se va a quedar escuchandola hasta que la misma se desconecte.
 void *rutinaConsola(void * arg)
 {
 
@@ -249,7 +254,7 @@ void *rutinaConsola(void * arg)
 
 	while(todaviaHayTrabajo){
 		switch(recibirMensaje(socketConsola,&stream)){
-			case recibirScript:{
+			case envioScriptAnsisop:{
 
 				//***Como para el caso de recibir un script
 				char* scripAnsisop = (char *)stream;
@@ -276,12 +281,12 @@ void *rutinaConsola(void * arg)
 				sem_post(&mutex_cola_New);
 			}break;
 
-			case finalizarScript:{
+			case finalizarCiertoScript:{
 				int pid;
 				int respuesta = (int)stream;
 
 				//***Le digo a memoria que mate a este programa
-				enviarMensaje(socketMemoria,1, &pid,sizeof(int));
+				enviarMensaje(socketMemoria,envioDelPidEnSeco, &pid,sizeof(int));
 
 				//***Memoria me avisa que salio todobon
 				respuesta = recibirMensaje(socketConsola, &pid);
@@ -289,7 +294,7 @@ void *rutinaConsola(void * arg)
 
 				consola_finalizacionPorDirectiva(socketConsola, pid, -7);
 			}break;
-			case desconectar:{
+			case desconectarConsola:{
 
 				todaviaHayTrabajo = false;
 				consola_finalizarTodosLosProcesos(socketConsola);
@@ -306,12 +311,16 @@ void *rutinaConsola(void * arg)
 	close(socketConsola);
 }
 
+
+/// *** Esta rutina se comenzará a hacer cuando podramos comenzar a enviar mensajes entre procesos
 void *rutinaCPU(void * arg)
 {
 	int socketCPU = (int)arg;
 }
 
 
+
+/// *** Esta Función esta probada y anda
 //***Esta rutina solo revisa una lista de procesos y si algun terminó, se lo avisa a su consola correspondiente
 void * revisarFinalizados(){
 	while(1){
@@ -344,6 +353,7 @@ void * revisarFinalizados(){
 	}
 }
 
+/// *** Esta Función esta probada y anda
 void *aceptarConexiones( void *arg ){
 	//----DECLARACION DE VARIABLES ------//
 	int listener = (int)arg;
@@ -398,7 +408,8 @@ void *aceptarConexiones( void *arg ){
 ///--- FIN RUTINAS DE HILOS----///
 
 
-
+///--------FUNCIONES DE CONEXIONES-------////
+//***Estas funciones andan
 void conectarConMemoria()
 {
 	int rta_conexion;
@@ -419,7 +430,6 @@ void conectarConMemoria()
 }
 void conectarConFS()
 {
-
 	int rta_conexion;
 	socketFS = conexionConServidor(getConfigString("PUERTO_FS"),getConfigString("IP_FS")); // Asignación del socket que se conectara con el filesytem
 	if (socketFS == 1){
@@ -436,12 +446,12 @@ void conectarConFS()
 	}
 	printf("Conexión exitosa con el FileSystem(%i)!!\n",rta_conexion);
 }
-
+///---- FIN FUNCIONES DE CONEXIONES------////
 
 int main(void) {
 	printf("Inicializando Kernel.....\n\n");
 
-	///------INICIALIZO TODO-------------///
+	///------INICIALIZO TO.DO-------------///
 		historico_pid=0;
 
 		//***Inicializo las listas

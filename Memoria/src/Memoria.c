@@ -35,8 +35,8 @@
 #include "parser/metadata_program.h"
 #include "parser/parser.h"
 //Variables
-#define ID 2
 
+#include "../../Nuestras/src/laGranBiblioteca/datosGobalesGenerales.h"
 
 enum directivasMemoria{
  inicializarPrograma = 1,
@@ -164,7 +164,7 @@ void *rutinaKernel(void *arg){
 
 		int id_clienteConectado;
 
-		if ((id_clienteConectado = handshakeServidor(socketKernel, ID, aceptados)) == -1) {
+		if ((id_clienteConectado = handshakeServidor(socketKernel, Memoria, aceptados)) == -1) {
 			perror("Error con el handshake: -1");
 			close(socketKernel);
 		}
@@ -334,7 +334,7 @@ void *aceptarConexionesCpu( void *arg ){ // aca le sacamos el asterisco, porque 
 		printf("[AceptarConexionesCPU] - Conexion con %s\n", ip);
 
 		int id_clienteConectado;
-		if ((id_clienteConectado = handshakeServidor(nuevoSocketCpu, ID, aceptados)) == -1) {
+		if ((id_clienteConectado = handshakeServidor(nuevoSocketCpu, Memoria, aceptados)) == -1) {
 			perror("Error con el handshake: -1");
 			close(nuevoSocketCpu);
 		}

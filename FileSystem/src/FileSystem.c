@@ -26,8 +26,7 @@
 #include "../../Nuestras/src/laGranBiblioteca/sockets.c"
 #include "../../Nuestras/src/laGranBiblioteca/config.c"
 
-#define ID 4
-
+#include "../../Nuestras/src/laGranBiblioteca/datosGobalesGenerales.h"
 
 int main(void) {
 	printf("Inicializando FileSystem.....\n\n");
@@ -39,7 +38,7 @@ int main(void) {
 	struct sockaddr_storage their_addr; // connector's address information
 
 	int id_cliente, rta_handshake, nuevoSocket, listener;// listen on sock_fd, new connection on new_fd
-	int aceptados[] = {0};
+	int aceptados[] = {Kernel};
 	char ip[INET6_ADDRSTRLEN];
 	char* mensajeRecibido = string_new();//El valgrind dice que hay un problema acá
 
@@ -68,7 +67,7 @@ int main(void) {
 
 	close(listener); // child doesn't need the listener
 
-	if ((rta_handshake = handshakeServidor(nuevoSocket, ID, aceptados)) == -1) {
+	if ((rta_handshake = handshakeServidor(nuevoSocket, FileSystem, aceptados)) == -1) {
 		perror("Error con el handshake: -1");
 		close(nuevoSocket);
 	}

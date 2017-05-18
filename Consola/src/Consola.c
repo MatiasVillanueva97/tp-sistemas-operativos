@@ -22,6 +22,9 @@
 #include "../../Nuestras/src/laGranBiblioteca/config.c"
 
 #include <arpa/inet.h>
+
+#include "../../Nuestras/src/laGranBiblioteca/datosGobalesGenerales.h"
+
 typedef struct {
 	int socket;
 	size_t tamanioScript;

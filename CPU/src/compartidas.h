@@ -10,6 +10,7 @@
 #ifndef ESTACOSA
 #define ESTACOSA
 
+
 typedef struct{
 	int page;
 	int offset;

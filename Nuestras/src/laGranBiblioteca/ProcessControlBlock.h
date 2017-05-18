@@ -31,15 +31,16 @@ typedef struct{
 } t_entrada;
 
 typedef struct{
- int pid;
- t_puntero_instruccion programCounter;
- int contPags_pcb;
- int contextoActual;
- t_intructions* indiceCodigo;
-char* indiceEtiquetas; // ¡??¡?'¿¿'??¡ que es¡?
- t_entrada* indiceStack;
- int exitCode;
+	int pid;
+	t_puntero_instruccion programCounter;
+	int contPags_pcb;
+	int contextoActual;
+	t_intructions* indiceCodigo;
+	char* indiceEtiquetas; // ¡??¡?'¿¿'??¡ que es¡?
+	t_entrada* indiceStack;
+	int exitCode;
 }__attribute__((packed)) PCB_DATA;
+
 ////-----FIN PCB y Stack--------////
 
 
