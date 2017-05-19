@@ -4,7 +4,22 @@
  *  Created on: 18/5/2017
  *      Author: utnso
  */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <errno.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <arpa/inet.h>
+#include <sys/wait.h>
+#include <signal.h>
+
 #include <parser/metadata_program.h>
+#include "commons/collections/list.h"
 
 
 #ifndef LAGRANBIBLIOTECA_PROCESSCONTROLBLOCK_H_
@@ -53,6 +68,16 @@ char* indiceEtiquetas; // ¡??¡?'¿¿'??¡ que es¡?
 
 
 ////-----FIN PCB y Stack--------////
+
+void *  serializarPCB(PCB_DATA * pcb);
+
+PCB_DATA* deserializarPCB(void* stream);
+
+void imprimirPCB(PCB_DATA * pcb);
+
+void harcodeoAsquerosoDePCB();
+
+void destruirPCB_Puntero(PCB_DATA * pcb);
 
 
 #endif /* LAGRANBIBLIOTECA_PROCESSCONTROLBLOCK_H_ */
