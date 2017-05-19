@@ -320,6 +320,8 @@ void *rutinaCPU(void * arg)
 
 
 
+
+
 /// *** Esta Función esta probada y anda
 //***Esta rutina solo revisa una lista de procesos y si algun terminó, se lo avisa a su consola correspondiente
 void * revisarFinalizados(){
@@ -354,7 +356,7 @@ void * revisarFinalizados(){
 }
 
 /// *** Esta Función esta probada y anda
-void *aceptarConexiones( void *arg ){
+void * aceptarConexiones( void *arg ){
 	//----DECLARACION DE VARIABLES ------//
 	int listener = (int)arg;
 	int nuevoSocket;
@@ -407,6 +409,24 @@ void *aceptarConexiones( void *arg ){
 }
 ///--- FIN RUTINAS DE HILOS----///
 
+int gradoMultiprogramacionActual()
+{
+	return 0;
+}
+
+void * planificadorLargoPlazo(void * arg)
+{
+	while(1)
+	{
+		sleep(5);
+
+		if(gradoMultiprogramacionActual() < getConfigInt("GRADO_MULTIPROG"))
+		{
+
+		}
+
+	}
+}
 
 ///--------FUNCIONES DE CONEXIONES-------////
 //***Estas funciones andan
@@ -415,12 +435,10 @@ void conectarConMemoria()
 	int rta_conexion;
 	socketMemoria = conexionConServidor(getConfigString("PUERTO_MEMORIA"),getConfigString("IP_MEMORIA")); // Asignación del socket que se conectara con la memoria
 	if (socketMemoria == 1){
-			perror("Falla en el protocolo de comunicación");
-			exit(1);
+		perror("Falla en el protocolo de comunicación");
 	}
 	if (socketMemoria == 2){
 		perror("No se conectado con el FileSystem, asegurese de que este abierto el proceso");
-		exit(1);
 	}
 	if ( (rta_conexion = handshakeCliente(socketMemoria, Kernel)) == -1) {
 				perror("Error en el handshake con Memoria");
@@ -434,11 +452,9 @@ void conectarConFS()
 	socketFS = conexionConServidor(getConfigString("PUERTO_FS"),getConfigString("IP_FS")); // Asignación del socket que se conectara con el filesytem
 	if (socketFS == 1){
 		perror("Falla en el protocolo de comunicación");
-		exit(1);
 	}
 	if (socketFS == 2){
 		perror("No se conectado con el FileSystem, asegurese de que este abierto el proceso");
-		exit(1);
 	}
 	if ( (rta_conexion = handshakeCliente(socketFS, Kernel)) == -1) {
 		perror("Error en el handshake con FileSystem");
@@ -492,11 +508,19 @@ int main(void) {
 	pthread_t hilo_revisarFinalizados;
 	pthread_create(&hilo_revisarFinalizados, NULL, revisarFinalizados, NULL);
 
+	//---ABRO EL HILO DEL PLANIFICADOR A LARGO PLAZO---//
+	pthread_t hilo_planificadorLargoPlazo;
+	pthread_create(&hilo_planificadorLargoPlazo, NULL, planificadorLargoPlazo, NULL);
+
 	//----ME PONGO A ESCUCHAR CONEXIONES---//
 	pthread_t hilo_aceptarConexiones;
 	pthread_create(&hilo_aceptarConexiones, NULL, aceptarConexiones, listener);
-	pthread_join(hilo_aceptarConexiones, NULL);
 
+
+
+
+	pthread_join(hilo_aceptarConexiones, NULL);
+	pthread_join(hilo_planificadorLargoPlazo, NULL);
 	pthread_join(hilo_revisarFinalizados, NULL);
 
 

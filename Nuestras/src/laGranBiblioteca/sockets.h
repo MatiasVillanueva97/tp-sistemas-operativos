@@ -16,6 +16,8 @@
 #include <sys/wait.h>
 #include <signal.h>
 
+#include "datosGobalesGenerales.h"
+
 #ifndef LAGRANBIBLIOTECA_SOCKETS_H_
 #define LAGRANBIBLIOTECA_SOCKETS_H_
 
