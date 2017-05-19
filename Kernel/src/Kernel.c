@@ -148,7 +148,7 @@ int memoria_CalcularCantidadPaginas(char * scriptAnsisop)
 //***Funciones de Planificador
 void newToReady(){
 
-	printf("\n\n\nEstamos en el planificador a largo plazo!\n\n");
+	printf("\n\n\nEstamos en la función newToReady a largo plazo!\n\n");
 
 	//***Tomo el primer elemento de la cola sin sacarlo de ella
 	sem_wait(&mutex_cola_New);
@@ -316,6 +316,10 @@ void *rutinaConsola(void * arg)
 void *rutinaCPU(void * arg)
 {
 	int socketCPU = (int)arg;
+
+	int actualGrado = getConfigInt("GRADO_MULTIPROG");
+	setConfigInt("GRADO_MULTIPROG",actualGrado+1);
+
 }
 
 
@@ -409,24 +413,54 @@ void * aceptarConexiones( void *arg ){
 }
 ///--- FIN RUTINAS DE HILOS----///
 
+
+///---- FUNCIONES DE PLANIFICACION ----///
+
+///***Esta Función esta Probada y anda (falta meterle tres semaforos mutex)
+//***Esta Función lo que hace es sumar el size de todas las colas que determinan el grado de multiplicacion y devuelve la suma
 int gradoMultiprogramacionActual()
 {
-	return 0;
+	//HAcer Semaforos para todas las colas
+	int cantidadProcesosEnLasColas = queue_size(cola_Ready)+queue_size(cola_Wait)+queue_size(cola_Exec);
+	return cantidadProcesosEnLasColas;
 }
 
-void * planificadorLargoPlazo(void * arg)
+bool hayProgramasEnNew()
+{
+	sem_wait(&mutex_cola_New);
+		bool valor = queue_size(cola_New) > 0;
+	sem_post(&mutex_cola_New);
+
+	return valor;
+}
+
+void * planificadorLargoPlazo()
 {
 	while(1)
 	{
-		sleep(5);
+		sleep(1);
+		printf("Entramos al planificador de largo plazo!\n");
 
-		if(gradoMultiprogramacionActual() < getConfigInt("GRADO_MULTIPROG"))
+		if(gradoMultiprogramacionActual() < getConfigInt("GRADO_MULTIPROG") && hayProgramasEnNew())
 		{
-
+			newToReady();
 		}
+		printf("No nos da el grado de multi programación ni hay programas en new!\n");
+		//getConfigIntArrayElement("SEM_IDS",2);
+		//	setConfigInt("GRADO_MULTIPROG",3);
 
 	}
 }
+
+void * planificadorCortoPlazo()
+{
+
+}
+
+
+
+///---- FIN FUNCIONES DE PLANIFICACION ----///
+
 
 ///--------FUNCIONES DE CONEXIONES-------////
 //***Estas funciones andan
@@ -494,7 +528,7 @@ int main(void) {
 
 	//---CONECTANDO CON FILESYSTEM Y MEMORIA
 	printf("\n\n\nEsperando conexiones:\n-FileSystem\n-Memoria\n");
-	conectarConMemoria();
+//	conectarConMemoria();
 //	conectarConFS();
 	///----------------------///
 
