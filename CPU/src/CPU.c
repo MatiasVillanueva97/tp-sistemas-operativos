@@ -60,7 +60,7 @@ int tamanoDe__t_entrada(t_entrada entrada){
 
 int tamanoDe__t_entradas(t_entrada* entradas, int cantidadDeEntradas){
 	///***Esta asignacion es para poder guardar el tamaño de las entradas
-	int tamano = sizeof(uint32_t);// * cantidadDeEntradas; //Para guardar los headers de las entradas
+	int tamano = 0;
 	int i;
 	for(i = 0; i<cantidadDeEntradas ; i++){
 		tamano += tamanoDe__t_entrada(entradas[i]);
@@ -234,6 +234,7 @@ t_entrada deserializarEntrada(void* stream, int *posicion){
 
 	t_entrada entrada;
 
+	//*posicion -= 4;
 
 	int tamanoListaDeArgumentos;
 	tamanoListaDeArgumentos = obtenerTamanoProximoBloque(stream, posicion);
@@ -262,13 +263,18 @@ t_entrada deserializarEntrada(void* stream, int *posicion){
 
 
 void * serializarEntradas(t_entrada* entradas, int cantidadDeEntradas){
+
+	if(cantidadDeEntradas == 0){
+		return NULL;
+	}
+
+	//***Indico que hay entradas
+
 	int tamanoEntradas = tamanoDe__t_entradas(entradas,cantidadDeEntradas);
-	void * stream = malloc(tamanoEntradas);
-	//***Agrego el tamaño
-	memcpy(stream, &tamanoEntradas, sizeof(uint32_t));
+	void * stream = malloc(tamanoEntradas);//Es el tamaño de las entradas y el del header
 
 	int i=0;
-	int recorrido = sizeof(uint32_t);
+	int recorrido = 0;
 
 	for(i = 0; i<cantidadDeEntradas; i++){
 		int tamanoEntradaActual = tamanoDe__t_entrada(entradas[i]);
@@ -284,7 +290,12 @@ void * serializarEntradas(t_entrada* entradas, int cantidadDeEntradas){
 
 t_entrada* deserializarEntradas(void * stream, int* pos, int cantidadDeEntradas){
 	int i=0;
-	int tamano = obtenerTamanoProximoBloque(stream, pos);
+
+	if(cantidadDeEntradas == 0){
+		return NULL;
+	}
+
+	//int tamano = obtenerTamanoProximoBloque(stream, pos);
 	//t_entrada * entradas = malloc(sizeof(t_entrada)*cantidadDeEntradas);
 	t_entrada * entradas = malloc(sizeof(t_entrada)*cantidadDeEntradas);////--------------------esto fue lo ultimo que toque
 	//int tamanoEntrada = obtenerTamanoProximoBloque(stream, pos);
@@ -307,7 +318,7 @@ void * serializar__t_instructions(t_intructions* indiceCodigo, uint32_t cantidad
 }
 
 t_intructions * deserializar__t_instructions(void* stream, int* pos, int cantidadDeInstrucciones){
-	int tamanoInst = tamanoDe__t_instructions(cantidadDeInstrucciones);
+	//int tamanoInst = tamanoDe__t_instructions(cantidadDeInstrucciones);
 	t_intructions* instrucciones = malloc(sizeof(t_intructions)*cantidadDeInstrucciones);
 	int i = 0;
 	for(i = 0; i<cantidadDeInstrucciones;i++){
@@ -392,7 +403,7 @@ PCB_DATA* deserializarPCB(void* stream){
 	int tamanoPCB = leerUINT32(stream, &recorrido);
 
 
-	PCB_DATA * pcb = malloc(tamanoPCB);
+	PCB_DATA * pcb = malloc(sizeof(PCB_DATA));
 	//PCB_DATA pcb;
 
 	int cantidadEntradas = leerUINT32(stream, &recorrido);
@@ -461,14 +472,17 @@ void imprimirEntradas(t_entrada* indiceStack, int cantidadDeEntradas){
 		imprimirListaDe__t_variables(indiceStack[i].argumentos,"argumentos");
 		imprimirListaDe__t_variables(indiceStack[i].variables,"variables");
 	}
+	if(cantidadDeEntradas == 0) printf("\nNo hay entradas cargadas en el PCB");
 }
 
 void imprimirIndiceDeCodigo(t_intructions* indiceDeCodigo, int cantidadDeInstrucciones){
-	int i;
-	printf("\nLista de indiceDeCodigo:");
-	for(i=0;i<cantidadDeInstrucciones;i++){
-		printf("\n\tEn la posicion %d el indiceDeCodigo.offset vale: %d ", i, indiceDeCodigo[i].offset);
-		printf("\n\tEn la posicion %d el indiceDeCodigo.start vale: %d", i, indiceDeCodigo[i].start);
+	if(cantidadDeInstrucciones!=0){
+		int i;
+		printf("\nLista de indiceDeCodigo:");
+		for(i=0;i<cantidadDeInstrucciones;i++){
+			printf("\n\tEn la posicion %d el indiceDeCodigo.offset vale: %d ", i, indiceDeCodigo[i].offset);
+			printf("\n\tEn la posicion %d el indiceDeCodigo.start vale: %d", i, indiceDeCodigo[i].start);
+		}
 	}
 }
 
@@ -503,9 +517,125 @@ char* script =
 		"end\n"
 		"\n";
 
+void harcodeoAsquerosoDePCB(){
+	t_variable * a = malloc(sizeof(t_variable));
+	a->ID = 's';
+
+	t_direccion c;
+	c.offset = 234;
+	c.page = 1234;
+	c.size = 231;
+
+	a->direccion = c;
+
+	t_variable * b= malloc(sizeof(t_variable));
+	b->ID = 'h';
+	b->direccion = c;
+
+	t_list * lista1= list_create();
+
+	list_add(lista1,a);
+	list_add(lista1,b);
+
+	t_entrada entrada;
+	entrada.argumentos = lista1;
+	entrada.variables = lista1;
+	entrada.retPos = 42;
+	entrada.retVar = c;
+
+	t_entrada * entradas = malloc(sizeof(entrada)*4);
+	entradas[0] = entrada;
+	entradas[1] = entrada;
+	entradas[2] = entrada;
+	entradas[3] = entrada;
+
+	t_intructions instruccion;
+	instruccion.offset=53;
+	instruccion.start=123;
+
+	t_intructions* instrucciones = malloc(sizeof(t_intructions)*2);
+	instrucciones[0] = instruccion;
+	instrucciones[1] = instruccion;
+
+	PCB_DATA pcb;
+	pcb.cantidadDeEntradas = 4;
+	pcb.indiceStack = entradas;
+	pcb.cantidadDeInstrucciones = 2;
+	pcb.indiceCodigo = instrucciones;
+	pcb.pid = 1;
+	pcb.contextoActual = 53;
+	pcb.programCounter = 23;
+	pcb.contPags_pcb = 6;
+	pcb.cantidadDeEtiquetas = 9;
+	pcb.exitCode = -9;
+	pcb.indiceEtiquetas = string_duplicate("poronga");
+
+	void * stream = serializarPCB(&pcb);
+
+	free(instrucciones);
+	free(a);
+	free(b);
+	free(entradas);
+	char* aux = pcb.indiceEtiquetas;
+	free(aux);
+
+	PCB_DATA* pcb2 = deserializarPCB(stream);
+
+	imprimirPCB(pcb2);
+
+	//destruirPCB_Local(pcb);
+	destruirPCB_Puntero(pcb2);
+
+}
+
+int pidHistorico;
+PCB_DATA* crearPCB(char * scriptAnsisop){
+	t_metadata_program *metadata = metadata_desde_literal(scriptAnsisop);
+	PCB_DATA * pcb = malloc(sizeof(pcb));
+		//***Aca va el wait de un semaforo
+			pcb->pid = pidHistorico;
+		//***Aca va el signal del semaforo
+			pcb->contPags_pcb = 1;
+			pcb->contextoActual = -1;
+			pcb->exitCode = 0; //***Por ahora el exit code 0 significa que no esta terminado
+			pcb->indiceCodigo = metadata->instrucciones_serializado;
+			pcb->indiceEtiquetas = metadata->etiquetas;
+			pcb->cantidadDeEtiquetas = metadata->cantidad_de_etiquetas;
+
+			pcb->indiceStack = NULL; //Al principio creo que no hay nada
+
+			pcb->cantidadDeEntradas = 0;
+			pcb->cantidadDeInstrucciones = metadata->instrucciones_size;
+			pcb->programCounter = metadata->instruccion_inicio;
+		return pcb;
+}
+
+//***Nota: para usar esta funcion las listas tienen que contener punteros almacenados en el heap, es bastante obvio pero lo aclaro por si se rompe al carajo
+void destruirPCB_Local(PCB_DATA pcb){
+	if(pcb.cantidadDeEtiquetas != 0)
+		free(pcb.indiceEtiquetas);
+
+	free(pcb.indiceCodigo);
+
+	int i;
+	for(i = 0; i<pcb.cantidadDeEntradas;i++){
+		list_destroy_and_destroy_elements(pcb.indiceStack[i].argumentos, free);
+		list_destroy_and_destroy_elements(pcb.indiceStack[i].variables, free);
+	}
+	free(pcb.indiceStack);
+}
+
+void destruirPCB_Puntero(PCB_DATA * pcb){
+	destruirPCB_Local(*pcb);
+	free(pcb);
+}
 
 int main(void)
 {
+
+	//harcodeoAsqueroso();
+	harcodeoAsquerosoDePCB();
+
 	printf("Inicializando CPU.....\n\n");
 
 	int rta_conexion;
@@ -605,7 +735,7 @@ int main(void)
 		pcb.indiceStack->argumentos = list_create();
 		pcb.indiceStack->variables = list_create();
 
-		pcb.cantidadDeEntradas = 1;
+		pcb.cantidadDeEntradas = 0;
 		pcb.cantidadDeInstrucciones = metadata->instrucciones_size;
 		pcb.programCounter = metadata->instruccion_inicio;
 
