@@ -189,12 +189,111 @@ void escuchar(int sockfd)
 
 void *deserializador(Header header,int socket)
 {
-	void* contenido;
+	void* stream;
 	int* numero=malloc(sizeof(uint32_t));
 	int* yes =malloc(sizeof(uint32_t));
 
 	switch(header.tipo)
 	{
+		case envioPCB:
+		{
+					//aca va lo de spisso.
+				break;
+		}
+		case envioDelPidEnSeco:
+		{
+			if(recv(socket,numero,sizeof(int),0) == -1){
+				perror("Error al Recibir entero");
+				break;
+			}
+			return numero;
+		}
+		case envioCantidadPaginas:
+		{
+			if(recv(socket,numero,sizeof(int),0) == -1){
+				perror("Error al Recibir entero");
+				break;
+			}
+			return numero;
+		}
+		case envioPaginaMemoria:
+		{
+			stream= malloc(header.tamano);
+
+			if(recv(socket,stream,header.tamano,0) == -1)
+				{
+					perror("Error al Recibir entero");
+					break;
+				}
+			return stream;
+
+		}
+			//Acciones de cpu
+		case asignarValor:{
+			stream= malloc(sizeof(t_escrituraMemoria));
+			if(recv(socket,stream,sizeof(t_escrituraMemoria),0) == -1)
+				{
+					perror("Error al Recibir entero");
+					break;
+				}
+			return stream;
+		}
+		case pedirValor:
+		{
+			stream= malloc(sizeof(t_pedidoMemoria));
+			if(recv(socket,stream,sizeof(t_pedidoMemoria),0) == -1)
+				{
+					perror("Error al Recibir entero");
+					break;
+				}
+			return stream;
+		}
+
+			case algoHaceMemoria:
+			{
+				break;
+			}
+
+			case envioScriptAnsisop:
+			{
+				stream= malloc(header.tamano);
+
+				if(recv(socket,stream,header.tamano,0) == -1)
+					{
+						perror("Error al Recibir entero");
+						break;
+					}
+				return stream;
+			}
+
+			case finalizarCiertoScript:
+			{
+				if(recv(socket,numero,sizeof(int),0) == -1)
+					{
+						perror("Error al Recibir entero");
+						break;
+					}
+				return numero;
+			}
+
+			case desconectarConsola:
+			{
+				if(recv(socket,numero,sizeof(int),0) == -1)
+					{
+						perror("Error al Recibir entero");
+						break;
+					}
+				return numero;
+			}
+			default:
+			{
+				perror("tiraste un tipo de operacion invalida/desconocida");
+			}
+
+
+	/*
+	}
+
 		case CASO_OK:
 		{
 			*yes=0;
@@ -250,6 +349,7 @@ void *deserializador(Header header,int socket)
 		default:
 			perror("Error al recibir mensajes");
 			exit(-1);
+			*/
 	}
 	return NULL;
 }
@@ -266,7 +366,7 @@ int recibirMensaje(int socket,void* stream) // Toda esta funcion deberá ccambia
 
 	stream = malloc(header.tamano); ////ACA HICE UN MALLOC
 	memcpy(stream, deserializador(header,socket), header.tamano);
-	return header.tamano;
+	return header.tipo;
 }
 
 
@@ -277,12 +377,86 @@ int recibirMensaje(int socket,void* stream) // Toda esta funcion deberá ccambia
 
 //
 
-void* serializar (int tipoMensaje, void* contenido, int tamanioMensaje)
+void* serializar (int tipoDeOperacion, void* contenido, int tamanioMensaje)
 {
 
 	void * stream=malloc(tamanioMensaje+(sizeof(int)*2));
-	memcpy(stream, &tipoMensaje, sizeof(int));
+	memcpy(stream, &tipoDeOperacion, sizeof(int));
 
+
+	switch(tipoDeOperacion)
+	{
+		case envioPCB:
+		{
+				//aca va lo de spisso.
+			break;
+		}
+		case envioDelPidEnSeco:
+		{
+			memcpy(stream+sizeof(int), &tamanioMensaje, sizeof(int));
+			memcpy(stream+sizeof(int)*2, contenido, sizeof(int));
+			break;
+		}
+		case envioCantidadPaginas:
+		{
+			memcpy(stream+sizeof(int), &tamanioMensaje, sizeof(int));
+			memcpy(stream+sizeof(int)*2, contenido, sizeof(int));
+			break;
+		}
+
+		case envioPaginaMemoria:
+		{
+			memcpy(stream+sizeof(int), &tamanioMensaje, sizeof(int));
+
+			memcpy(stream+sizeof(int)*2, contenido, tamanioMensaje);
+			break;
+		}
+		//Acciones de cpu
+		case asignarValor:{
+			memcpy(stream+sizeof(int), &tamanioMensaje, sizeof(int));
+			memcpy(stream+sizeof(int), contenido, sizeof(t_escrituraMemoria));
+			break;
+		}
+		case pedirValor:
+		{
+			memcpy(stream+sizeof(int), &tamanioMensaje, sizeof(int));
+			memcpy(stream+sizeof(int), contenido, sizeof(t_pedidoMemoria));
+				break;
+		}
+
+		case algoHaceMemoria:
+		{
+			break;
+		}
+
+		case envioScriptAnsisop:
+		{
+			memcpy(stream+sizeof(int), &tamanioMensaje, sizeof(int));
+			memcpy(stream+sizeof(int)*2, contenido, tamanioMensaje);
+				break;
+		}
+
+		case finalizarCiertoScript:
+		{
+			memcpy(stream+sizeof(int), &tamanioMensaje, sizeof(int));
+			memcpy(stream+sizeof(int)*2, contenido, sizeof(int));
+			break;
+		}
+
+		case desconectarConsola:
+		{
+			memcpy(stream+sizeof(int), &tamanioMensaje, sizeof(int));
+			memcpy(stream+sizeof(int)*2, contenido, sizeof(int));
+			break;
+		}
+		default:
+		{
+			perror("tiraste un tipo de operacion invalida/desconocida");
+		}
+	}
+	return stream;
+
+/*
 	switch(tipoMensaje)
 	{
 		case CASO_OK: // el caso de una respuesta, que solo da a entender una validacion por ok
@@ -317,9 +491,10 @@ void* serializar (int tipoMensaje, void* contenido, int tamanioMensaje)
 
 	}
 	return stream;
+	*/
 }
 
-int enviarMensaje(int socket, int tipoMensaje, void* contenido, int tamanioMensaje)
+int enviarMensaje(int socket, int TipoDeOperacion, void* contenido, int tamanioMensaje)
 {
 	int total = 0;
 	int n;
@@ -327,7 +502,7 @@ int enviarMensaje(int socket, int tipoMensaje, void* contenido, int tamanioMensa
 	int longitud = 2*sizeof(uint32_t) + tamanioMensaje;
 	bytesleft = longitud;
 	void* auxiliar;
-	auxiliar = serializar(tipoMensaje, contenido, tamanioMensaje);
+	auxiliar = serializar(TipoDeOperacion, contenido, tamanioMensaje);
 	/*if(send(socket, auxiliar , ((2*sizeof(uint32_t))+tamanioMensaje), 0) == -1 ){
 			perror("recv");
 			return -1;

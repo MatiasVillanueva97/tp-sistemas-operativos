@@ -29,6 +29,7 @@
 
 #include "../../Nuestras/src/laGranBiblioteca/sockets.c"
 #include "../../Nuestras/src/laGranBiblioteca/config.c"
+#include "../../Nuestras/src/laGranBiblioteca/datosGobalesGenerales.h"
 #include "EstructurasDeLaMemoria.h"
 #include "funcionesDeTablaInvertida.h"
 #include "funcionesDeCache.h"
@@ -348,6 +349,12 @@ void *aceptarConexionesCpu( void *arg ){ // aca le sacamos el asterisco, porque 
 int main(void) {
 	//
 	printf("Inicializando Memoria.....\n\n");
+	int puta = 5;
+	void* serializado = serializar(envioDelPidEnSeco,&puta,sizeof(int));
+	Header putoel;
+	putoel.tamano = sizeof(int);
+	putoel.tipo = envioDelPidEnSeco;
+	int respuesta = (int) deserializador(putoel,serializado);
 	// ******* Configuracion de la Memoria a partir de un archivo
 	cache=list_create();
 	printf("Configuracion Inicial: \n");

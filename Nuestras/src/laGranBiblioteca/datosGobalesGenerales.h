@@ -20,6 +20,7 @@
 #include "commons/collections/list.h"
 #include "commons/collections/queue.h"
 #include "commons/collections/dictionary.h"
+#include "ProcessControlBlock.h"
 
 #ifndef DATOSGOBALESGENERALES_H_
 #define DATOSGOBALESGENERALES_H_
@@ -32,15 +33,26 @@ enum id_Modulos{
 	FileSystem = 4
 };
 
+typedef struct{
+ int id;
+ t_direccion direccion;
+ t_valor_variable valor;
+}__attribute__((packed)) t_escrituraMemoria;
 
+typedef struct{
+ int id;
+ t_direccion direccion;
+}__attribute__((packed)) t_pedidoMemoria;
 enum tipos_de_Acciones{
 	//***Todas las acciones del Kernel al enviar
+		envioPCB = 4,
 		envioDelPidEnSeco = 1,
 		envioCantidadPaginas = 2,
 		envioPaginaMemoria = 3,
 
 	//***Todas las acciones del CPU
-		negritoHermoso=101,
+		asignarValor = 101,
+		pedirValor = 102,
 
 	//***Todas las acciones del Memoria
 		algoHaceMemoria = 200,
