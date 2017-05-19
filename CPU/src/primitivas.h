@@ -20,6 +20,7 @@
 
 #include "../../Nuestras/src/laGranBiblioteca/sockets.h"
 #include "../../Nuestras/src/laGranBiblioteca/ProcessControlBlock.h"
+#include "../../Nuestras/src/laGranBiblioteca/datosGobalesGenerales.h"
 
 
 int a,b;
@@ -32,17 +33,6 @@ typedef struct{
  int pid;
  char* mensaje;
 } t_mensajeDeProceso;
-
-typedef struct{
-	int id;
-	t_direccion direccion;
-}t_pedidoMemoria;
-
-typedef struct{
-	int id;
-	t_direccion direccion;
-	t_valor_variable valor;
-}t_escrituraMemoria;
 
 	t_direccion calcularDireccion(t_puntero puntero);
 
