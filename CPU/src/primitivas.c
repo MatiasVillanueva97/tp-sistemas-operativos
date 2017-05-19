@@ -121,7 +121,7 @@ void AnSISOP_irAlLabel(t_nombre_etiqueta nombre_etiqueta){
 	//Una etiqueta es como un identificador para las funciones del programa ANSISOP
 	//El numero de instruccion al que esta asociada la etiqueta es el numero de la primera instruccion ejecutable de dicha funcion
 	//La funcion devuelve el numero de instruccion al que esta asociada la etiqueta
-	puntero = metadata_buscar_etiqueta(nombre_etiqueta,pcb.indiceEtiquetas,pcb.cantidadEtiquetas);
+	puntero = metadata_buscar_etiqueta(nombre_etiqueta,pcb.indiceEtiquetas,pcb.cantidadDeEtiquetas);
 
 	//Como es el numero de la siguiente instruccion a ejecutar se le asigna al ProgramCounter para que el programa siga a partir de ahi
 	pcb.programCounter = puntero;

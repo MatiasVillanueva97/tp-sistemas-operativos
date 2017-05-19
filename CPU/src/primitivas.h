@@ -19,6 +19,8 @@
 #include "compartidas.h"
 
 #include "../../Nuestras/src/laGranBiblioteca/sockets.h"
+#include "../../Nuestras/src/laGranBiblioteca/ProcessControlBlock.h"
+
 
 int a,b;
 t_direccion dirA,dirB;

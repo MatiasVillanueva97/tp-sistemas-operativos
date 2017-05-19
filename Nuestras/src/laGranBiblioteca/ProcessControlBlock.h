@@ -12,34 +12,45 @@
 
 
 ////-----PCB y Stack--------////
+
 typedef struct{
  int page;
  int offset;
  int size;
-}t_direccion;
+}__attribute__((packed))t_direccion;
 
 typedef struct{
  char ID;
  t_direccion direccion;
-}t_variable;
+}__attribute__((packed))t_variable;
 
 typedef struct{
  t_list* argumentos;
  t_list* variables;
  int retPos;
  t_direccion retVar;
-} t_entrada;
+}__attribute__((packed))t_entrada;
+
+
 
 typedef struct{
-	int pid;
-	t_puntero_instruccion programCounter;
-	int contPags_pcb;
-	int contextoActual;
-	t_intructions* indiceCodigo;
-	char* indiceEtiquetas; // ¡??¡?'¿¿'??¡ que es¡?
-	t_entrada* indiceStack;
-	int exitCode;
+ int pid;
+ t_puntero_instruccion programCounter;
+
+ int cantidadDeInstrucciones;//Sirve para el indice de codigo, Es un contador para meterlo en un for
+
+ int contPags_pcb;
+ int contextoActual;
+ t_intructions* indiceCodigo;//Es un array
+char* indiceEtiquetas; // ¡??¡?'¿¿'??¡ que es¡?
+ int cantidadDeEntradas;//Es un contador para meterlo en un for
+ int cantidadDeEtiquetas;
+ t_entrada* indiceStack;//Es otro array
+
+
+ int exitCode;
 }__attribute__((packed)) PCB_DATA;
+
 
 ////-----FIN PCB y Stack--------////
 
