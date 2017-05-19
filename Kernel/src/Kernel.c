@@ -37,6 +37,7 @@
 pthread_mutex_t mutex_HistoricoPcb; // deberia ser historico pid
 pthread_mutex_t mutex_ListaDeAvisos;
 pthread_mutex_t mutex_cola_New;
+pthread_mutex_t nuevaCPU;
 
 sem_t* contadorDeCpus = 0;
 
@@ -44,6 +45,7 @@ void inicializarSemaforo(){
 	sem_init(&mutex_HistoricoPcb,0,1);
 	sem_init(&mutex_ListaDeAvisos,0,1);
 	sem_init(&mutex_cola_New,0,1);
+	sem_init(&nuevaCPU,0,0);
 }
 ///----FIN SEMAFOROS----///
 
@@ -311,14 +313,18 @@ void *rutinaConsola(void * arg)
 	close(socketConsola);
 }
 
+typedef struct{
+	int socketCPU;
+	bool ocupada;
+};
+
 
 /// *** Esta rutina se comenzará a hacer cuando podramos comenzar a enviar mensajes entre procesos
 void *rutinaCPU(void * arg)
 {
 	int socketCPU = (int)arg;
 
-	int actualGrado = getConfigInt("GRADO_MULTIPROG");
-	setConfigInt("GRADO_MULTIPROG",actualGrado+1);
+	sem_pos(&nuevaCPU);
 
 }
 
@@ -448,13 +454,22 @@ void * planificadorLargoPlazo()
 		printf("No nos da el grado de multi programación ni hay programas en new!\n");
 		//getConfigIntArrayElement("SEM_IDS",2);
 		//	setConfigInt("GRADO_MULTIPROG",3);
-
 	}
 }
 
 void * planificadorCortoPlazo()
 {
+	while(1)
+	{
+		sem_wait(&nuevaCPU);
+		sleep(1);
+		printf("Entramos al planificador de corto plazo!\n");
 
+
+		printf("No nos da el grado de multi programación ni hay programas en new!\n");
+		//getConfigIntArrayElement("SEM_IDS",2);
+		//	setConfigInt("GRADO_MULTIPROG",3);
+	}
 }
 
 
