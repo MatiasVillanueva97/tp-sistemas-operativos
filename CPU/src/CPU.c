@@ -28,25 +28,19 @@
 #include "primitivas.h"
 #include "compartidas.h"
 
+void conectarConMemoria();
+void conectarConKernel();
+
+
 char* script =
-		"begin\n"
 		"variables a, b\n"
 		"a = 3\n"
 		"b = 5\n"
 		"a = b + 12\n"
-		"end\n"
-		"\n";
-
+		"end\n";
 
 int main(void)
 {
-
-	//harcodeoAsqueroso();
-	harcodeoAsquerosoDePCB();
-
-	printf("Inicializando CPU.....\n\n");
-
-	int rta_conexion;
 	AnSISOP_funciones AnSISOP_funciones = {
 			.AnSISOP_definirVariable = AnSISOP_definirVariable,
 			.AnSISOP_obtenerPosicionVariable = AnSISOP_obtenerPosicionVariable,
@@ -73,102 +67,70 @@ int main(void)
 			.AnSISOP_leer = AnSISOP_leer
 	};
 
+	pcb = malloc(sizeof(PCB_DATA));
+
+	printf("Inicializando CPU.....\n\n");
+
+
 	// ******* Configuracion Inicial de CPU
 
  	printf("Configuracion Inicial: \n");
 
  	configuracionInicial("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/CPU/cpu.config");
+
  	imprimirConfiguracion();
 
-	// ******* Procesos de la CPU - por ahora solo recibir un mensaje
+ 	//conectarConKernel();
 
-/*
-	socketKernel = conexionConServidor(getConfigString("PUERTO_KERNEL"),getConfigString("IP_KERNEL")); // Asignación del socket que se conectara con el filesytem
+ 	//conectarConMemoria();
 
+ 	//ESTE GRAN WHILE(1) ESTA COMENTADO PORQUE EN REALIDAD ES PARA RECIBIR UN PCB ATRAS DE OTRO Y EJECUTARLOS HASTA QUE EL KERNEL ME DIGA MORITE HIPPIE
 
-	// validacion de un correcto handshake
-	if (socketKernel == 1){
-		perror("Falla en el protocolo de comunicación");
-		exit(1);
-	}
-	if (socketKernel == 2){
-		perror("No se conectado con el Kernel, asegurese de que este abierto el proceso");
-		exit(1);
-	}
-	if ( (rta_conexion = handshakeCliente(socketKernel, CPU)) == -1) {
-		perror("Error en el handshake con el Servidor");
-		close(socketKernel);
-	}
-	printf("Conexión exitosa con el Servidor(%i)!!\n",rta_conexion);
-
-	socketMemoria = conexionConServidor(getConfigString("PUERTO_MEMORIA"),getConfigString("IP_MEMORIA"));
-
-	// validacion de un correcto hadnshake
-	if (socketMemoria == 1){
-		perror("Falla en el protocolo de comunicación");
-		exit(1);
-	}
-	if (socketMemoria == 2){
-		perror("No se conectado con el Kernel, asegurese de que este abierto el proceso");
-		exit(1);
-	}
-	if ( (rta_conexion = handshakeCliente(socketMemoria, CPU)) == -1) {
-		perror("Error en el handshake con el Servidor");
-		close(socketMemoria);
-	}
-	printf("Conexión exitosa con el Servidor(%i)!!\n",rta_conexion);
-*/
-	while(1){
+	//while(1){
 		terminoPrograma = false;
+
 		// Recepcion del pcb
 		puts("esperando pcb\n");
-
 		/*
-		if(recibirMensaje(socketKernel,(void*)&pcb)==-1){
-			perror("Error en el Reciv");
-		}
-		*/
+		void* stream;
+		int accion = recibirMensaje(socketKernel,stream);
+		switch(accion){
+			case envioPCB:{
+				pcb = deserealizarPCB(stream);
+				break;
+			}
+			default:{
+				perror("Error en la accion maquinola");
+			}
+		}*/
 
 		t_metadata_program *metadata = metadata_desde_literal(script);
 
-		pcb.pid = 0;
-		pcb.contPags_pcb = 1;
-		pcb.contextoActual = -1;
-		pcb.exitCode = 0;
-		pcb.indiceCodigo = metadata->instrucciones_serializado;
-		pcb.indiceEtiquetas = metadata->etiquetas;
-		pcb.cantidadDeEtiquetas = metadata->cantidad_de_etiquetas; /// HAY QUE VER ESTO; ACAAAAAAA MIRENME SOY UN COMENTARIO WUOWUOWUWOUWOWUOWUWOWWWOOO
+		pcb->pid = 0;
+		pcb->contPags_pcb = 1;
+		pcb->contextoActual = 0;
+		pcb->exitCode = 0;
+		pcb->indiceCodigo = metadata->instrucciones_serializado;
+		pcb->indiceEtiquetas = metadata->etiquetas;
+		pcb->cantidadDeEtiquetas = metadata->cantidad_de_etiquetas; /// HAY QUE VER ESTO; ACAAAAAAA MIRENME SOY UN COMENTARIO WUOWUOWUWOUWOWUOWUWOWWWOOO
 
-		pcb.indiceStack = malloc(sizeof(t_entrada));
-		pcb.indiceStack->argumentos = list_create();
-		pcb.indiceStack->variables = list_create();
+		pcb->indiceStack = malloc(sizeof(t_entrada));
+		pcb->indiceStack->argumentos = list_create();
+		pcb->indiceStack->variables = list_create();
 
-		pcb.cantidadDeEntradas = 0;
-		pcb.cantidadDeInstrucciones = metadata->instrucciones_size;
-		pcb.programCounter = metadata->instruccion_inicio;
+		pcb->cantidadDeEntradas = 1;
+		pcb->cantidadDeInstrucciones = metadata->instrucciones_size;
+		pcb->programCounter = metadata->instruccion_inicio;
 
-		void* pcbSerializado = serializarPCB(&pcb);
-
-		PCB_DATA *pcb2 = deserializarPCB(pcbSerializado);
-
-		pcb = *pcb2;
-
-		imprimirPCB(pcb2);
-/*
-		// Pedido de Codigo
-		enviarMensaje(socketMemoria,1,(void *)&pcb.pid, sizeof(int));
-		//Recepcion del codigo ANSISOP
-		if(recibirMensaje(socketMemoria,(void*)script)==-1){
-			perror("Error en el Reciv");
-		}
-*/
 		char** lineas = string_split(script,"\n");
 		int i = 0;
 
-		while(!terminoPrograma){
+		while(1){
 
 			char* instruccion = lineas[i];
-			puts(instruccion);
+			printf("\n%s\n\n",instruccion);
+
+
 			/*t_pedidoMemoria pedido;
 			pedido.id = pcb.pid;
 			pedido.direccion = calcularDireccion(pcb.indiceCodigo[pcb.programCounter].start);
@@ -176,33 +138,86 @@ int main(void)
 */
 /*
 			// Pedido de Codigo
-			//Falta crear un caso de enviarMensaje para este tipo de pedidos
-			enviarMensaje(socketMemoria,5,(void *)&pedido, sizeof(pedido));
+			enviarMensaje(socketMemoria,pedirValor,(void *)&pedido, sizeof(pedido));
+*/
+/*
 			//Recepcion del codigo ANSISOP
-			if(recibirMensaje(socketMemoria,(void*)instruccion)==-1){
-				perror("Error en el Reciv");
+			void* stream;
+			int accion = recibirMensaje(socketMemoria,stream);
+			switch(accion){
+				case lineaDeCodigo:{
+					char* instruccion = stream;
+					break;
+				}
+				default:{
+					perror("Error en la accion maquinola");
 			}
 */
-
-
 
 			//Magia del Parser para llamar a las primitivas
 			analizadorLinea(instruccion,&AnSISOP_funciones,&AnSISOP_funciones_kernel);
 
+			if(!strcmp(instruccion,"end"))break;
 			free(instruccion);
 			i++;
 		}
-		free(script);
-	}
+
+		//Libera la anteultima posicion del array lineas que es la que tiene el end porque el free no llega a ejecutarse
+		free(lineas[i]);
+		//libera la ultima posicion del array lineas, aunque solo posea un NULL
+		free(lineas[i+1]);
+		//libera el array lineas per se
+		free(lineas);
+
+		//NO SE LIBERA EL MATADATA PORQUE REALMENTE NO VA A ESTAR ACA SINO EN KERNEL Y SOLO TENDRIA QUE LIBERAR MI HERMOSO PCB
+		//libera la emoria malloqueada por el PCB
+		destruirPCB_Puntero(pcb);
+
+	//}
+
+
 	close(socketKernel);
 	liberarConfiguracion();
-	// free(mensajeRecibido); --- esto tira cviolacion de segmentos
+
+
 	return 0;
 }
 
 
 
+void conectarConMemoria()
+{
+	int rta_conexion;
+	socketMemoria = conexionConServidor(getConfigString("PUERTO_MEMORIA"),getConfigString("IP_MEMORIA")); // Asignación del socket que se conectara con la memoria
+	if (socketMemoria == 1){
+		perror("Falla en el protocolo de comunicación");
+	}
+	if (socketMemoria == 2){
+		perror("No se conectado con el Memoria, asegurese de que este abierto el proceso");
+	}
+	if ( (rta_conexion = handshakeCliente(socketMemoria, CPU)) == -1) {
+				perror("Error en el handshake con Memoria");
+				close(socketMemoria);
+	}
+	printf("Conexión exitosa con el Memoria(%i)!!\n",rta_conexion);
+}
 
+void conectarConKernel()
+{
+	int rta_conexion;
+	socketKernel = conexionConServidor(getConfigString("PUERTO_MEMORIA"),getConfigString("IP_MEMORIA")); // Asignación del socket que se conectara con la memoria
+	if (socketKernel == 1){
+		perror("Falla en el protocolo de comunicación");
+	}
+	if (socketKernel == 2){
+		perror("No se conectado con el Kernel, asegurese de que este abierto el proceso");
+	}
+	if ( (rta_conexion = handshakeCliente(socketKernel, CPU)) == -1) {
+				perror("Error en el handshake con Kernel");
+				close(socketMemoria);
+	}
+	printf("Conexión exitosa con el Kernel(%i)!!\n",rta_conexion);
+}
 
 
 

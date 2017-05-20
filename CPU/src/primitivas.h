@@ -23,8 +23,8 @@
 #include "../../Nuestras/src/laGranBiblioteca/datosGobalesGenerales.h"
 
 
-int a,b;
-t_direccion dirA,dirB;
+int a,b,o,f;
+t_direccion dirA,dirB,dirO,dirF;
 
 //HARDCODEADISIMO PAPU
 #define tamanioPagina 64

@@ -14,6 +14,6 @@
 
 int socketKernel;
 int socketMemoria;
-PCB_DATA pcb;
+PCB_DATA* pcb;
 bool terminoPrograma;
 #endif //ESTACOSA
