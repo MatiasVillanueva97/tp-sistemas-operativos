@@ -56,6 +56,7 @@ enum tipos_de_Acciones{
 
 	//***Todas las acciones del Memoria
 		algoHaceMemoria = 200,
+		lineaDeCodigo = 201,
 
 	//***Todas las acciones de Consola
 		envioScriptAnsisop = 301,

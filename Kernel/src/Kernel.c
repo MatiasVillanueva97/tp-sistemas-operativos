@@ -324,7 +324,7 @@ void *rutinaCPU(void * arg)
 {
 	int socketCPU = (int)arg;
 
-	sem_pos(&nuevaCPU);
+	//sem_pos(&nuevaCPU);
 
 }
 

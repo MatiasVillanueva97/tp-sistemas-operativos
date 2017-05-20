@@ -27,6 +27,7 @@
 #include "commons/string.h"
 #include "commons/collections/list.h"
 
+
 #include "../../Nuestras/src/laGranBiblioteca/sockets.c"
 #include "../../Nuestras/src/laGranBiblioteca/config.c"
 #include "../../Nuestras/src/laGranBiblioteca/datosGobalesGenerales.h"
@@ -173,7 +174,7 @@ void *rutinaKernel(void *arg){
 
 		sem_post(&sem_isKernelConectado);//Semaforo que indica si solo hay un kernel conectado
 
-		recibirMensajesDelKernel(socketKernel);
+		recibirMensajesMemoria(socketKernel);
 }
 void *rutinaCPU(void * arg)
 {
@@ -245,65 +246,67 @@ void *rutinaConsolaMemoria(void* x){
 
 }
 
+typedef struct{
+int pid;
+int cantPags;
+void* contenido;
+}t_inicializarPrograma;
+
+typedef struct{
+	int pid;
+	t_direccion direccion;
+	void* buffer;
+}t_almacenarBytes;
+
+typedef struct {
+	int pid;
+	int cantPags;
+}t_asignarPaginas;
 //Funciones de Conexion
-void recibirMensajesDelKernel(int socketKernel){
+void recibirMensajesMemoria(void* arg){
+	int socketKernel = (int)arg;
+	void* stream;
+	int operacion;
 	while (1){
-		int operacion;
-		int pid;
-		recibirMensaje(socketKernel,&operacion);
-		recibirMensaje(socketKernel,&pid);
+
+		operacion = recibirMensaje(socketKernel,&stream);
 
 		switch(operacion)
 		{
-			case inicializarPrograma:{ //inicializarPrograma
-				int cantidadDePaginas;
-				recibirMensaje(socketKernel,&cantidadDePaginas);
-				asignarPaginasAUnProceso(pid,cantidadDePaginas);//chequearError
+				case inicializarPrograma:{ //inicializarPrograma
+					t_inicializarPrograma* estructura = stream;
+					asignarPaginasAUnProceso(estructura->pid,estructura->cantPags);//chequearError
 
-				int i;
-				void* contenido = malloc(sizeOfPaginas);
-				for (i=1;i<=cantidadDePaginas;i++){
-					recibirMensaje(socketKernel,contenido);
-					almacenarBytesEnPagina(pid,i,0,sizeOfPaginas,contenido);
+					break;
 				}
-				//acciones
-				break;
-			}
-			case solicitarBytes :{ //solicitar bytes de una pagina
-				int paginaRequerida;
-				recibirMensaje(socketKernel,&paginaRequerida);
-				int offset;
-				recibirMensaje(socketKernel,&offset);
-				int tamano;
-				recibirMensaje(socketKernel,&tamano);
-				void* contenidoDeLaPagina= solicitarBytesDeUnaPagina(pid,paginaRequerida,offset,tamano);
-				enviarMensaje(socketKernel,1,contenidoDeLaPagina,tamano);
-				break;
-			}
+				case solicitarBytes :{ //solicitar bytes de una pagina
+					t_pedidoMemoria* estructura = stream;
+					void* contenidoDeLaPagina= solicitarBytesDeUnaPagina(estructura->id,estructura->direccion.page,estructura->direccion.offset,estructura->direccion.size);
+					enviarMensaje(socketKernel,201,contenidoDeLaPagina,estructura->direccion.size);
+					//cambiar por linea de codigo (enum)
+					//Controla errores forro.
+					break;
+				}
 
-			case almacenarBytes://almacenarBytes en una pagina
-			{
-				int paginaAEscribir;
-				recibirMensaje(socketKernel,&paginaAEscribir);
-				int offset;
-				recibirMensaje(socketKernel,&offset);
-				int tamano;
-				recibirMensaje(socketKernel,&tamano);
-				void* buffer= malloc(tamano);
-				recibirMensaje(socketKernel,&buffer);
-				almacenarBytesEnPagina(pid,paginaAEscribir,offset,tamano,buffer);
-				break;
-			}
-			case asignarPaginas:{//PedirMasPaginas
-				int cantidadDePaginas;
-				recibirMensaje(socketKernel,&cantidadDePaginas);
-				asignarPaginasAUnProceso(pid,cantidadDePaginas);//chequearError
-				break;
-			}
-			case finalizarPrograma:{//FinalzarPrograma
-				finalizarUnPrograma(pid);
-			}
-
+				case almacenarBytes://almacenarBytes en una pagina
+				{
+					t_almacenarBytes* estructura = stream;
+					almacenarBytesEnPagina(estructura->pid,estructura->direccion.page,estructura->direccion.offset,estructura->direccion.size,estructura->buffer);
+					break;
+				}
+				case asignarPaginas:{//PedirMasPaginas
+					t_asignarPaginas* estructura = stream;
+					asignarPaginasAUnProceso(estructura->pid,estructura->cantPags);//chequearError
+					break;
+				}
+				case finalizarPrograma:{//FinalzarPrograma
+					int* pid = stream;
+					finalizarUnPrograma(*pid);
+					break;
+				}
+				default:{
+					perror("Error de comando");
+				}
 		}
 
 
@@ -341,7 +344,7 @@ void *aceptarConexionesCpu( void *arg ){ // aca le sacamos el asterisco, porque 
 		}
 		printf("[AceptarConexionesCPU] - Nueva CPU Conectada! Socket CPU: %d\n", nuevoSocketCpu);
 
-		pthread_create(&hilo_nuevaCPU, NULL, rutinaCPU,  &nuevoSocketCpu);
+		pthread_create(&hilo_nuevaCPU, NULL, recibirMensajesMemoria,  &nuevoSocketCpu);
 	}
 }
 
@@ -389,20 +392,20 @@ int main(void) {
 	char* w = solicitarBytesDeUnaPagina(0, 1, 0, strlen(mensaje1));
 	puts(w);
 */
-	asignarPaginasAUnProceso(23,23);
+	/*asignarPaginasAUnProceso(23,23);
 	printf("cantidad de paginas : %d ", cantidadDePaginasDeUnProcesoDeUnProceso(23));
 	size_t len = 0;
 
 	char* mensaje = NULL;
 	int* z = solicitarBytesDeUnaPagina(0, 0, 4, 4);
-
+*/
 	// ******* Declaración de la mayoria de las variables a utilizar
 
 	pthread_t hilo_consolaMemoria;
 	pthread_create(&hilo_consolaMemoria, NULL, rutinaConsolaMemoria,  NULL);
-	pthread_join(hilo_consolaMemoria, NULL);
+	//pthread_join(hilo_consolaMemoria, NULL);
 	int listener;
-	char* mensajeRecibido= string_new();
+	//char* mensajeRecibido= string_new();
 
 
 	// ******* Conexiones obligatorias y necesarias
@@ -423,7 +426,6 @@ int main(void) {
 	pthread_join(hilo_AceptarConexionesCPU , NULL);
 	close(listener);
 	liberarConfiguracion();
-	free(mensajeRecibido);
 	free(memoriaTotal);
 
 	return EXIT_SUCCESS;
