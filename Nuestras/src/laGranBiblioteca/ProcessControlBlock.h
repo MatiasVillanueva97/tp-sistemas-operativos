@@ -69,7 +69,9 @@ char* indiceEtiquetas; // ¡??¡?'¿¿'??¡ que es¡?
 
 ////-----FIN PCB y Stack--------////
 
-void *  serializarPCB(PCB_DATA * pcb);
+int tamanoPCB(PCB_DATA * pcb);
+
+void* serializarPCB(PCB_DATA * pcb);
 
 PCB_DATA* deserializarPCB(void* stream);
 

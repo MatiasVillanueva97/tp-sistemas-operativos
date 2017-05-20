@@ -27,6 +27,10 @@ typedef struct{
 } __attribute__((packed))
 Header;
 
+int leerInt(void* stream);
+
+char* leerString(void * stream);
+
 void sigchld_handler(int s);
 /**
 * @NAME: getSin_Addr
@@ -53,7 +57,7 @@ void escuchar(int);
 * @NAME: recibirMensaje
 * @DESC: Crea un string vacio
 */
-int recibirMensaje(int socket,void* stream); // Toda esta funcion deberá ccambiar en el momento qeu defininamos el protocolo de paquetes de mensajes :)
+int recibirMensaje(int socket,void** stream); // Toda esta funcion deberá ccambiar en el momento qeu defininamos el protocolo de paquetes de mensajes :)
 /**
 * @NAME: enviarMensaje
 * @DESC: Crea un string vacio

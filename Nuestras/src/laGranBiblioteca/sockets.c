@@ -31,30 +31,12 @@
 #define MAXDATASIZE 100 // max number of bytes we can get at once
 #define BACKLOG 10	 // how many pending connections queue will hold
 
-
-#define CASO_OK 0
-#define CASO_INT 1
-#define CASO_DINAMICO 2
-
-
-
 // get sockaddr, IPv4 or IPv6:
 
 typedef struct{
 	int tipo;
 	int cantidad;
 }t_mensajeByte;
-
-/*
-void sigchld_handler(int s)
-{
-	// waitpid() might overwrite errno, so we save and restore it:
-	int saved_errno = errno;
-
-	while(waitpid(-1, NULL, WNOHANG) > 0);
-
-	errno = saved_errno;
-}*/
 
 
 void *getSin_Addr(struct sockaddr *sa)
@@ -145,7 +127,6 @@ int crearSocketYBindeo(char* puerto)
 
 		if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &yes,sizeof(int)) == -1) {
 			perror("setsockopt");
-			exit(1);
 		}
 
 		if (bind(sockfd, p->ai_addr, p->ai_addrlen) == -1) {
@@ -161,7 +142,6 @@ int crearSocketYBindeo(char* puerto)
 
 		if (p == NULL)  {
 				fprintf(stderr, "server: failed to bind\n");
-				exit(1);
 			}
 		return sockfd;
 
@@ -186,175 +166,30 @@ void escuchar(int sockfd)
 		printf("\n\nEstableciendo Conexiones:\n\n");
 }
 
+int leerInt(void* stream)
+{
+	int axuluar = *((int*)stream);
+	free(stream);
+	return axuluar;
+}
+
+char* leerString(void * stream)
+{
+	return (char*)stream;
+}
+
 
 void *deserializador(Header header,int socket)
 {
-	void* stream;
-	int* numero=malloc(sizeof(uint32_t));
-	int* yes =malloc(sizeof(uint32_t));
+	void* stream = malloc(header.tamano);
 
-	switch(header.tipo)
-	{
-		case envioPCB:
-		{
-					//aca va lo de spisso.
-				break;
-		}
-		case envioDelPidEnSeco:
-		{
-			if(recv(socket,numero,sizeof(int),0) == -1){
-				perror("Error al Recibir entero");
-				break;
-			}
-			return numero;
-		}
-		case envioCantidadPaginas:
-		{
-			if(recv(socket,numero,sizeof(int),0) == -1){
-				perror("Error al Recibir entero");
-				break;
-			}
-			return numero;
-		}
-		case envioPaginaMemoria:
-		{
-			stream= malloc(header.tamano);
-
-			if(recv(socket,stream,header.tamano,0) == -1)
-				{
-					perror("Error al Recibir entero");
-					break;
-				}
-			return stream;
-
-		}
-			//Acciones de cpu
-		case asignarValor:{
-			stream= malloc(sizeof(t_escrituraMemoria));
-			if(recv(socket,stream,sizeof(t_escrituraMemoria),0) == -1)
-				{
-					perror("Error al Recibir entero");
-					break;
-				}
-			return stream;
-		}
-		case pedirValor:
-		{
-			stream= malloc(sizeof(t_pedidoMemoria));
-			if(recv(socket,stream,sizeof(t_pedidoMemoria),0) == -1)
-				{
-					perror("Error al Recibir entero");
-					break;
-				}
-			return stream;
-		}
-
-			case algoHaceMemoria:
-			{
-				break;
-			}
-
-			case envioScriptAnsisop:
-			{
-				stream= malloc(header.tamano);
-
-				if(recv(socket,stream,header.tamano,0) == -1)
-					{
-						perror("Error al Recibir entero");
-						break;
-					}
-				return stream;
-			}
-
-			case finalizarCiertoScript:
-			{
-				if(recv(socket,numero,sizeof(int),0) == -1)
-					{
-						perror("Error al Recibir entero");
-						break;
-					}
-				return numero;
-			}
-
-			case desconectarConsola:
-			{
-				if(recv(socket,numero,sizeof(int),0) == -1)
-					{
-						perror("Error al Recibir entero");
-						break;
-					}
-				return numero;
-			}
-			default:
-			{
-				perror("tiraste un tipo de operacion invalida/desconocida");
-			}
-
-
-	/*
+	if(recv(socket,stream,header.tamano,0) == -1){
+		perror("Error al Recibir mensaje");
 	}
-
-		case CASO_OK:
-		{
-			*yes=0;
-			return yes; // Vos no tenes que entender esto, dejalo. DIE' de  DIE'
-		}
-		case CASO_INT: //Devuelve un int, deberiamos hacer un case por cada estrutuctura que querramos recibir con tamaño fijo.
-		{
-			if(recv(socket,numero,4,0) == -1){
-				perror("Error al Recibir entero");
-				break;
-			}
-			return numero;
-		}
-		case CASO_DINAMICO: // en este caso agarramos todo el contenido de cualquie chorro de bytes y lo devolvemos asi como vino sin asco,
-		{
-			contenido = malloc(header.tamano);
-			if(recv(socket,contenido,header.tamano,0)==-1){
-				perror("Error al recibir mensajes dinamicos");
-				break;
-			}
-			return contenido;
-		case 3:{
-					struct{
-						int pid;
-						int contPags_pcb;
-					}__attribute__((packed)) *PCB_DATA = malloc(sizeof(int)*2);
-					if(recv(socket,&PCB_DATA->pid,sizeof(int),0)==-1){
-						perror("Error al recibir mensajes dinamicos");
-						break;
-					}
-					if(recv(socket,&PCB_DATA->contPags_pcb,sizeof(int),0)==-1){
-						perror("Error al recibir mensajes dinamicos");
-						break;
-					}
-					return PCB_DATA;
-				}
-				case 4:{
-					struct{
-						int pid;
-						char* mensaje;
-					}*paraImprimir = malloc(header.tamano);
-					if(recv(socket,&paraImprimir->pid,sizeof(int),0)==-1){
-						perror("Error al recibir mensajes dinamicos");
-						break;
-					}
-					if(recv(socket,&paraImprimir->mensaje,header.tamano-sizeof(int),0)==-1){
-						perror("Error al recibir mensajes dinamicos");
-						break;
-					}
-					return paraImprimir;
-				}
-		}
-		default:
-			perror("Error al recibir mensajes");
-			exit(-1);
-			*/
-	}
-	return NULL;
+	return stream;
 }
 
-int recibirMensaje(int socket,void* stream) // Toda esta funcion deberá ccambiar en el momento qeu definamos el protocolo de paquetes de mensajes :)
+int recibirMensaje(int socket,void** stream) // Toda esta funcion deberá ccambiar en el momento qeu definamos el protocolo de paquetes de mensajes :)
 {
 	Header header;
 	int cantidad;
@@ -364,8 +199,11 @@ int recibirMensaje(int socket,void* stream) // Toda esta funcion deberá ccambia
 
 	if(cantidad == 0) return 0;
 
-	stream = malloc(header.tamano); ////ACA HICE UN MALLOC
-	memcpy(stream, deserializador(header,socket), header.tamano);
+	*stream = malloc(header.tamano); ////ACA HICE UN MALLOC
+	void* auxiliarStream = deserializador(header,socket);
+	memcpy(*stream, auxiliarStream, header.tamano);
+	free(auxiliarStream);
+
 	return header.tipo;
 }
 
