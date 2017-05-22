@@ -262,10 +262,6 @@ void* serializar (int tipoDeOperacion, void* contenido, int tamanioMensaje)
 				break;
 		}
 
-		case algoHaceMemoria:
-		{
-			break;
-		}
 
 		case envioScriptAnsisop:
 		{

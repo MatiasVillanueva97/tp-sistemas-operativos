@@ -55,8 +55,9 @@ enum tipos_de_Acciones{
 		pedirValor = 102,
 
 	//***Todas las acciones del Memoria
-		algoHaceMemoria = 200,
+		enviarTamanoPaginas = 200,
 		lineaDeCodigo = 201,
+		RespuestaBooleanaDeMemoria = 202,
 
 	//***Todas las acciones de Consola
 		envioScriptAnsisop = 301,

@@ -129,26 +129,29 @@ int asignarPaginasAUnProceso(int pid, int cantidadDePaginas){
 	int paginaMaxima = cantidadDePaginasDeUnProcesoDeUnProceso(pid);
 	int i ;
 	for(i= 1 ;i <= cantidadDePaginas; i++){
-		if(!hayEspacio(pid,paginaMaxima+i)){
+		if(reservarFrame(pid,paginaMaxima+i) == -1){
+			finalizarUnPrograma(pid);
 			return -1;
 		}
 	}
-	for(i= 1 ;i <= cantidadDePaginas; i++){
-		reservarFrame(pid,paginaMaxima+i);
-	}
 	return 0;
 }
-void finalizarUnPrograma(int pid){
+int finalizarUnPrograma(int pid){
 	int paginas = cantidadDePaginasDeUnProcesoDeUnProceso(pid);
+	if(paginas == 0){
+		return -1;
+	}
 	int i;
 	for(i = 1; i<= paginas;i++){
 		liberarPagina(pid,i);
 	}
+	return 1;
+
 }
 
 //Rutinas
 void *rutinaKernel(void *arg){
-	int listener = (int)arg;
+		int listener = (int)arg;
 		int socketKernel;
 		int aceptados[] = {0}; // hacer un enum de esto
 		struct sockaddr_storage their_addr;
@@ -171,6 +174,9 @@ void *rutinaKernel(void *arg){
 			close(socketKernel);
 		}
 		printf("[Rutina Kernel] - Kernel conectado exitosamente\n");
+		int x= sizeOfPaginas;
+		enviarMensaje(socketKernel,enviarTamanoPaginas,&x,sizeof(int));
+		printf("El numero es %d", x);
 
 		sem_post(&sem_isKernelConectado);//Semaforo que indica si solo hay un kernel conectado
 
@@ -264,25 +270,29 @@ typedef struct {
 }t_asignarPaginas;
 //Funciones de Conexion
 void recibirMensajesMemoria(void* arg){
-	int socketKernel = (int)arg;
+	int socket = (int)arg;
 	void* stream;
 	int operacion;
 	while (1){
 
-		operacion = recibirMensaje(socketKernel,&stream);
+		operacion = recibirMensaje(socket,&stream);
 
 		switch(operacion)
 		{
 				case inicializarPrograma:{ //inicializarPrograma
 					t_inicializarPrograma* estructura = stream;
-					asignarPaginasAUnProceso(estructura->pid,estructura->cantPags);//chequearError
+					int x=1;
+					if(asignarPaginasAUnProceso(estructura->pid,estructura->cantPags)==-1){
+						x=-1;
+					}
+					enviarMensaje(socket,RespuestaBooleanaDeMemoria,&x,sizeof(int));
 
 					break;
 				}
 				case solicitarBytes :{ //solicitar bytes de una pagina
 					t_pedidoMemoria* estructura = stream;
 					void* contenidoDeLaPagina= solicitarBytesDeUnaPagina(estructura->id,estructura->direccion.page,estructura->direccion.offset,estructura->direccion.size);
-					enviarMensaje(socketKernel,201,contenidoDeLaPagina,estructura->direccion.size);
+					enviarMensaje(socket,201,contenidoDeLaPagina,estructura->direccion.size);
 					//cambiar por linea de codigo (enum)
 					//Controla errores forro.
 					break;
@@ -291,17 +301,29 @@ void recibirMensajesMemoria(void* arg){
 				case almacenarBytes://almacenarBytes en una pagina
 				{
 					t_almacenarBytes* estructura = stream;
-					almacenarBytesEnPagina(estructura->pid,estructura->direccion.page,estructura->direccion.offset,estructura->direccion.size,estructura->buffer);
+					int x=1;
+					if(almacenarBytesEnPagina(estructura->pid,estructura->direccion.page,estructura->direccion.offset,estructura->direccion.size,estructura->buffer)==-1){
+						x=-1;
+					}
+					enviarMensaje(socket,RespuestaBooleanaDeMemoria,&x,sizeof(int));
+
 					break;
 				}
 				case asignarPaginas:{//PedirMasPaginas
 					t_asignarPaginas* estructura = stream;
-					asignarPaginasAUnProceso(estructura->pid,estructura->cantPags);//chequearError
+					int x=1;
+					if(asignarPaginasAUnProceso(estructura->pid,estructura->cantPags)==-1){
+							x=-1;
+					}
 					break;
 				}
 				case finalizarPrograma:{//FinalzarPrograma
 					int* pid = stream;
-					finalizarUnPrograma(*pid);
+					int x=1;
+					if(finalizarUnPrograma(*pid)){
+							x=-1;
+					}
+					enviarMensaje(socket,RespuestaBooleanaDeMemoria,&x,sizeof(int));
 					break;
 				}
 				default:{
@@ -344,7 +366,7 @@ void *aceptarConexionesCpu( void *arg ){ // aca le sacamos el asterisco, porque 
 		}
 		printf("[AceptarConexionesCPU] - Nueva CPU Conectada! Socket CPU: %d\n", nuevoSocketCpu);
 
-		pthread_create(&hilo_nuevaCPU, NULL, recibirMensajesMemoria,  &nuevoSocketCpu);
+		pthread_create(&hilo_nuevaCPU, NULL, recibirMensajesMemoria,  nuevoSocketCpu);
 	}
 }
 
