@@ -51,6 +51,9 @@ int funcionHash (int pid, int pagina){
 //Funciones De Memoria
 void* leerMemoriaPosta (int pid, int pagina ){
 	int frame = buscarFrameCorrespondiente(pid,pagina); //checkear que no haya errores en buscarFrame.
+	if(frame==-1){
+		return 0;
+	}
 	void * contenido = malloc(getConfigInt("MARCO_SIZE"));
 	memcpy(contenido,memoriaTotal+frame*getConfigInt("MARCO_SIZE"),getConfigInt("MARCO_SIZE"));
 	return contenido;
@@ -62,6 +65,9 @@ int escribirMemoriaPosta(int pid,int pagina,void* contenido){
 		return 0;
 	}
 	int frame = buscarFrameCorrespondiente(pid,pagina);
+	if (frame == 0){
+		return 0;
+	}
 	int posicion = frame*getConfigInt("MARCO_SIZE");
 	memcpy(memoriaTotal+posicion,contenido,getConfigInt("MARCO_SIZE"));
 	return 1;
@@ -79,6 +85,7 @@ void imprimirContenidoMemoria(){
 	//fwrite(memoriaTotal,sizeOfPaginas,getConfigInt("MARCOS"),archivo);
 	fclose(archivo);
 }
+/*
 bool hayEspacio(int pid,int pagina){
 	int i;
 	for(i=funcionHash(pid,pagina);getConfigInt("MARCOS") > i;i++){
@@ -89,62 +96,98 @@ bool hayEspacio(int pid,int pagina){
 	}
 	return false;
 }
-
+*/
 //Funciones Principales
-void iniciarPrograma(int pid, int paginas){
-	int i;
-	for(i=1;i<=paginas;i++){
-		reservarFrame(pid,i);
-	}
-	//Falta hacer algo?
-}
+
 int almacenarBytesEnPagina(int pid, int pagina, int desplazamiento, int tamano,void* buffer){
 	if(desplazamiento + tamano > sizeOfPaginas){
-		return -1;
+		return 0;
 	}
 	void *contenidoDeLaPagina = malloc(tamano);
-	contenidoDeLaPagina = memoriaTotal+buscarFrameCorrespondiente(pid,pagina)*getConfigInt("MARCO_SIZE");
+	int frame = buscarFrameCorrespondiente(pid,pagina);
+	if(frame ==-1){
+		return 0;
+	}
+	contenidoDeLaPagina = memoriaTotal+frame*getConfigInt("MARCO_SIZE");
 	memcpy(contenidoDeLaPagina+desplazamiento, buffer,tamano);
 	return 1;
 }
 void* solicitarBytesDeUnaPagina(int pid, int pagina, int desplazamiento, int tamano){
 	void* contenidoDeLaPagina = malloc(sizeOfPaginas);
 	contenidoDeLaPagina = leerMemoriaPosta(pid,pagina);
+	if ((int)contenidoDeLaPagina == -1){
+		return 0;
+	}
 	void* contenidoADevolver = malloc(tamano);
 	memcpy(contenidoADevolver,contenidoDeLaPagina+desplazamiento,tamano);
 	free(contenidoDeLaPagina);
 	return contenidoADevolver;
 
 }
+int buscarCantidadDePaginas(int pid){
+
+	filaTablaCantidadDePaginas* x= buscarFilaEnTablaCantidadDePaginas(pid);
+	if (x==NULL){
+		return 0;
+	}
+	return x->cantidadDePaginas;
+
+}
+
+int buscarFilaEnTablaCantidadDePaginas(int pid){
+
+	bool buscarPid(filaTablaCantidadDePaginas* fila){
+			return (fila->pid== pid);
+	}
+	filaTablaCantidadDePaginas* x = list_find(tablaConCantidadDePaginas,buscarPid);
+	return x;
+
+}
+
 int asignarPaginasAUnProceso(int pid, int cantidadDePaginas){
-	int paginaMaxima = cantidadDePaginasDeUnProcesoDeUnProceso(pid);
-	int i ;
+//	int paginaMaxima = cantidadDePaginasDeUnProcesoDeUnProceso(pid);
+	int i;
+	int paginaMaxima = buscarCantidadDePaginas(pid);
+
 	for(i= 1 ;i <= cantidadDePaginas; i++){
-		if(reservarFrame(pid,paginaMaxima+i) == -1){
+		if(reservarFrame(pid,paginaMaxima+i) == 0){
 			finalizarUnPrograma(pid);
-			return -1;
+			return 0;
 		}
 	}
-	return 0;
+	filaTablaCantidadDePaginas * x = malloc(sizeof(x));
+	x->pid = pid;
+	x->cantidadDePaginas= cantidadDePaginas+paginaMaxima;
+	if(paginaMaxima == 0){
+		list_add(tablaConCantidadDePaginas,x);
+	}
+	else{
+		filaTablaCantidadDePaginas * elemento = buscarFilaEnTablaCantidadDePaginas(pid);
+		elemento->cantidadDePaginas += cantidadDePaginas;
+	}
+	return 1;
 }
 int finalizarUnPrograma(int pid){
-	int paginas = cantidadDePaginasDeUnProcesoDeUnProceso(pid);
+	int paginas = buscarCantidadDePaginas(pid);
 	if(paginas == 0){
-		return -1;
+		return 0;
 	}
 	int i;
 	for(i = 1; i<= paginas;i++){
 		liberarPagina(pid,i);
 	}
+	bool buscarPid(filaTablaCantidadDePaginas* fila){
+			return (fila->pid== pid);
+	}
+	list_remove_and_destroy_by_condition(tablaConCantidadDePaginas,buscarPid,free);
 	return 1;
-
 }
 
 //Rutinas
 void *rutinaKernel(void *arg){
 		int listener = (int)arg;
 		int socketKernel;
-		int aceptados[] = {0}; // hacer un enum de esto
+		int aceptados[] = {Kernel}; // hacer un enum de esto
 		struct sockaddr_storage their_addr;
 		char ip[INET6_ADDRSTRLEN];
 		socklen_t sin_size = sizeof their_addr;
@@ -172,25 +215,7 @@ void *rutinaKernel(void *arg){
 
 		recibirMensajesMemoria(socketKernel);
 }
-void *rutinaCPU(void * arg)
-{
-	int socketCPU = ((int*)arg)[0] ;
-	int pidRecibido, tamanioDatosAEnviarCPU;
 
-	printf("[Rutina CPU] - Entro a la rutina CPU. Socket CPU: %d\n", socketCPU);
-
-	recibirMensaje(socketCPU,&pidRecibido);
-
-	void * datosAEnviarACPU = leerMemoria(buscarPidEnTablaInversa(pidRecibido),&tamanioDatosAEnviarCPU);
-
-	puts((char*)datosAEnviarACPU);
-
-	enviarMensaje(socketCPU,2,datosAEnviarACPU,tamanioDatosAEnviarCPU);
-
-	printf("[Rutina CPU] - MensajeEnviado a CPU. Socket CPU: %s\n\n", datosAEnviarACPU);
-
-	free(datosAEnviarACPU);
-}
 void *rutinaConsolaMemoria(void* x){
 	size_t len = 0;
 		char* mensaje = NULL;
@@ -234,12 +259,10 @@ void *rutinaConsolaMemoria(void* x){
 						if(strcmp(comandoConsola[1],"PID:")== 0){
 							comandoConsola = string_split(comandoConsola[2], "\n");
 							int pidPedido = atoi(comandoConsola[0]);
-							printf("El proceso %d tiene %d\n",pidPedido,cantidadDePaginasDeUnProcesoDeUnProceso(pidPedido));
+							printf("El proceso %d tiene %d\n",pidPedido,((filaTablaCantidadDePaginas*)buscarFilaEnTablaCantidadDePaginas(pidPedido))->cantidadDePaginas);
 						}
 				}
 			}
-
-
 }
 
 typedef struct{
@@ -261,8 +284,8 @@ typedef struct {
 void recibirMensajesMemoria(void* arg){
 	int socket = (int)arg;
 	void* stream;
-	int operacion;
-	while (1){
+	int operacion=1;//Esto es para que si lee 0, se termine el while.
+	while (operacion){
 
 		operacion = recibirMensaje(socket,&stream);
 
@@ -271,7 +294,7 @@ void recibirMensajesMemoria(void* arg){
 				case inicializarPrograma:{ //inicializarPrograma
 					t_inicializarPrograma* estructura = stream;
 					int x=1;
-					if(asignarPaginasAUnProceso(estructura->pid,estructura->cantPags)==-1){
+					if(asignarPaginasAUnProceso(estructura->pid,estructura->cantPags)==0){
 						x=0;
 					}
 					enviarMensaje(socket,RespuestaBooleanaDeMemoria,&x,sizeof(int));
@@ -279,7 +302,6 @@ void recibirMensajesMemoria(void* arg){
 					int t=1;
 					char* contenidoPag;
 					int rta_escribir_Memoria;
-
 					for(t;t<=estructura->cantPags;t++)
 					{
 					   recibirMensaje(socket,&contenidoPag);
@@ -289,7 +311,6 @@ void recibirMensajesMemoria(void* arg){
 					}
 					free(contenidoPag);
 
-					sleep(5);
 
 					break;
 				}
@@ -306,8 +327,8 @@ void recibirMensajesMemoria(void* arg){
 				{
 					t_almacenarBytes* estructura = stream;
 					int x=1;
-					if(almacenarBytesEnPagina(estructura->pid,estructura->direccion.page,estructura->direccion.offset,estructura->direccion.size,estructura->buffer)==-1){
-						x=-1;
+					if(almacenarBytesEnPagina(estructura->pid,estructura->direccion.page,estructura->direccion.offset,estructura->direccion.size,estructura->buffer)==0){
+						x=0;
 					}
 					enviarMensaje(socket,RespuestaBooleanaDeMemoria,&x,sizeof(int));
 
@@ -317,8 +338,10 @@ void recibirMensajesMemoria(void* arg){
 					t_asignarPaginas* estructura = stream;
 					int x=1;
 					if(asignarPaginasAUnProceso(estructura->pid,estructura->cantPags)==-1){
-							x=-1;
+							x=0;
 					}
+					enviarMensaje(socket,RespuestaBooleanaDeMemoria,&x,sizeof(int));
+
 					break;
 				}
 				case finalizarPrograma:{//FinalzarPrograma
@@ -328,9 +351,13 @@ void recibirMensajesMemoria(void* arg){
 					int* pid = stream;
 					int x=1;
 					if(finalizarUnPrograma(*pid)){
-							x=-1;
+							x=0;
 					}
 					enviarMensaje(socket,RespuestaBooleanaDeMemoria,&x,sizeof(int));
+					break;
+				}
+				case 0:{
+					close(socket);
 					break;
 				}
 				default:{
@@ -378,6 +405,7 @@ void *aceptarConexionesCpu( void *arg ){ // aca le sacamos el asterisco, porque 
 }
 
 
+
 int main(void) {
 	//
 	printf("Inicializando Memoria.....\n\n");
@@ -386,6 +414,7 @@ int main(void) {
 
 	// ******* Configuracion de la Memoria a partir de un archivo
 	cache=list_create();
+	tablaConCantidadDePaginas = list_create();
 	printf("Configuracion Inicial: \n");
 	configuracionInicial("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Memoria/memoria.config");
 	imprimirConfiguracion();
@@ -394,9 +423,10 @@ int main(void) {
 	cantidadDeMarcos = getConfigInt("MARCOS");
 	memoriaTotal = malloc(sizeOfPaginas*cantidadDeMarcos);
 	int i;
-	char hijodeputa = ' ';
-	for(i=0;i<sizeOfPaginas*cantidadDeMarcos;i++){
-		memcpy(memoriaTotal+i,&hijodeputa,1);
+	char* hijodeputa =malloc(sizeOfPaginas);
+	hijodeputa = string_repeat(' ',sizeOfPaginas);
+	for(i=0;i<cantidadDeMarcos;i++){//Chequearlo despues
+		memcpy(memoriaTotal+i*sizeOfPaginas,hijodeputa,sizeOfPaginas);
 	}
 	// PRUEBAS
 	iniciarTablaDePaginacionInvertida();
@@ -429,7 +459,8 @@ int main(void) {
 
 	pthread_t hilo_consolaMemoria;
 	pthread_create(&hilo_consolaMemoria, NULL, rutinaConsolaMemoria,  NULL);
-	//pthread_join(hilo_consolaMemoria, NULL);
+
+	pthread_join(hilo_consolaMemoria, NULL);
 	int listener;
 	//char* mensajeRecibido= string_new();
 
@@ -440,7 +471,6 @@ int main(void) {
 
 	pthread_t hilo_AceptarConexionesCPU, hilo_Kernel;
 
-	//semaforoTrucho = -100;
 	sem_init(&sem_isKernelConectado,0,0);
 
 	pthread_create(&hilo_Kernel, NULL, rutinaKernel,  listener);

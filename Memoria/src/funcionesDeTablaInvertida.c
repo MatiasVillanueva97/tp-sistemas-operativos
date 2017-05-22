@@ -90,19 +90,34 @@ int reservarFrame(int pid, int pagina){
 	for(i=funcionHash(pid,pagina);getConfigInt("MARCOS") > i;i++){
 		filaDeTablaPaginaInvertida filaActual = tablaDePaginacionInvertida[i];
 		if(filaActual.pagina == -1 && filaActual.pid == -1){
+			filaTablaCantidadDePaginas* fila = malloc(sizeof(filaTablaCantidadDePaginas));
+			list_add(tablaConCantidadDePaginas,fila);
 			tablaDePaginacionInvertida[i].pagina = pagina;
 			tablaDePaginacionInvertida[i].pid = pid;
 			return 1;
 		}
 	}
-	return -1;
+	return 0;
+}
+int sum(t_list *lista,int(* funcion) (void*)){
+	int i;
+	int contador=0;
+	for( i = 0; i< list_size(lista);i++){
+		contador += funcion(list_get(lista,i));
+	}
+	return contador;
+}
+int getCantidadDePaginas(filaTablaCantidadDePaginas * fila){
+	return fila->cantidadDePaginas;
 }
 int memoriaFramesLibres(){
 	int i = 0;
 	int libres = 0;
+	int prueba = sum(tablaConCantidadDePaginas,getCantidadDePaginas);
 	for(i;getConfigInt("MARCOS") > i;i++){
 			filaDeTablaPaginaInvertida filaActual = tablaDePaginacionInvertida[i];
 			if(filaActual.pagina == -1 && filaActual.pid == -1){
+
 				tablaDePaginacionInvertida[i].pagina = -1;
 				tablaDePaginacionInvertida[i].pid = -1;
 				libres++;
@@ -112,6 +127,7 @@ int memoriaFramesLibres(){
 }
 
 //Funciones Paginas
+/*
 int cantidadDePaginasDeUnProcesoDeUnProceso(int pid){
 	int i = 0;
 	int paginas = 0;
@@ -122,7 +138,7 @@ int cantidadDePaginasDeUnProcesoDeUnProceso(int pid){
 			}
 		}
 	return paginas;
-}
+}*/
 int liberarPagina(int pid, int pagina){
 	int i;
 	for(i=funcionHash(pid,pagina);getConfigInt("MARCOS") > i;i++){
@@ -133,5 +149,5 @@ int liberarPagina(int pid, int pagina){
 			return 1;
 		}
 	}
-	return -1;
+	return 0;
 }

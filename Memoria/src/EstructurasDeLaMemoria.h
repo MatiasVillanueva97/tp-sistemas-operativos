@@ -15,11 +15,15 @@ int sizeOfPaginas;
 int cantidadDeMarcos;
 void* memoriaTotal;
 t_list* cache;
-
+t_list* tablaConCantidadDePaginas;
 
 
 #endif /* ESTRUCTURASDELAMEMORIA_H_ */
 
+typedef struct{
+	int pid;
+	int cantidadDePaginas;
+}filaTablaCantidadDePaginas;
 typedef struct{
 	int pid;
 	int pagina;
