@@ -38,15 +38,6 @@
 #include "parser/parser.h"
 //Variables
 
-#include "../../Nuestras/src/laGranBiblioteca/datosGobalesGenerales.h"
-
-enum directivasMemoria{
- inicializarPrograma = 1,
- solicitarBytes = 2,
- almacenarBytes = 3,
- asignarPaginas = 4, /// asigna paginas a un proceso, esto es mas que nada para el heap
- finalizarPrograma = 5
-};
 
 sem_t sem_isKernelConectado; // meparece que es otro tipo de semaforo, no mutex
 
@@ -68,12 +59,12 @@ int escribirMemoriaPosta(int pid,int pagina,void* contenido){
 	//Antes de poder escribir, se deben haber reservado los frame.
 	if(strlen(contenido)>getConfigInt("MARCO_SIZE")){
 		perror("El tamaño del contenido es mayor al tamaño de una pagina con la configuracion actual");
-		return -1;
+		return 0;
 	}
 	int frame = buscarFrameCorrespondiente(pid,pagina);
 	int posicion = frame*getConfigInt("MARCO_SIZE");
 	memcpy(memoriaTotal+posicion,contenido,getConfigInt("MARCO_SIZE"));
-	return 0;
+	return 1;
 }
 void imprimirContenidoMemoria(){
 	FILE* archivo =  fopen ("file.txt", "w+");
@@ -174,9 +165,8 @@ void *rutinaKernel(void *arg){
 			close(socketKernel);
 		}
 		printf("[Rutina Kernel] - Kernel conectado exitosamente\n");
-		int x= sizeOfPaginas;
-		enviarMensaje(socketKernel,enviarTamanoPaginas,&x,sizeof(int));
-		printf("El numero es %d", x);
+
+		enviarMensaje(socketKernel,enviarTamanoPaginas,&sizeOfPaginas,sizeof(int));
 
 		sem_post(&sem_isKernelConectado);//Semaforo que indica si solo hay un kernel conectado
 
@@ -255,7 +245,6 @@ void *rutinaConsolaMemoria(void* x){
 typedef struct{
 int pid;
 int cantPags;
-void* contenido;
 }t_inicializarPrograma;
 
 typedef struct{
@@ -283,16 +272,31 @@ void recibirMensajesMemoria(void* arg){
 					t_inicializarPrograma* estructura = stream;
 					int x=1;
 					if(asignarPaginasAUnProceso(estructura->pid,estructura->cantPags)==-1){
-						x=-1;
+						x=0;
 					}
 					enviarMensaje(socket,RespuestaBooleanaDeMemoria,&x,sizeof(int));
+
+					int t=1;
+					char* contenidoPag;
+					int rta_escribir_Memoria;
+
+					for(t;t<=estructura->cantPags;t++)
+					{
+					   recibirMensaje(socket,&contenidoPag);
+					   rta_escribir_Memoria=escribirMemoriaPosta(estructura->pid,t,contenidoPag);
+
+					   enviarMensaje(socket,RespuestaBooleanaDeMemoria,&rta_escribir_Memoria,sizeof(int));
+					}
+					free(contenidoPag);
+
+					sleep(5);
 
 					break;
 				}
 				case solicitarBytes :{ //solicitar bytes de una pagina
 					t_pedidoMemoria* estructura = stream;
 					void* contenidoDeLaPagina= solicitarBytesDeUnaPagina(estructura->id,estructura->direccion.page,estructura->direccion.offset,estructura->direccion.size);
-					enviarMensaje(socket,201,contenidoDeLaPagina,estructura->direccion.size);
+					enviarMensaje(socket,lineaDeCodigo,contenidoDeLaPagina,estructura->direccion.size);
 					//cambiar por linea de codigo (enum)
 					//Controla errores forro.
 					break;
@@ -318,6 +322,9 @@ void recibirMensajesMemoria(void* arg){
 					break;
 				}
 				case finalizarPrograma:{//FinalzarPrograma
+
+					printf("finalizar PRograma entroasjdfasjfas \n");
+
 					int* pid = stream;
 					int x=1;
 					if(finalizarUnPrograma(*pid)){
@@ -374,12 +381,9 @@ void *aceptarConexionesCpu( void *arg ){ // aca le sacamos el asterisco, porque 
 int main(void) {
 	//
 	printf("Inicializando Memoria.....\n\n");
-	int puta = 5;
-	void* serializado = serializar(envioDelPidEnSeco,&puta,sizeof(int));
-	Header putoel;
-	putoel.tamano = sizeof(int);
-	putoel.tipo = envioDelPidEnSeco;
-	int respuesta = (int) deserializador(putoel,serializado);
+
+
+
 	// ******* Configuracion de la Memoria a partir de un archivo
 	cache=list_create();
 	printf("Configuracion Inicial: \n");

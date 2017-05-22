@@ -29,6 +29,7 @@
 int socketMemoria;
 int socketFS;
 int historico_pid;
+int size_pagina;
 
 ///------ESTRUCTURAS AUXILIARES ADMNISTRATIVAS------///
 

@@ -43,6 +43,7 @@ typedef struct{
  int id;
  t_direccion direccion;
 }__attribute__((packed)) t_pedidoMemoria;
+
 enum tipos_de_Acciones{
 	//***Todas las acciones del Kernel al enviar
 		envioPCB = 4,
@@ -58,6 +59,12 @@ enum tipos_de_Acciones{
 		enviarTamanoPaginas = 200,
 		lineaDeCodigo = 201,
 		RespuestaBooleanaDeMemoria = 202,
+     	inicializarPrograma = 203,
+		solicitarBytes = 204,
+		almacenarBytes = 205,
+		asignarPaginas = 206, /// asigna paginas a un proceso, esto es mas que nada para el heap
+		finalizarPrograma = 207,
+
 
 	//***Todas las acciones de Consola
 		envioScriptAnsisop = 301,

@@ -221,111 +221,10 @@ void* serializar (int tipoDeOperacion, void* contenido, int tamanioMensaje)
 	void * stream=malloc(tamanioMensaje+(sizeof(int)*2));
 	memcpy(stream, &tipoDeOperacion, sizeof(int));
 
+	memcpy(stream+sizeof(int), &tamanioMensaje, sizeof(int));
+	memcpy(stream+sizeof(int)*2, contenido, tamanioMensaje);
 
-	switch(tipoDeOperacion)
-	{
-		case envioPCB:
-		{
-				//aca va lo de spisso.
-			break;
-		}
-		case envioDelPidEnSeco:
-		{
-			memcpy(stream+sizeof(int), &tamanioMensaje, sizeof(int));
-			memcpy(stream+sizeof(int)*2, contenido, sizeof(int));
-			break;
-		}
-		case envioCantidadPaginas:
-		{
-			memcpy(stream+sizeof(int), &tamanioMensaje, sizeof(int));
-			memcpy(stream+sizeof(int)*2, contenido, sizeof(int));
-			break;
-		}
-
-		case envioPaginaMemoria:
-		{
-			memcpy(stream+sizeof(int), &tamanioMensaje, sizeof(int));
-
-			memcpy(stream+sizeof(int)*2, contenido, tamanioMensaje);
-			break;
-		}
-		//Acciones de cpu
-		case asignarValor:{
-			memcpy(stream+sizeof(int), &tamanioMensaje, sizeof(int));
-			memcpy(stream+sizeof(int), contenido, sizeof(t_escrituraMemoria));
-			break;
-		}
-		case pedirValor:
-		{
-			memcpy(stream+sizeof(int), &tamanioMensaje, sizeof(int));
-			memcpy(stream+sizeof(int), contenido, sizeof(t_pedidoMemoria));
-				break;
-		}
-
-
-		case envioScriptAnsisop:
-		{
-			memcpy(stream+sizeof(int), &tamanioMensaje, sizeof(int));
-			memcpy(stream+sizeof(int)*2, contenido, tamanioMensaje);
-				break;
-		}
-
-		case finalizarCiertoScript:
-		{
-			memcpy(stream+sizeof(int), &tamanioMensaje, sizeof(int));
-			memcpy(stream+sizeof(int)*2, contenido, sizeof(int));
-			break;
-		}
-
-		case desconectarConsola:
-		{
-			memcpy(stream+sizeof(int), &tamanioMensaje, sizeof(int));
-			memcpy(stream+sizeof(int)*2, contenido, sizeof(int));
-			break;
-		}
-		default:
-		{
-			perror("tiraste un tipo de operacion invalida/desconocida");
-		}
-	}
 	return stream;
-
-/*
-	switch(tipoMensaje)
-	{
-		case CASO_OK: // el caso de una respuesta, que solo da a entender una validacion por ok
-		{
-			memcpy(stream+sizeof(int), &tamanioMensaje, sizeof(int));
-		}break;
-		case CASO_INT: /// 3-150
-		{
-			memcpy(stream+sizeof(int), &tamanioMensaje, sizeof(int));
-			memcpy(stream+(sizeof(int)*2), contenido, sizeof(int));
-		}break;
-		case CASO_DINAMICO:
-		{
-			memcpy(stream+sizeof(int), &tamanioMensaje, sizeof(int));
-			memcpy(stream+(sizeof(int)*2), contenido, tamanioMensaje);
-		}break;
-		case 3:{
-				memcpy(stream+sizeof(int), &tamanioMensaje, sizeof(int));
-				memcpy(stream+(sizeof(int)*2), contenido, tamanioMensaje);
-				break;
-			}
-			case 4:{
-				memcpy(stream+sizeof(int), &tamanioMensaje, sizeof(int));
-				memcpy(stream+(sizeof(int)*2), contenido, tamanioMensaje);
-				break;
-			}
-		default:{
-			perror("Error al serializar el chorro de bytes");
-			exit(-1);
-		}break;
-
-
-	}
-	return stream;
-	*/
 }
 
 int enviarMensaje(int socket, int TipoDeOperacion, void* contenido, int tamanioMensaje)
@@ -336,7 +235,9 @@ int enviarMensaje(int socket, int TipoDeOperacion, void* contenido, int tamanioM
 	int longitud = 2*sizeof(uint32_t) + tamanioMensaje;
 	bytesleft = longitud;
 	void* auxiliar;
+
 	auxiliar = serializar(TipoDeOperacion, contenido, tamanioMensaje);
+
 	/*if(send(socket, auxiliar , ((2*sizeof(uint32_t))+tamanioMensaje), 0) == -1 ){
 			perror("recv");
 			return -1;

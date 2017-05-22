@@ -114,8 +114,6 @@ void consola_finalizarTodosLosProcesos(int socketConsola){
 
 ///---FUNCIONES DEL KERNEL----//
 
-int size_pagina=256;
-
 /// *** Esta función esta probada y quasi-anda --- no anda uno de los freee de de adentro, que ahora esta comentado.. El programa sigue andando pero podemos tener memory leaks
 void liberar_Programa_En_New(PROGRAMAS_EN_NEW * programaNuevo)
 {
@@ -126,16 +124,16 @@ void liberar_Programa_En_New(PROGRAMAS_EN_NEW * programaNuevo)
 
 /// *** Esta función esta probada y anda
 //*** Esta funcion te divide el scriptAnsisop en una cantidad de paginas dadas, el size de cada pagina esta en el config
-char * memoria_dividirScriptEnPaginas(int cant_paginas, char copiaScriptAnsisop)
+char** memoria_dividirScriptEnPaginas(int cant_paginas, char *copiaScriptAnsisop)
 {
-	char * scriptDivididoEnPaginas[cant_paginas] ;
+	char * scriptDivididoEnPaginas[cant_paginas];
 	int i;
 	for(i=0;i<cant_paginas;i++){
 		scriptDivididoEnPaginas[i] = malloc(size_pagina);
 		memcpy(scriptDivididoEnPaginas[i],copiaScriptAnsisop+i*size_pagina,size_pagina);
 		puts(scriptDivididoEnPaginas[i]);
 	}
- return scriptDivididoEnPaginas;
+	return scriptDivididoEnPaginas;
 }
 
 /// *** Esta función esta probada y anda
@@ -149,7 +147,6 @@ int memoria_CalcularCantidadPaginas(char * scriptAnsisop)
 /// *** A esta función solo le faltan dos cosas, 1- la funcion consola_finalizacionPorNoMemoria ; (no esta desarrollada) y porbar tuodos los enviar y recibir mensajes con memoria
 //***Funciones de Planificador
 void newToReady(){
-
 	printf("\n\n\nEstamos en la función newToReady a largo plazo!\n\n");
 
 	//***Tomo el primer elemento de la cola sin sacarlo de ella
@@ -158,43 +155,54 @@ void newToReady(){
 
 	printf("Estructura:--\nPid: %d\nScript: %s\nSocketConsola:%d\n\n",programaAnsisop->pid_provisorio,programaAnsisop->scriptAnsisop,programaAnsisop->socketConsola);
 
+	//***Calculo cuantas paginas necesitara la memoria para este script
+	int cant_paginas = memoria_CalcularCantidadPaginas(programaAnsisop->scriptAnsisop);
 
-	//***Le Enviamos a memoria el pid con el que vamos a trabajar - Junto a la accion que vamos a realizar
-	enviarMensaje(socketMemoria,envioDelPidEnSeco, &programaAnsisop->pid_provisorio, sizeof(int)); // Enviamos el pid a memoria
+	typedef struct{
+	int pid;
+	int cantPags;
+	}__attribute__((packed)) PARA_MEMORIA_INICIALIZAR_PROGRAMA;
+
+	PARA_MEMORIA_INICIALIZAR_PROGRAMA algo;
+
+	algo.cantPags=cant_paginas;
+	algo.pid=programaAnsisop->pid_provisorio;
+
+	//***Le Enviamos a memoria el pid con el que vamos a trabajar - Junto a la accion que vamos a realizar - Le envio a memeoria la cantidad de paginas que necesitaré reservar
+	enviarMensaje(socketMemoria,inicializarPrograma, &algo, sizeof(int)*2); // Enviamos el pid a memoria
+
 	printf("Pid Enviado a memoria, pid: %d\n", programaAnsisop->pid_provisorio);
 
-	//***Calculo cuantas paginas necesitara la memoria para este script
-	int cant_paginas = memoria_CalcularCantidadPaginas(programaAnsisop->scriptAnsisop); // hacer esta funcion-------------------------------------------------FALTA
-
-	//***Le envio a memeoria la cantidad de paginas que necesitaré reservar
-	enviarMensaje(socketMemoria,envioCantidadPaginas,&cant_paginas,sizeof(int));
-	printf("Cantidad De Paginas Enviadas a memoria, cantidad de paginas: %d\n", cant_paginas);
-
-	int ok=0;
+	int* ok;
 	recibirMensaje(socketMemoria, &ok); // Esperamos a que memoria me indique si puede guardar o no el stream
 
-	if(ok)
+	if(*ok)
 	{
+		printf("\n\n[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-%d\n", *ok);
+
 		char* copiaScriptAnsisop = strdup(programaAnsisop->scriptAnsisop);
 		int pid= programaAnsisop->pid_provisorio;
 		int copiasocketConsola = programaAnsisop->socketConsola;
 
 		//***Quito el script de la cola de new
 		queue_pop(cola_New);
-		liberar_Programa_En_New(programaAnsisop);
+//		liberar_Programa_En_New(programaAnsisop); --- Arreglar esto
+
 		sem_post(&mutex_cola_New);
 
-		printf("\n\n[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado\n");
 
 		//*** Divido el script en la cantidad de paginas necesarias
-		char** scriptEnPaginas = memoria_dividirScriptEnPaginas(cant_paginas, copiaScriptAnsisop); // hacer esta otra funcion-------------------------------------------FALTA
+		char** scriptEnPaginas = memoria_dividirScriptEnPaginas(cant_paginas, copiaScriptAnsisop);
 
 		//***Le envio a memoria todo el scrip pagina a pagina
 		int i=0;
-		for(i; i<cant_paginas; i++)
+
+		for(i; i<cant_paginas && ok; i++)
 		{
-			//enviarMensaje(socketMemoria,enviarPaginaMemoria,scriptEnPaginas[i],sizeof(int));
+			enviarMensaje(socketMemoria,envioCantidadPaginas,scriptEnPaginas[i],strlen(scriptEnPaginas[i]));//// Cambiar strlen rellenar con /0
 			printf("Envio una pagina: %d\n", i);
+
+			recibirMensaje(socketMemoria,&ok);
 		}
 
 		//***Creo el PCB
@@ -292,7 +300,7 @@ void *rutinaConsola(void * arg)
 
 				//***Memoria me avisa que salio todobon
 				respuesta = recibirMensaje(socketConsola, &pid);
-				errorEn(respuesta, "[Funcion consola_FinalizacionPorDirectiva] - La Memoria no pudo finalizar el proceso"); // y algo mas deveriamos hacer
+				errorEn(respuesta, "[Funcion consola_FinalizacionPorDirectiva] - La Memoria no pudo finalizar el proceso");
 
 				consola_finalizacionPorDirectiva(socketConsola, pid, -7);
 			}break;
@@ -494,6 +502,15 @@ void conectarConMemoria()
 				close(socketMemoria);
 	}
 	printf("Conexión exitosa con el Memoria(%i)!!\n",rta_conexion);
+
+	int* sizePag;
+	recibirMensaje(socketMemoria, &sizePag);
+
+	size_pagina = *sizePag;
+
+	printf("[Conexion con Memoria] - El Size pag es: %d", size_pagina);
+
+	free(sizePag);
 }
 void conectarConFS()
 {
@@ -517,7 +534,7 @@ int main(void) {
 	printf("Inicializando Kernel.....\n\n");
 
 	///------INICIALIZO TO.DO-------------///
-		historico_pid=0;
+		historico_pid=1;
 
 		//***Inicializo las listas
 		avisos = list_create();
@@ -543,7 +560,7 @@ int main(void) {
 
 	//---CONECTANDO CON FILESYSTEM Y MEMORIA
 	printf("\n\n\nEsperando conexiones:\n-FileSystem\n-Memoria\n");
-//	conectarConMemoria();
+	conectarConMemoria();
 //	conectarConFS();
 	///----------------------///
 
@@ -564,8 +581,6 @@ int main(void) {
 	//----ME PONGO A ESCUCHAR CONEXIONES---//
 	pthread_t hilo_aceptarConexiones;
 	pthread_create(&hilo_aceptarConexiones, NULL, aceptarConexiones, listener);
-
-
 
 
 	pthread_join(hilo_aceptarConexiones, NULL);
