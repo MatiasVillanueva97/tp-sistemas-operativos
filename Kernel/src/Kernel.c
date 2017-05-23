@@ -131,7 +131,7 @@ char** memoria_dividirScriptEnPaginas(int cant_paginas, char *copiaScriptAnsisop
 	for(i=0;i<cant_paginas;i++){
 		scriptDivididoEnPaginas[i] = malloc(size_pagina);
 		memcpy(scriptDivididoEnPaginas[i],copiaScriptAnsisop+i*size_pagina,size_pagina);
-		puts(scriptDivididoEnPaginas[i]);
+		printf("[memoria_dividirScriptEnPaginas] - %s",scriptDivididoEnPaginas[i]);
 	}
 	return scriptDivididoEnPaginas;
 }
@@ -147,6 +147,21 @@ int memoria_CalcularCantidadPaginas(char * scriptAnsisop)
 /// *** A esta función solo le faltan dos cosas, 1- la funcion consola_finalizacionPorNoMemoria ; (no esta desarrollada) y porbar tuodos los enviar y recibir mensajes con memoria
 //***Funciones de Planificador
 void newToReady(){
+	PROGRAMAS_EN_NEW * nuevoPrograma;
+
+	sem_wait(&mutex_HistoricoPcb);
+		nuevoPrograma->pid_provisorio= historico_pid;
+		historico_pid++;
+	sem_post(&mutex_HistoricoPcb);
+
+	nuevoPrograma->scriptAnsisop = "asdasd asd546as546d a546s 546as 54asd 546asd546asd 546asd546asd546asd546d as546d 546d 546asd546sd 546asd 546asd 546asd 546asd546asd546asd546das 546asd";
+	nuevoPrograma->socketConsola = 53;
+
+	//***Lo Agrego a la Cola de New - Aca hay que poner un semaforo
+	sem_wait(&mutex_cola_New);
+		queue_push(cola_New,nuevoPrograma);
+	sem_post(&mutex_cola_New);
+
 	printf("\n\n\nEstamos en la función newToReady a largo plazo!\n\n");
 
 	//***Tomo el primer elemento de la cola sin sacarlo de ella
@@ -158,24 +173,15 @@ void newToReady(){
 	//***Calculo cuantas paginas necesitara la memoria para este script
 	int cant_paginas = memoria_CalcularCantidadPaginas(programaAnsisop->scriptAnsisop);
 
-	typedef struct{
-	int pid;
-	int cantPags;
-	}__attribute__((packed)) PARA_MEMORIA_INICIALIZAR_PROGRAMA;
-
-	PARA_MEMORIA_INICIALIZAR_PROGRAMA algo;
-
-	algo.cantPags=cant_paginas;
-	algo.pid=programaAnsisop->pid_provisorio;
+	INICIALIZAR_PROGRAMA dataParaMemoria;
+	dataParaMemoria.cantPags=cant_paginas;
+	dataParaMemoria.pid=programaAnsisop->pid_provisorio;
 
 	//***Le Enviamos a memoria el pid con el que vamos a trabajar - Junto a la accion que vamos a realizar - Le envio a memeoria la cantidad de paginas que necesitaré reservar
-	enviarMensaje(socketMemoria,inicializarPrograma, &algo, sizeof(int)*2); // Enviamos el pid a memoria
-
-	printf("Pid Enviado a memoria, pid: %d\n", programaAnsisop->pid_provisorio);
+	enviarMensaje(socketMemoria,inicializarPrograma, &dataParaMemoria, sizeof(int)*2); // Enviamos el pid a memoria
 
 	int* ok;
 	recibirMensaje(socketMemoria, &ok); // Esperamos a que memoria me indique si puede guardar o no el stream
-
 	if(*ok)
 	{
 		printf("\n\n[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-%d\n", *ok);
@@ -186,7 +192,7 @@ void newToReady(){
 
 		//***Quito el script de la cola de new
 		queue_pop(cola_New);
-//		liberar_Programa_En_New(programaAnsisop); --- Arreglar esto
+	//	liberar_Programa_En_New(programaAnsisop); --- Arreglar esto
 
 		sem_post(&mutex_cola_New);
 
@@ -206,22 +212,14 @@ void newToReady(){
 		}
 
 		//***Creo el PCB
-		PCB_DATA * pcbNuevo = crearPCB(copiaScriptAnsisop, cant_paginas, pid);
+/*		PCB_DATA * pcbNuevo = crearPCB(copiaScriptAnsisop, cant_paginas, pid);
 		free(copiaScriptAnsisop);
 
 		//***Añado el pcb a la cola de Ready
 		queue_push(cola_Ready,pcbNuevo);
 
-		//***Añado al proceso a la cola de avisos
-		AVISO_FINALIZACION * aviso = malloc(sizeof(AVISO_FINALIZACION));
 
-		aviso->pid = pcbNuevo->pid;
-		aviso->socketConsola = copiasocketConsola;
-		aviso->finalizado = false;
-
-		list_add(avisos,aviso);
-
-		printf("Se agrego en la lista de avisos: pid- %d , socketConsola-%d \n", aviso->pid,aviso->socketConsola);
+		printf("Se agrego en la lista de avisos: pid- %d , socketConsola-%d \n", aviso->pid,aviso->socketConsola);*/
 	}
 	else
 	{
@@ -289,6 +287,21 @@ void *rutinaConsola(void * arg)
 				sem_wait(&mutex_cola_New);
 					queue_push(cola_New,nuevoPrograma);
 				sem_post(&mutex_cola_New);
+
+				//***Añado al proceso a la cola de avisos -- FAlta un semaforo par aviso de finalizacion
+	/*			AVISO_FINALIZACION * aviso = malloc(sizeof(AVISO_FINALIZACION));
+
+				aviso->pid = nuevoPrograma->pid_provisorio;
+				aviso->socketConsola = socketConsola;
+				aviso->finalizado = false;
+
+				list_add(avisos,aviso); // esto no va aca
+		*/
+				/* Cuando un consola envia un pid para finalizar, lo que vamos a hacer es una funci+on que cambie el estado de ese proceso a finalizado,
+				 * de modo que en el mommento en que un proceso pase de cola en cola se valide como esta su estado, de estar en finalizado se pasa automaticamente ala cola
+				 * de finalizados --- Asi que se elimina la estructura de avisos de finalizacion y se agrega el elemento estado a todos las estructuras de als colas
+				 */
+
 			}break;
 
 			case finalizarCiertoScript:{
@@ -432,13 +445,14 @@ void * aceptarConexiones( void *arg ){
 
 ///***Esta Función esta Probada y anda (falta meterle tres semaforos mutex)
 //***Esta Función lo que hace es sumar el size de todas las colas que determinan el grado de multiplicacion y devuelve la suma
-int gradoMultiprogramacionActual()
+int cantidadProgramasEnProcesamiento()
 {
 	//HAcer Semaforos para todas las colas
 	int cantidadProcesosEnLasColas = queue_size(cola_Ready)+queue_size(cola_Wait)+queue_size(cola_Exec);
 	return cantidadProcesosEnLasColas;
 }
 
+//*** Esta función te dice si hay programas en new
 bool hayProgramasEnNew()
 {
 	sem_wait(&mutex_cola_New);
@@ -448,20 +462,19 @@ bool hayProgramasEnNew()
 	return valor;
 }
 
+//*** Rutina que
 void * planificadorLargoPlazo()
 {
 	while(1)
 	{
-		sleep(1);
 		printf("Entramos al planificador de largo plazo!\n");
 
-		if(gradoMultiprogramacionActual() < getConfigInt("GRADO_MULTIPROG") && hayProgramasEnNew())
+		if(cantidadProgramasEnProcesamiento() < getConfigInt("GRADO_MULTIPROG") && hayProgramasEnNew())
 		{
 			newToReady();
 		}
-		printf("No nos da el grado de multi programación ni hay programas en new!\n");
-		//getConfigIntArrayElement("SEM_IDS",2);
-		//	setConfigInt("GRADO_MULTIPROG",3);
+		printf("No nos da el grado de multi programación o hay programas en new!\n");
+		sleep(5);
 	}
 }
 
@@ -487,6 +500,7 @@ void * planificadorCortoPlazo()
 
 ///--------FUNCIONES DE CONEXIONES-------////
 //***Estas funciones andan
+//*** Esta función se conecta con memoria y recibe de ella el tamaño de las paginas
 void conectarConMemoria()
 {
 	int rta_conexion;
@@ -497,7 +511,7 @@ void conectarConMemoria()
 	if (socketMemoria == 2){
 		perror("No se conectado con el FileSystem, asegurese de que este abierto el proceso");
 	}
-	if ( (rta_conexion = handshakeCliente(socketMemoria, Kernel)) == -1) {
+	if ( (rta_conexion = handshakeCliente(socketMemoria, Kernel)) != Memoria) {
 				perror("Error en el handshake con Memoria");
 				close(socketMemoria);
 	}
@@ -570,8 +584,10 @@ int main(void) {
 	escuchar(listener); // poner a escuchar ese socket
 	///----------------------//
 
+	newToReady();
+
 	//---ABRO EL HILO DE PROCESOS FINALIZADOS---//
-	pthread_t hilo_revisarFinalizados;
+/*	pthread_t hilo_revisarFinalizados;
 	pthread_create(&hilo_revisarFinalizados, NULL, revisarFinalizados, NULL);
 
 	//---ABRO EL HILO DEL PLANIFICADOR A LARGO PLAZO---//
@@ -586,7 +602,7 @@ int main(void) {
 	pthread_join(hilo_aceptarConexiones, NULL);
 	pthread_join(hilo_planificadorLargoPlazo, NULL);
 	pthread_join(hilo_revisarFinalizados, NULL);
-
+*/
 
 	while(1)
 	{

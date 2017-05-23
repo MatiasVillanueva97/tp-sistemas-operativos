@@ -27,13 +27,16 @@
 #include "commons/string.h"
 #include "commons/collections/list.h"
 
-
 #include "../../Nuestras/src/laGranBiblioteca/sockets.c"
 #include "../../Nuestras/src/laGranBiblioteca/config.c"
+#include "../../Nuestras/src/laGranBiblioteca/funcionesParaTodosYTodas.c"
+
 #include "../../Nuestras/src/laGranBiblioteca/datosGobalesGenerales.h"
+
 #include "EstructurasDeLaMemoria.h"
 #include "funcionesDeTablaInvertida.h"
 #include "funcionesDeCache.h"
+
 #include "parser/metadata_program.h"
 #include "parser/parser.h"
 //Variables
@@ -460,7 +463,7 @@ int main(void) {
 	pthread_t hilo_consolaMemoria;
 	pthread_create(&hilo_consolaMemoria, NULL, rutinaConsolaMemoria,  NULL);
 
-	pthread_join(hilo_consolaMemoria, NULL);
+//	pthread_join(hilo_consolaMemoria, NULL);
 	int listener;
 	//char* mensajeRecibido= string_new();
 

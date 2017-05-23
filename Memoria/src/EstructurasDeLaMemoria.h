@@ -8,6 +8,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include "commons/collections/list.h"
+
+
 #ifndef ESTRUCTURASDELAMEMORIA_H_
 #define ESTRUCTURASDELAMEMORIA_H_
 int retardo;
@@ -16,9 +18,6 @@ int cantidadDeMarcos;
 void* memoriaTotal;
 t_list* cache;
 t_list* tablaConCantidadDePaginas;
-
-
-#endif /* ESTRUCTURASDELAMEMORIA_H_ */
 
 typedef struct{
 	int pid;
@@ -50,3 +49,5 @@ typedef struct{
 	uint32_t size;
 	bool isFree;
 }__attribute__((packed))HeapMetadata;
+
+#endif /* ESTRUCTURASDELAMEMORIA_H_ */

@@ -4,29 +4,7 @@
  *  Created on: 17/5/2017
  *      Author: utnso
  */
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <errno.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <arpa/inet.h>
-#include <sys/wait.h>
-#include <signal.h>
-#include <pthread.h>
-#include <semaphore.h>
-#include "commons/config.h"
-#include "commons/log.h"
-#include "commons/string.h"
-
-
-#include "EstructurasDeLaMemoria.h"
-
-#include "parser/metadata_program.h"
-#include "parser/parser.h"
+#include "funcionesDeTablaInvertida.h"
 
 
 
@@ -99,6 +77,7 @@ int reservarFrame(int pid, int pagina){
 	}
 	return 0;
 }
+/*
 int sum(t_list *lista,int(* funcion) (void*)){
 	int i;
 	int contador=0;
@@ -106,14 +85,16 @@ int sum(t_list *lista,int(* funcion) (void*)){
 		contador += funcion(list_get(lista,i));
 	}
 	return contador;
-}
+}*/
 int getCantidadDePaginas(filaTablaCantidadDePaginas * fila){
 	return fila->cantidadDePaginas;
 }
 int memoriaFramesLibres(){
 	int i = 0;
 	int libres = 0;
+
 	int prueba = sum(tablaConCantidadDePaginas,getCantidadDePaginas);
+
 	for(i;getConfigInt("MARCOS") > i;i++){
 			filaDeTablaPaginaInvertida filaActual = tablaDePaginacionInvertida[i];
 			if(filaActual.pagina == -1 && filaActual.pid == -1){

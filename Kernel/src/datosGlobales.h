@@ -55,6 +55,14 @@ typedef struct{
 	int socketConsola;
 } PROGRAMAS_EN_NEW;
 
+//*** Esta es la escructura que le envio a memoria para que inicialize un programa
+typedef struct{
+int pid;
+int cantPags;
+}__attribute__((packed))INICIALIZAR_PROGRAMA;
+
+
+
 ///------FIN ESTRUCTURAS AUXILIARES ADMNISTRATIVAS------///
 
 ///-------INICIO COLAS-------//
