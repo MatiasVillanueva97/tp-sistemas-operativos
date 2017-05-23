@@ -43,12 +43,12 @@ t_puntero AnSISOP_definirVariable(t_nombre_variable identificador_variable){
 		list_add(pcb->indiceStack[pcb->contextoActual].variables,variable);
 		printf("%c %d %d %d \n",variable->ID,variable->direccion.page,variable->direccion.offset,variable->direccion.size);
 	}
-
+/*
 	if(identificador_variable == 'a') dirA = direccion;
 	if(identificador_variable == 'b') dirB = direccion;
 	if(identificador_variable == '0') dirO = direccion;
 	if(identificador_variable == 'f') dirF = direccion;
-
+*/
 	printf("Defini %c le asigne la direccion: %d %d %d \n",identificador_variable,direccion.page,direccion.offset,direccion.size);
 
 	return calcularPuntero(direccion);
@@ -313,27 +313,25 @@ t_valor_variable pedirValorAMemoria(t_direccion direccion){
 			.direccion = direccion
 	};
 
-/*
+
 	//Se pide a Memoria el contenido de esa posicion que es el valor de la variable
-	enviarMensaje(socketMemoria,pedirValor,(void *)&pedido, sizeof(pedido));
-*/
-/*
+	enviarMensaje(socketMemoria,solicitarBytes,(void *)&pedido, sizeof(pedido));
+
+
 	//se recibe el valor de la variable
 	void* stream;
-	int accion = recibirMensaje(socketMemoria,stream);
+	int* valor;
+	int accion = recibirMensaje(socketMemoria,&stream);
 	switch(accion){
-		case valor:{
-			int* valorVariable = stream;
+		case lineaDeCodigo:{
+			valor = stream;
+			valorVariable = *valor;
 			break;
 		}
 		default:{
 			perror("Error en la accion maquinola");
+		}
 	}
-*/
-	if(direccion.page == dirA.page && direccion.offset == dirA.offset && direccion.size == dirA.size) return a;
-	if(direccion.page == dirB.page && direccion.offset == dirB.offset && direccion.size == dirB.size) return b;
-	if(direccion.page == dirO.page && direccion.offset == dirO.offset && direccion.size == dirO.size) return o;
-	if(direccion.page == dirF.page && direccion.offset == dirF.offset && direccion.size == dirF.size) return f;
 
 	return valorVariable;
 }
@@ -346,27 +344,24 @@ void escribirirValorEnMemoria(t_direccion direccion, t_valor_variable valor){
 			.valor = valor
 	};
 
-	if(direccion.page == dirA.page && direccion.offset == dirA.offset && direccion.size == dirA.size) a = valor;
-	if(direccion.page == dirB.page && direccion.offset == dirB.offset && direccion.size == dirB.size) b = valor;
-	if(direccion.page == dirO.page && direccion.offset == dirO.offset && direccion.size == dirO.size) o = valor;
-	if(direccion.page == dirF.page && direccion.offset == dirF.offset && direccion.size == dirF.size) f = valor;
-/*
 	//se pide a memoria que escriba el valor enviado en la posicion de memoria tambien enviada
-	enviarMensaje(socketMemoria,asignarValor,(void*)&escritura,sizeof(t_escrituraMemoria));
-*/
-/*
+	enviarMensaje(socketMemoria,almacenarBytes,(void*)&escritura,sizeof(t_escrituraMemoria));
+
+
 	//Devuelve un OK o mata un Stack Overflow
 	void* stream;
-	int accion = recibirMensaje(socketMemoria,stream);
+	int* respuesta;
+	int accion = recibirMensaje(socketMemoria,&stream);
 	switch(accion){
-		case estadotransaccion:{
-			int* valorVariable = stream;
+		case RespuestaBooleanaDeMemoria:{
+			respuesta = stream;
 			break;
 		}
 		default:{
 			perror("Error en la accion maquinola");
+		}
 	}
-	if(*valorVariable == STACKOVERFLOW){
+/*	if(*valorVariable){
 		//ALGO PARA QUE ROMPA TODO
 	}
 */
@@ -422,7 +417,7 @@ t_direccion calcularDireccion(t_puntero puntero){
 	t_direccion direccion;
 
 	if(tamanioPagina > puntero){
-		direccion.page = 0;
+		direccion.page = 1;
 		direccion.offset = puntero;
 	}else{
 		direccion.page = puntero/tamanioPagina;
@@ -430,7 +425,7 @@ t_direccion calcularDireccion(t_puntero puntero){
 	}
 	direccion.size = 4;
 
-	printf("En base a la posicion %d calculo la direccion %d %d %d \n",direccion.page,direccion.offset,direccion.size,puntero);
+	printf("En base a la posicion %d calculo la direccion %d %d %d \n",puntero,direccion.page,direccion.offset,direccion.size);
 
 	return direccion;
 }

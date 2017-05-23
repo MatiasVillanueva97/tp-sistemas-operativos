@@ -32,12 +32,8 @@ void conectarConMemoria();
 void conectarConKernel();
 
 
-char* script =
-		"variables a, b\n"
-		"a = 3\n"
-		"b = 5\n"
-		"a = b + 12\n"
-		"end\n";
+char* script = "begin\nvariables a, b\na = 3\nb = 5\na = b + 12\nend\n";
+
 
 int main(void)
 {
@@ -82,7 +78,7 @@ int main(void)
 
  	//conectarConKernel();
 
- 	//conectarConMemoria();
+ 	conectarConMemoria();
 
  	//ESTE GRAN WHILE(1) ESTA COMENTADO PORQUE EN REALIDAD ES PARA RECIBIR UN PCB ATRAS DE OTRO Y EJECUTARLOS HASTA QUE EL KERNEL ME DIGA MORITE HIPPIE
 
@@ -106,7 +102,7 @@ int main(void)
 
 		t_metadata_program *metadata = metadata_desde_literal(script);
 
-		pcb->pid = 0;
+		pcb->pid = 1;
 		pcb->contPags_pcb = 1;
 		pcb->contextoActual = 0;
 		pcb->exitCode = 0;
@@ -122,55 +118,44 @@ int main(void)
 		pcb->cantidadDeInstrucciones = metadata->instrucciones_size;
 		pcb->programCounter = metadata->instruccion_inicio;
 
-		char** lineas = string_split(script,"\n");
-		int i = 0;
 
-		while(1){
+		while(!terminoPrograma){
 
-			char* instruccion = lineas[i];
-			printf("\n%s\n\n",instruccion);
+			t_pedidoMemoria pedido;
+			pedido.id = pcb->pid;
+			pedido.direccion = calcularDireccion(pcb->indiceCodigo[pcb->programCounter].start);
+			pedido.direccion.size = pcb->indiceCodigo[pcb->programCounter].offset;
 
 
-			/*t_pedidoMemoria pedido;
-			pedido.id = pcb.pid;
-			pedido.direccion = calcularDireccion(pcb.indiceCodigo[pcb.programCounter].start);
-			pedido.direccion.size = pcb.indiceCodigo[pcb.programCounter].offset;
-*/
-/*
 			// Pedido de Codigo
-			enviarMensaje(socketMemoria,pedirValor,(void *)&pedido, sizeof(pedido));
-*/
-/*
+			enviarMensaje(socketMemoria,solicitarBytes,(void *)&pedido, sizeof(pedido));
+
+
 			//Recepcion del codigo ANSISOP
 			void* stream;
-			int accion = recibirMensaje(socketMemoria,stream);
+			char* instruccion;
+			int accion = recibirMensaje(socketMemoria,&stream);
 			switch(accion){
 				case lineaDeCodigo:{
-					char* instruccion = stream;
+					instruccion = stream;
+					instruccion[pedido.direccion.size - 1] = '\0';
 					break;
 				}
 				default:{
 					perror("Error en la accion maquinola");
+				}
 			}
-*/
+
+			printf("\n%s\n\n",instruccion);
 
 			//Magia del Parser para llamar a las primitivas
 			analizadorLinea(instruccion,&AnSISOP_funciones,&AnSISOP_funciones_kernel);
-
-			if(!strcmp(instruccion,"end"))break;
-			free(instruccion);
-			i++;
+			free(stream);
+			pcb->programCounter++;
 		}
 
-		//Libera la anteultima posicion del array lineas que es la que tiene el end porque el free no llega a ejecutarse
-		free(lineas[i]);
-		//libera la ultima posicion del array lineas, aunque solo posea un NULL
-		free(lineas[i+1]);
-		//libera el array lineas per se
-		free(lineas);
-
 		//NO SE LIBERA EL MATADATA PORQUE REALMENTE NO VA A ESTAR ACA SINO EN KERNEL Y SOLO TENDRIA QUE LIBERAR MI HERMOSO PCB
-		//libera la emoria malloqueada por el PCB
+		//libera la memoria malloqueada por el PCB
 		destruirPCB_Puntero(pcb);
 
 	//}

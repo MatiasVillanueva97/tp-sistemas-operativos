@@ -27,7 +27,7 @@ int a,b,o,f;
 t_direccion dirA,dirB,dirO,dirF;
 
 //HARDCODEADISIMO PAPU
-#define tamanioPagina 64
+#define tamanioPagina 256
 
 typedef struct{
  int pid;
