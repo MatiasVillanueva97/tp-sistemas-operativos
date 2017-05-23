@@ -32,7 +32,6 @@ typedef struct {
 } t_parametrosHiloPrograma;
 
 #define MAXDATASIZE 100 // max number of bytes we can get at once
-#define ID 3
 
 void* laFuncionMagicaDeConsola(void*);
 char* diferencia(char*,char*);
@@ -76,7 +75,7 @@ int main(void)
 		perror("No se conectado con el FileSystem, asegurese de que este abierto el proceso");
 		exit(1);
 	}
-	if ( (rta_conexion = handshakeCliente(socketConsola, ID)) == -1) {
+	if ( (rta_conexion = handshakeCliente(socketConsola, Consola)) == -1) {
 		perror("Error en el handshake con el Servidor");
 		close(socketConsola);
 	}
@@ -170,7 +169,7 @@ void* laFuncionMagicaDeConsola(void* parametros){
 	int *pid = malloc(4);
 	char* tiempoInicio = temporal_get_string_time();
 	t_parametrosHiloPrograma *parametrosHiloPrograma = parametros;
-	enviarMensaje(parametrosHiloPrograma->socket,2,(void *)parametrosHiloPrograma->script, parametrosHiloPrograma->tamanioScript);
+	enviarMensaje(parametrosHiloPrograma->socket,envioScriptAnsisop,(void *)parametrosHiloPrograma->script, parametrosHiloPrograma->tamanioScript);
 	recibirMensaje(parametrosHiloPrograma->socket,(void *)pid);
 	printf("%d",*pid);
 

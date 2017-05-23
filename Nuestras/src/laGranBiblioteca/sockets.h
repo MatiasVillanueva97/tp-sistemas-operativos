@@ -31,6 +31,7 @@ int leerInt(void* stream);
 
 char* leerString(void * stream);
 
+
 void sigchld_handler(int s);
 /**
 * @NAME: getSin_Addr
@@ -40,6 +41,14 @@ void *getSin_Addr(struct sockaddr *sa);
 /**
 * @NAME: conexionConServidor
 * @DESC: Crea un string vacio
+*/
+int aceptarConexiones(int listener, int* nuevoSocket, int procesoQueAcepta, int* aceptados);
+/**
+* @NAME: aceptarConexiones
+* @DESC: Acepta una conexión, realiza el handshake con este y devuelve el id de quien se coneto, y setea en la variable "nuevoSocket" el valor del socket con quien se conecto
+* 		 Recibe por parametro el listener de donde escuchara el accept interno, el socketNuevo que devolverá el acept interno, el porceso que llama a la función, por ejemplo,
+* 		 Si estoy llamando a esta función en el kernel, le pasaré al momento de llamarla, el id del kernel, y por ultimo la lista de procesos con quienes me puedo conectar,
+* 		 siguiendo con el ejemplo, el kernel le pasará el array [1 ,3], porque son los id con quienes puede hacer handshake.
 */
 int conexionConServidor(char* puerto, char* ip);
 /**

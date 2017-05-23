@@ -53,6 +53,7 @@ typedef struct{
 	int pid_provisorio;
 	char* scriptAnsisop;
 	int socketConsola;
+	bool finalizado;
 } PROGRAMAS_EN_NEW;
 
 //*** Esta es la escructura que le envio a memoria para que inicialize un programa

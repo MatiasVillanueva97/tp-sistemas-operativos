@@ -50,6 +50,34 @@ void *getSin_Addr(struct sockaddr *sa)
 	return &(((struct sockaddr_in*)sa)->sin_addr); //IPV4
 }
 
+void errorEn(int valor,char * donde){
+	if(valor == -1)
+		printf("%s\n", donde);
+}
+
+int aceptarConexiones(int listener, int* nuevoSocket, int procesoQueAcepta, int* aceptados)
+{
+	int socketNuevo;
+	struct sockaddr_storage their_addr;
+	socklen_t sin_size = sizeof their_addr;//No preguntes porque, pero sin esto no anda nada
+	char ip[INET6_ADDRSTRLEN];
+
+	socketNuevo = accept(listener, (struct sockaddr *) &their_addr, &sin_size);
+	errorEn(nuevoSocket,"ACCEPT");
+
+	//***Toda esta negrada para imprimir una ip
+	inet_ntop(their_addr.ss_family, getSin_Addr((struct sockaddr *) &their_addr), ip, sizeof ip);
+	printf("Conexion con %s\n", ip);
+
+	//***Hago el handShake con la nueva conexion
+	int id_clienteConectado;
+	id_clienteConectado = handshakeServidor(socketNuevo, procesoQueAcepta, aceptados);
+
+	*nuevoSocket = socketNuevo;
+
+	return id_clienteConectado;
+}
+
 int conexionConServidor(char* puerto, char* ip)
 {
 	int sockfd;

@@ -382,7 +382,7 @@ void *aceptarConexionesCpu( void *arg ){ // aca le sacamos el asterisco, porque 
 
 	pthread_t hilo_nuevaCPU;
 
-	//sem_wait(&sem_isKernelConectado);
+	sem_wait(&sem_isKernelConectado);
 	printf("[AceptarConexionesCPU] - Ya se ha establecido Conexion con un Kernel, ahora si se pueden conectar CPUs: \n");
 
 	while (1)
@@ -434,13 +434,13 @@ int main(void) {
 	// PRUEBAS
 	iniciarTablaDePaginacionInvertida();
 
-
+/*
 	reservarFrame(1,1);
 	reservarFrame(1,2);
 	char* script = "begin\nvariables a, b\na = 3\nb = 5\na = b + 12\nend\n";
 	almacenarBytesEnPagina(1,1,0,strlen(script)+1,(void*)script);
 	char* stream = solicitarBytesDeUnaPagina(1,1,0,strlen(script)+1);
-
+*/
 
 
 	//printf("El frame es %i, la pagina es %i, y  la pagina del pid es %i\n",tablaDePaginacionInvertida[0].frame,tablaDePaginacionInvertida[0].pagina,tablaDePaginacionInvertida[0].pid);
@@ -485,12 +485,12 @@ int main(void) {
 
 	sem_init(&sem_isKernelConectado,0,0);
 
-	//pthread_create(&hilo_Kernel, NULL, rutinaKernel,  listener);
+	pthread_create(&hilo_Kernel, NULL, rutinaKernel,  listener);
 	pthread_create(&hilo_AceptarConexionesCPU, NULL, aceptarConexionesCpu, listener);
 
 	printf("\nMensaje desde la ram principal del programa!\n");
 
-	//pthread_join(hilo_Kernel, NULL);
+	pthread_join(hilo_Kernel, NULL);
 	pthread_join(hilo_AceptarConexionesCPU , NULL);
 	close(listener);
 	liberarConfiguracion();

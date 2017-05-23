@@ -76,7 +76,7 @@ int main(void)
 
  	imprimirConfiguracion();
 
- 	//conectarConKernel();
+ 	conectarConKernel();
 
  	conectarConMemoria();
 
@@ -190,7 +190,7 @@ void conectarConMemoria()
 void conectarConKernel()
 {
 	int rta_conexion;
-	socketKernel = conexionConServidor(getConfigString("PUERTO_MEMORIA"),getConfigString("IP_MEMORIA")); // Asignación del socket que se conectara con la memoria
+	socketKernel = conexionConServidor(getConfigString("PUERTO_KERNEL"),getConfigString("IP_KERNEL")); // Asignación del socket que se conectara con la memoria
 	if (socketKernel == 1){
 		perror("Falla en el protocolo de comunicación");
 	}
