@@ -118,7 +118,7 @@ int almacenarBytesEnPagina(int pid, int pagina, int desplazamiento, int tamano,v
 void* solicitarBytesDeUnaPagina(int pid, int pagina, int desplazamiento, int tamano){
 	void* contenidoDeLaPagina = malloc(sizeOfPaginas);
 	contenidoDeLaPagina = leerMemoriaPosta(pid,pagina);
-	if ((int)contenidoDeLaPagina == -1){
+	if ((int)contenidoDeLaPagina == 0){
 		return 0;
 	}
 	void* contenidoADevolver = malloc(tamano);
@@ -319,8 +319,17 @@ void recibirMensajesMemoria(void* arg){
 				}
 				case solicitarBytes :{ //solicitar bytes de una pagina
 					t_pedidoMemoria* estructura = stream;
+					int respuesta= 1;
 					void* contenidoDeLaPagina= solicitarBytesDeUnaPagina(estructura->id,estructura->direccion.page,estructura->direccion.offset,estructura->direccion.size);
-					enviarMensaje(socket,lineaDeCodigo,contenidoDeLaPagina,estructura->direccion.size);
+					if(!(int)contenidoDeLaPagina){
+						respuesta =0;
+					enviarMensaje(socket,RespuestaBooleanaDeMemoria,&respuesta,sizeof(int));
+					}
+					else{
+						enviarMensaje(socket,RespuestaBooleanaDeMemoria,&respuesta,sizeof(int));
+						enviarMensaje(socket,lineaDeCodigo,contenidoDeLaPagina,estructura->direccion.size);
+
+					}
 					//cambiar por linea de codigo (enum)
 					//Controla errores forro.
 					break;
@@ -434,13 +443,15 @@ int main(void) {
 	// PRUEBAS
 	iniciarTablaDePaginacionInvertida();
 
-/*
+
 	reservarFrame(1,1);
 	reservarFrame(1,2);
 	char* script = "begin\nvariables a, b\na = 3\nb = 5\na = b + 12\nend\n";
-	almacenarBytesEnPagina(1,1,0,strlen(script)+1,(void*)script);
-	char* stream = solicitarBytesDeUnaPagina(1,1,0,strlen(script)+1);
-*/
+	almacenarBytesEnPagina(1,1,0,strlen(script),(void*)script);
+	char* stream = solicitarBytesDeUnaPagina(1,1,0,strlen(script));
+
+	char* stream2 = solicitarBytesDeUnaPagina(1,312451516,0,strlen(script));
+
 
 
 	//printf("El frame es %i, la pagina es %i, y  la pagina del pid es %i\n",tablaDePaginacionInvertida[0].frame,tablaDePaginacionInvertida[0].pagina,tablaDePaginacionInvertida[0].pid);

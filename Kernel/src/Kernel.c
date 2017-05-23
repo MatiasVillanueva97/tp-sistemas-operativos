@@ -124,6 +124,17 @@ void liberar_Programa_En_New(PROGRAMAS_EN_NEW * programaNuevo)
 
 /// *** Esta función esta probada y anda
 //*** Esta funcion te divide el scriptAnsisop en una cantidad de paginas dadas, el size de cada pagina esta en el config
+/*char** memoria_dividirScriptEnPaginas(int cant_paginas, char *copiaScriptAnsisop)
+{
+	char * scriptDivididoEnPaginas[cant_paginas];
+	int i;
+	for(i=0;i<cant_paginas;i++){
+		scriptDivididoEnPaginas[i] = malloc(size_pagina);
+		memcpy(scriptDivididoEnPaginas[i],copiaScriptAnsisop+i*size_pagina,size_pagina);
+		printf("[memoria_dividirScriptEnPaginas] - %s",scriptDivididoEnPaginas[i]);
+	}
+	return scriptDivididoEnPaginas;
+}*/
 char** memoria_dividirScriptEnPaginas(int cant_paginas, char *copiaScriptAnsisop)
 {
 	char * scriptDivididoEnPaginas[cant_paginas];
@@ -132,6 +143,10 @@ char** memoria_dividirScriptEnPaginas(int cant_paginas, char *copiaScriptAnsisop
 		scriptDivididoEnPaginas[i] = malloc(size_pagina);
 		memcpy(scriptDivididoEnPaginas[i],copiaScriptAnsisop+i*size_pagina,size_pagina);
 		printf("[memoria_dividirScriptEnPaginas] - %s",scriptDivididoEnPaginas[i]);
+	}
+	if(strlen(scriptDivididoEnPaginas[i-1]) < size_pagina){
+		char* x = string_repeat(' ',size_pagina-strlen(scriptDivididoEnPaginas[i-1]));
+		string_append(&(scriptDivididoEnPaginas[i-1]),x);
 	}
 	return scriptDivididoEnPaginas;
 }
