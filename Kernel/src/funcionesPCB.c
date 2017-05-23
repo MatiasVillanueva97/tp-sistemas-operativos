@@ -1,29 +1,28 @@
 #include "funcionesPCB.h"
 
-PCB_DATA* crearPCB(const char* script, int contadorPaginas, int unPid)
-{
+
+PCB_DATA* crearPCB(char * scriptAnsisop, int pid, int contPags){
+	t_metadata_program *metadata = metadata_desde_literal(scriptAnsisop);
 	PCB_DATA * pcb = malloc(sizeof(PCB_DATA));
 
-	t_metadata_program* metadataScrip;
-	metadataScrip = metadata_desde_literal(script);
+		pcb->pid = pid;
+		pcb->contPags_pcb = contPags;
 
-//	pcb->indiceCodigo = malloc(sizeof(t_intructions)*(metadataScrip->instrucciones_size));
+		pcb->contextoActual = -1;
+		pcb->exitCode = 0; //***Por ahora el exit code 0 significa que no esta terminado
 
-	pcb->pid = unPid;
+		pcb->indiceCodigo = metadata->instrucciones_serializado;
+		pcb->indiceEtiquetas = metadata->etiquetas;
+		pcb->cantidadDeEtiquetas = metadata->cantidad_de_etiquetas;
 
-//	pcb->programCounter = metadataScrip->instruccion_inicio;
+		pcb->indiceStack = contPags-2;
 
-	pcb->contPags_pcb = contadorPaginas;
+		pcb->cantidadDeEntradas = 0;
+		pcb->cantidadDeInstrucciones = metadata->instrucciones_size;
+		pcb->programCounter = metadata->instruccion_inicio;
 
-	pcb->contextoActual=0;
-
-//	pcb->indiceCodigo =  metadataScrip->instrucciones_serializado;
-//	pcb->indiceEtiquetas= metadataScrip->etiquetas;
-	pcb->indiceStack = malloc(sizeof(t_entrada));
-	pcb->exitCode=1;  /// esta en 1 , es mera instalación
-
-	//metadata_destruir(metadataScrip);// debería estar
-} // creo que tiene  memori leaks
+	return pcb;
+}
 
 
 PCB_DATA * buscarPCBPorPidEnCola(t_queue * cola, int pid){

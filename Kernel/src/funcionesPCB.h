@@ -20,9 +20,9 @@
 #define FUNCIONESPCB_H_
 
 
-PCB_DATA* crearPCB(const char* , int , int );
+PCB_DATA* crearPCB(char * scriptAnsisop, int pid, int contPags);
 /* ******** CrearPCB
- * función que crea el pcb a partir de un scriptAnsisop, el contador de las paginas asignadas a memoria y un pid
+ * función que crea el pcb a partir de un scriptAnsisop, un pid y el contador de las paginas asignadas a memoria
  *
  */
 

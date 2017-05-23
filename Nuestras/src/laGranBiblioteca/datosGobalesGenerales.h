@@ -50,6 +50,8 @@ enum tipos_de_Acciones{
 		envioDelPidEnSeco = 1,
 		envioCantidadPaginas = 2,
 		envioPaginaMemoria = 3,
+		pidFinalizadoPorFaltaDeMemoria = 4,
+		envioErrorFinalizacion = 5,
 
 	//***Todas las acciones del CPU
 		asignarValor = 101,

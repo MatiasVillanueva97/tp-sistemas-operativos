@@ -550,30 +550,6 @@ void harcodeoAsquerosoDePCB(){
 
 }
 
-/*
-PCB_DATA* crearPCB(char * scriptAnsisop){
-	t_metadata_program *metadata = metadata_desde_literal(scriptAnsisop);
-	PCB_DATA * pcb = malloc(sizeof(pcb));
-		//***Aca va el wait de un semaforo
-			pcb->pid = pidHistorico;
-		//***Aca va el signal del semaforo
-			pcb->contPags_pcb = 1;
-			pcb->contextoActual = -1;
-			pcb->exitCode = 0; //***Por ahora el exit code 0 significa que no esta terminado
-			pcb->indiceCodigo = metadata->instrucciones_serializado;
-			pcb->indiceEtiquetas = metadata->etiquetas;
-			pcb->cantidadDeEtiquetas = metadata->cantidad_de_etiquetas;
-
-			pcb->indiceStack = NULL; //Al principio creo que no hay nada
-
-			pcb->cantidadDeEntradas = 0;
-			pcb->cantidadDeInstrucciones = metadata->instrucciones_size;
-			pcb->programCounter = metadata->instruccion_inicio;
-		return pcb;
-}
-*/
-
-
 //***Nota: para usar esta funcion las listas tienen que contener punteros almacenados en el heap, es bastante obvio pero lo aclaro por si se rompe al carajo
 void destruirPCB_Local(PCB_DATA pcb){
 	if(pcb.cantidadDeEtiquetas != 0)

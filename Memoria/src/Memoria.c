@@ -68,7 +68,7 @@ int escribirMemoriaPosta(int pid,int pagina,void* contenido){
 		return 0;
 	}
 	int frame = buscarFrameCorrespondiente(pid,pagina);
-	if (frame == 0){
+	if (frame == -1){
 		return 0;
 	}
 	int posicion = frame*getConfigInt("MARCO_SIZE");
@@ -443,7 +443,7 @@ int main(void) {
 	// PRUEBAS
 	iniciarTablaDePaginacionInvertida();
 
-
+/*
 	reservarFrame(1,1);
 	reservarFrame(1,2);
 	char* script = "begin\nvariables a, b\na = 3\nb = 5\na = b + 12\nend\n";
@@ -451,7 +451,7 @@ int main(void) {
 	char* stream = solicitarBytesDeUnaPagina(1,1,0,strlen(script));
 
 	char* stream2 = solicitarBytesDeUnaPagina(1,312451516,0,strlen(script));
-
+*/
 
 
 	//printf("El frame es %i, la pagina es %i, y  la pagina del pid es %i\n",tablaDePaginacionInvertida[0].frame,tablaDePaginacionInvertida[0].pagina,tablaDePaginacionInvertida[0].pid);

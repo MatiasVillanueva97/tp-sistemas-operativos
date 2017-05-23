@@ -50,11 +50,12 @@ t_list * avisos;
 //*** Como los procesos pueden finalizar en cualquier momento, y en el pcb no contenemos a que consola pertenece cierto proceso
 //*** Creamos esta estructura que nos contiene eso, el pid del proceso, la consola a quien le pertenece y el estado del proceso
 typedef struct{
-	int pid_provisorio;
+	int pid;
 	char* scriptAnsisop;
 	int socketConsola;
-	bool finalizado;
-} PROGRAMAS_EN_NEW;
+	bool finalizadoExternamente;
+	PCB_DATA* pcb;
+} PROCESOS;
 
 //*** Esta es la escructura que le envio a memoria para que inicialize un programa
 typedef struct{

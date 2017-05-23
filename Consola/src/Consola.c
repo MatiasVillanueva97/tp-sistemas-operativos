@@ -169,8 +169,10 @@ void* laFuncionMagicaDeConsola(void* parametros){
 	int *pid = malloc(4);
 	char* tiempoInicio = temporal_get_string_time();
 	t_parametrosHiloPrograma *parametrosHiloPrograma = parametros;
+
 	enviarMensaje(parametrosHiloPrograma->socket,envioScriptAnsisop,(void *)parametrosHiloPrograma->script, parametrosHiloPrograma->tamanioScript);
-	recibirMensaje(parametrosHiloPrograma->socket,(void *)pid);
+
+	recibirMensaje(parametrosHiloPrograma->socket,&pid);
 	printf("%d",*pid);
 
 	pthread_mutex_lock( &mutex );
