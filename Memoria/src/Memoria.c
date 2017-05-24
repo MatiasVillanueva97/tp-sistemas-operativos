@@ -340,7 +340,7 @@ void recibirMensajesMemoria(void* arg){
 				{
 					t_almacenarBytes* estructura = stream;
 					int x=1;
-					if(almacenarBytesEnPagina(estructura->pid,estructura->direccion.page,estructura->direccion.offset,estructura->direccion.size,estructura->buffer)==0){
+					if(almacenarBytesEnPagina(estructura->pid,estructura->direccion.page,estructura->direccion.offset,estructura->direccion.size,&(estructura->buffer))==0){
 						x=0;
 					}
 					enviarMensaje(socket,RespuestaBooleanaDeMemoria,&x,sizeof(int));
@@ -449,6 +449,8 @@ int main(void) {
 	reservarFrame(1,2);
 	char* script = "begin\nvariables a, b\na = 3\nb = 5\na = b + 12\nend\n";
 	almacenarBytesEnPagina(1,1,0,strlen(script),(void*)script);
+	int x = 3;
+	almacenarBytesEnPagina(1,2,0,sizeof(int),(void*)&x);
 /*	char* stream = solicitarBytesDeUnaPagina(1,1,0,strlen(script));
 
 	char* stream2 = solicitarBytesDeUnaPagina(1,312451516,0,strlen(script));

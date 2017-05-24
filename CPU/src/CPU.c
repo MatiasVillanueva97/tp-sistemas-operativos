@@ -163,6 +163,7 @@ int main(void)
 				pcb->programCounter++;
 			}
 
+			free(instruccion);
 			free(stream);
 
 		}

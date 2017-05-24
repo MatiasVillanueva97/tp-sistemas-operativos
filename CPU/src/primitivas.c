@@ -316,30 +316,45 @@ t_valor_variable pedirValorAMemoria(t_direccion direccion){
 	//se recibe el valor de la variable
 	void* stream;
 	int* valor;
+	int* booleano;
 	int accion = recibirMensaje(socketMemoria,&stream);
+
 	switch(accion){
-		case lineaDeCodigo:{
-			valor = stream;
-			valorVariable = *valor;
-			break;
+			case RespuestaBooleanaDeMemoria:{
+				booleano = stream;
+			}break;
+			default:{
+				perror("Error en la accion maquinola");
+			}break;
 		}
-		default:{
-			perror("Error en la accion maquinola");
-		}
+	free(stream);
+	if(*booleano){
+		accion = recibirMensaje(socketMemoria,&stream);
+			switch(accion){
+				case lineaDeCodigo:{
+					valor = stream;
+					valorVariable = *valor;
+				}break;
+				default:{
+					perror("Error en la accion maquinola");
+				}break;
+			}
+	}else{
+		terminoPrograma = true;
+		pcb->exitCode = -5;		//Excepcion de Memoria STACK OVERFLOW
 	}
+
+	free(stream);
 
 	return valorVariable;
 }
 
 void escribirirValorEnMemoria(t_direccion direccion, t_valor_variable valor){
 
-	int* direccionDevalor = &valor;
 	void* auxiliar = malloc(sizeof(t_escrituraMemoria));
 	memcpy(auxiliar,&pcb->pid,sizeof(int));
-	memcpy(auxiliar + sizeof(int),&(direccion.page),sizeof(int));
-	memcpy(auxiliar + sizeof(int) * 2,&(direccion.offset),sizeof(int));
-	memcpy(auxiliar + sizeof(int) * 3,&(direccion.size),sizeof(int));
-	memcpy(auxiliar + sizeof(int) * 4,&direccionDevalor,sizeof(t_valor_variable));
+	memcpy(auxiliar + sizeof(int),&direccion,sizeof(t_direccion));
+	memcpy(auxiliar + sizeof(int) * 4,&valor,sizeof(t_valor_variable));
 
 	//se pide a memoria que escriba el valor enviado en la posicion de memoria tambien enviada
 	enviarMensaje(socketMemoria,almacenarBytes,auxiliar,sizeof(t_escrituraMemoria));
@@ -366,6 +381,7 @@ void escribirirValorEnMemoria(t_direccion direccion, t_valor_variable valor){
 		pcb->exitCode = -5;
 	}
 
+	free(stream);
 }
 
 
