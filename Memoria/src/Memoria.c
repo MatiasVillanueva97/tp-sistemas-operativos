@@ -127,6 +127,16 @@ void* solicitarBytesDeUnaPagina(int pid, int pagina, int desplazamiento, int tam
 	return contenidoADevolver;
 
 }
+int buscarFilaEnTablaCantidadDePaginas(int pid){
+
+	bool buscarPid(filaTablaCantidadDePaginas* fila){
+			return (fila->pid== pid);
+	}
+	filaTablaCantidadDePaginas* x = list_find(tablaConCantidadDePaginas,buscarPid);
+	return x;
+
+}
+
 int buscarCantidadDePaginas(int pid){
 
 	filaTablaCantidadDePaginas* x= buscarFilaEnTablaCantidadDePaginas(pid);
@@ -137,15 +147,6 @@ int buscarCantidadDePaginas(int pid){
 
 }
 
-int buscarFilaEnTablaCantidadDePaginas(int pid){
-
-	bool buscarPid(filaTablaCantidadDePaginas* fila){
-			return (fila->pid== pid);
-	}
-	filaTablaCantidadDePaginas* x = list_find(tablaConCantidadDePaginas,buscarPid);
-	return x;
-
-}
 
 int asignarPaginasAUnProceso(int pid, int cantidadDePaginas){
 //	int paginaMaxima = cantidadDePaginasDeUnProcesoDeUnProceso(pid);

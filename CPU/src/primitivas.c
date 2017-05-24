@@ -333,17 +333,20 @@ t_valor_variable pedirValorAMemoria(t_direccion direccion){
 
 void escribirirValorEnMemoria(t_direccion direccion, t_valor_variable valor){
 
+	int* direccionDevalor = &valor;
 	void* auxiliar = malloc(sizeof(t_escrituraMemoria));
 	memcpy(auxiliar,&pcb->pid,sizeof(int));
 	memcpy(auxiliar + sizeof(int),&(direccion.page),sizeof(int));
 	memcpy(auxiliar + sizeof(int) * 2,&(direccion.offset),sizeof(int));
 	memcpy(auxiliar + sizeof(int) * 3,&(direccion.size),sizeof(int));
-	memcpy(auxiliar + sizeof(int) * 4,&valor,sizeof(t_valor_variable));
+	memcpy(auxiliar + sizeof(int) * 4,&direccionDevalor,sizeof(t_valor_variable));
 
 	//se pide a memoria que escriba el valor enviado en la posicion de memoria tambien enviada
 	enviarMensaje(socketMemoria,almacenarBytes,auxiliar,sizeof(t_escrituraMemoria));
 
 	free(auxiliar);
+	//free(direccionDevalor);
+
 
 	//Devuelve un OK o mata con un Stack Overflow
 	void* stream;
