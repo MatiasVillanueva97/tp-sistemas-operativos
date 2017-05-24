@@ -42,7 +42,7 @@ void *getSin_Addr(struct sockaddr *sa);
 * @NAME: conexionConServidor
 * @DESC: Crea un string vacio
 */
-int aceptarConexiones(int listener, int* nuevoSocket, int procesoQueAcepta, int* aceptados);
+int aceptarConexiones(int listener, int* nuevoSocket, int procesoQueAcepta, int* aceptados, int cantidadDePermitidos);
 /**
 * @NAME: aceptarConexiones
 * @DESC: Acepta una conexión, realiza el handshake con este y devuelve el id de quien se coneto, y setea en la variable "nuevoSocket" el valor del socket con quien se conecto
@@ -81,7 +81,7 @@ int handshakeCliente(int socket, int id);
 * @NAME: handshakeServidor
 * @DESC: Crea un string vacio
 */
-int handshakeServidor(int socket,int id, int permitidos[]);
+int handshakeServidor(int socket,int id, int permitidos[],int cantidadDePermitidos);
 /**
 * @NAME: deserializador
 * @DESC: Crea un string vacio

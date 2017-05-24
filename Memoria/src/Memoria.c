@@ -190,34 +190,23 @@ int finalizarUnPrograma(int pid){
 //Rutinas
 void *rutinaKernel(void *arg){
 		int listener = (int)arg;
-		int socketKernel;
 		int aceptados[] = {Kernel}; // hacer un enum de esto
-		struct sockaddr_storage their_addr;
-		char ip[INET6_ADDRSTRLEN];
-		socklen_t sin_size = sizeof their_addr;
-
+		int socketKernel;
 		escuchar(listener); // poner a escuchar ese socket
-
-		if ((socketKernel = accept(listener, (struct sockaddr *) &their_addr, &sin_size)) == -1) {// estas lines tienen que ser una funcion
-			perror("Error en el Accept");
-			//continue;
-		}
-		inet_ntop(their_addr.ss_family, getSin_Addr((struct sockaddr *) &their_addr), ip, sizeof ip); // para poder imprimir la ip del server
-		printf("[Rutina Kernel] - Conexion con %s\n", ip);
-
 		int id_clienteConectado;
-
-		if ((id_clienteConectado = handshakeServidor(socketKernel, Memoria, aceptados)) == -1) {
-			perror("Error con el handshake: -1");
+		id_clienteConectado = aceptarConexiones(listener, &socketKernel, Memoria, &aceptados,1);
+		if(id_clienteConectado == -1){
 			close(socketKernel);
 		}
-		printf("[Rutina Kernel] - Kernel conectado exitosamente\n");
+		else{
+			printf("[Rutina Kernel] - Kernel conectado exitosamente\n");
+			enviarMensaje(socketKernel,enviarTamanoPaginas,&sizeOfPaginas,sizeof(int));
+			sem_post(&sem_isKernelConectado);//Semaforo que indica si solo hay un kernel conectado
+			recibirMensajesMemoria(socketKernel);
+		}
 
-		enviarMensaje(socketKernel,enviarTamanoPaginas,&sizeOfPaginas,sizeof(int));
 
-		sem_post(&sem_isKernelConectado);//Semaforo que indica si solo hay un kernel conectado
 
-		recibirMensajesMemoria(socketKernel);
 }
 
 void *rutinaConsolaMemoria(void* x){
@@ -302,18 +291,19 @@ void recibirMensajesMemoria(void* arg){
 						x=0;
 					}
 					enviarMensaje(socket,RespuestaBooleanaDeMemoria,&x,sizeof(int));
+					if(x){
+						int t=1;
+						char* contenidoPag;
+						int rta_escribir_Memoria;
+						for(t;t<=estructura->cantPags ;t++)
+						{
+							recibirMensaje(socket,&contenidoPag);
+							rta_escribir_Memoria=escribirMemoriaPosta(estructura->pid,t,contenidoPag);
 
-					int t=1;
-					char* contenidoPag;
-					int rta_escribir_Memoria;
-					for(t;t<=estructura->cantPags;t++)
-					{
-					   recibirMensaje(socket,&contenidoPag);
-					   rta_escribir_Memoria=escribirMemoriaPosta(estructura->pid,t,contenidoPag);
-
-					   enviarMensaje(socket,RespuestaBooleanaDeMemoria,&rta_escribir_Memoria,sizeof(int));
-					}
+							enviarMensaje(socket,RespuestaBooleanaDeMemoria,&rta_escribir_Memoria,sizeof(int));
+						}
 					free(contenidoPag);
+					}
 
 
 					break;
@@ -382,38 +372,34 @@ void recibirMensajesMemoria(void* arg){
 	}
 }
 void *aceptarConexionesCpu( void *arg ){ // aca le sacamos el asterisco, porque esto era un void*
+	sem_wait(&sem_isKernelConectado);
 	int listener = (int)arg;
 	int nuevoSocketCpu;
-	int aceptados[] = {1};
-	struct sockaddr_storage their_addr;
-	char ip[INET6_ADDRSTRLEN];
-	socklen_t sin_size = sizeof their_addr;
+	int aceptados[] = {CPU};
 	escuchar(listener); // poner a escuchar ese socket
+	int id_clienteConectado;
+	id_clienteConectado = aceptarConexiones(listener, &nuevoSocketCpu, Memoria, &aceptados,1);
+	if(id_clienteConectado == -1){
+		close(nuevoSocketCpu);
+	}
 
 	pthread_t hilo_nuevaCPU;
 
-	sem_wait(&sem_isKernelConectado);
 	printf("[AceptarConexionesCPU] - Ya se ha establecido Conexion con un Kernel, ahora si se pueden conectar CPUs: \n");
 
 	while (1)
 	{
-		sin_size = sizeof their_addr;
-
-		if ((nuevoSocketCpu = accept(listener, (struct sockaddr *) &their_addr, &sin_size)) == -1) {// estas lines tienen que ser una funcion
-			perror("Error en el Accept");
-			//continue;
-		}
-		inet_ntop(their_addr.ss_family, getSin_Addr((struct sockaddr *) &their_addr), ip, sizeof ip); // para poder imprimir la ip del server
-		printf("[AceptarConexionesCPU] - Conexion con %s\n", ip);
 
 		int id_clienteConectado;
-		if ((id_clienteConectado = handshakeServidor(nuevoSocketCpu, Memoria, aceptados)) == -1) {
-			perror("Error con el handshake: -1");
-			close(nuevoSocketCpu);
+		id_clienteConectado = aceptarConexiones(listener, &nuevoSocketCpu, Kernel, &aceptados,2);
+		if(id_clienteConectado == -1){
+				close(nuevoSocketCpu);
 		}
-		printf("[AceptarConexionesCPU] - Nueva CPU Conectada! Socket CPU: %d\n", nuevoSocketCpu);
+		else{
+			printf("[AceptarConexionesCPU] - Nueva CPU Conectada! Socket CPU: %d\n", nuevoSocketCpu);
+			pthread_create(&hilo_nuevaCPU, NULL, recibirMensajesMemoria,  nuevoSocketCpu);
+		}
 
-		pthread_create(&hilo_nuevaCPU, NULL, recibirMensajesMemoria,  nuevoSocketCpu);
 	}
 }
 
@@ -445,14 +431,16 @@ int main(void) {
 	iniciarTablaDePaginacionInvertida();
 
 	// PRUEBAS
-/*
-	reservarFrame(1,1);
-	reservarFrame(1,2);
+
+	asignarPaginasAUnProceso(1,2);
+
 	char* script = "begin\nvariables a, b\na = 3\nb = 5\na = b + 12\nend\n";
 	almacenarBytesEnPagina(1,1,0,strlen(script),(void*)script);
 	int x = 3;
 	almacenarBytesEnPagina(1,2,0,sizeof(int),(void*)&x);
-*/
+	finalizarUnPrograma(1);
+	asignarPaginasAUnProceso(5,3);
+
 /*	char* stream = solicitarBytesDeUnaPagina(1,1,0,strlen(script));
 
 	char* stream2 = solicitarBytesDeUnaPagina(1,312451516,0,strlen(script));
@@ -506,7 +494,7 @@ int main(void) {
 
 	printf("\nMensaje desde la ram principal del programa!\n");
 
-	pthread_join(hilo_Kernel, NULL);
+//	pthread_join(hilo_Kernel, NULL);
 	pthread_join(hilo_AceptarConexionesCPU , NULL);
 	close(listener);
 	liberarConfiguracion();

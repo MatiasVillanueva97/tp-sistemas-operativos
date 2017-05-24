@@ -54,25 +54,40 @@ int buscarFrameCorrespondiente(int pidRecibido,int pagina)
 {
 	int posicionDadaPorElHash = funcionHash(pidRecibido,pagina);
 	filaDeTablaPaginaInvertida filaActual;
-	while (posicionDadaPorElHash < getConfigInt("MARCOS")){
-		filaActual =tablaDePaginacionInvertida[posicionDadaPorElHash];
+	int i;
+	for (i=0;i < getConfigInt("MARCOS");i++){
+		filaActual =tablaDePaginacionInvertida[i];
 		if (filaActual.pid == pidRecibido && filaActual.pagina == pagina ){
 			return filaActual.frame;
 		}
-		posicionDadaPorElHash++;
+	}
+	for (i=0;posicionDadaPorElHash >0;i++){
+		filaActual =tablaDePaginacionInvertida[i];
+		if (filaActual.pid == pidRecibido && filaActual.pagina == pagina ){
+			return filaActual.frame;
+		}
 	}
 	return -1;
 }
 int reservarFrame(int pid, int pagina){
 	int i;
-	for(i=funcionHash(pid,pagina);getConfigInt("MARCOS") > i;i++){
+	int posicionEnLatabla = funcionHash(pid,pagina);
+	for(i=posicionEnLatabla;getConfigInt("MARCOS") > i;i++){
 		filaDeTablaPaginaInvertida filaActual = tablaDePaginacionInvertida[i];
 		if(filaActual.pagina == -1 && filaActual.pid == -1){
-			filaTablaCantidadDePaginas* fila = malloc(sizeof(filaTablaCantidadDePaginas));
-			list_add(tablaConCantidadDePaginas,fila);
 			tablaDePaginacionInvertida[i].pagina = pagina;
 			tablaDePaginacionInvertida[i].pid = pid;
 			return 1;
+		}
+	}
+	for(i=0;posicionEnLatabla> i;i++){
+			filaDeTablaPaginaInvertida filaActual = tablaDePaginacionInvertida[i];
+			if(filaActual.pagina == -1 && filaActual.pid == -1){
+				filaTablaCantidadDePaginas* fila = malloc(sizeof(filaTablaCantidadDePaginas));
+				list_add(tablaConCantidadDePaginas,fila);
+				tablaDePaginacionInvertida[i].pagina = pagina;
+				tablaDePaginacionInvertida[i].pid = pid;
+				return 1;
 		}
 	}
 	return 0;
@@ -94,8 +109,8 @@ int memoriaFramesLibres(){
 	int libres = 0;
 
 	int prueba = sum(tablaConCantidadDePaginas,getCantidadDePaginas);
-
-	for(i;getConfigInt("MARCOS") > i;i++){
+	return prueba;
+	/*for(i;getConfigInt("MARCOS") > i;i++){
 			filaDeTablaPaginaInvertida filaActual = tablaDePaginacionInvertida[i];
 			if(filaActual.pagina == -1 && filaActual.pid == -1){
 
@@ -105,6 +120,7 @@ int memoriaFramesLibres(){
 			}
 		}
 	return libres;
+	*/
 }
 
 //Funciones Paginas
@@ -122,7 +138,16 @@ int cantidadDePaginasDeUnProcesoDeUnProceso(int pid){
 }*/
 int liberarPagina(int pid, int pagina){
 	int i;
-	for(i=funcionHash(pid,pagina);getConfigInt("MARCOS") > i;i++){
+	int posicionEnLaTabla =funcionHash(pid,pagina);
+	for(i=posicionEnLaTabla;getConfigInt("MARCOS") > i;i++){
+		filaDeTablaPaginaInvertida filaActual = tablaDePaginacionInvertida[i];
+		if(filaActual.pagina == pagina && filaActual.pid == pid){
+			tablaDePaginacionInvertida[i].pagina = -1;
+			tablaDePaginacionInvertida[i].pid = -1;
+			return 1;
+		}
+	}
+	for(i=0;posicionEnLaTabla> i;i++){
 		filaDeTablaPaginaInvertida filaActual = tablaDePaginacionInvertida[i];
 		if(filaActual.pagina == pagina && filaActual.pid == pid){
 			tablaDePaginacionInvertida[i].pagina = -1;

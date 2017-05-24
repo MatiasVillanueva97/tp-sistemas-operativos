@@ -55,7 +55,7 @@ void errorEn(int valor,char * donde){
 		printf("%s\n", donde);
 }
 
-int aceptarConexiones(int listener, int* nuevoSocket, int procesoQueAcepta, int* aceptados)
+int aceptarConexiones(int listener, int* nuevoSocket, int procesoQueAcepta, int* aceptados,int cantidadDePermitidos)
 {
 	int socketNuevo;
 	struct sockaddr_storage their_addr;
@@ -71,7 +71,7 @@ int aceptarConexiones(int listener, int* nuevoSocket, int procesoQueAcepta, int*
 
 	//***Hago el handShake con la nueva conexion
 	int id_clienteConectado;
-	id_clienteConectado = handshakeServidor(socketNuevo, procesoQueAcepta, aceptados);
+	id_clienteConectado = handshakeServidor(socketNuevo, procesoQueAcepta, aceptados,cantidadDePermitidos);
 
 	*nuevoSocket = socketNuevo;
 
@@ -284,10 +284,10 @@ int enviarMensaje(int socket, int TipoDeOperacion, void* contenido, int tamanioM
 }
 
 
-int conexionPosible(int id, int* permitidos)
+int conexionPosible(int id, int permitidos[],int cantidadDePermitidos)
 {
 	int i;
-	for(i = 0; (permitidos + i) != NULL; i++){
+	for(i = 0; i<cantidadDePermitidos; i++){
 		if(id == permitidos[i])
 			return 1;
 	}
@@ -318,7 +318,7 @@ int handshakeCliente(int socket, int id)
 }
 
 //Devuelve el id del cliente con quien se conecto
-int handshakeServidor(int socket,int id, int permitidos[])
+int handshakeServidor(int socket,int id, int permitidos[],int cantidadDePermitidos)
 {
 	int id_cliente;
 	int rta;
@@ -329,7 +329,7 @@ int handshakeServidor(int socket,int id, int permitidos[])
 		perror("Error en el recv del HandshakeServidor");
 	}
 
-	rta = conexionPosible(id_cliente,permitidos) ? id : -1; // se comprueba que puedan conectarse
+	rta = conexionPosible(id_cliente,permitidos,cantidadDePermitidos) ? id : -1; // se comprueba que puedan conectarse
 
 	//Se envia el id del servidor al cliente en caso de que se acepte la conexion
 
