@@ -36,7 +36,7 @@ enum id_Modulos{
 typedef struct{
  int id;
  t_direccion direccion;
- t_valor_variable valor;
+ void* valor;
 }__attribute__((packed)) t_escrituraMemoria;
 
 typedef struct{

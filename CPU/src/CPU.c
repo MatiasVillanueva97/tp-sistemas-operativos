@@ -30,6 +30,8 @@
 
 void conectarConMemoria();
 void conectarConKernel();
+void pedidoValido(int*,void*,int);
+void recibirInstruccion(void*,char**,int,int*);
 
 
 char* script = "begin\nvariables a, b\na = 3\nb = 5\na = b + 12\nend\n";
@@ -76,7 +78,7 @@ int main(void)
 
  	imprimirConfiguracion();
 
- 	conectarConKernel();
+ 	//conectarConKernel();
 
  	conectarConMemoria();
 
@@ -133,25 +135,36 @@ int main(void)
 
 			//Recepcion del codigo ANSISOP
 			void* stream;
-			char* instruccion;
+			int booleano;
+
+			//Se recibe si tal pedido es valido o rompe por todos lados
 			int accion = recibirMensaje(socketMemoria,&stream);
-			switch(accion){
-				case lineaDeCodigo:{
-					instruccion = stream;
-					instruccion[pedido.direccion.size - 1] = '\0';
-					break;
-				}
-				default:{
-					perror("Error en la accion maquinola");
-				}
+
+			pedidoValido(&booleano,stream,accion);
+
+
+			//Si el pedido salio bien se pasa a pedir el codigo concretamente
+			char* instruccion;
+
+
+			if(booleano){
+				recibirInstruccion(stream,&instruccion,pedido.direccion.size,&accion);
+			}else{
+				terminoPrograma = true;
+				pcb->exitCode = -5;		//Excepcion de Memoria STACK OVERFLOW
 			}
 
-			printf("\n%s\n\n",instruccion);
+			//Si se recibio una linea de codigo se analiza
+			if(accion == lineaDeCodigo){
+				printf("\n%s\n\n",instruccion);
 
-			//Magia del Parser para llamar a las primitivas
-			analizadorLinea(instruccion,&AnSISOP_funciones,&AnSISOP_funciones_kernel);
+				//Magia del Parser para llamar a las primitivas
+				analizadorLinea(instruccion,&AnSISOP_funciones,&AnSISOP_funciones_kernel);
+				pcb->programCounter++;
+			}
+
 			free(stream);
-			pcb->programCounter++;
+
 		}
 
 		//NO SE LIBERA EL MATADATA PORQUE REALMENTE NO VA A ESTAR ACA SINO EN KERNEL Y SOLO TENDRIA QUE LIBERAR MI HERMOSO PCB
@@ -168,6 +181,9 @@ int main(void)
 	return 0;
 }
 
+
+
+//******************************************************************FUNCIONES PARA MODULARIZAR Y QUEDE UN LINDO CODIGO*********************************************************************\\
 
 
 void conectarConMemoria()
@@ -204,9 +220,29 @@ void conectarConKernel()
 	printf("Conexión exitosa con el Kernel(%i)!!\n",rta_conexion);
 }
 
+void pedidoValido(int* booleano,void* stream, int accion){
+	switch(accion){
+		case RespuestaBooleanaDeMemoria:{
+			memcpy(booleano,stream,sizeof(int));
+		}break;
+		default:{
+			perror("Error en la accion maquinola");
+		}break;
+	}
+}
 
-
-
+void recibirInstruccion(void *stream, char** instruccion, int size, int* accion){
+	*accion = recibirMensaje(socketMemoria,&stream);
+	switch(*accion){
+		case lineaDeCodigo:{
+			*instruccion = stream;
+			(*instruccion)[size - 1] = '\0';
+		}break;
+		default:{
+			perror("Error en la accion maquinola");
+		}break;
+	}
+}
 
 
 

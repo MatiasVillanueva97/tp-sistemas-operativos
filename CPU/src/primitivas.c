@@ -338,15 +338,18 @@ t_valor_variable pedirValorAMemoria(t_direccion direccion){
 
 void escribirirValorEnMemoria(t_direccion direccion, t_valor_variable valor){
 
+	void* auxiliar = malloc(sizeof(int));
+	memcpy(auxiliar,&valor,sizeof(t_valor_variable));
 	t_escrituraMemoria escritura = {
 			.id = pcb->pid,
 			.direccion = direccion,
-			.valor = valor
 	};
+	escritura.valor = auxiliar;
 
 	//se pide a memoria que escriba el valor enviado en la posicion de memoria tambien enviada
 	enviarMensaje(socketMemoria,almacenarBytes,(void*)&escritura,sizeof(t_escrituraMemoria));
 
+	free(auxiliar);
 
 	//Devuelve un OK o mata un Stack Overflow
 	void* stream;
@@ -361,10 +364,11 @@ void escribirirValorEnMemoria(t_direccion direccion, t_valor_variable valor){
 			perror("Error en la accion maquinola");
 		}
 	}
-/*	if(*valorVariable){
-		//ALGO PARA QUE ROMPA TODO
+	if(!*respuesta){
+		terminoPrograma = true;
+		pcb->exitCode = -5;
 	}
-*/
+
 }
 
 
