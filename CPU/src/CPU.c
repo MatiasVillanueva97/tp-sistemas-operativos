@@ -78,7 +78,7 @@ int main(void)
 
  	imprimirConfiguracion();
 
- 	//conectarConKernel();
+ 	conectarConKernel();
 
  	conectarConMemoria();
 

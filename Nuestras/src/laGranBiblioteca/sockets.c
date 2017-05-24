@@ -284,10 +284,10 @@ int enviarMensaje(int socket, int TipoDeOperacion, void* contenido, int tamanioM
 }
 
 
-int conexionPosible(int id, int permitidos[])
+int conexionPosible(int id, int* permitidos)
 {
 	int i;
-	for(i = 0; i < 4; i++){
+	for(i = 0; (permitidos + i) != NULL; i++){
 		if(id == permitidos[i])
 			return 1;
 	}
