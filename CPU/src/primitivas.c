@@ -35,13 +35,11 @@ t_puntero AnSISOP_definirVariable(t_nombre_variable identificador_variable){
 	//Si es un digito es un argumento debido a la sintaxis del lenguaje, entonces se debe almacenar en argumentos
 	if(isdigit(identificador_variable)){
 		list_add(pcb->indiceStack[pcb->contextoActual].argumentos,variable);
-		printf("%c %d %d %d \n",variable->ID,variable->direccion.page,variable->direccion.offset,variable->direccion.size);
 	}
 
 	//Si es una letra es una variable debido a la sintaxis del lenguaje, entonces se debe almacenar en variables
 	if(isalpha(identificador_variable)){
 		list_add(pcb->indiceStack[pcb->contextoActual].variables,variable);
-		printf("%c %d %d %d \n",variable->ID,variable->direccion.page,variable->direccion.offset,variable->direccion.size);
 	}
 /*
 	if(identificador_variable == 'a') dirA = direccion;
@@ -64,7 +62,6 @@ t_puntero AnSISOP_obtenerPosicionVariable(t_nombre_variable identificador_variab
 	if(identificador_variable >= '0' && identificador_variable <= '9'){
 		//Es menos 48 porque '0' es 48 es ASCII y es para obtener el valor sin hacer mucho quilombo
 		variable = list_get(pcb->indiceStack[pcb->contextoActual].argumentos,identificador_variable - 48);
-		printf("%c %d %d %d \n",variable->ID,variable->direccion.page,variable->direccion.offset,variable->direccion.size);
 
 		aRetornar = calcularPuntero(variable->direccion);
 
@@ -76,9 +73,7 @@ t_puntero AnSISOP_obtenerPosicionVariable(t_nombre_variable identificador_variab
 		int j;
 		for(j = 0; j < list_size(pcb->indiceStack[pcb->contextoActual].variables); j++){
 			variable = list_get(pcb->indiceStack[pcb->contextoActual].variables,j);
-			puts("hola");
 			if(variable->ID == identificador_variable){
-				printf("%c %d %d %d \n",variable->ID,variable->direccion.page,variable->direccion.offset,variable->direccion.size);
 
 				aRetornar = calcularPuntero(variable->direccion);
 
@@ -338,20 +333,19 @@ t_valor_variable pedirValorAMemoria(t_direccion direccion){
 
 void escribirirValorEnMemoria(t_direccion direccion, t_valor_variable valor){
 
-	void* auxiliar = malloc(sizeof(int));
-	memcpy(auxiliar,&valor,sizeof(t_valor_variable));
-	t_escrituraMemoria escritura = {
-			.id = pcb->pid,
-			.direccion = direccion,
-	};
-	escritura.valor = auxiliar;
+	void* auxiliar = malloc(sizeof(t_escrituraMemoria));
+	memcpy(auxiliar,&pcb->pid,sizeof(int));
+	memcpy(auxiliar + sizeof(int),&(direccion.page),sizeof(int));
+	memcpy(auxiliar + sizeof(int) * 2,&(direccion.offset),sizeof(int));
+	memcpy(auxiliar + sizeof(int) * 3,&(direccion.size),sizeof(int));
+	memcpy(auxiliar + sizeof(int) * 4,&valor,sizeof(t_valor_variable));
 
 	//se pide a memoria que escriba el valor enviado en la posicion de memoria tambien enviada
-	enviarMensaje(socketMemoria,almacenarBytes,(void*)&escritura,sizeof(t_escrituraMemoria));
+	enviarMensaje(socketMemoria,almacenarBytes,auxiliar,sizeof(t_escrituraMemoria));
 
 	free(auxiliar);
 
-	//Devuelve un OK o mata un Stack Overflow
+	//Devuelve un OK o mata con un Stack Overflow
 	void* stream;
 	int* respuesta;
 	int accion = recibirMensaje(socketMemoria,&stream);
