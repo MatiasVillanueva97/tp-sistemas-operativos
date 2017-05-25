@@ -288,7 +288,8 @@ void *rutinaConsola(void * arg)
 	printf("[Rutina rutinaConsola] - Entramos al hilo de la consola: %d!\n", socketConsola);
 
 	while(todaviaHayTrabajo){
-		switch(301){//recibirMensaje(socketConsola,&stream)){
+		int a = recibirMensaje(socketConsola,&stream);
+	switch(a){
 			case envioScriptAnsisop:{
 
 				//hago esto para que me agregue 5 procesos
@@ -301,7 +302,8 @@ void *rutinaConsola(void * arg)
 				//***Estoy recibiendo un script para inicializar. Creo un neuvo proceso y ya comeizno a rellenarlo con los datos que ya tengo
 				printf("[Rutina rutinaConsola] -Nuevo script recibido!\n");
 
-				char* scripAnsisop =  "begin\nvariables a, b\na = 3\nb = 5\na = b + 12\nend\n";// (char *)stream;
+				char* scripAnsisop = (char *)stream;
+				printf("El stream es : %s /n",scripAnsisop);
 
 				PROCESOS * nuevoPrograma = malloc(sizeof(PROCESOS));
 
@@ -367,7 +369,7 @@ void *rutinaConsola(void * arg)
 			}break;
 
 			default:{
-				perror("Se recibio una accion que no esta contemplada, se cerrara el socket\n");
+				printf("Se recibio una accion que no esta contemplada:%d se cerrara el socket\n",a);
 				todaviaHayTrabajo=false;
 			}break;
 		}
