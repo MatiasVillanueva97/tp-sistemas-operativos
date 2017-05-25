@@ -35,7 +35,7 @@
 
 ///----INICIO SEMAFOROS----///
 pthread_mutex_t mutex_HistoricoPcb; // deberia ser historico pid
-pthread_mutex_t mutex_ListaDeAvisos;
+pthread_mutex_t mutex_colaProcesos;
 pthread_mutex_t mutex_cola_New;
 pthread_mutex_t nuevaCPU;
 pthread_mutex_t mutex_cola_Finished;
@@ -44,7 +44,7 @@ sem_t* contadorDeCpus = 0;
 
 void inicializarSemaforo(){
 	sem_init(&mutex_HistoricoPcb,0,1);
-	sem_init(&mutex_ListaDeAvisos,0,1);
+	sem_init(&mutex_colaProcesos,0,1);
 	sem_init(&mutex_cola_New,0,1);
 	sem_init(&nuevaCPU,0,0);
 	sem_init(&mutex_cola_Finished,0,1);
@@ -142,36 +142,18 @@ char** memoria_dividirScriptEnPaginas(int cant_paginas, char *copiaScriptAnsisop
 	return scriptDivididoEnPaginas;
 }
 
-
 /// *** Esta función esta probada y anda
 //***Esta Funcion te devuelve la cantidad de paginas que se van a requerir para un scriptAsisop dado
 int memoria_CalcularCantidadPaginas(char * scriptAnsisop)
 {
-  return  ceil(((double)(strlen(scriptAnsisop))/((double) size_pagina)));
+  return  (ceil(((double)(strlen(scriptAnsisop))/((double) size_pagina))));
 }
 
 
 /// *** A esta función solo le faltan dos cosas, 1- la funcion consola_finalizacionPorNoMemoria ; (no esta desarrollada) y porbar tuodos los enviar y recibir mensajes con memoria
 //***Funciones de Planificador
 void newToReady(){
-/*	PROGRAMAS_EN_NEW * nuevoPrograma = malloc(sizeof(PROGRAMAS_EN_NEW));
 
-				sem_wait(&mutex_HistoricoPcb);
-					nuevoPrograma->pid_provisorio= historico_pid;
-					historico_pid++;
-				sem_post(&mutex_HistoricoPcb);
-
-
-
-					nuevoPrograma->scriptAnsisop = "HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH";
-					nuevoPrograma->socketConsola = 53;
-					nuevoPrograma->finalizado = false;
-
-					//***Lo Agrego a la Cola de New - Aca hay que poner un semaforo
-				sem_wait(&mutex_cola_New);
-					queue_push(cola_New,nuevoPrograma);
-				sem_post(&mutex_cola_New);
-*/
 	printf("\n\n\nEstamos en la función newToReady a largo plazo!\n\n");
 
 	//***Tomo el primer elemento de la cola sin sacarlo de ella
@@ -187,7 +169,7 @@ void newToReady(){
 		int cant_paginas = memoria_CalcularCantidadPaginas(programaAnsisop->scriptAnsisop);
 
 		INICIALIZAR_PROGRAMA dataParaMemoria;
-		dataParaMemoria.cantPags=cant_paginas;
+		dataParaMemoria.cantPags=cant_paginas+stack_size;
 		dataParaMemoria.pid=programaAnsisop->pid;
 
 		//***Le Enviamos a memoria el pid con el que vamos a trabajar - Junto a la accion que vamos a realizar - Le envio a memeoria la cantidad de paginas que necesitaré reservar
@@ -206,11 +188,22 @@ void newToReady(){
 			//*** Divido el script en la cantidad de paginas necesarias
 			char** scriptEnPaginas = memoria_dividirScriptEnPaginas(cant_paginas, programaAnsisop->scriptAnsisop);
 
-			//***Le envio a memoria todo el scrip pagina a pagina
+			//***Le envio a memoria tiodo el scrip pagina a pagina
 			int i=0;
-			for(i; i<cant_paginas && ok; i++)
+			for(i; i<cant_paginas && *ok; i++)
 			{
-				enviarMensaje(socketMemoria,envioCantidadPaginas,scriptEnPaginas[i],strlen(scriptEnPaginas[i]));
+				enviarMensaje(socketMemoria,envioCantidadPaginas,scriptEnPaginas[i],size_pagina);
+				printf("Envio una pagina: %d\n", i);
+
+				recibirMensaje(socketMemoria,&ok);
+			}
+
+			char * paginasParaElStack;
+			paginasParaElStack = string_repeat('*',size_pagina);
+
+			for(i=0; i<stack_size && *ok;i++)
+			{
+				enviarMensaje(socketMemoria,envioCantidadPaginas,paginasParaElStack,size_pagina);
 				printf("Envio una pagina: %d\n", i);
 
 				recibirMensaje(socketMemoria,&ok);
@@ -256,6 +249,24 @@ void newToReady(){
 	/// Que onda con programaAnsisop? No hay que liberarlo? Yo creo que no, onda perderia todas las referencias a los punteros... o no lo sé
 }
 
+///***Esta función tiene que buscar en todas las colas y fijarse donde esta el procesos y cambiar su estado a estado finalizado
+void proceso_finalizacionExterna(int pid)
+{
+	/*sem_wait(&mutex_colaProcesos);
+	bool busqueda(PROCESOS * aviso)
+	{
+		if(aviso->pid == pid)
+			return true;
+
+		return false;
+	}
+
+
+	PROCESOS* procesoAFianalizar =(PROCESOS*)list_find(avisos, busqueda);
+	//**Le avisamos a la consola apropiada a traves del socket que esta en la estructura de avisos, que cierto pid esta en estado finalizado
+
+	sem_post(&mutex_colaProcesos);*/
+}
 
 ///---FIN FUNCIONES DEL KERNEL----//
 
@@ -277,8 +288,7 @@ void *rutinaConsola(void * arg)
 	printf("[Rutina rutinaConsola] - Entramos al hilo de la consola: %d!\n", socketConsola);
 
 	while(todaviaHayTrabajo){
-		//int a = recibirMensaje(socketConsola,&stream);
-		switch(301){
+		switch(301){//recibirMensaje(socketConsola,&stream)){
 			case envioScriptAnsisop:{
 
 				//hago esto para que me agregue 5 procesos
@@ -328,7 +338,7 @@ void *rutinaConsola(void * arg)
 				int respuesta;
 
 				//***Le digo a memoria que mate a este programa
-				enviarMensaje(socketMemoria,envioDelPidEnSeco, &pid,sizeof(int));
+				enviarMensaje(socketConsola,envioDelPidEnSeco, &pid,sizeof(int));
 
 				//***Memoria me avisa que salio todobon
 				if(recibirMensaje(socketConsola, &respuesta)){
@@ -358,9 +368,11 @@ void *rutinaConsola(void * arg)
 
 			default:{
 				perror("Se recibio una accion que no esta contemplada, se cerrara el socket\n");
+				todaviaHayTrabajo=false;
 			}break;
 		}
 	}
+	printf("Se decontecta a la consola socket: %d\n", socketConsola);
 	close(socketConsola);
 }
 
@@ -375,8 +387,6 @@ void *rutinaCPU(void * arg)
 {
 	int socketCPU = (int)arg;
 }
-
-
 
 
 /* Esta rutina mepa recontra re murio ya
@@ -399,7 +409,7 @@ void * revisarFinalizados(){
 			return false;
 		}
 
-		sem_wait(&mutex_ListaDeAvisos);
+		sem_wait(&mutex_colaProcesos);
 		//**Si algun elemento de la lista se encuentra en estado finalizado, se avisa a la consola y se elimina el proceso de la lista
 		if(list_any_satisfy(avisos, busqueda)){
 			AVISO_FINALIZACION* aux =(AVISO_FINALIZACION*)list_find(avisos, busqueda);
@@ -409,7 +419,7 @@ void * revisarFinalizados(){
 			//**Eliminamos el nodo de la lista
 			list_remove_and_destroy_element(avisos,pos,free);//***No se si esto tiene memory leaks-- revisar
 		}
-		sem_post(&mutex_ListaDeAvisos);
+		sem_post(&mutex_colaProcesos);
 	}
 }
 */
@@ -426,7 +436,7 @@ void * aceptarConexiones_Cpu_o_Consola( void *arg ){
 	while(1)
 	{
 		//***Acepto una conexion
-		id_clienteConectado = aceptarConexiones(listener, &nuevoSocket, Kernel, &aceptados);
+		id_clienteConectado = aceptarConexiones(listener, &nuevoSocket, Kernel, &aceptados, 2);
 
 		pthread_t hilo_M;
 
@@ -519,30 +529,39 @@ void * planificadorCortoPlazo()
 //*** Esta función se conecta con memoria y recibe de ella el tamaño de las paginas
 void conectarConMemoria()
 {
-	int rta_conexion;
-	socketMemoria = conexionConServidor(getConfigString("PUERTO_MEMORIA"),getConfigString("IP_MEMORIA")); // Asignación del socket que se conectara con la memoria
-	if (socketMemoria == 1){
-		perror("Falla en el protocolo de comunicación");
-	}
-	if (socketMemoria == 2){
-		perror("No se conectado con el FileSystem, asegurese de que este abierto el proceso");
-	}
-	rta_conexion = handshakeCliente(socketMemoria, Kernel);
-	if ( rta_conexion != Memoria) {
-				perror("Error en el handshake con Memoria");
-				close(socketMemoria);
-	}
-	else{
-		printf("Conexión exitosa con el Memoria(%i)!!\n",rta_conexion);
+	bool flag=true;
 
-		int* sizePag;
-		recibirMensaje(socketMemoria, &sizePag);
+	while(flag)
+	{
+		int rta_conexion;
+		socketMemoria = conexionConServidor(getConfigString("PUERTO_MEMORIA"),getConfigString("IP_MEMORIA")); // Asignación del socket que se conectara con la memoria
+		if (socketMemoria == 1){
+			perror("Falla en el protocolo de comunicación");
+		}
+		if (socketMemoria == 2){
+			perror("No se conectado con Memoria, asegurese de que este abierto el proceso");
+		}
+		rta_conexion = handshakeCliente(socketMemoria, Kernel);
 
-		size_pagina = *sizePag;
+		if ( rta_conexion != Memoria) {
+			perror("Error en el handshake con Memoria");
+			close(socketMemoria);
+			exit(-1);
+		}
+		else{
+			printf("Conexión exitosa con el Memoria(%i)!!\n",rta_conexion);
 
-		printf("[Conexion con Memoria] - El Size pag es: %d", size_pagina);
+			int* sizePag;
+			recibirMensaje(socketMemoria, &sizePag);
 
-		free(sizePag);
+			size_pagina = *sizePag;
+
+			printf("[Conexion con Memoria] - El Size pag es: %d", size_pagina);
+
+			free(sizePag);
+
+			flag=false;
+		}
 	}
 }
 void conectarConFS()
@@ -587,6 +606,7 @@ int main(void) {
 		configuracionInicial("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Kernel/kernel.config");
 		imprimirConfiguracion();
 
+		stack_size = getConfigInt("STACK_SIZE");
 	///-----------------------------////
 
 
