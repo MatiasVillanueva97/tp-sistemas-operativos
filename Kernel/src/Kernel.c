@@ -227,13 +227,15 @@ void newToReady(){
 				recibirMensaje(socketMemoria,&ok);
 			}
 
-			//***Creo el PCB
-			PCB_DATA * pcbNuevo = crearPCB(programaAnsisop->scriptAnsisop, programaAnsisop->pid, cant_paginas+stack_size);
+			//***Termino de completar el PCB
 
-			programaAnsisop->pcb = pcbNuevo;
+
+			programaAnsisop->pcb->contPags_pcb= cant_paginas+stack_size;
+			programaAnsisop->pcb->indiceStack= cant_paginas+1;
+
 
 			//***Añado el pcb a la cola de Ready
-			queue_push(cola_Ready,pcbNuevo);
+			queue_push(cola_Ready,programaAnsisop->pcb);
 		}
 		else
 		{
@@ -335,6 +337,9 @@ void *rutinaConsola(void * arg)
 				nuevoPrograma->socketConsola = socketConsola;
 				nuevoPrograma->finalizadoExternamente = false;
 
+				//***Creo el PCB
+				PCB_DATA * pcbNuevo = crearPCB(nuevoPrograma->scriptAnsisop, nuevoPrograma->pid, 0);
+				nuevoPrograma->pcb = pcbNuevo;
 
 				//***Lo Agrego a la Cola de New
 				sem_wait(&mutex_cola_New);
