@@ -25,9 +25,6 @@
 
 #include "../../Nuestras/src/laGranBiblioteca/datosGobalesGenerales.h"
 
-
-#define MAXDATASIZE 100 // max number of bytes we can get at once
-
 void* rutinaIniciarPrograma(void*);
 char* diferencia(char*,char*);
 int* transformarFechaAInts(char*);
@@ -142,13 +139,26 @@ int main(void)
 		}
 		if(strcmp(comandoConsola[0],"finalizarPrograma") == 0){
 			char** stream= string_split(comandoConsola[1],"\n");
-			int pid;
-			pid = string_itoa(*stream);
-			enviarMensaje(socketKernel,finalizarCiertoScript ,&pid, sizeof(int));
+			int *pid;
+			*pid = atoi(*stream);
+			enviarMensaje(socketKernel,finalizarCiertoScript ,pid, sizeof(int));
+
+			int respuesta = recibirMensaje(socketKernel, &pid);
+
+			if (respuesta == pidFinalizado)
+				printf("Se finalizo correctamente el pid: %d", *pid);
+			else if (respuesta == errorFinalizacionPid)
+				printf("No se ha finalizado correctamente el pid: %d", *pid);
+
+			// Joako estuvo aqui
+
 			continue;
 		}
 		if(strcmp(comandoConsola[0],"desconectarConsola\n") == 0){
 			liberarArray(comandoConsola);
+
+			enviarMensaje(socketKernel,desconectarConsola, NULL, 0);
+
 			break;
 		}
 		puts("Comando Inválido!");

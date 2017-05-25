@@ -9,13 +9,13 @@ PCB_DATA* crearPCB(char * scriptAnsisop, int pid, int contPags){
 		pcb->contPags_pcb = contPags;
 
 		pcb->contextoActual = -1;
-		pcb->exitCode = 0; //***Por ahora el exit code 0 significa que no esta terminado
+		pcb->exitCode = 53; //***Por ahora el exit code 53 significa que no esta terminado
 
 		pcb->indiceCodigo = metadata->instrucciones_serializado;
 		pcb->indiceEtiquetas = metadata->etiquetas;
 		pcb->cantidadDeEtiquetas = metadata->cantidad_de_etiquetas;
 
-		pcb->indiceStack = contPags-2;
+		pcb->indiceStack = contPags-stack_size;
 
 		pcb->cantidadDeEntradas = 0;
 		pcb->cantidadDeInstrucciones = metadata->instrucciones_size;

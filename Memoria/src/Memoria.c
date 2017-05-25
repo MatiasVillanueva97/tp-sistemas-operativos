@@ -245,8 +245,8 @@ void *rutinaConsolaMemoria(void* x){
 						if(strcmp(comandoConsola[1],"memoria\n")== 0){
 							printf("Su tamaño en frames: %d\n",cantidadDeMarcos);
 							int cantidadDeMarcosLibres = memoriaFramesLibres();
-							printf("Marcos libres: %d\n", cantidadDeMarcosLibres);
-							printf("Marcos ocupado %d\n", cantidadDeMarcos -cantidadDeMarcosLibres);
+							printf("Marcos ocupados: %d\n", cantidadDeMarcosLibres);
+							printf("Marcos libres: %d\n", cantidadDeMarcos -cantidadDeMarcosLibres);
 
 						}
 						if(strcmp(comandoConsola[1],"PID:")== 0){
@@ -349,14 +349,14 @@ void recibirMensajesMemoria(void* arg){
 				}
 				case finalizarPrograma:{//FinalzarPrograma
 
-					printf("finalizar PRograma entroasjdfasjfas \n");
-
 					int* pid = stream;
 					int x=1;
+					printf("Entramos a Finalizar Programa. Pid: %d \n", *pid);
 					if(finalizarUnPrograma(*pid)){
 							x=0;
 					}
 					enviarMensaje(socket,RespuestaBooleanaDeMemoria,&x,sizeof(int));
+
 					break;
 				}
 				case 0:{
@@ -426,10 +426,10 @@ int main(void) {
 
 	// PRUEBAS
 
-	asignarPaginasAUnProceso(1,2);
+//	asignarPaginasAUnProceso(1,2);
 
-	char* script = "begin\nvariables a, b\na = 3\nb = 5\na = b + 12\nend\n";
-	almacenarBytesEnPagina(1,1,0,strlen(script),(void*)script);
+//	char* script = "begin\nvariables a, b\na = 3\nb = 5\na = b + 12\nend\n";
+//	almacenarBytesEnPagina(1,1,0,strlen(script),(void*)script);
 //	int x = 3;
 //	almacenarBytesEnPagina(1,2,0,sizeof(int),(void*)&x);
 //	finalizarUnPrograma(1);

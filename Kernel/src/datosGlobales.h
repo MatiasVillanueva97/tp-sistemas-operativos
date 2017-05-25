@@ -34,16 +34,6 @@ int size_pagina;
 
 ///------ESTRUCTURAS AUXILIARES ADMNISTRATIVAS------///
 
-//*** Estructura que utilizamos para manjear el tema de tener que avisarle a la consola cuando su proceso finalizó
-//*** Como los procesos pueden finalizar en cualquier momento, y en el pcb no contenemos a que consola pertenece cierto proceso
-//*** Creamos esta estructura que nos contiene eso, el pid del proceso, la consola a quien le pertenece y el estado del proceso
-//*** Los procesos que utilicen esta estructura son aquellos que esten en, ready, ejecutar, wait y finalizados
-typedef struct {
-	int pid;
-	int socketConsola;
-	bool finalizado;
-}AVISO_FINALIZACION;
-
 //*** Esta lista es porque una consola puede tener una serie de procesos --- Igual creo que esto tiene que morir
 t_list * avisos;
 

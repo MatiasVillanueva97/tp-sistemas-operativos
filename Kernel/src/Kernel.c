@@ -35,7 +35,7 @@
 
 ///----INICIO SEMAFOROS----///
 pthread_mutex_t mutex_HistoricoPcb; // deberia ser historico pid
-pthread_mutex_t mutex_colaProcesos;
+pthread_mutex_t mutex_listaProcesos;
 pthread_mutex_t mutex_cola_New;
 pthread_mutex_t nuevaCPU;
 pthread_mutex_t mutex_cola_Finished;
@@ -44,7 +44,7 @@ sem_t* contadorDeCpus = 0;
 
 void inicializarSemaforo(){
 	sem_init(&mutex_HistoricoPcb,0,1);
-	sem_init(&mutex_colaProcesos,0,1);
+	sem_init(&mutex_listaProcesos,0,1);
 	sem_init(&mutex_cola_New,0,1);
 	sem_init(&nuevaCPU,0,0);
 	sem_init(&mutex_cola_Finished,0,1);
@@ -70,12 +70,12 @@ void inicializarSemaforo(){
 
 /// *** Falta probar!
 //***Esta funcion busca todos los procesos que tiene una consola
-t_list * avisosDeConsola(int socketConsola){
+/*t_list * avisosDeConsola(int socketConsola){
 	bool buscarPorSocket(AVISO_FINALIZACION * aviso){
 		return (aviso->socketConsola == socketConsola);
 	}
 	return list_filter(avisos, buscarPorSocket);
-}
+}*/
 
 /// *** Falta probar! Necesitamos que ande el enviar mensajes
 void consola_enviarAvisoDeFinalizacion(int socketConsola, int pid){
@@ -86,7 +86,7 @@ void consola_enviarAvisoDeFinalizacion(int socketConsola, int pid){
 /// *** Falta probar! Necesitamos que ande el enviar mensajes
 ///***Me falto borrarlo de la lista de avisos
 void consola_finalizacionPorDirectiva(int socketConsola, int pid, int idError){
-
+/*
 	PCB_DATA * pcb = buscarPCBPorPidYBorrar(pid);
 	if(pcb != NULL){
 		pcb->exitCode = idError;
@@ -97,17 +97,35 @@ void consola_finalizacionPorDirectiva(int socketConsola, int pid, int idError){
 	}
 	else
 		//***Le mando un 0 diciendo que no pude encontrar el pcb
-		enviarMensaje(socketConsola,1,0,sizeof(int));
+		enviarMensaje(socketConsola,1,0,sizeof(int));*/
 }
 
 /// *** Falta probar! Necesitamos que ande el enviar mensajes
+
 void consola_finalizarTodosLosProcesos(int socketConsola){
-	t_list * avisosConsola = avisosDeConsola(socketConsola);
-	void modificar(AVISO_FINALIZACION * aviso){
-		aviso->finalizado = true;
-		consola_finalizacionPorDirectiva(socketConsola, aviso->pid, -6);
+
+	void cambiar(PROCESOS * process){
+		if(process->socketConsola==socketConsola)
+		{
+			process->pcb->exitCode=-6;
+
+			process->finalizadoExternamente=true;
+
+			enviarMensaje(socketMemoria,finalizarPrograma,&process->pid,sizeof(int));
+
+			int* joaquin;
+			recibirMensaje(socketMemoria,&joaquin);
+			free(joaquin);
+
+			printf("Murio el proceso: %d\n", process->pid);
+		}
 	}
-	list_map(avisosConsola, modificar);
+
+	bool busqueda(PROCESOS * process)	{
+		return process->socketConsola==socketConsola;
+	}
+
+	list_iterate(avisos, cambiar);
 }
 
 ////----FIN FUNCIONES CONSOLA-----///
@@ -146,7 +164,7 @@ char** memoria_dividirScriptEnPaginas(int cant_paginas, char *copiaScriptAnsisop
 //***Esta Funcion te devuelve la cantidad de paginas que se van a requerir para un scriptAsisop dado
 int memoria_CalcularCantidadPaginas(char * scriptAnsisop)
 {
-  return  (ceil(((double)(strlen(scriptAnsisop))/((double) size_pagina))));
+  return  ceil(((double)(strlen(scriptAnsisop))/((double) size_pagina)));
 }
 
 
@@ -175,7 +193,7 @@ void newToReady(){
 		//***Le Enviamos a memoria el pid con el que vamos a trabajar - Junto a la accion que vamos a realizar - Le envio a memeoria la cantidad de paginas que necesitaré reservar
 		enviarMensaje(socketMemoria,inicializarPrograma, &dataParaMemoria, sizeof(int)*2); // Enviamos el pid a memoria
 
-		int* ok;
+		int* ok=malloc(sizeof(int));
 		recibirMensaje(socketMemoria, &ok); // Esperamos a que memoria me indique si puede guardar o no el stream
 		if(*ok)
 		{
@@ -210,7 +228,7 @@ void newToReady(){
 			}
 
 			//***Creo el PCB
-			PCB_DATA * pcbNuevo = crearPCB(programaAnsisop->scriptAnsisop, programaAnsisop->pid, cant_paginas);
+			PCB_DATA * pcbNuevo = crearPCB(programaAnsisop->scriptAnsisop, programaAnsisop->pid, cant_paginas+stack_size);
 
 			programaAnsisop->pcb = pcbNuevo;
 
@@ -222,6 +240,7 @@ void newToReady(){
 			//***Como memoria no me puede guardar el programa, finalizo este proceso- Lo saco de la cola de new y lo mando a la cola de finished
 			queue_pop(cola_New);
 			programaAnsisop->finalizadoExternamente=true;
+			programaAnsisop->pcb->exitCode=-1; // exit code por falta de memoria
 
 			sem_wait(&mutex_cola_Finished);
 				queue_push(cola_Finished, programaAnsisop);
@@ -233,6 +252,7 @@ void newToReady(){
 			sem_post(&mutex_cola_New);
 			printf("[Funcion newToReady] - No hubo espacio para guardar en memoria!\n");
 		}
+		free(ok);
 	}
 	else
 	{
@@ -250,9 +270,11 @@ void newToReady(){
 }
 
 ///***Esta función tiene que buscar en todas las colas y fijarse donde esta el procesos y cambiar su estado a estado finalizado
-void proceso_finalizacionExterna(int pid)
+bool proceso_finalizacionExterna(int pid, int exitCode)
 {
-	/*sem_wait(&mutex_colaProcesos);
+	bool flag=false;
+	sem_wait(&mutex_listaProcesos);
+
 	bool busqueda(PROCESOS * aviso)
 	{
 		if(aviso->pid == pid)
@@ -260,12 +282,17 @@ void proceso_finalizacionExterna(int pid)
 
 		return false;
 	}
-
-
 	PROCESOS* procesoAFianalizar =(PROCESOS*)list_find(avisos, busqueda);
-	//**Le avisamos a la consola apropiada a traves del socket que esta en la estructura de avisos, que cierto pid esta en estado finalizado
 
-	sem_post(&mutex_colaProcesos);*/
+	if( procesoAFianalizar != NULL){
+		procesoAFianalizar->pcb->exitCode=exitCode;
+		procesoAFianalizar->finalizadoExternamente=true;
+		flag=true;
+	}
+
+	sem_post(&mutex_listaProcesos);
+
+	return flag;
 }
 
 ///---FIN FUNCIONES DEL KERNEL----//
@@ -291,16 +318,8 @@ void *rutinaConsola(void * arg)
 		int a = recibirMensaje(socketConsola,&stream);
 	switch(a){
 			case envioScriptAnsisop:{
-
-				//hago esto para que me agregue 5 procesos
-				cont++;
-				if(cont==5)
-				{
-					todaviaHayTrabajo=false;
-				}
-
 				//***Estoy recibiendo un script para inicializar. Creo un neuvo proceso y ya comeizno a rellenarlo con los datos que ya tengo
-				printf("[Rutina rutinaConsola] -Nuevo script recibido!\n");
+				printf("[Rutina rutinaConsola] - Nuevo script recibido!\n");
 
 				char* scripAnsisop = (char *)stream;
 				printf("El stream es : %s /n",scripAnsisop);
@@ -316,6 +335,7 @@ void *rutinaConsola(void * arg)
 				nuevoPrograma->socketConsola = socketConsola;
 				nuevoPrograma->finalizadoExternamente = false;
 
+
 				//***Lo Agrego a la Cola de New
 				sem_wait(&mutex_cola_New);
 					queue_push(cola_New,nuevoPrograma);
@@ -323,6 +343,10 @@ void *rutinaConsola(void * arg)
 
 				//***Le envio a consola el pid del script que me acaba de enviar
 				enviarMensaje(socketConsola,envioDelPidEnSeco,&nuevoPrograma->pid,sizeof(int));
+
+				sem_wait(&mutex_listaProcesos);
+					list_add(avisos,nuevoPrograma);
+				sem_post(&mutex_listaProcesos);
 
 				/* Cuando un consola envia un pid para finalizar, lo que vamos a hacer es una funci+on que cambie el estado de ese proceso a finalizado,
 				 * de modo que en el mommento en que un proceso pase de cola en cola se valide como esta su estado, de estar en finalizado externamente
@@ -334,38 +358,44 @@ void *rutinaConsola(void * arg)
 			}
 
 			case finalizarCiertoScript:{
+
 				//***Estoy recibiendo un script para finalizar, le digo a memoria que lo finalize y si sale bien le aviso a consola, sino tambien le aviso, pero que salio mal xd
-				puts("Entramos");
-				int pid = (int)stream;
-				int respuesta;
+				int pid = leerInt(stream);
+				int* respuesta = malloc(sizeof(int));
+
+				printf("Entramos a finalizar el script, del pid: %d\n", pid);
 
 				//***Le digo a memoria que mate a este programa
-				//enviarMensaje(socketConsola,envioDelPidEnSeco, &pid,sizeof(int));//CAMBIAR
+				enviarMensaje(socketMemoria,finalizarPrograma, &pid,sizeof(int));//CAMBIAR
 
-				//***Memoria me avisa que salio todobon
-				if(recibirMensaje(socketConsola, &respuesta)){
+				//***Esta función actualizará el estado de finalizacion de un proceso
+				if(proceso_finalizacionExterna(pid, -7) )
+				{
+					enviarMensaje(socketConsola,pidFinalizado, &pid,sizeof(int));
 
-					//***Esta función actualizará el estado de finalizacion de un proceso
-					proceso_finalizacionExterna(pid);
-
-					//***Le avisamos a la consola que se finalizó el proceso indicado
-					consola_finalizacionPorDirectiva(socketConsola, pid, -7); /// hay que actualizar esta función!
+					//***Memoria me avisa si no encontro el pid
+					recibirMensaje(socketMemoria, &respuesta);
+					if(!respuesta){
+						errorEn(respuesta, "[Rutina rutinaConsola] - La Memoria no pudo finalizar el proceso\n");
+					}
 				}
 				else{
-					errorEn(respuesta, "[Rutina rutinaConsola] - La Memoria no pudo finalizar el proceso\n");
-					enviarMensaje(socketConsola,envioErrorFinalizacion, &pid,sizeof(int));
+					errorEn(respuesta, "[Rutina rutinaConsola] - No existe el pid\n");
+					enviarMensaje(socketConsola,errorFinalizacionPid, &pid,sizeof(int));
 				}
 
+
+				free(respuesta);
 			}break;
-			case desconectarConsola:{
+			case desconectarConsola:{ // podria ser 0
 				//***Se desconecta la consola
+				//int pid = leerInt(stream);
 
 				//***Ya no hay mas nada que hacer, entonces cambio el bool de todaviahaytrabajo a false, asi salgo del while
 				todaviaHayTrabajo = false;
 
 				consola_finalizarTodosLosProcesos(socketConsola);
 
-				// matar todos los procesos en memoria tambien
 			}break;
 
 			default:{
@@ -493,15 +523,13 @@ bool hayProgramasEnNew()
 //*** Rutina que te pasa los procesos de new a ready - anda bien
 void * planificadorLargoPlazo()
 {
+	printf("Entramos al planificador de largo plazo!\n");
 	while(1)
 	{
-		printf("Entramos al planificador de largo plazo!\n");
-
 		if(cantidadProgramasEnProcesamiento() < getConfigInt("GRADO_MULTIPROG") && hayProgramasEnNew())
 		{
 			newToReady();
 		}
-		printf("No nos da el grado de multi programación o hay programas en new!\n");
 		sleep(5);
 	}
 }
