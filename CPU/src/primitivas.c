@@ -327,8 +327,8 @@ t_valor_variable pedirValorAMemoria(t_direccion direccion){
 				perror("Error en la accion maquinola");
 			}break;
 		}
-	free(stream);
 	if(*booleano){
+		free(stream);
 		accion = recibirMensaje(socketMemoria,&stream);
 			switch(accion){
 				case lineaDeCodigo:{

@@ -377,12 +377,6 @@ void *aceptarConexionesCpu( void *arg ){ // aca le sacamos el asterisco, porque 
 	int nuevoSocketCpu;
 	int aceptados[] = {CPU};
 	escuchar(listener); // poner a escuchar ese socket
-	int id_clienteConectado;
-	id_clienteConectado = aceptarConexiones(listener, &nuevoSocketCpu, Memoria, &aceptados,1);
-	if(id_clienteConectado == -1){
-		close(nuevoSocketCpu);
-	}
-
 	pthread_t hilo_nuevaCPU;
 
 	printf("[AceptarConexionesCPU] - Ya se ha establecido Conexion con un Kernel, ahora si se pueden conectar CPUs: \n");
@@ -391,7 +385,7 @@ void *aceptarConexionesCpu( void *arg ){ // aca le sacamos el asterisco, porque 
 	{
 
 		int id_clienteConectado;
-		id_clienteConectado = aceptarConexiones(listener, &nuevoSocketCpu, Kernel, &aceptados,2);
+		id_clienteConectado = aceptarConexiones(listener, &nuevoSocketCpu, Memoria, &aceptados,1);
 		if(id_clienteConectado == -1){
 				close(nuevoSocketCpu);
 		}
@@ -436,10 +430,10 @@ int main(void) {
 
 	char* script = "begin\nvariables a, b\na = 3\nb = 5\na = b + 12\nend\n";
 	almacenarBytesEnPagina(1,1,0,strlen(script),(void*)script);
-	int x = 3;
-	almacenarBytesEnPagina(1,2,0,sizeof(int),(void*)&x);
-	finalizarUnPrograma(1);
-	asignarPaginasAUnProceso(5,3);
+//	int x = 3;
+//	almacenarBytesEnPagina(1,2,0,sizeof(int),(void*)&x);
+//	finalizarUnPrograma(1);
+//	asignarPaginasAUnProceso(5,3);
 
 /*	char* stream = solicitarBytesDeUnaPagina(1,1,0,strlen(script));
 
@@ -494,7 +488,7 @@ int main(void) {
 
 	printf("\nMensaje desde la ram principal del programa!\n");
 
-//	pthread_join(hilo_Kernel, NULL);
+	pthread_join(hilo_Kernel, NULL);
 	pthread_join(hilo_AceptarConexionesCPU , NULL);
 	close(listener);
 	liberarConfiguracion();
