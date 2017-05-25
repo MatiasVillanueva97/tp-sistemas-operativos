@@ -131,7 +131,6 @@ int main(void)
 			        continue;
 			    }
 			    pthread_attr_destroy(&attr);
-			//free(script); 				ESTO ES LO QUE ROMPIA TO DO
 			liberarArray(nombreDeArchivo);
 			liberarArray(comandoConsola);
 			continue;
@@ -142,10 +141,11 @@ int main(void)
 			continue;
 		}
 		if(strcmp(comandoConsola[0],"finalizarPrograma") == 0){
-			char** stream= string_split(comandoConsola[1], "\n");
+			char** stream= string_split(comandoConsola[1],"\n");
 			int pid;
-			pid = string_itoa(stream[0]);
+			pid = string_itoa(*stream);
 			enviarMensaje(socketKernel,finalizarCiertoScript ,&pid, sizeof(int));
+			continue;
 		}
 		if(strcmp(comandoConsola[0],"desconectarConsola\n") == 0){
 			liberarArray(comandoConsola);

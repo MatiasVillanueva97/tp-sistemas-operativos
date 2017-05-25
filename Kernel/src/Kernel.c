@@ -335,12 +335,12 @@ void *rutinaConsola(void * arg)
 
 			case finalizarCiertoScript:{
 				//***Estoy recibiendo un script para finalizar, le digo a memoria que lo finalize y si sale bien le aviso a consola, sino tambien le aviso, pero que salio mal xd
-
+				puts("Entramos");
 				int pid = (int)stream;
 				int respuesta;
 
 				//***Le digo a memoria que mate a este programa
-				enviarMensaje(socketConsola,envioDelPidEnSeco, &pid,sizeof(int));
+				//enviarMensaje(socketConsola,envioDelPidEnSeco, &pid,sizeof(int));//CAMBIAR
 
 				//***Memoria me avisa que salio todobon
 				if(recibirMensaje(socketConsola, &respuesta)){
