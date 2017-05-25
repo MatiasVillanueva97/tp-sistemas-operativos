@@ -283,7 +283,7 @@ void AnSISOP_escribir(t_descriptor_archivo descriptor_archivo, void* informacion
 	t_mensajeDeProceso mensajeDeProceso;
 	mensajeDeProceso.pid = pcb->pid;
 	mensajeDeProceso.mensaje = informacion;
-	printf("%d   %s",mensajeDeProceso.pid,mensajeDeProceso.mensaje);
+	printf("%s \n",mensajeDeProceso.mensaje);
 	//enviarMensaje(socketKernel,4,&mensajeDeProceso,tamanio + sizeof(int));
 
 	//intentar arreglar esto de otra forma

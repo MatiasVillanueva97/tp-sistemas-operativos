@@ -111,7 +111,7 @@ int almacenarBytesEnPagina(int pid, int pagina, int desplazamiento, int tamano,v
 
 	sem_wait(&mutex_TablaDePaginasInvertida);
 	int frame = buscarFrameCorrespondiente(pid,pagina);
-	sem_wait(&mutex_TablaDePaginasInvertida);
+	sem_post(&mutex_TablaDePaginasInvertida);
 	if(frame ==-1){
 		return 0;
 	}
@@ -454,10 +454,10 @@ int main(void) {
 
 	// PRUEBAS
 
-//	asignarPaginasAUnProceso(1,2);
+	asignarPaginasAUnProceso(1,2);
 
-//	char* script = "begin\nvariables a, b\na = 3\nb = 5\na = b + 12\nend\n";
-//	almacenarBytesEnPagina(1,1,0,strlen(script),(void*)script);
+	char* script = "begin\nvariables a, b\na = 3\nb = 5\na = b + 12\nprints l \"Hola Mundo\"\nend\n";
+	almacenarBytesEnPagina(1,1,0,strlen(script),(void*)script);
 //	int x = 3;
 //	almacenarBytesEnPagina(1,2,0,sizeof(int),(void*)&x);
 //	finalizarUnPrograma(1);
