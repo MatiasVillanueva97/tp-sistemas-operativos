@@ -38,6 +38,7 @@ void iniciarTablaDePaginacionInvertida(){
 void imprimirTablaDePaginasInvertida(){
 	FILE* archivo =  fopen ("tablaDePaginas.dat", "w+");
 	int i;
+	sem_wait(&mutex_TablaDePaginasInvertida);
 	for (i=0;i<cantidadDeMarcos;i++){
 		if(tablaDePaginacionInvertida[i].pid !=-1 &&tablaDePaginacionInvertida[i].pagina != -1){
 			fprintf(archivo, "Fila numero %d:    %d |%d  |%d \n\n",  i+1,tablaDePaginacionInvertida[i].pid, tablaDePaginacionInvertida[i].pagina,tablaDePaginacionInvertida[i].frame);
@@ -45,6 +46,7 @@ void imprimirTablaDePaginasInvertida(){
 		}
 
 	}
+	sem_post(&mutex_TablaDePaginasInvertida);
 	fclose(archivo);
 
 }
@@ -107,8 +109,9 @@ int getCantidadDePaginas(filaTablaCantidadDePaginas * fila){
 int memoriaFramesLibres(){
 	int i = 0;
 	int libres = 0;
-
+	sem_wait(&mutex_TablaDeCantidadDePaginas);
 	int prueba = sum(tablaConCantidadDePaginas,getCantidadDePaginas);
+	sem_post(&mutex_TablaDePaginasInvertida);
 	return prueba;
 	/*for(i;getConfigInt("MARCOS") > i;i++){
 			filaDeTablaPaginaInvertida filaActual = tablaDePaginacionInvertida[i];
@@ -136,7 +139,7 @@ int cantidadDePaginasDeUnProcesoDeUnProceso(int pid){
 		}
 	return paginas;
 }*/
-int liberarPagina(int pid, int pagina){
+int liberarPagina(int pid, int pagina){ //Esta sincronizado en finalizarPrograma.
 	int i;
 	int posicionEnLaTabla =funcionHash(pid,pagina);
 	for(i=posicionEnLaTabla;getConfigInt("MARCOS") > i;i++){

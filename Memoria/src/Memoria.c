@@ -40,9 +40,7 @@
 #include "parser/metadata_program.h"
 #include "parser/parser.h"
 //Variables
-
-
-sem_t sem_isKernelConectado; // meparece que es otro tipo de semaforo, no mutex
+ // meparece que es otro tipo de semaforo, no mutex
 
 
 
@@ -64,7 +62,9 @@ void* leerMemoriaPosta (int pid, int pagina ){
 int escribirMemoriaPosta(int pid,int pagina,void* contenido){
 	//Antes de poder escribir, se deben haber reservado los frame.
 	if(strlen(contenido)>getConfigInt("MARCO_SIZE")){
-		perror("El tamaño del contenido es mayor al tamaño de una pagina con la configuracion actual");
+		puts(contenido);
+		puts(string_itoa(strlen(contenido)));
+		perror("El tamaño del contenido es mayor al tamaño de una pagina con la configuracion actual idiota");
 		return 0;
 	}
 	int frame = buscarFrameCorrespondiente(pid,pagina);
@@ -78,13 +78,14 @@ int escribirMemoriaPosta(int pid,int pagina,void* contenido){
 void imprimirContenidoMemoria(){
 	FILE* archivo =  fopen ("file.txt", "w+");
 	int i;
+	sem_wait(&mutex_Memoria);
 	for (i=0;i<cantidadDeMarcos;i++){
 		fprintf(archivo, "Contenido de la pagina numero %s \n\n",  string_itoa(i+1));
 
 		fwrite(memoriaTotal+i*sizeOfPaginas,sizeOfPaginas,1,archivo);
 		fwrite("\n",1,1,archivo);
-
 	}
+	sem_post(&mutex_Memoria);
 	//fwrite(memoriaTotal,sizeOfPaginas,getConfigInt("MARCOS"),archivo);
 	fclose(archivo);
 }
@@ -107,22 +108,29 @@ int almacenarBytesEnPagina(int pid, int pagina, int desplazamiento, int tamano,v
 		return 0;
 	}
 	void *contenidoDeLaPagina = malloc(tamano);
+
+	sem_wait(&mutex_TablaDePaginasInvertida);
 	int frame = buscarFrameCorrespondiente(pid,pagina);
+	sem_wait(&mutex_TablaDePaginasInvertida);
 	if(frame ==-1){
 		return 0;
 	}
+	sem_wait(&mutex_Memoria);
 	contenidoDeLaPagina = memoriaTotal+frame*getConfigInt("MARCO_SIZE");
 	memcpy(contenidoDeLaPagina+desplazamiento, buffer,tamano);
+	sem_post(&mutex_Memoria);
 	return 1;
 }
 void* solicitarBytesDeUnaPagina(int pid, int pagina, int desplazamiento, int tamano){
 	void* contenidoDeLaPagina = malloc(sizeOfPaginas);
+	sem_wait(&mutex_Memoria); //No se si son 2 mutex distintos
 	contenidoDeLaPagina = leerMemoriaPosta(pid,pagina);
 	if ((int)contenidoDeLaPagina == 0){
 		return 0;
 	}
 	void* contenidoADevolver = malloc(tamano);
 	memcpy(contenidoADevolver,contenidoDeLaPagina+desplazamiento,tamano);
+	sem_post(&mutex_Memoria);
 	free(contenidoDeLaPagina);
 	return contenidoADevolver;
 
@@ -138,8 +146,9 @@ int buscarFilaEnTablaCantidadDePaginas(int pid){
 }
 
 int buscarCantidadDePaginas(int pid){
-
+	sem_wait(&mutex_TablaDeCantidadDePaginas);
 	filaTablaCantidadDePaginas* x= buscarFilaEnTablaCantidadDePaginas(pid);
+	sem_post(&mutex_TablaDeCantidadDePaginas);
 	if (x==NULL){
 		return 0;
 	}
@@ -151,17 +160,22 @@ int buscarCantidadDePaginas(int pid){
 int asignarPaginasAUnProceso(int pid, int cantidadDePaginas){
 //	int paginaMaxima = cantidadDePaginasDeUnProcesoDeUnProceso(pid);
 	int i;
+
+
 	int paginaMaxima = buscarCantidadDePaginas(pid);
 
+	sem_wait(&mutex_TablaDePaginasInvertida);
 	for(i= 1 ;i <= cantidadDePaginas; i++){
 		if(reservarFrame(pid,paginaMaxima+i) == 0){
 			finalizarUnPrograma(pid);
 			return 0;
 		}
 	}
-	filaTablaCantidadDePaginas * x = malloc(sizeof(x));
+	sem_post(&mutex_TablaDePaginasInvertida);
+	filaTablaCantidadDePaginas * x = malloc(sizeof(filaTablaCantidadDePaginas));
 	x->pid = pid;
 	x->cantidadDePaginas= cantidadDePaginas+paginaMaxima;
+	sem_wait(&mutex_TablaDeCantidadDePaginas);
 	if(paginaMaxima == 0){
 		list_add(tablaConCantidadDePaginas,x);
 	}
@@ -169,21 +183,26 @@ int asignarPaginasAUnProceso(int pid, int cantidadDePaginas){
 		filaTablaCantidadDePaginas * elemento = buscarFilaEnTablaCantidadDePaginas(pid);
 		elemento->cantidadDePaginas += cantidadDePaginas;
 	}
+	sem_post(&mutex_TablaDeCantidadDePaginas);
 	return 1;
 }
 int finalizarUnPrograma(int pid){
+	sem_wait(&mutex_TablaDeCantidadDePaginas);
 	int paginas = buscarCantidadDePaginas(pid);
-	if(paginas == 0){
-		return 0;
-	}
-	int i;
-	for(i = 1; i<= paginas;i++){
-		liberarPagina(pid,i);
-	}
 	bool buscarPid(filaTablaCantidadDePaginas* fila){
 			return (fila->pid== pid);
 	}
 	list_remove_and_destroy_by_condition(tablaConCantidadDePaginas,buscarPid,free);
+	sem_post(&mutex_TablaDeCantidadDePaginas);
+	if(paginas == 0){
+		return 0;
+	}
+	int i;
+	sem_wait(&mutex_TablaDePaginasInvertida);
+	for(i = 1; i<= paginas;i++){
+		liberarPagina(pid,i);
+	}
+	sem_wait(&mutex_TablaDePaginasInvertida);
 	return 1;
 }
 
@@ -295,14 +314,16 @@ void recibirMensajesMemoria(void* arg){
 						int t=1;
 						char* contenidoPag;
 						int rta_escribir_Memoria;
+						sem_wait(&mutex_Memoria);
 						for(t;t<=estructura->cantPags ;t++)
 						{
-							recibirMensaje(socket,&contenidoPag);
+							recibirMensaje(socket,(void*)&contenidoPag);
+							puts(contenidoPag);
 							rta_escribir_Memoria=escribirMemoriaPosta(estructura->pid,t,contenidoPag);
-
 							enviarMensaje(socket,RespuestaBooleanaDeMemoria,&rta_escribir_Memoria,sizeof(int));
+							free(contenidoPag);
 						}
-					free(contenidoPag);
+						sem_post(&mutex_Memoria);
 					}
 
 
@@ -311,10 +332,12 @@ void recibirMensajesMemoria(void* arg){
 				case solicitarBytes :{ //solicitar bytes de una pagina
 					t_pedidoMemoria* estructura = stream;
 					int respuesta= 1;
+
 					void* contenidoDeLaPagina= solicitarBytesDeUnaPagina(estructura->id,estructura->direccion.page,estructura->direccion.offset,estructura->direccion.size);
+
 					if(!(int)contenidoDeLaPagina){
 						respuesta =0;
-					enviarMensaje(socket,RespuestaBooleanaDeMemoria,&respuesta,sizeof(int));
+						enviarMensaje(socket,RespuestaBooleanaDeMemoria,&respuesta,sizeof(int));
 					}
 					else{
 						enviarMensaje(socket,RespuestaBooleanaDeMemoria,&respuesta,sizeof(int));
@@ -367,6 +390,7 @@ void recibirMensajesMemoria(void* arg){
 					perror("Error de comando");
 				}
 		}
+		free(stream);
 
 
 	}
@@ -402,7 +426,9 @@ void *aceptarConexionesCpu( void *arg ){ // aca le sacamos el asterisco, porque 
 int main(void) {
 	//
 	printf("Inicializando Memoria.....\n\n");
-
+	sem_init(&mutex_Memoria,0,1);
+	sem_init(&mutex_TablaDeCantidadDePaginas,0,1);
+	sem_init(&mutex_TablaDePaginasInvertida,0,1);
 
 
 	// ******* Configuracion de la Memoria a partir de un archivo
@@ -421,6 +447,8 @@ int main(void) {
 	for(i=0;i<cantidadDeMarcos;i++){//Chequearlo despues
 		memcpy(memoriaTotal+i*sizeOfPaginas,hijodeputa,sizeOfPaginas);
 	}
+	free(hijodeputa); //No me toma el free por algun motivo __	 O	___
+													//		  \__|__/
 
 	iniciarTablaDePaginacionInvertida();
 

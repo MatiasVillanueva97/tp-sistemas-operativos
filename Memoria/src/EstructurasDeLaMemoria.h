@@ -8,7 +8,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include "commons/collections/list.h"
-
+#include <pthread.h>
+#include <semaphore.h>
 
 #ifndef ESTRUCTURASDELAMEMORIA_H_
 #define ESTRUCTURASDELAMEMORIA_H_
@@ -18,6 +19,11 @@ int cantidadDeMarcos;
 void* memoriaTotal;
 t_list* cache;
 t_list* tablaConCantidadDePaginas;
+sem_t mutex_Memoria;
+sem_t mutex_TablaDePaginasInvertida;
+sem_t mutex_TablaDeCantidadDePaginas;
+
+sem_t sem_isKernelConectado;
 
 typedef struct{
 	int pid;

@@ -67,7 +67,7 @@ int main(void) {
 
 	close(listener); // child doesn't need the listener
 
-	if ((rta_handshake = handshakeServidor(nuevoSocket, FileSystem, aceptados)) == -1) {
+	if ((rta_handshake = handshakeServidor(nuevoSocket, FileSystem, aceptados,1)) == -1) {
 		perror("Error con el handshake: -1");
 		close(nuevoSocket);
 	}
