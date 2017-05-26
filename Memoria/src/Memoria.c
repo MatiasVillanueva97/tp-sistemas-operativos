@@ -322,11 +322,11 @@ void recibirMensajesMemoria(void* arg){
 					      {
 					    	  recibirMensaje(socket,&contenidoPag);
 					    	  memcpy(contenidoDeLaPaginaPosta,contenidoPag,sizeOfPaginas);
-					    	  free(contenidoPag);
-					    	  rta_escribir_Memoria=escribirMemoriaPosta(estructura->pid,t,contenidoPag);
+					    	  //rta_escribir_Memoria=escribirMemoriaPosta(estructura->pid,t,contenidoPag);
 
-					    	  //rta_escribir_Memoria=escribirMemoriaPosta(estructura->pid,t,contenidoDeLaPaginaPosta);
+					    	  rta_escribir_Memoria=escribirMemoriaPosta(estructura->pid,t,contenidoDeLaPaginaPosta);
 					    	  enviarMensaje(socket,RespuestaBooleanaDeMemoria,&rta_escribir_Memoria,sizeof(int));
+					    	  free(contenidoPag);
 					      }
 					      free(contenidoDeLaPaginaPosta);
 					      sem_post(&mutex_Memoria);
