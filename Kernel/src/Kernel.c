@@ -181,6 +181,7 @@ void newToReady(){
 
 			//***Le envio a memoria las paginas del stack
 			char * paginasParaElStack;
+			// puto el que lee
 			paginasParaElStack = string_repeat(' ',size_pagina);
 			for(i=0; i<stack_size && *ok;i++)
 			{
@@ -272,9 +273,6 @@ void *rutinaConsola(void * arg)
 	int socketConsola = (int)arg;
 	bool todaviaHayTrabajo = true;
 	void * stream;
-
-	int cont=0;
-
 	printf("[Rutina rutinaConsola] - Entramos al hilo de la consola: %d!\n", socketConsola);
 
 	while(todaviaHayTrabajo){
@@ -363,9 +361,12 @@ void *rutinaConsola(void * arg)
 				consola_finalizarTodosLosProcesos(socketConsola);
 
 			}break;
-
+			case 0:{
+				printf("[Rutina rutinaConsola] - La consola ha perecido\n");
+						todaviaHayTrabajo=false;
+			}break;
 			default:{
-				printf("Se recibio una accion que no esta contemplada:%d se cerrara el socket\n",a);
+				printf("[Rutina rutinaConsola] - Se recibio una accion que no esta contemplada:%d se cerrara el socket\n",a);
 				todaviaHayTrabajo=false;
 			}break;
 		}
@@ -387,15 +388,16 @@ void *rutinaCPU(void * arg)
 	bool todaviaHayTrabajo = true;
 	void * stream;
 	int accionCPU;
-	int cont=0;
 
-	printf("[Rutina rutinaCPU] - Entramos al hilo de la consola: %d!\n", accionCPU);
+	printf("[Rutina rutinaCPU] - Entramos al hilo de la CPU: %d!\n", socketCPU);
 
 	while(todaviaHayTrabajo){
 		accionCPU = recibirMensaje(socketCPU,&stream);
 
 		switch(accionCPU){
 			case pedirPCB:{
+
+				printf("[Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- %d!\n", pedirPCB);
 
 				PCB_DATA* pcb = queue_peek(cola_Ready);
 
@@ -407,6 +409,7 @@ void *rutinaCPU(void * arg)
 				// POner semaforos
 
 			}break;
+
 			case 0:{
 				printf("[Rutina rutinaCPU] - Desconecta la CPU\n");
 				todaviaHayTrabajo=false;
@@ -463,7 +466,7 @@ void * aceptarConexiones_Cpu_o_Consola( void *arg ){
 
 				enviarMensaje(nuevoSocket,enviarDatosCPU,&datosCPU,sizeof(int)*3);
 
-				//pthread_create(&hilo_M, NULL, rutinaCPU, nuevoSocket);
+				printf("Socket CPU %d\n\n", nuevoSocket);
 
 				rutinaCPU(nuevoSocket);
 			}break;

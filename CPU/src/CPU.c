@@ -82,8 +82,11 @@ int main(void)
 
  	conectarConMemoria();
 
+
+
  	if(recibirMensaje(socketKernel,(void*)&datosIniciales) != 7) perror("Kernel que es esta basura? Dame mis datos para comenzar");
 
+ 	printf("Datos recibidos de Kernel:\nsize_pag-%d\nquantum-%d\nsize_stack-%d\n", datosIniciales->size_pag, datosIniciales->quantum, datosIniciales->size_stack);
 
  	//ESTE GRAN WHILE(1) ESTA COMENTADO PORQUE EN REALIDAD ES PARA RECIBIR UN PCB ATRAS DE OTRO Y EJECUTARLOS HASTA QUE EL KERNEL ME DIGA MORITE HIPPIE
 
@@ -94,11 +97,14 @@ int main(void)
  		terminoPrograma = false;
 
 		// Recepcion del pcb
+
+		enviarMensaje(socketKernel,pedirPCB,&quantumUsado,sizeof(int));
+
+		void* pcbSerializado;
 		puts("esperando pcb\n");
+		if(recibirMensaje(socketKernel,&pcbSerializado) != envioPCB) perror("Error en la accion maquinola");
 
-		enviarMensaje(socketKernel,pedirPCB,NULL,0);
-
-		if(recibirMensaje(socketKernel,(void*)&pcb) != envioPCB) perror("Error en la accion maquinola");
+		pcb=deserializarPCB(pcbSerializado);
 
 		while(!terminoPrograma && datosIniciales->quantum != quantumUsado){
 
