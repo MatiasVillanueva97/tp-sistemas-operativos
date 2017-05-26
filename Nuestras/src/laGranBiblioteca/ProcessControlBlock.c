@@ -552,8 +552,8 @@ void harcodeoAsquerosoDePCB(){
 
 //***Nota: para usar esta funcion las listas tienen que contener punteros almacenados en el heap, es bastante obvio pero lo aclaro por si se rompe al carajo
 void destruirPCB_Local(PCB_DATA pcb){
-	if(pcb.cantidadDeEtiquetas != 0)
-		free(pcb.indiceEtiquetas);
+
+	free(pcb.indiceEtiquetas);
 
 	free(pcb.indiceCodigo);
 

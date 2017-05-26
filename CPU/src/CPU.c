@@ -65,8 +65,6 @@ int main(void)
 			.AnSISOP_leer = AnSISOP_leer
 	};
 
-	pcb = malloc(sizeof(PCB_DATA));
-
 	printf("Inicializando CPU.....\n\n");
 
 
@@ -105,6 +103,8 @@ int main(void)
 		if(recibirMensaje(socketKernel,&pcbSerializado) != envioPCB) perror("Error en la accion maquinola");
 
 		pcb=deserializarPCB(pcbSerializado);
+
+		free(pcbSerializado);
 
 		while(!terminoPrograma && datosIniciales->quantum != quantumUsado){
 
@@ -162,7 +162,7 @@ int main(void)
 
 	close(socketKernel);
 	liberarConfiguracion();
-
+	free(datosIniciales);
 
 	return 0;
 }

@@ -49,12 +49,17 @@ return tamano;
 
 char * generarScript(char * nombreDeArchivo){
 	FILE* archivo = fopen(nombreDeArchivo, "r");
-	size_t tamano = tamanoArchivo(archivo);
-	char* script = malloc(tamano+1);
-	fread(script,tamano,1,archivo);//lee el archivo y lo guarda en el script AnsiSOP
-	script[tamano] = '\0';
-	fclose(archivo);
-	return script;
+	if(archivo != NULL){
+		size_t tamano = tamanoArchivo(archivo);
+		char* script = malloc(tamano+1);
+		fread(script,tamano,1,archivo);//lee el archivo y lo guarda en el script AnsiSOP
+		script[tamano] = '\0';
+		fclose(archivo);
+		return script;
+	}
+	perror("No existe ese archivo");
+	exit(1);
+	return "holi";
 }
 
 void conectarConKernel(){

@@ -28,6 +28,8 @@
 #include "../../Nuestras/src/laGranBiblioteca/config.c"
 #include "../../Nuestras/src/laGranBiblioteca/datosGobalesGenerales.h"
 
+#include "../../Nuestras/src/laGranBiblioteca/ProcessControlBlock.c"
+
 #include "datosGlobales.h"
 #include "funcionesPCB.h"
 
@@ -401,7 +403,9 @@ void *rutinaCPU(void * arg)
 
 				PCB_DATA* pcb = queue_peek(cola_Ready);
 
-				enviarMensaje(socketCPU,envioPCB,pcb,sizeof(PCB_DATA));
+				void* pcbSerializado = serializarPCB(pcb);
+
+				enviarMensaje(socketCPU,envioPCB,pcbSerializado,tamanoPCB(pcb) + 4);
 
 				queue_pop(cola_Ready);
 				queue_push(cola_Exec,pcb);

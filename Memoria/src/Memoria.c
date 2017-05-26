@@ -107,7 +107,7 @@ int almacenarBytesEnPagina(int pid, int pagina, int desplazamiento, int tamano,v
 	if(desplazamiento + tamano > sizeOfPaginas){
 		return 0;
 	}
-	void *contenidoDeLaPagina = malloc(tamano);
+	void *contenidoDeLaPagina;
 
 	sem_wait(&mutex_TablaDePaginasInvertida);
 	int frame = buscarFrameCorrespondiente(pid,pagina);
@@ -122,10 +122,11 @@ int almacenarBytesEnPagina(int pid, int pagina, int desplazamiento, int tamano,v
 	return 1;
 }
 void* solicitarBytesDeUnaPagina(int pid, int pagina, int desplazamiento, int tamano){
-	void* contenidoDeLaPagina = malloc(sizeOfPaginas);
+	void* contenidoDeLaPagina;
 	sem_wait(&mutex_Memoria); //No se si son 2 mutex distintos
 	contenidoDeLaPagina = leerMemoriaPosta(pid,pagina);
 	if ((int)contenidoDeLaPagina == 0){
+		free(contenidoDeLaPagina);
 		return 0;
 	}
 	void* contenidoADevolver = malloc(tamano);
@@ -274,6 +275,7 @@ void *rutinaConsolaMemoria(void* x){
 							printf("El proceso %d tiene %d\n",pidPedido,((filaTablaCantidadDePaginas*)buscarFilaEnTablaCantidadDePaginas(pidPedido))->cantidadDePaginas);
 						}
 				}
+				liberarArray(comandoConsola);
 			}
 }
 
@@ -311,19 +313,23 @@ void recibirMensajesMemoria(void* arg){
 					}
 					enviarMensaje(socket,RespuestaBooleanaDeMemoria,&x,sizeof(int));
 					if(x){
-						int t=1;
-						char* contenidoPag;
-						int rta_escribir_Memoria;
-						sem_wait(&mutex_Memoria);
-						for(t;t<=estructura->cantPags ;t++)
-						{
-							recibirMensaje(socket,(void*)&contenidoPag);
-							puts(contenidoPag);
-							rta_escribir_Memoria=escribirMemoriaPosta(estructura->pid,t,contenidoPag);
-							enviarMensaje(socket,RespuestaBooleanaDeMemoria,&rta_escribir_Memoria,sizeof(int));
-							free(contenidoPag);
-						}
-						sem_post(&mutex_Memoria);
+					      int t;
+					      char* contenidoPag ;
+					      char* contenidoDeLaPaginaPosta= malloc(sizeOfPaginas);
+					      int rta_escribir_Memoria;
+					      sem_wait(&mutex_Memoria);
+					      for(t=1;t<=estructura->cantPags ;t++)
+					      {
+					    	  recibirMensaje(socket,&contenidoPag);
+					    	  memcpy(contenidoDeLaPaginaPosta,contenidoPag,sizeOfPaginas);
+					    	  free(contenidoPag);
+					    	  rta_escribir_Memoria=escribirMemoriaPosta(estructura->pid,t,contenidoPag);
+
+					    	  //rta_escribir_Memoria=escribirMemoriaPosta(estructura->pid,t,contenidoDeLaPaginaPosta);
+					    	  enviarMensaje(socket,RespuestaBooleanaDeMemoria,&rta_escribir_Memoria,sizeof(int));
+					      }
+					      free(contenidoDeLaPaginaPosta);
+					      sem_post(&mutex_Memoria);
 					}
 
 
@@ -344,6 +350,7 @@ void recibirMensajesMemoria(void* arg){
 						enviarMensaje(socket,lineaDeCodigo,contenidoDeLaPagina,estructura->direccion.size);
 
 					}
+					free(contenidoDeLaPagina);
 					//cambiar por linea de codigo (enum)
 					//Controla errores forro.
 					break;
@@ -390,7 +397,7 @@ void recibirMensajesMemoria(void* arg){
 					perror("Error de comando");
 				}
 		}
-		free(stream);
+		if(operacion != 0) free(stream);
 
 
 	}
@@ -442,7 +449,7 @@ int main(void) {
 	cantidadDeMarcos = getConfigInt("MARCOS");
 	memoriaTotal = malloc(sizeOfPaginas*cantidadDeMarcos);
 	int i;
-	char* hijodeputa =malloc(sizeOfPaginas);
+	char* hijodeputa;
 	hijodeputa = string_repeat(' ',sizeOfPaginas);
 	for(i=0;i<cantidadDeMarcos;i++){//Chequearlo despues
 		memcpy(memoriaTotal+i*sizeOfPaginas,hijodeputa,sizeOfPaginas);
@@ -454,10 +461,10 @@ int main(void) {
 
 	// PRUEBAS
 
-	asignarPaginasAUnProceso(1,2);
+//	asignarPaginasAUnProceso(1,2);
 
-	char* script = "begin\nvariables a, b\na = 3\nb = 5\na = b + 12\nprints l \"Hola Mundo\"\nend\n";
-	almacenarBytesEnPagina(1,1,0,strlen(script),(void*)script);
+//	char* script = "begin\nvariables a, b\na = 3\nb = 5\na = b + 12\nprints l \"Hola Mundo\"\nend\n";
+//	almacenarBytesEnPagina(1,1,0,strlen(script),(void*)script);
 //	int x = 3;
 //	almacenarBytesEnPagina(1,2,0,sizeof(int),(void*)&x);
 //	finalizarUnPrograma(1);
