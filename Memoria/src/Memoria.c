@@ -515,7 +515,6 @@ int main(void) {
 	pthread_create(&hilo_AceptarConexionesCPU, NULL, aceptarConexionesCpu, listener);
 
 	printf("\nMensaje desde la ram principal del programa!\n");
-
 	pthread_join(hilo_Kernel, NULL);
 	pthread_join(hilo_AceptarConexionesCPU , NULL);
 	close(listener);

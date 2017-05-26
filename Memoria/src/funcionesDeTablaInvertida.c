@@ -15,9 +15,22 @@ int buscarPidEnTablaInversa(int pidRecibido) //DEJO ESTA PORQUE SINO SE ROMPE TO
 }
 void iniciarTablaDePaginacionInvertida(){
 	//tablaDePaginacionInvertida = malloc (sizeof(filaDeTablaPaginaInvertida)*getConfigInt("MARCOS"));//falta calcular la cantidadDe filas que tiene la tabla.
-	tablaDePaginacionInvertida = malloc(getConfigInt("MARCOS")*sizeof(filaDeTablaPaginaInvertida));
+	tablaDePaginacionInvertida = memoriaTotal;
+
+	int cantidad = ceil(((double)((getConfigInt("MARCOS")*sizeof(filaDeTablaPaginaInvertida)))/((double) sizeOfPaginas)));
 	int i;
-	for(i = 0;getConfigInt("MARCOS")> i;i++){
+
+	for(i=0;i<cantidad;i++){
+		tablaDePaginacionInvertida[i].frame = i;
+		tablaDePaginacionInvertida[i].pid = 0;
+		tablaDePaginacionInvertida[i].pagina = i+1;
+	}
+	filaTablaCantidadDePaginas* nuevaFila= malloc(sizeof(filaTablaCantidadDePaginas));
+	nuevaFila->pid = 0;
+	nuevaFila->cantidadDePaginas = cantidad;
+	list_add(tablaConCantidadDePaginas,nuevaFila);
+
+	for(i = cantidad;getConfigInt("MARCOS")> i;i++){
 		tablaDePaginacionInvertida[i].frame = i;
 		tablaDePaginacionInvertida[i].pid = -1;
 		tablaDePaginacionInvertida[i].pagina = -1;
