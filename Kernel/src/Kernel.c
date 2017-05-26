@@ -53,29 +53,9 @@ void inicializarSemaforo(){
 
 
 
-///------FUNCIONES Y PROTOCOLOS COMUNES----//
-/// *** Esto Funciona
-/*void errorEn(int valor,char * donde){
-	if(valor == -1)
-		printf("%s\n", donde);
-}*/
-
-//---FIN FUNCIONES COMUNES---//
-
-
-
-
-
 ///-----FUNCIONES CONSOLA-------//
 
-/// *** Falta probar!
-//***Esta funcion busca todos los procesos que tiene una consola
-/*t_list * avisosDeConsola(int socketConsola){
-	bool buscarPorSocket(AVISO_FINALIZACION * aviso){
-		return (aviso->socketConsola == socketConsola);
-	}
-	return list_filter(avisos, buscarPorSocket);
-}*/
+
 
 /// *** Falta probar! Necesitamos que ande el enviar mensajes
 void consola_enviarAvisoDeFinalizacion(int socketConsola, int pid){
@@ -83,25 +63,8 @@ void consola_enviarAvisoDeFinalizacion(int socketConsola, int pid){
 	enviarMensaje(socketConsola,envioDelPidEnSeco,&pid,sizeof(int));
 }
 
-/// *** Falta probar! Necesitamos que ande el enviar mensajes
-///***Me falto borrarlo de la lista de avisos
-void consola_finalizacionPorDirectiva(int socketConsola, int pid, int idError){
-/*
-	PCB_DATA * pcb = buscarPCBPorPidYBorrar(pid);
-	if(pcb != NULL){
-		pcb->exitCode = idError;
-		queue_push(cola_Finished,pcb);
-		//**Le mando un 1 diciendo que salio todao ok
-		enviarMensaje(socketConsola,1,1,sizeof(int));
-		consola_enviarAvisoDeFinalizacion(socketConsola, pid);
-	}
-	else
-		//***Le mando un 0 diciendo que no pude encontrar el pcb
-		enviarMensaje(socketConsola,1,0,sizeof(int));*/
-}
 
 /// *** Falta probar! Necesitamos que ande el enviar mensajes
-
 void consola_finalizarTodosLosProcesos(int socketConsola){
 
 	void cambiar(PROCESOS * process){
@@ -207,8 +170,8 @@ void newToReady(){
 			char** scriptEnPaginas = memoria_dividirScriptEnPaginas(cant_paginas, programaAnsisop->scriptAnsisop);
 
 			//***Le envio a memoria tiodo el scrip pagina a pagina
-			int i=0;
-			for(i; i<cant_paginas && *ok; i++)
+			int i;
+			for(i=0; i<cant_paginas && *ok; i++)
 			{
 				enviarMensaje(socketMemoria,envioCantidadPaginas,scriptEnPaginas[i],size_pagina);
 				printf("Envio una pagina: %d\n", i);
@@ -216,9 +179,9 @@ void newToReady(){
 				recibirMensaje(socketMemoria,&ok);
 			}
 
+			//***Le envio a memoria las paginas del stack
 			char * paginasParaElStack;
-			paginasParaElStack = string_repeat('*',size_pagina);
-
+			paginasParaElStack = string_repeat(' ',size_pagina);
 			for(i=0; i<stack_size && *ok;i++)
 			{
 				enviarMensaje(socketMemoria,envioCantidadPaginas,paginasParaElStack,size_pagina);
@@ -231,8 +194,6 @@ void newToReady(){
 
 
 			programaAnsisop->pcb->contPags_pcb= cant_paginas+stack_size;
-			programaAnsisop->pcb->indiceStack= cant_paginas+1;
-
 
 			//***Añado el pcb a la cola de Ready
 			queue_push(cola_Ready,programaAnsisop->pcb);
@@ -418,49 +379,53 @@ typedef struct{
 	bool ocupada;
 }CPUS_EN_USO;
 
-
 /// *** Esta rutina se comenzará a hacer cuando podramos comenzar a enviar mensajes entre procesos
 void *rutinaCPU(void * arg)
 {
 	int socketCPU = (int)arg;
-}
 
+	bool todaviaHayTrabajo = true;
+	void * stream;
+	int accionCPU;
+	int cont=0;
 
-/* Esta rutina mepa recontra re murio ya
-/// *** Esta Función esta probada y anda
-//***Esta rutina solo revisa una lista de procesos y si algun terminó, se lo avisa a su consola correspondiente
-void * revisarFinalizados(){
-	while(1){
+	printf("[Rutina rutinaCPU] - Entramos al hilo de la consola: %d!\n", accionCPU);
 
-		sleep(10);
-		printf("[Rutina revisarFinalizados] - Entro al while 1 de la rutina de finalizados\n");
+	while(todaviaHayTrabajo){
+		accionCPU = recibirMensaje(socketCPU,&stream);
 
-		int pos = 0;
+		switch(accionCPU){
+			case pedirPCB:{
 
-		bool busqueda(AVISO_FINALIZACION * aviso)
-		{
-			if(aviso->finalizado){
-				return true;
-			}
-			pos++;
-			return false;
+				PCB_DATA* pcb = queue_peek(cola_Ready);
+
+				enviarMensaje(socketCPU,envioPCB,pcb,sizeof(PCB_DATA));
+
+				queue_pop(cola_Ready);
+				queue_push(cola_Exec,pcb);
+
+				// POner semaforos
+
+			}break;
+			case 0:{
+				printf("[Rutina rutinaCPU] - Desconecta la CPU\n");
+				todaviaHayTrabajo=false;
+			}break;
+			default:{
+				printf("[Rutina rutinaCPU] - Se recibio una accion que no esta contemplada:%d se cerrara el socket\n",accionCPU);
+				todaviaHayTrabajo=false;
+			}break;
 		}
-
-		sem_wait(&mutex_colaProcesos);
-		//**Si algun elemento de la lista se encuentra en estado finalizado, se avisa a la consola y se elimina el proceso de la lista
-		if(list_any_satisfy(avisos, busqueda)){
-			AVISO_FINALIZACION* aux =(AVISO_FINALIZACION*)list_find(avisos, busqueda);
-			//**Le avisamos a la consola apropiada a traves del socket que esta en la estructura de avisos, que cierto pid esta en estado finalizado
-			consola_enviarAvisoDeFinalizacion(aux->socketConsola, aux->pid);
-
-			//**Eliminamos el nodo de la lista
-			list_remove_and_destroy_element(avisos,pos,free);//***No se si esto tiene memory leaks-- revisar
-		}
-		sem_post(&mutex_colaProcesos);
 	}
-}
-*/
 
+	close(socketCPU);
+}
+
+typedef struct{
+	int size_pag;
+	int quantum;
+	int size_stack;
+}__attribute__((packed)) DATOS_PARA_CPU;
 
 /// *** Esta Función esta probada y anda
 void * aceptarConexiones_Cpu_o_Consola( void *arg ){
@@ -482,15 +447,25 @@ void * aceptarConexiones_Cpu_o_Consola( void *arg ){
 			case Consola: // Si es un cliente conectado es una CPU
 			{
 				printf("\nNueva Consola Conectada!\nSocket Consola %d\n\n", nuevoSocket);
-				//pthread_create(&hilo_M, NULL, rutinaConsola, nuevoSocket);
+				pthread_create(&hilo_M, NULL, rutinaConsola, nuevoSocket);
 
-				rutinaConsola(nuevoSocket);
 			}break;
 
 			case CPU: // Si el cliente conectado es el cpu
 			{
 				printf("Nueva CPU Conectada\nSocket CPU %d\n\n", nuevoSocket);
+
+				DATOS_PARA_CPU datosCPU;
+
+				datosCPU.size_pag=size_pagina;
+				datosCPU.quantum=quantumRR;
+				datosCPU.size_stack=stack_size;
+
+				enviarMensaje(nuevoSocket,enviarDatosCPU,&datosCPU,sizeof(int)*3);
+
 				//pthread_create(&hilo_M, NULL, rutinaCPU, nuevoSocket);
+
+				rutinaCPU(nuevoSocket);
 			}break;
 
 			default:
@@ -642,6 +617,7 @@ int main(void) {
 		imprimirConfiguracion();
 
 		stack_size = getConfigInt("STACK_SIZE");
+		quantumRR = -1 ;//getConfigInt("QUANTUM");
 	///-----------------------------////
 
 

@@ -53,6 +53,7 @@ enum tipos_de_Acciones{
 		pidFinalizadoPorFaltaDeMemoria = 4,
 		errorFinalizacionPid = 5,
 		pidFinalizado = 6,
+		enviarDatosCPU = 7,
 
 	//***Todas las acciones del CPU
 		asignarValor = 101,

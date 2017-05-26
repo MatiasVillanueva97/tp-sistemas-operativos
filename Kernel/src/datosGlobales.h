@@ -31,6 +31,8 @@ int socketFS;
 int historico_pid;
 int stack_size;
 int size_pagina;
+int quantumRR;
+
 
 ///------ESTRUCTURAS AUXILIARES ADMNISTRATIVAS------///
 
