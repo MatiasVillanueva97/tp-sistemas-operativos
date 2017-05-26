@@ -57,6 +57,7 @@ enum tipos_de_Acciones{
 	//***Todas las acciones del CPU
 		asignarValor = 101,
 		pedirValor = 102,
+		pedirPCB = 103,
 
 	//***Todas las acciones del Memoria
 		enviarTamanoPaginas = 200,

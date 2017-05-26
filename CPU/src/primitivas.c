@@ -410,7 +410,7 @@ t_direccion calcularNuevaDireccion(){
 		asignarDireccionRespectoA(pcb->contextoActual, &direccion);
 	}
 
-	if(direccion.offset > tamanioPagina){
+	if(direccion.offset > datosIniciales->size_pag){
 		direccion.page++;
 		direccion.offset = 0;
 	}
@@ -424,7 +424,7 @@ t_direccion calcularNuevaDireccion(){
 
 //NO HARDCODEAR EL TAMANIO DE LA PAGINA
 t_puntero calcularPuntero(t_direccion direccion){
-	t_puntero puntero = direccion.page * tamanioPagina + direccion.offset;
+	t_puntero puntero = direccion.page * datosIniciales->size_pag + direccion.offset;
 	printf("En base a la direccion %d %d %d calculo la posicion %d \n",direccion.page,direccion.offset,direccion.size,puntero);
 	return puntero;
 }
@@ -433,12 +433,12 @@ t_puntero calcularPuntero(t_direccion direccion){
 t_direccion calcularDireccion(t_puntero puntero){
 	t_direccion direccion;
 
-	if(tamanioPagina > puntero){
+	if(datosIniciales->size_pag > puntero){
 		direccion.page = 1;
 		direccion.offset = puntero;
 	}else{
-		direccion.page = puntero/tamanioPagina;
-		direccion.offset = puntero % tamanioPagina;
+		direccion.page = puntero/datosIniciales->size_pag;
+		direccion.offset = puntero % datosIniciales->size_pag;
 	}
 	direccion.size = 4;
 
@@ -518,6 +518,5 @@ void asignarDireccionRespectoA(int contexto, t_direccion* direccion){
 
 //Devuelve la pagina donde comienza en el stack
 int paginaInicio(){
-	//ASUMIENDO QUE ESE CAMPO DEL PCB TIENE EL VALOR DE LA CANTIDAD DE PAGINAS DE CODIGO, HABLAR CON LOS CHICOS QUE ES  CONSULTAR
-	return pcb->contPags_pcb + 1;
+	return pcb->contPags_pcb - datosIniciales->size_stack + 1;
 }

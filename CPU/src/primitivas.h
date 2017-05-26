@@ -23,16 +23,10 @@
 #include "../../Nuestras/src/laGranBiblioteca/datosGobalesGenerales.h"
 
 
-int a,b,o,f;
-t_direccion dirA,dirB,dirO,dirF;
-
-//HARDCODEADISIMO PAPU
-#define tamanioPagina 256
-
 typedef struct{
  int pid;
  char* mensaje;
-} t_mensajeDeProceso;
+}__attribute__((packed)) t_mensajeDeProceso;
 
 	t_direccion calcularDireccion(t_puntero puntero);
 

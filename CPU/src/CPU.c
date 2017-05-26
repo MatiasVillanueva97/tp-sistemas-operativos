@@ -82,46 +82,25 @@ int main(void)
 
  	conectarConMemoria();
 
+ 	if(recibirMensaje(socketKernel,(void*)&datosIniciales) != 7) perror("Kernel que es esta basura? Dame mis datos para comenzar");
+
+
  	//ESTE GRAN WHILE(1) ESTA COMENTADO PORQUE EN REALIDAD ES PARA RECIBIR UN PCB ATRAS DE OTRO Y EJECUTARLOS HASTA QUE EL KERNEL ME DIGA MORITE HIPPIE
 
 	//while(1){
-		terminoPrograma = false;
+
+ 		int quantumUsado = 0;
+
+ 		terminoPrograma = false;
 
 		// Recepcion del pcb
 		puts("esperando pcb\n");
-		/*
-		void* stream;
-		int accion = recibirMensaje(socketKernel,stream);
-		switch(accion){
-			case envioPCB:{
-				pcb = deserealizarPCB(stream);
-				break;
-			}
-			default:{
-				perror("Error en la accion maquinola");
-			}
-		}*/
 
-		t_metadata_program *metadata = metadata_desde_literal(script);
+		enviarMensaje(socketKernel,pedirPCB,NULL,0);
 
-		pcb->pid = 1;
-		pcb->contPags_pcb = 1;
-		pcb->contextoActual = 0;
-		pcb->exitCode = 0;
-		pcb->indiceCodigo = metadata->instrucciones_serializado;
-		pcb->indiceEtiquetas = metadata->etiquetas;
-		pcb->cantidadDeEtiquetas = metadata->cantidad_de_etiquetas; /// HAY QUE VER ESTO; ACAAAAAAA MIRENME SOY UN COMENTARIO WUOWUOWUWOUWOWUOWUWOWWWOOO
+		if(recibirMensaje(socketKernel,(void*)&pcb) != envioPCB) perror("Error en la accion maquinola");
 
-		pcb->indiceStack = malloc(sizeof(t_entrada));
-		pcb->indiceStack->argumentos = list_create();
-		pcb->indiceStack->variables = list_create();
-
-		pcb->cantidadDeEntradas = 1;
-		pcb->cantidadDeInstrucciones = metadata->instrucciones_size;
-		pcb->programCounter = metadata->instruccion_inicio;
-
-
-		while(!terminoPrograma){
+		while(!terminoPrograma && datosIniciales->quantum != quantumUsado){
 
 			t_pedidoMemoria pedido;
 			pedido.id = pcb->pid;

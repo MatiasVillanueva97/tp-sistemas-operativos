@@ -12,8 +12,15 @@
 #ifndef ESTACOSA
 #define ESTACOSA
 
+typedef struct{
+ int size_pag;
+ int quantum;
+ int size_stack;
+}__attribute__((packed)) t_datosIniciales;
+
 int socketKernel;
 int socketMemoria;
 PCB_DATA* pcb;
 bool terminoPrograma;
+t_datosIniciales* datosIniciales;
 #endif //ESTACOSA
