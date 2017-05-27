@@ -5,14 +5,17 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../src/Kernel.c \
+../src/funcionesMemoria.c \
 ../src/funcionesPCB.c 
 
 OBJS += \
 ./src/Kernel.o \
+./src/funcionesMemoria.o \
 ./src/funcionesPCB.o 
 
 C_DEPS += \
 ./src/Kernel.d \
+./src/funcionesMemoria.d \
 ./src/funcionesPCB.d 
 
 

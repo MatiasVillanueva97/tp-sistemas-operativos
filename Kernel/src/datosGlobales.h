@@ -56,6 +56,12 @@ int pid;
 int cantPags;
 }__attribute__((packed))INICIALIZAR_PROGRAMA;
 
+//*** Estructura que le envio a la cpu al principio con todos lo datos que esta necesitará
+typedef struct{
+	int size_pag;
+	int quantum;
+	int size_stack;
+}__attribute__((packed)) DATOS_PARA_CPU;
 
 
 ///------FIN ESTRUCTURAS AUXILIARES ADMNISTRATIVAS------///
@@ -64,9 +70,11 @@ int cantPags;
 t_queue * cola_New;
 t_queue * cola_Ready;
 t_queue * cola_Wait;
-
 t_queue * cola_Exec;
 t_queue * cola_Finished;
+
+t_queue * cola_CPUs_libres;
+
 ///-------FIN COLAS------//
 
 

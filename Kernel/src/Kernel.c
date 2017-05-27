@@ -32,14 +32,17 @@
 
 #include "datosGlobales.h"
 #include "funcionesPCB.h"
+#include "funcionesMemoria.h"
 
 
 
 ///----INICIO SEMAFOROS----///
 pthread_mutex_t mutex_HistoricoPcb; // deberia ser historico pid
 pthread_mutex_t mutex_listaProcesos;
+pthread_mutex_t mutex_cola_CPUs_libres;
 pthread_mutex_t mutex_cola_New;
-pthread_mutex_t nuevaCPU;
+pthread_mutex_t mutex_cola_Ready;
+pthread_mutex_t mutex_cola_Exec;
 pthread_mutex_t mutex_cola_Finished;
 
 sem_t* contadorDeCpus = 0;
@@ -47,8 +50,10 @@ sem_t* contadorDeCpus = 0;
 void inicializarSemaforo(){
 	sem_init(&mutex_HistoricoPcb,0,1);
 	sem_init(&mutex_listaProcesos,0,1);
+	sem_init(&mutex_cola_CPUs_libres,0,1);
 	sem_init(&mutex_cola_New,0,1);
-	sem_init(&nuevaCPU,0,0);
+	sem_init(&mutex_cola_Exec,0,1);
+	sem_init(&mutex_cola_Ready,0,1);
 	sem_init(&mutex_cola_Finished,0,1);
 }
 ///----FIN SEMAFOROS----///
@@ -58,15 +63,16 @@ void inicializarSemaforo(){
 ///-----FUNCIONES CONSOLA-------//
 
 
-
 /// *** Falta probar! Necesitamos que ande el enviar mensajes
+///*** Esta funcion le avisa a la consola que un cierto proceso (pid) ya termino
 void consola_enviarAvisoDeFinalizacion(int socketConsola, int pid){
 	printf("[Función consola_enviarAvisoDeFinalizacion] - Se Envía a Consola el pid: %d, porque ha finalizado!\n", pid);
 	enviarMensaje(socketConsola,envioDelPidEnSeco,&pid,sizeof(int));
 }
 
 
-/// *** Falta probar! Necesitamos que ande el enviar mensajes
+/// *** Funciona
+/// *** Esta funcion finalizara todos los procesos que sean de una consola que se acaba de desconectar
 void consola_finalizarTodosLosProcesos(int socketConsola){
 
 	void cambiar(PROCESOS * process){
@@ -97,44 +103,11 @@ void consola_finalizarTodosLosProcesos(int socketConsola){
 
 
 
-
 ///---FUNCIONES DEL KERNEL----//
 
-/// *** Esta función esta probada y quasi-anda --- no anda uno de los freee de de adentro, que ahora esta comentado.. El programa sigue andando pero podemos tener memory leaks
-/*void liberar_Programa_En_New(PROGRAMAS_EN_NEW * programaNuevo)
-{
-	free(programaNuevo->scriptAnsisop); El que no este esta cosa puede traer memory leaks
-	free(programaNuevo);
-}*/
 
-/// *** Esta función esta probada y anda
-//*** Esta funcion te divide el scriptAnsisop en una cantidad de paginas dadas, el size de cada pagina esta en el config
-char** memoria_dividirScriptEnPaginas(int cant_paginas, char *copiaScriptAnsisop)
-{
-	char * scriptDivididoEnPaginas[cant_paginas];
-	int i;
-	for(i=0;i<cant_paginas;i++){
-		scriptDivididoEnPaginas[i] = malloc(size_pagina);
-		memcpy(scriptDivididoEnPaginas[i],copiaScriptAnsisop+i*size_pagina,size_pagina);
-		printf("[memoria_dividirScriptEnPaginas] - %s",scriptDivididoEnPaginas[i]);
-	}
-	if(strlen(scriptDivididoEnPaginas[i-1]) < size_pagina){
-		char* x = string_repeat(' ',size_pagina-strlen(scriptDivididoEnPaginas[i-1]));
-		string_append(&(scriptDivididoEnPaginas[i-1]),x);
-	}
-	return scriptDivididoEnPaginas;
-}
-
-/// *** Esta función esta probada y anda
-//***Esta Funcion te devuelve la cantidad de paginas que se van a requerir para un scriptAsisop dado
-int memoria_CalcularCantidadPaginas(char * scriptAnsisop)
-{
-  return  ceil(((double)(strlen(scriptAnsisop))/((double) size_pagina)));
-}
-
-
-/// *** A esta función solo le faltan dos cosas, 1- la funcion consola_finalizacionPorNoMemoria ; (no esta desarrollada) y porbar tuodos los enviar y recibir mensajes con memoria
-//***Funciones de Planificador
+/// *** Esta función Anda
+//***Funciones de Planificador a largo plazo - Esta funcion te pasa los procesos, (que no hayan finalizado), a la cola de ready;
 void newToReady(){
 
 	printf("\n\n\nEstamos en la función newToReady a largo plazo!\n\n");
@@ -261,6 +234,14 @@ bool proceso_finalizacionExterna(int pid, int exitCode)
 	return flag;
 }
 
+
+
+
+
+
+
+
+
 ///---FIN FUNCIONES DEL KERNEL----//
 
 
@@ -377,15 +358,18 @@ void *rutinaConsola(void * arg)
 	close(socketConsola);
 }
 
-typedef struct{
-	int socketCPU;
-	bool ocupada;
-}CPUS_EN_USO;
 
 /// *** Esta rutina se comenzará a hacer cuando podramos comenzar a enviar mensajes entre procesos
 void *rutinaCPU(void * arg)
 {
 	int socketCPU = (int)arg;
+
+	//*** Le envio a la CPU todos los datos qeu esta necesitara para poder trabajar, como el tamaño de una pagina de memoria, el quantum y la cantidad de paginas que ocupa un stack
+	DATOS_PARA_CPU datosCPU;
+	datosCPU.size_pag=size_pagina;
+	datosCPU.quantum=quantumRR;
+	datosCPU.size_stack=stack_size;
+	enviarMensaje(socketCPU,enviarDatosCPU,&datosCPU,sizeof(int)*3);
 
 	bool todaviaHayTrabajo = true;
 	void * stream;
@@ -393,28 +377,36 @@ void *rutinaCPU(void * arg)
 
 	printf("[Rutina rutinaCPU] - Entramos al hilo de la CPU: %d!\n", socketCPU);
 
+	//*** Voy a trabajar con esta CPU hasta que se deconecte
 	while(todaviaHayTrabajo){
+
+		//*** Recibo la accion por parte de la CPU
 		accionCPU = recibirMensaje(socketCPU,&stream);
 
 		switch(accionCPU){
+			//*** La CPU me pide un PCB para poder trabajar
 			case pedirPCB:{
 
 				printf("[Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- %d!\n", pedirPCB);
 
-				PCB_DATA* pcb = queue_peek(cola_Ready);
-
+				PCB_DATA* pcb = queue_peek(cola_Exec);
 				void* pcbSerializado = serializarPCB(pcb);
 
 				enviarMensaje(socketCPU,envioPCB,pcbSerializado,tamanoPCB(pcb) + 4);
 
-				queue_pop(cola_Ready);
-				queue_push(cola_Exec,pcb);
-
-				// POner semaforos
-
 			}break;
 			case enviarPCBaTerminado:{
 				//TE MANDO UN PCB QUE YA TERMINE DE EJECUTAR POR COMPLETO, ARREGLATE LAS COSAS DE MOVER DE UNA COLA A LA OTRA Y ESO
+
+				printf("[Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- %d!\n", pedirPCB);
+
+				PCB_DATA* pcb = deserializarPCB(stream);
+
+				queue_pop(cola_Exec);
+
+				queue_push(cola_Finished,pcb);
+
+
 			}break;
 			case enviarPCBaReady:{
 				//TE MANDO UN PCB QUE TERMINA PORQUE SE QUEDO SIN QUANTUM, ARREGLATE LAS COSAS DE MOVER DE UNA COLA A LA OTRA Y ESO
@@ -437,11 +429,11 @@ void *rutinaCPU(void * arg)
 				//TE MANDO EL NOMBRE DE UNA VARIABLE COMPARTIDA Y ME DEBERIAS DEVOLVER SU VALOR
 			}break;
 			case 0:{
-				printf("[Rutina rutinaCPU] - Desconecta la CPU\n");
+				printf("[Rutina rutinaCPU] - Desconecta la CPU N°: %d\n", socketCPU);
 				todaviaHayTrabajo=false;
 			}break;
 			default:{
-				printf("[Rutina rutinaCPU] - Se recibio una accion que no esta contemplada:%d se cerrara el socket\n",accionCPU);
+				printf("[Rutina rutinaCPU] - Se recibio una accion que no esta contemplada: %d se cerrara el socket\n",accionCPU);
 				todaviaHayTrabajo=false;
 			}break;
 		}
@@ -450,11 +442,6 @@ void *rutinaCPU(void * arg)
 	close(socketCPU);
 }
 
-typedef struct{
-	int size_pag;
-	int quantum;
-	int size_stack;
-}__attribute__((packed)) DATOS_PARA_CPU;
 
 /// *** Esta Función esta probada y anda
 void * aceptarConexiones_Cpu_o_Consola( void *arg ){
@@ -476,6 +463,8 @@ void * aceptarConexiones_Cpu_o_Consola( void *arg ){
 			case Consola: // Si es un cliente conectado es una CPU
 			{
 				printf("\nNueva Consola Conectada!\nSocket Consola %d\n\n", nuevoSocket);
+
+				/// CAmbiar este hilo a uno desetachable
 				pthread_create(&hilo_M, NULL, rutinaConsola, nuevoSocket);
 
 			}break;
@@ -484,17 +473,10 @@ void * aceptarConexiones_Cpu_o_Consola( void *arg ){
 			{
 				printf("Nueva CPU Conectada\nSocket CPU %d\n\n", nuevoSocket);
 
-				DATOS_PARA_CPU datosCPU;
+				//wait(&mutex_cola_CPUs_libres);
+					queue_push(cola_CPUs_libres,nuevoSocket);
+				//post(&mutex_cola_CPUs_libres);
 
-				datosCPU.size_pag=size_pagina;
-				datosCPU.quantum=quantumRR;
-				datosCPU.size_stack=stack_size;
-
-				enviarMensaje(nuevoSocket,enviarDatosCPU,&datosCPU,sizeof(int)*3);
-
-				printf("Socket CPU %d\n\n", nuevoSocket);
-
-				rutinaCPU(nuevoSocket);
 			}break;
 
 			default:
@@ -532,7 +514,7 @@ bool hayProgramasEnNew()
 //*** Rutina que te pasa los procesos de new a ready - anda bien
 void * planificadorLargoPlazo()
 {
-	printf("Entramos al planificador de largo plazo!\n");
+	printf("[rutina planificadorLargoPlazo] - Entramos al planificador de largo plazo!\n");
 	while(1)
 	{
 		if(cantidadProgramasEnProcesamiento() < getConfigInt("GRADO_MULTIPROG") && hayProgramasEnNew())
@@ -543,18 +525,97 @@ void * planificadorLargoPlazo()
 	}
 }
 
-void * planificadorCortoPlazo()
+//*** Esta funcion te dice si hay cpus disponibles
+bool hayCpusDisponibles(){
+	sem_wait(&mutex_cola_CPUs_libres);
+		bool valor = queue_size(cola_CPUs_libres) > 0;
+	sem_post(&mutex_cola_CPUs_libres);
+
+	return valor;
+}
+
+//*** Esta funcion te dice si hay programas en ready
+bool hayProcesosEnReady(){
+	sem_wait(&mutex_cola_Ready);
+		bool valor = queue_size(cola_Ready) > 0;
+	sem_post(&mutex_cola_Ready);
+
+	return valor;
+}
+
+
+///*** Quito el primer elemento de la cola de ready, valido que no haya sido finalizado y lo pongo en la cola de exec
+PCB_DATA* tomarPCBdeReady()
 {
+//	wait(&mutex_cola_Ready);
+//	wait(&mutex_cola_Exec);
+
+	//*** Tomo el primer elemento de la cola de ready y lo quito
+	PCB_DATA* pcb = queue_peek(cola_Ready);
+	queue_pop(cola_Ready);
+
+	//*** Valido que el proceso no haya sido terminado ya
+	if(pcb->exitCode != 53)
+	{
+		//*** Si ya fue finalizado lo paso a la cola de finalizados
+//		wait(&mutex_cola_Finished);
+			queue_push(cola_Finished,pcb);
+//		post(&mutex_cola_Finished);
+
+		//*** valido si aun quedan procesos en la cola de ready para seguir buscando un pcb para trabajar
+		if(queue_size(cola_Ready)>0){
+
+			//*** Si como aun quedan porcesos en la cola de ready vuelvo a llamar a la funcion tomarPCBdeReady
+//			post(&mutex_cola_Exec);
+//			post(&mutex_cola_Ready);
+			pcb = tomarPCBdeReady();
+		}
+		else
+		{
+			//** En caso de que ya no haya mas procesos para trabajar, devuelvo null
+//			post(&mutex_cola_Exec);
+//			post(&mutex_cola_Ready);
+			return NULL;
+		}
+	}
+
+	//*** Como el proceso que encontre no esta terminado, entonces lo pongo en la cola de excec y lo retorno
+	queue_push(cola_Exec,pcb);
+
+//	post(&mutex_cola_Exec);
+//	post(&mutex_cola_Ready);
+	return pcb;
+}
+
+void * readyToExec()
+{
+	printf("[Rutina readyToExec] - Entramos al planificador de corto plazo!\n");
+
 	while(1)
 	{
-		sem_wait(&nuevaCPU);
-		sleep(1);
-		printf("Entramos al planificador de corto plazo!\n");
+		if(hayCpusDisponibles() && hayProcesosEnReady())
+		{
+			PCB_DATA* pcb;
+			///*** Quito el primer elemento de la cola de ready, valido que no haya sido finalizado y lo pongo en la cola de exec - en caso de no encontrar uno para poder trabajar no hago nada
+			if((pcb = tomarPCBdeReady()) != NULL)
+			{
+				//*** Agarro una cpu que este disponible
+			//	wait(&mutex_cola_CPUs_libres);
+					int cpuParaTrabajar = queue_peek(cola_CPUs_libres);
+					queue_pop(cola_CPUs_libres);
+			//	post(&mutex_cola_CPUs_libres);
+
+				printf("[Rutina readyToExec] - Se crea un nuevo hilo para que la CPU N°: %d trabaje con el proceso N°: %d\n", cpuParaTrabajar, pcb->pid);
 
 
-		printf("No nos da el grado de multi programación ni hay programas en new!\n");
-		//getConfigIntArrayElement("SEM_IDS",2);
-		//	setConfigInt("GRADO_MULTIPROG",3);
+				//*** Llamo a una rutina CPU que va a estar trabajando con la cpu que le paso por parametro -- Cambiar tipo de hilo
+				pthread_t hilo_rutinaCPU;
+				pthread_create(&hilo_rutinaCPU, NULL, rutinaCPU, cpuParaTrabajar);
+			}
+
+		}
+
+		sleep(10);
 	}
 }
 
@@ -637,6 +698,8 @@ int main(void) {
 		cola_Exec = queue_create();
 		cola_Finished = queue_create();
 
+		cola_CPUs_libres = queue_create();
+
 		//***Inicializo los semaforos
 		inicializarSemaforo();
 
@@ -669,12 +732,17 @@ int main(void) {
 	pthread_t hilo_planificadorLargoPlazo;
 	pthread_create(&hilo_planificadorLargoPlazo, NULL, planificadorLargoPlazo, NULL);
 
+	pthread_t hilo_readyToExec;
+	pthread_create(&hilo_readyToExec, NULL, readyToExec, NULL);
+
+
 	//----ME PONGO A ESCUCHAR CONEXIONES---//
 	pthread_t hilo_aceptarConexiones_Cpu_o_Consola;
 	pthread_create(&hilo_aceptarConexiones_Cpu_o_Consola, NULL, aceptarConexiones_Cpu_o_Consola, listener);
 
 
 	pthread_join(hilo_aceptarConexiones_Cpu_o_Consola, NULL);
+	pthread_join(hilo_readyToExec, NULL);
 	pthread_join(hilo_planificadorLargoPlazo, NULL);
 
 	while(1)
