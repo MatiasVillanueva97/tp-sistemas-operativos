@@ -15,11 +15,9 @@ PCB_DATA* crearPCB(char * scriptAnsisop, int pid, int contPags){
 		pcb->indiceEtiquetas = metadata->etiquetas;
 		pcb->cantidadDeEtiquetas = metadata->cantidad_de_etiquetas;
 
-		pcb->indiceStack = malloc(sizeof(t_entrada));
-		pcb->indiceStack->argumentos = list_create();
-		pcb->indiceStack->variables = list_create();
+		pcb->indiceStack = NULL;
 
-		pcb->cantidadDeEntradas = 1;
+		pcb->cantidadDeEntradas = 0;
 		pcb->cantidadDeInstrucciones = metadata->instrucciones_size;
 		pcb->programCounter = metadata->instruccion_inicio;
 

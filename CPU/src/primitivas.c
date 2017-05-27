@@ -27,6 +27,13 @@ t_puntero AnSISOP_definirVariable(t_nombre_variable identificador_variable){
 	t_direccion direccion;
 	t_variable* variable = malloc(sizeof(t_variable));
 
+
+	if(pcb->indiceStack == NULL){
+		pcb->indiceStack = malloc(sizeof(t_entrada));
+		pcb->indiceStack->argumentos = list_create();
+		pcb->indiceStack->variables = list_create();
+	}
+
 	direccion = calcularNuevaDireccion();
 
 	variable->ID = identificador_variable;
@@ -41,12 +48,7 @@ t_puntero AnSISOP_definirVariable(t_nombre_variable identificador_variable){
 	if(isalpha(identificador_variable)){
 		list_add(pcb->indiceStack[pcb->contextoActual].variables,variable);
 	}
-/*
-	if(identificador_variable == 'a') dirA = direccion;
-	if(identificador_variable == 'b') dirB = direccion;
-	if(identificador_variable == '0') dirO = direccion;
-	if(identificador_variable == 'f') dirF = direccion;
-*/
+
 	printf("Defini %c le asigne la direccion: %d %d %d \n",identificador_variable,direccion.page,direccion.offset,direccion.size);
 
 	return calcularPuntero(direccion);
@@ -133,7 +135,7 @@ void AnSISOP_irAlLabel(t_nombre_etiqueta nombre_etiqueta){
 	puntero = metadata_buscar_etiqueta(nombre_etiqueta,pcb->indiceEtiquetas,pcb->cantidadDeEtiquetas);
 
 	//Como es el numero de la siguiente instruccion a ejecutar se le asigna al ProgramCounter para que el programa siga a partir de ahi
-	pcb->programCounter = puntero;
+	pcb->programCounter = 5;
 
 }
 
@@ -148,11 +150,12 @@ void AnSISOP_llamarSinRetorno(t_nombre_etiqueta etiqueta){
 	//Se guarda en el contexto actual cual es la posicion de la instruccion siguiente que debe ejecutar al volver de la funcion
 	pcb->indiceStack[pcb->contextoActual].retPos = pcb->programCounter + 1;
 
+	//Se actualiza la cantidad de entradas en el Stack
+	pcb->cantidadDeEntradas++;
+
 	//Para que luego siga la ejecucion en la funcion
 	AnSISOP_irAlLabel(etiqueta);
 
-	//Se actualiza la cantidad de entradas en el Stack
-	pcb->cantidadDeEntradas++;
 
 }
 
@@ -170,11 +173,12 @@ void AnSISOP_llamarConRetorno(t_nombre_etiqueta etiqueta,t_puntero donde_retorna
 	//Se guarda en el contexto actual cual es la direccion de la variable a la que se le asignara el valor que retornara esta funcion
 	pcb->indiceStack[pcb->contextoActual].retVar = calcularDireccion(donde_retornar);
 
+	//Se actualiza la cantidad de entradas en el Stack
+	pcb->cantidadDeEntradas++;
+
 	//Para que luego siga la ejecucion en la funcion
 	AnSISOP_irAlLabel(etiqueta);
 
-	//Se actualiza la cantidad de entradas en el Stack
-	pcb->cantidadDeEntradas++;
 
 }
 
@@ -199,7 +203,7 @@ void AnSISOP_finalizar(void){
 		puts("Se finalizo la ultima instruccion de una funcion");
 
 		//Se cambia el ProgramCounter para que siga la ejecucion a partir de la siguiente instruccion de la funcion anterior
-		pcb->programCounter = pcb->indiceStack[pcb->contextoActual].retPos;
+		pcb->programCounter = pcb->indiceStack[pcb->contextoActual].retPos - 1;
 
 		//Se libera la memoria de esa entrada
 		list_destroy_and_destroy_elements(pcb->indiceStack[pcb->contextoActual].argumentos, free);
@@ -222,7 +226,7 @@ void AnSISOP_retornar(t_valor_variable retorno){
 	escribirirValorEnMemoria(pcb->indiceStack[pcb->contextoActual].retVar , retorno );
 
 	//Se cambia el ProgramCounter para que siga la ejecucion a partir de la siguiente instruccion de la funcion anterior
-	pcb->programCounter = pcb->indiceStack[pcb->contextoActual].retPos;
+	pcb->programCounter = pcb->indiceStack[pcb->contextoActual].retPos - 1;
 
 	//Se libera la memoria de esa entrada
 	list_destroy_and_destroy_elements(pcb->indiceStack[pcb->contextoActual].argumentos, free);

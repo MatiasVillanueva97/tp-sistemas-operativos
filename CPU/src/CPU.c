@@ -106,7 +106,7 @@ int main(void)
 
 		free(pcbSerializado);
 
-		while(!terminoPrograma && datosIniciales->quantum != quantumUsado){
+		while(!terminoPrograma || datosIniciales->quantum == quantumUsado){
 
 			t_pedidoMemoria pedido;
 			pedido.id = pcb->pid;
@@ -150,12 +150,13 @@ int main(void)
 
 			free(instruccion);
 			free(stream);
-
+			quantumUsado++;
 		}
 
-		//NO SE LIBERA EL MATADATA PORQUE REALMENTE NO VA A ESTAR ACA SINO EN KERNEL Y SOLO TENDRIA QUE LIBERAR MI HERMOSO PCB
 		//libera la memoria malloqueada por el PCB
 		destruirPCB_Puntero(pcb);
+
+		//ACA AVISARLE A KERNEL QUE TERMINE QUE CON ESTE PROCESO
 
 	//}
 
