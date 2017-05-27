@@ -143,6 +143,7 @@ void AnSISOP_llamarSinRetorno(t_nombre_etiqueta etiqueta){
 	puts("AnSISOP_llamarSinRetorno");
 	pcb->contextoActual++;
 
+	pcb->indiceStack = realloc(pcb->indiceStack, sizeof(t_entrada) * (pcb->contextoActual + 1));
 	pcb->indiceStack[pcb->contextoActual].argumentos = list_create();
 	pcb->indiceStack[pcb->contextoActual].variables = list_create();
 
@@ -164,6 +165,7 @@ void AnSISOP_llamarConRetorno(t_nombre_etiqueta etiqueta,t_puntero donde_retorna
 
 	pcb->contextoActual++;
 
+	pcb->indiceStack = realloc(pcb->indiceStack, sizeof(t_entrada) * (pcb->contextoActual + 1));
 	pcb->indiceStack[pcb->contextoActual].argumentos = list_create();
 	pcb->indiceStack[pcb->contextoActual].variables = list_create();
 
