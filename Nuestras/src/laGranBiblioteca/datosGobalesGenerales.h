@@ -59,6 +59,8 @@ enum tipos_de_Acciones{
 		asignarValor = 101,
 		pedirValor = 102,
 		pedirPCB = 103,
+		enviarPCBaTerminado = 104,
+		enviarPCBaReady = 105,
 
 	//***Todas las acciones del Memoria
 		enviarTamanoPaginas = 200,

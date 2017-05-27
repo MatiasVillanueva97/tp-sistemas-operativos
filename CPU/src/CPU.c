@@ -90,13 +90,13 @@ int main(void)
 
 	//while(1){
 
- 		int quantumUsado = 0;
+ 		int quantumRestante = datosIniciales->quantum;
 
  		terminoPrograma = false;
 
 		// Recepcion del pcb
 
-		enviarMensaje(socketKernel,pedirPCB,&quantumUsado,sizeof(int));
+		enviarMensaje(socketKernel,pedirPCB,&quantumRestante,sizeof(int));
 
 		void* pcbSerializado;
 		puts("esperando pcb\n");
@@ -106,7 +106,7 @@ int main(void)
 
 		free(pcbSerializado);
 
-		while(!terminoPrograma || datosIniciales->quantum == quantumUsado){
+		while(!terminoPrograma && quantumRestante != 0){
 
 			t_pedidoMemoria pedido;
 			pedido.id = pcb->pid;
@@ -150,13 +150,18 @@ int main(void)
 
 			free(instruccion);
 			free(stream);
-			quantumUsado++;
+			quantumRestante--;
+		}
+
+		//ACA AVISARLE A KERNEL QUE TERMINE QUE CON ESTE PROCESO
+		if(terminoPrograma){
+			enviarMensaje(socketKernel,enviarPCBaTerminado,serializarPCB(pcb),tamanoPCB(pcb) + 4);
+		}else{
+			enviarMensaje(socketKernel,enviarPCBaReady,serializarPCB(pcb),tamanoPCB(pcb) + 4);
 		}
 
 		//libera la memoria malloqueada por el PCB
 		destruirPCB_Puntero(pcb);
-
-		//ACA AVISARLE A KERNEL QUE TERMINE QUE CON ESTE PROCESO
 
 	//}
 
