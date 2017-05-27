@@ -34,15 +34,26 @@ enum id_Modulos{
 };
 
 typedef struct{
- int id;
- t_direccion direccion;
- void* valor;
+	int id;
+	t_direccion direccion;
+	void* valor;
 }__attribute__((packed)) t_escrituraMemoria;
 
 typedef struct{
- int id;
- t_direccion direccion;
+	int id;
+	t_direccion direccion;
 }__attribute__((packed)) t_pedidoMemoria;
+
+typedef struct{
+	int valor;
+	t_nombre_compartida variable;
+}__attribute__((packed)) t_asignarValor;
+
+typedef struct{
+	int pid;
+	int descriptorArchivo;
+	char* mensaje;
+}__attribute__((packed)) t_mensajeDeProceso;
 
 enum tipos_de_Acciones{
 	//***Todas las acciones del Kernel al enviar
@@ -61,6 +72,12 @@ enum tipos_de_Acciones{
 		pedirPCB = 103,
 		enviarPCBaTerminado = 104,
 		enviarPCBaReady = 105,
+		mensajeParaEscribir = 106,
+		waitSemaforo = 107,
+		signalSemaforo = 108,
+		asignarValorCompartida = 109,
+		pedirValorCompartida = 110,
+
 
 	//***Todas las acciones del Memoria
 		enviarTamanoPaginas = 200,

@@ -116,11 +116,32 @@ void AnSISOP_asignar(t_puntero direccion_variable, t_valor_variable valor){
 
 t_valor_variable AnSISOP_obtenerValorCompartida(t_nombre_compartida variable){
 	puts("AnSISOP_obtenerValorCompartida");
+
+	printf("Le pido al Kernel que me de el valor de la variable compartida: %s\n",variable);
+	enviarMensaje(socketKernel,pedirValorCompartida,variable,strlen(variable));
+
+	//RECIBIR UN MENSAJE DICIENDO SI ESA VARIABLE EXISTIA REALMENTE
+
+	//ACA RECIBO EL VALOR QUE SE ASIGNO PARA EL RETURN
+
 	return 0;
 }
 
 t_valor_variable AnSISOP_asignarValorCompartida(t_nombre_compartida variable,t_valor_variable valor){
 	puts("AnSISOP_asignarValorCompartida");
+
+	t_asignarValor mensaje = {
+			.valor = valor,
+			.variable = variable
+	};
+
+	printf("Le pido al Kernel que asigne el valor: %d a la variable compartida: %s\n",valor,variable);
+	enviarMensaje(socketKernel,asignarValorCompartida,&mensaje,strlen(variable));
+
+	//RECIBIR UN MENSAJE DICIENDO SI ESA VARIABLE EXISTIA REALMENTE
+
+	//ACA RECIBO EL VALOR QUE SE ASIGNO PARA EL RETURN
+
 	return 0;
 }
 
@@ -261,11 +282,22 @@ void AnSISOP_retornar(t_valor_variable retorno){
 void AnSISOP_wait(t_nombre_semaforo identificador_semaforo){
 	puts("AnSISOP_wait");
 
+	printf("Le pido al Kernel que haga wait del semaforo: %s\n",identificador_semaforo);
+	enviarMensaje(socketKernel,waitSemaforo,identificador_semaforo,strlen(identificador_semaforo));
+
+	//RECIBIR UN MENSAJE DICIENDO SI ESE SEMAFORO EXISTIA REALMENTE
+
+	//RECIBIR UN MENSAJE DICIENDO SI SE BLOQUEA O NO POR EL WAIT... SUPONGO
+
 }
 
 void AnSISOP_signal(t_nombre_semaforo identificador_semaforo){
 	puts("AnSISOP_signal");
 
+	printf("Le pido al Kernel que haga signal del semaforo: %s\n",identificador_semaforo);
+	enviarMensaje(socketKernel,signalSemaforo,identificador_semaforo,strlen(identificador_semaforo));
+
+	//RECIBIR UN MENSAJE DICIENDO SI ESE SEMAFORO EXISTIA REALMENTE
 }
 
 t_puntero AnSISOP_reservar(t_valor_variable espacio){
@@ -300,13 +332,19 @@ void AnSISOP_moverCursor(t_descriptor_archivo descriptor_archivo,t_valor_variabl
 
 void AnSISOP_escribir(t_descriptor_archivo descriptor_archivo, void* informacion, t_valor_variable tamanio){
 	puts("AnSISOP_escribir");
-	t_mensajeDeProceso mensajeDeProceso;
-	mensajeDeProceso.pid = pcb->pid;
-	mensajeDeProceso.mensaje = informacion;
+	t_mensajeDeProceso mensajeDeProceso = {
+			.pid = pcb->pid,
+			.descriptorArchivo = descriptor_archivo,
+			.mensaje = informacion
+	};
 	printf("%s \n",mensajeDeProceso.mensaje);
-	//enviarMensaje(socketKernel,4,&mensajeDeProceso,tamanio + sizeof(int));
 
-	//intentar arreglar esto de otra forma
+	enviarMensaje(socketKernel,mensajeParaEscribir,&mensajeDeProceso,tamanio + sizeof(int)*2);
+
+	//RECIBIR UN MENSAJE DICIENDO SI ESE ARCHIVO EXISTIA REALMENTE
+
+	//RECIBIR UN MENSAJE DICIENDO SI  PODIA ACCEDER A ESE ARCHIVO REALMENTE
+
 }
 
 void AnSISOP_leer(t_descriptor_archivo descriptor_archivo,t_puntero informacion, t_valor_variable tamanio){
