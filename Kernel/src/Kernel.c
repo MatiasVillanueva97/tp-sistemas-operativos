@@ -47,6 +47,8 @@ pthread_mutex_t mutex_cola_Finished;
 
 sem_t* contadorDeCpus = 0;
 
+sem_t sem_ConsolaKernelLenvantada;
+
 void inicializarSemaforo(){
 	sem_init(&mutex_HistoricoPcb,0,1);
 	sem_init(&mutex_listaProcesos,0,1);
@@ -55,6 +57,8 @@ void inicializarSemaforo(){
 	sem_init(&mutex_cola_Exec,0,1);
 	sem_init(&mutex_cola_Ready,0,1);
 	sem_init(&mutex_cola_Finished,0,1);
+
+	sem_init(&sem_ConsolaKernelLenvantada,0,0);
 }
 ///----FIN SEMAFOROS----///
 
@@ -473,9 +477,9 @@ void * aceptarConexiones_Cpu_o_Consola( void *arg ){
 			{
 				printf("Nueva CPU Conectada\nSocket CPU %d\n\n", nuevoSocket);
 
-				//wait(&mutex_cola_CPUs_libres);
+				sem_wait(&mutex_cola_CPUs_libres);
 					queue_push(cola_CPUs_libres,nuevoSocket);
-				//post(&mutex_cola_CPUs_libres);
+				sem_post(&mutex_cola_CPUs_libres);
 
 			}break;
 
@@ -515,9 +519,12 @@ bool hayProgramasEnNew()
 void * planificadorLargoPlazo()
 {
 	printf("[rutina planificadorLargoPlazo] - Entramos al planificador de largo plazo!\n");
-	while(1)
+
+	//*** el booleano finPorConsolaDelKernel esta en false desde el inicio, en el momento en el que el kernel quiera frenar la planificiacion esta variable pasara a true, y se frenara la planificacion
+	while(!finPorConsolaDelKernel)
 	{
-		if(cantidadProgramasEnProcesamiento() < getConfigInt("GRADO_MULTIPROG") && hayProgramasEnNew())
+		//*** Validamos que haya programas en alguna de la cola de new y que la cantidad de procesos que haya entre las colas de ready-excec-bloq sea menor al grado de multiprogramacion permitida
+		if(cantidadProgramasEnProcesamiento() < grado_multiprogramacion && hayProgramasEnNew())
 		{
 			newToReady();
 		}
@@ -544,11 +551,12 @@ bool hayProcesosEnReady(){
 }
 
 
+//**** Esta funcion anda bien, el tema es que tengo comentados todos los semaforos, nose porque tiran error
 ///*** Quito el primer elemento de la cola de ready, valido que no haya sido finalizado y lo pongo en la cola de exec
-PCB_DATA* tomarPCBdeReady()
+PCB_DATA* readyToExec()
 {
-//	wait(&mutex_cola_Ready);
-//	wait(&mutex_cola_Exec);
+	sem_wait(&mutex_cola_Ready);
+	sem_wait(&mutex_cola_Exec);
 
 	//*** Tomo el primer elemento de la cola de ready y lo quito
 	PCB_DATA* pcb = queue_peek(cola_Ready);
@@ -558,23 +566,23 @@ PCB_DATA* tomarPCBdeReady()
 	if(pcb->exitCode != 53)
 	{
 		//*** Si ya fue finalizado lo paso a la cola de finalizados
-//		wait(&mutex_cola_Finished);
+		sem_wait(&mutex_cola_Finished);
 			queue_push(cola_Finished,pcb);
-//		post(&mutex_cola_Finished);
+		sem_post(&mutex_cola_Finished);
 
 		//*** valido si aun quedan procesos en la cola de ready para seguir buscando un pcb para trabajar
 		if(queue_size(cola_Ready)>0){
 
 			//*** Si como aun quedan porcesos en la cola de ready vuelvo a llamar a la funcion tomarPCBdeReady
-//			post(&mutex_cola_Exec);
-//			post(&mutex_cola_Ready);
-			pcb = tomarPCBdeReady();
+			sem_post(&mutex_cola_Exec);
+			sem_post(&mutex_cola_Ready);
+			pcb = readyToExec();
 		}
 		else
 		{
 			//** En caso de que ya no haya mas procesos para trabajar, devuelvo null
-//			post(&mutex_cola_Exec);
-//			post(&mutex_cola_Ready);
+			sem_post(&mutex_cola_Exec);
+			sem_post(&mutex_cola_Ready);
 			return NULL;
 		}
 	}
@@ -582,28 +590,29 @@ PCB_DATA* tomarPCBdeReady()
 	//*** Como el proceso que encontre no esta terminado, entonces lo pongo en la cola de excec y lo retorno
 	queue_push(cola_Exec,pcb);
 
-//	post(&mutex_cola_Exec);
-//	post(&mutex_cola_Ready);
+	sem_post(&mutex_cola_Exec);
+	sem_post(&mutex_cola_Ready);
 	return pcb;
 }
 
-void * readyToExec()
+void * planificadorCortoPlazo()
 {
 	printf("[Rutina readyToExec] - Entramos al planificador de corto plazo!\n");
 
-	while(1)
+	//*** el booleano finPorConsolaDelKernel esta en false desde el inicio, en el momento en el que el kernel quiera frenar la planificiacion esta variable pasara a true, y se frenara la planificacion
+	while(!finPorConsolaDelKernel)
 	{
 		if(hayCpusDisponibles() && hayProcesosEnReady())
 		{
 			PCB_DATA* pcb;
 			///*** Quito el primer elemento de la cola de ready, valido que no haya sido finalizado y lo pongo en la cola de exec - en caso de no encontrar uno para poder trabajar no hago nada
-			if((pcb = tomarPCBdeReady()) != NULL)
+			if((pcb = readyToExec()) != NULL)
 			{
 				//*** Agarro una cpu que este disponible
-			//	wait(&mutex_cola_CPUs_libres);
+				sem_wait(&mutex_cola_CPUs_libres);
 					int cpuParaTrabajar = queue_peek(cola_CPUs_libres);
 					queue_pop(cola_CPUs_libres);
-			//	post(&mutex_cola_CPUs_libres);
+				sem_post(&mutex_cola_CPUs_libres);
 
 				printf("[Rutina readyToExec] - Se crea un nuevo hilo para que la CPU N°: %d trabaje con el proceso N°: %d\n", cpuParaTrabajar, pcb->pid);
 
@@ -622,6 +631,190 @@ void * readyToExec()
 
 
 ///---- FIN FUNCIONES DE PLANIFICACION ----///
+
+
+///---- CONSOLA DEL KERNEL -----////
+
+//**Esta funcion anda
+///***Esta funcion imprime todos los pids de sistema
+void imprimirTodosLosProcesosEnColas(){
+
+	void imprimir (PROCESOS * aviso)
+	{
+		printf("Pid: %d\n", aviso->pid);
+
+		if(aviso->pcb->exitCode == 53)
+			printf("Estado: en procesamiento\n");
+		else
+			printf("Estado: finalizado (%d)\n",aviso->pcb->exitCode);
+	}
+
+	list_iterate(avisos, imprimir);
+}
+
+
+///*** Esta funcion dada una cola te imprime todos los procesos que esta contenga
+void imprimirProcesosdeCola(t_queue* unaCola)
+{
+	/*void imprimir (t_queue * unaCola)
+	{
+	}
+
+	list_iterate(avisos, imprimir);*/
+}
+
+
+/// Falta desarrollar toda la funcion
+///*** Esta funcion lo que hace es finalizar un proceso este en la cola que este, se invoca desde la consola del kernel y retorna true al terminar, o false sino exite el pid
+bool finalizarProcesoDesdeKernel(int pid)
+{
+	return true;
+}
+
+void * consolaKernel()
+{
+	int opcion;
+	printf("Hola Bienvenido al Kernel!\n\n"
+			"Aca esta el menu de todas las opciones que tiene para hacer:\n"
+			"1- Obtener el listado de procesos del sistema de alguna cola.\n"
+			"2- Obtener datos sobre un proceso.\n"
+			"3- Obtener la tabla global de archivos.\n"
+			"4- Modificar el grado de multiprogramación del sistema.\n"
+			"5- Finalizar un proceso.\n"
+			"6- Detener la planificación.\n"
+			"7- Reactivar la planificación.\n"
+			"8- Imprimir de nuevo el menu.\n\n"
+			"Elija el numero de su opcion: ");
+	sem_post(&sem_ConsolaKernelLenvantada);
+	scanf("%d", &opcion);
+
+
+	while(1)
+	{
+		switch(opcion){
+			case 1:{
+				printf("Selecione la cola que quiere imprimir:\n"
+						"1- Cola de New.\n"
+						"2- Cola de Ready.\n"
+						"3- Cola de Exec.\n"
+						"4- Cola de Bloq.\n"
+						"5- Cola de Finish.\n"
+						"6- Todas las colas.\n"
+						"Elija el numero de su opcion: ");
+						scanf("%d", &opcion);
+
+				switch(opcion){
+					case 1:{
+						printf("Procesos de la cola de New:\n");
+
+						imprimirProcesosdeCola(cola_New);
+					}break;
+					case 2:{
+						printf("Procesos de la cola de Ready:\n");
+
+
+					}break;
+					case 3:{
+						printf("Procesos de la cola de Exec:\n");
+
+
+					}break;
+					case 4:{
+						printf("Procesos de la cola de Bloq:\n");
+
+
+					}break;
+					case 5:{
+						printf("Procesos de la cola de Finish:\n");
+
+
+					}break;
+					case 6:{
+						printf("Estos son todos los procesos:\n");
+
+						sem_wait(&mutex_listaProcesos);
+						imprimirTodosLosProcesosEnColas();
+						sem_post(&mutex_listaProcesos);
+					}break;
+					default:{
+						printf("Opcion invalida! Intente nuevamente.\n");
+					}break;
+				}
+
+
+			}break;
+			case 2:{
+				int pid;
+				printf("Ingrese pid del proceso a finalizar: ");
+				scanf("%d",&pid);
+/*
+				2. Obtener para un proceso dado:
+				a. La cantidad de rafagas ejecutadas.
+				b. La cantidad de operaciones privilegiadas que ejecutó.
+				c. Obtener la tabla de archivos abiertos por el proceso.
+				d. La cantidad de páginas de Heap utilizadas
+				i. Cantidad de acciones alocar realizadas en cantidad de operaciones y en
+				bytes
+				ii. Cantidad de acciones liberar realizadas en cantidad de operaciones y en
+				bytes
+				e. Cantidad de syscalls ejecutadas*/
+			}break;
+			case 3:{
+				/// ni idea que es esto
+			}break;
+			case 4:{
+				int gradoNuevo;
+				printf("Ingrese nuevo Grado de multiprogramacion: ");
+				scanf("%d",&gradoNuevo);
+
+				//probablemente tengamos qeu poner un semaforo para la variable global de grado multiprogramacion
+				grado_multiprogramacion=gradoNuevo;
+			}break;
+			case 5:{
+				int pid;
+				printf("Ingrese pid del proceso a finalizar: ");
+				scanf("%d",&pid);
+
+				if(finalizarProcesoDesdeKernel(pid))
+					printf("Finalizacion exitosa.\n");
+				else
+					printf("El Pid %d es Incorrecto! Reeintente con un nuevo pid.\n",pid);
+
+			}break;
+			case 6:{
+				finPorConsolaDelKernel=true;
+				printf("Planificacion detenida.\n");
+			}break;
+			case 7:{
+				finPorConsolaDelKernel=false;
+				printf("Planificacion reactivada.\n");
+			}break;
+			case 8:{
+				printf("Hola Bienvenido al Kernel!\n\n"
+						"Aca esta el menu de todas las opciones que tiene para hacer:\n"
+						"1- Obtener el listado de procesos del sistema.\n"
+						"2- Obtener datos sobre un proceso.\n"
+						"3- Obtener la tabla global de archivos.\n"
+						"4- Modificar el grado de multiprogramación del sistema.\n"
+						"5- Finalizar un proceso.\n"
+						"6- Detener la planificación.\n"
+						"7- Imprimir de nuevo el menu.\n\n");
+			}break;
+			default:{
+
+			}break;
+		}
+
+		printf("Elija el numero de su opcion: ");
+		scanf("%d", &opcion);
+	}
+}
+
+///---- FIN CONSOLA KERNEL----////
+
+
+
+
 
 
 ///--------FUNCIONES DE CONEXIONES-------////
@@ -687,6 +880,7 @@ int main(void) {
 
 	///------INICIALIZO TO.DO-------------///
 		historico_pid=1;
+		finPorConsolaDelKernel=false;
 
 		//***Inicializo las listas
 		avisos = list_create();
@@ -708,6 +902,7 @@ int main(void) {
 		configuracionInicial("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Kernel/kernel.config");
 		imprimirConfiguracion();
 
+		grado_multiprogramacion = getConfigInt("GRADO_MULTIPROG");
 		stack_size = getConfigInt("STACK_SIZE");
 		quantumRR = -1 ;//getConfigInt("QUANTUM");
 	///-----------------------------////
@@ -726,14 +921,20 @@ int main(void) {
 	escuchar(listener); // poner a escuchar ese socket
 	///----------------------//
 
+	//---ABRO LA CONSOLA DEL KERNEL---//
+	pthread_t hilo_consolaKernel;
+	pthread_create(&hilo_consolaKernel, NULL, consolaKernel, NULL);
+	sem_wait(&sem_ConsolaKernelLenvantada);
 
 
 	//---ABRO EL HILO DEL PLANIFICADOR A LARGO PLAZO---//
 	pthread_t hilo_planificadorLargoPlazo;
 	pthread_create(&hilo_planificadorLargoPlazo, NULL, planificadorLargoPlazo, NULL);
 
-	pthread_t hilo_readyToExec;
-	pthread_create(&hilo_readyToExec, NULL, readyToExec, NULL);
+
+	//---ABRO EL HILO DEL PLANIFICADOR A CORTO PLAZO---//
+	pthread_t hilo_planificadorCortoPlazo;
+	pthread_create(&hilo_planificadorCortoPlazo, NULL, planificadorCortoPlazo, NULL);
 
 
 	//----ME PONGO A ESCUCHAR CONEXIONES---//
@@ -742,8 +943,9 @@ int main(void) {
 
 
 	pthread_join(hilo_aceptarConexiones_Cpu_o_Consola, NULL);
-	pthread_join(hilo_readyToExec, NULL);
+	pthread_join(hilo_planificadorCortoPlazo, NULL);
 	pthread_join(hilo_planificadorLargoPlazo, NULL);
+	pthread_join(hilo_consolaKernel, NULL);
 
 	while(1)
 	{

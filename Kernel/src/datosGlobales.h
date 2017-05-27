@@ -30,8 +30,10 @@ int socketMemoria;
 int socketFS;
 int historico_pid;
 int stack_size;
+int grado_multiprogramacion;
 int size_pagina;
 int quantumRR;
+bool finPorConsolaDelKernel;
 
 
 ///------ESTRUCTURAS AUXILIARES ADMNISTRATIVAS------///
