@@ -3,7 +3,7 @@
 
 t_valor_variable pedirValorAMemoria(t_direccion);
 
-void escribirirValorEnMemoria(t_direccion , t_valor_variable );
+void escribirValorEnMemoria(t_direccion , t_valor_variable );
 
 t_puntero calcularPuntero(t_direccion);
 
@@ -27,7 +27,7 @@ t_puntero AnSISOP_definirVariable(t_nombre_variable identificador_variable){
 	t_direccion direccion;
 	t_variable* variable = malloc(sizeof(t_variable));
 
-
+	//En el caso que esta sea la primera vez que el proceso entra en una CPU su indice de stack estara NULL porque no habia entradas anteriores, entonces se inicializa la primera entrada
 	if(pcb->indiceStack == NULL){
 		pcb->indiceStack = malloc(sizeof(t_entrada));
 		pcb->indiceStack->argumentos = list_create();
@@ -109,7 +109,7 @@ void AnSISOP_asignar(t_puntero direccion_variable, t_valor_variable valor){
 	t_direccion direccion = calcularDireccion(direccion_variable);
 
 	//Se escribe en Memoria sabiendo la posicion de memoria y el valor a escribir
-	escribirirValorEnMemoria(direccion,valor);
+	escribirValorEnMemoria(direccion,valor);
 
 	printf("Asigne a la direccion %d %d %d el valor es %d \n",direccion.page,direccion.offset,direccion.size,valor);
 }
@@ -135,21 +135,31 @@ void AnSISOP_irAlLabel(t_nombre_etiqueta nombre_etiqueta){
 	puntero = metadata_buscar_etiqueta(nombre_etiqueta,pcb->indiceEtiquetas,pcb->cantidadDeEtiquetas);
 
 	//Como es el numero de la siguiente instruccion a ejecutar se le asigna al ProgramCounter para que el programa siga a partir de ahi
+
+	//ESTO ES LO QUE DEBERIA ANDAR
+	//pcb->programCounter = puntero-1;
+
+
+	//HARDCODEO ASQUEROSO PARA DEMOSTRAR QUE ANDA EL RESTO DE COSAS SALVO ESTA PARTE
 	pcb->programCounter = 5;
+
 
 }
 
 void AnSISOP_llamarSinRetorno(t_nombre_etiqueta etiqueta){
 	puts("AnSISOP_llamarSinRetorno");
+
+	//Se incrementa el contexto actual para que cada vez que se pida un valor se vaya a buscar el valor en la entrada correspondiente
 	pcb->contextoActual++;
 
+	//Se reserva espacio para una entrada mas de stack y se inicializa ambas listas de argumentos y variables para su posterior utilizacion
 	pcb->indiceStack = realloc(pcb->indiceStack, sizeof(t_entrada) * (pcb->contextoActual + 1));
 	pcb->indiceStack[pcb->contextoActual].argumentos = list_create();
 	pcb->indiceStack[pcb->contextoActual].variables = list_create();
 
 
 	//Se guarda en el contexto actual cual es la posicion de la instruccion siguiente que debe ejecutar al volver de la funcion
-	pcb->indiceStack[pcb->contextoActual].retPos = pcb->programCounter + 1;
+	pcb->indiceStack[pcb->contextoActual].retPos = pcb->programCounter;
 
 	//Se actualiza la cantidad de entradas en el Stack
 	pcb->cantidadDeEntradas++;
@@ -163,14 +173,16 @@ void AnSISOP_llamarSinRetorno(t_nombre_etiqueta etiqueta){
 void AnSISOP_llamarConRetorno(t_nombre_etiqueta etiqueta,t_puntero donde_retornar){
 	puts("AnSISOP_llamarConRetorno");
 
+	//Se incrementa el contexto actual para que cada vez que se pida un valor se vaya a buscar el valor en la entrada correspondiente
 	pcb->contextoActual++;
 
+	//Se reserva espacio para una entrada mas de stack y se inicializa ambas listas de argumentos y variables para su posterior utilizacion
 	pcb->indiceStack = realloc(pcb->indiceStack, sizeof(t_entrada) * (pcb->contextoActual + 1));
 	pcb->indiceStack[pcb->contextoActual].argumentos = list_create();
 	pcb->indiceStack[pcb->contextoActual].variables = list_create();
 
 	//Se guarda en el contexto actual cual es la posicion de la instruccion siguiente que debe ejecutar al volver de la funcion
-	pcb->indiceStack[pcb->contextoActual].retPos = pcb->programCounter + 1;
+	pcb->indiceStack[pcb->contextoActual].retPos = pcb->programCounter;
 
 	//Se guarda en el contexto actual cual es la direccion de la variable a la que se le asignara el valor que retornara esta funcion
 	pcb->indiceStack[pcb->contextoActual].retVar = calcularDireccion(donde_retornar);
@@ -205,11 +217,12 @@ void AnSISOP_finalizar(void){
 		puts("Se finalizo la ultima instruccion de una funcion");
 
 		//Se cambia el ProgramCounter para que siga la ejecucion a partir de la siguiente instruccion de la funcion anterior
-		pcb->programCounter = pcb->indiceStack[pcb->contextoActual].retPos - 1;
+		pcb->programCounter = pcb->indiceStack[pcb->contextoActual].retPos;
 
-		//Se libera la memoria de esa entrada
+		//Se libera la memoria de esa entrada y se vuelve a ajustar el tamanio del indice del stack para tener siempre el tamanio exacto
 		list_destroy_and_destroy_elements(pcb->indiceStack[pcb->contextoActual].argumentos, free);
 		list_destroy_and_destroy_elements(pcb->indiceStack[pcb->contextoActual].variables, free);
+		pcb->indiceStack = realloc(pcb->indiceStack,sizeof(t_entrada) * (pcb->contextoActual));
 
 		//Se actualiza cual es el Contexto Actual de Ejecucion
 		pcb->contextoActual--;
@@ -225,14 +238,15 @@ void AnSISOP_retornar(t_valor_variable retorno){
 	puts("AnSISOP_retornar");
 
 	//Se escribe el valor devuelto por la funcion en la direccion de retorno
-	escribirirValorEnMemoria(pcb->indiceStack[pcb->contextoActual].retVar , retorno );
+	escribirValorEnMemoria(pcb->indiceStack[pcb->contextoActual].retVar , retorno );
 
 	//Se cambia el ProgramCounter para que siga la ejecucion a partir de la siguiente instruccion de la funcion anterior
-	pcb->programCounter = pcb->indiceStack[pcb->contextoActual].retPos - 1;
+	pcb->programCounter = pcb->indiceStack[pcb->contextoActual].retPos;
 
-	//Se libera la memoria de esa entrada
+	//Se libera la memoria de esa entrada y se vuelve a ajustar el tamanio del indice del stack para tener siempre el tamanio exacto
 	list_destroy_and_destroy_elements(pcb->indiceStack[pcb->contextoActual].argumentos, free);
 	list_destroy_and_destroy_elements(pcb->indiceStack[pcb->contextoActual].variables, free);
+	pcb->indiceStack = realloc(pcb->indiceStack,sizeof(t_entrada) * (pcb->contextoActual));
 
 	//Se actualiza cual es el Contexto Actual de Ejecucion
 	pcb->contextoActual--;
@@ -318,45 +332,72 @@ t_valor_variable pedirValorAMemoria(t_direccion direccion){
 	//Se pide a Memoria el contenido de esa posicion que es el valor de la variable
 	enviarMensaje(socketMemoria,solicitarBytes,(void *)&pedido, sizeof(pedido));
 
+	printf("Se pide el valor de la variable en la direccion de memoria: %d %d %d \n",direccion.page,direccion.offset,direccion.size);
 
 	//se recibe el valor de la variable
 	void* stream;
 	int* valor;
 	int* booleano;
+
 	int accion = recibirMensaje(socketMemoria,&stream);
 
-	switch(accion){
-			case RespuestaBooleanaDeMemoria:{
-				booleano = stream;
-			}break;
-			default:{
-				perror("Error en la accion maquinola");
-			}break;
-		}
-	if(*booleano){
-		free(stream);
-		accion = recibirMensaje(socketMemoria,&stream);
-			switch(accion){
-				case lineaDeCodigo:{
-					valor = stream;
-					valorVariable = *valor;
+		switch(accion){
+				case RespuestaBooleanaDeMemoria:{
+					booleano = stream;
 				}break;
 				default:{
 					perror("Error en la accion maquinola");
 				}break;
 			}
-	}else{
-		terminoPrograma = true;
-		pcb->exitCode = -5;		//Excepcion de Memoria STACK OVERFLOW
-	}
+		if(*booleano){
+			free(stream);
+			accion = recibirMensaje(socketMemoria,&stream);
+				switch(accion){
+					case lineaDeCodigo:{
+						valor = stream;
+						valorVariable = *valor;
+					}break;
+					default:{
+						perror("Error en la accion maquinola");
+					}break;
+				}
+		}else{
+			terminoPrograma = true;
+			pcb->exitCode = -5;		//Excepcion de Memoria STACK OVERFLOW
+		}
 
 	free(stream);
 
 	return valorVariable;
+
+	//ESTO PARECIA MEJOR PERO NO ANDA, DESPUES REVISALO
+
+/*
+	if(recibirMensaje(socketMemoria,&stream) == RespuestaBooleanaDeMemoria){
+		booleano = stream;
+	}
+	else{
+		perror("Error en la accion maquinola");
+	};
+
+	if(*booleano != 1){
+		free(stream);
+		if(recibirMensaje(socketMemoria,&stream) == lineaDeCodigo){
+			valor = stream;
+			valorVariable = *valor;
+		}else{
+			perror("Error en la accion maquinola");
+		}
+	}else{
+		terminoPrograma = true;
+		pcb->exitCode = -5;		//Excepcion de Memoria STACK OVERFLOW
+	}
+*/
 }
 
-void escribirirValorEnMemoria(t_direccion direccion, t_valor_variable valor){
+void escribirValorEnMemoria(t_direccion direccion, t_valor_variable valor){
 
+	//Se crea el void* que contiene el pid, la direccion y el valor a escribir, que son los datos necesarios para que la memoria escriba el valor
 	void* auxiliar = malloc(sizeof(t_escrituraMemoria));
 	memcpy(auxiliar,&pcb->pid,sizeof(int));
 	memcpy(auxiliar + sizeof(int),&direccion,sizeof(t_direccion));
@@ -365,8 +406,9 @@ void escribirirValorEnMemoria(t_direccion direccion, t_valor_variable valor){
 	//se pide a memoria que escriba el valor enviado en la posicion de memoria tambien enviada
 	enviarMensaje(socketMemoria,almacenarBytes,auxiliar,sizeof(t_escrituraMemoria));
 
+	printf("Se escribio el valor %d en la direccion de memoria: %d %d %d \n",valor,direccion.page,direccion.offset,direccion.size);
+
 	free(auxiliar);
-	//free(direccionDevalor);
 
 
 	//Devuelve un OK o mata con un Stack Overflow
@@ -382,7 +424,14 @@ void escribirirValorEnMemoria(t_direccion direccion, t_valor_variable valor){
 			perror("Error en la accion maquinola");
 		}
 	}
-	if(!*respuesta){
+//ESTO PARECIA MEJOR PERO NO ANDA, DESPUES REVISALO
+/*	if(recibirMensaje(socketMemoria,&stream) == RespuestaBooleanaDeMemoria){
+		respuesta = stream;
+	}else{
+		perror("Error en la accion maquinola");
+	}
+*/
+	if(*respuesta != 1){
 		terminoPrograma = true;
 		pcb->exitCode = -5;
 	}
