@@ -13,7 +13,7 @@ PCB_DATA* crearPCB(char * scriptAnsisop, int pid, int contPags){
 
 		pcb->indiceCodigo = metadata->instrucciones_serializado;
 		pcb->indiceEtiquetas = metadata->etiquetas;
-		pcb->cantidadDeEtiquetas = metadata->cantidad_de_etiquetas;
+		pcb->cantidadDeEtiquetas = metadata->cantidad_de_etiquetas + metadata->cantidad_de_funciones;
 
 		pcb->indiceStack = NULL;
 
