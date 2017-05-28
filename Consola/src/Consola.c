@@ -64,13 +64,8 @@ char * generarScript(char * nombreDeArchivo){
     	exit(-1);// Va si o si , en caso de que exista el error sino tira segmentation fault
     }
 	size_t tamano = tamanoArchivo(archivo);
-	char* script = malloc(tamano+1);
-	fread(script,tamano,1,archivo);//lee el archivo y lo guarda en el script AnsiSOP
-    if(tamano*1 != fread(script,tamano,1,archivo))
-    {
-        printf("\n Error : fallo la lectura del archivo \n");
-        exit(-1);
-    }
+	char* script = malloc(tamano+1);//lee el archivo y lo guarda en el script AnsiSOP
+   fread(script,tamano,1,archivo);
 	script[tamano] = '\0';
 	fclose(archivo);
 	return script;
@@ -78,7 +73,7 @@ char * generarScript(char * nombreDeArchivo){
 void transformarFechaAInts(char * fecha, int arrayFecha[4]){
 	char** arrayCalendario = string_split(fecha,":");
 	int i;
-	for (i=0;i<3;i++){
+	for (i=0;i<4;i++){
 		arrayFecha[i] = atoi(arrayCalendario[i]);
 	}
 
@@ -103,9 +98,7 @@ char* diferencia(char* fechaInicio,char* fechaFin){
 		}
 		resultadoChar[i] = string_itoa(resultadoInt[i]);
 		strcat(resultadoChar[i], ":");
-
 	}
-
 	char* diferencia = strcat(strcat(strcat(resultadoChar[0], resultadoChar[1]),resultadoChar[2]), resultadoChar[3]);
 
 	return diferencia;
@@ -131,24 +124,31 @@ void conectarConKernel(){
 		}
 		printf("Conexión exitosa con el Servidor(%i)!!\n",rta_conexion);
 }
+
 void agregarAListaDePidTid(int pid, int tid){
-	pidtid	aux;
-	aux.pid = pid;
-	aux.tid = tid;
-	list_add(listaPidTid, &aux);
+	pidtid*	aux = malloc(sizeof(pidtid));
+	aux->pid = pid;
+	aux->tid = tid;
+	list_add(listaPidTid, aux);
 
 }
-void matarHiloPrograma(int pid){
+
+void matarHiloPrograma(int pid){ // NOSE PORQUE NO FUNCA EL LIST_FIND
 	bool sonIguales(pidtid * elementos){
 		return  elementos->pid == pid;
 	}
-list_find(listaPidTid, sonIguales);
-	//if(pthread_kill(hiloAMatar.tid,SIGKILL) != 0){
-		//perror("Error al matar el hilo");
-	//}else{
-	list_remove_by_condition(listaPidTid, sonIguales);
+	pidtid * ret = malloc(sizeof(pidtid));
+	ret = list_find(listaPidTid, (void*) sonIguales);
+	if(ret == NULL){
+		perror("Error: el pid no existe o ya ha finalizado el programa");
+	}
+	else{
+		if(pthread_kill(ret->tid,SIGKILL) == 0){
+			perror ("Error: no se pudo finalizar el programa o ya ha finalizado el programa");
+		}else{
+		list_remove_and_destroy_by_condition(listaPidTid, sonIguales,free);}
 }
-//}
+}
 void crearHiloDetach( char* script){
 	pthread_attr_t attr;
 				pthread_t hilo ;
@@ -180,9 +180,10 @@ int main(void)
 	size_t len = 0;
 	char* mensaje = NULL;
 	listaPidTid = list_create();
-	sem_init(&mutex_lista,0,1);
 
+	sem_init(&mutex_lista,0,1);
 	sem_init(&mutex_escribirEnPantalla,0,0);
+
 	// ******* Configuración inicial Consola
 
 	printf("Configuracion Inicial:\n");
