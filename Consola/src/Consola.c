@@ -1,7 +1,7 @@
 /*
 ** client.c -- a stream socket client demo
 */
-//Hola estoy brancheando_lololo
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -15,7 +15,9 @@
 #include "commons/config.h"
 #include "commons/string.h"
 #include "commons/temporal.h"
-
+#include "commons/process.h"
+#include "commons/collections/list.h"
+#include <semaphore.h>
 #include <pthread.h>
 
 #include "../../Nuestras/src/laGranBiblioteca/sockets.c"
@@ -25,42 +27,90 @@
 
 #include "../../Nuestras/src/laGranBiblioteca/datosGobalesGenerales.h"
 
-void* rutinaIniciarPrograma(void*);
+void* rutinaPrograma(void*);
 char* diferencia(char*,char*);
-int* transformarFechaAInts(char*);
-
-int socketKernel;
-int hayMensajeNuevo = 1;
+void transformarFechaAInts(char*, int[4]);
+typedef struct {
+	int pid;
+	int tid;
+}pidtid;
 
 struct{
 	int pid;
 	char* mensaje;
 } mensajeDeProceso;
 
-pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+int socketKernel;
+int hayMensajeNuevo = 1;
+t_list* listaPidTid;
+
+pthread_mutex_t mutex_lista;
+pthread_mutex_t mutex_escribirEnPantalla;
 
 size_t tamanoArchivo(FILE * archivo){
 	size_t tamano;
-	fseek(archivo,0,SEEK_END);
+	fseek(archivo,0,SEEK_END);//ACA FALTA HANDELEAR ERROR
 	tamano = ftell(archivo);
 	fseek(archivo,0,SEEK_SET);
 return tamano;
 }
 
 char * generarScript(char * nombreDeArchivo){
-	FILE* archivo = fopen(nombreDeArchivo, "r");
-	if(archivo != NULL){
-		size_t tamano = tamanoArchivo(archivo);
-		char* script = malloc(tamano+1);
-		fread(script,tamano,1,archivo);//lee el archivo y lo guarda en el script AnsiSOP
-		script[tamano] = '\0';
-		fclose(archivo);
-		return script;
-	}
-	perror("No existe ese archivo");
-	exit(1);
-	return "holi";
+	FILE* archivo;
+
+    if ( !(archivo = fopen(nombreDeArchivo, "r")) )
+    {
+    	perror("Error: el archivo no esta en el directorio o no existe \n");
+    	exit(-1);// Va si o si , en caso de que exista el error sino tira segmentation fault
+    }
+	size_t tamano = tamanoArchivo(archivo);
+	char* script = malloc(tamano+1);
+	fread(script,tamano,1,archivo);//lee el archivo y lo guarda en el script AnsiSOP
+    if(tamano*1 != fread(script,tamano,1,archivo))
+    {
+        printf("\n Error : fallo la lectura del archivo \n");
+        exit(-1);
+    }
+	script[tamano] = '\0';
+	fclose(archivo);
+	return script;
 }
+void transformarFechaAInts(char * fecha, int arrayFecha[4]){
+	char** arrayCalendario = string_split(fecha,":");
+	int i;
+	for (i=0;i<3;i++){
+		arrayFecha[i] = atoi(arrayCalendario[i]);
+	}
+
+}
+char* diferencia(char* fechaInicio,char* fechaFin){
+	int resultadoInt[4];
+	int arrayInicio[4];
+	transformarFechaAInts(fechaInicio, arrayInicio);
+	int arrayFin[4];
+	transformarFechaAInts(fechaFin,arrayFin);
+	int i;
+	char* resultadoChar[4];
+	for(i=0;i<4;i++){
+		resultadoInt[i] = arrayFin[i]-arrayInicio[i];
+		if(resultadoInt[i] < 0){
+			resultadoInt[i-1]--;
+			if(i != 3) {
+				resultadoInt[i] = 60 + resultadoInt[i];
+			}else {
+				resultadoInt[i] = 1000 + resultadoInt[i];
+			};
+		}
+		resultadoChar[i] = string_itoa(resultadoInt[i]);
+		strcat(resultadoChar[i], ":");
+
+	}
+
+	char* diferencia = strcat(strcat(strcat(resultadoChar[0], resultadoChar[1]),resultadoChar[2]), resultadoChar[3]);
+
+	return diferencia;
+}
+
 
 void conectarConKernel(){
 	int rta_conexion;
@@ -81,8 +131,47 @@ void conectarConKernel(){
 		}
 		printf("Conexión exitosa con el Servidor(%i)!!\n",rta_conexion);
 }
+void agregarAListaDePidTid(int pid, int tid){
+	pidtid	aux;
+	aux.pid = pid;
+	aux.tid = tid;
+	list_add(listaPidTid, &aux);
 
+}
+void matarHiloPrograma(int pid){
+	bool sonIguales(pidtid * elementos){
+		return  elementos->pid == pid;
+	}
+list_find(listaPidTid, sonIguales);
+	//if(pthread_kill(hiloAMatar.tid,SIGKILL) != 0){
+		//perror("Error al matar el hilo");
+	//}else{
+	list_remove_by_condition(listaPidTid, sonIguales);
+}
+//}
+void crearHiloDetach( char* script){
+	pthread_attr_t attr;
+				pthread_t hilo ;
+				//Hilos detachables cpn manejo de errores tienen que ser logs
+				int  res;
+				  res = pthread_attr_init(&attr);
+				    if (res != 0) {
+				        perror("Error en los atributos del hilo");
 
+				    }
+				    res = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+				    if (res != 0) {
+				        perror("Error en el seteado del estado de detached");
+
+				    }
+
+				    res = pthread_create (&hilo ,&attr,rutinaPrograma, (void *) script);
+				    if (res != 0) {
+				        perror("Error en la creacion del hilo");
+
+				    }
+				    pthread_attr_destroy(&attr);
+}
 
 int main(void)
 {
@@ -90,7 +179,10 @@ int main(void)
 
 	size_t len = 0;
 	char* mensaje = NULL;
+	listaPidTid = list_create();
+	sem_init(&mutex_lista,0,1);
 
+	sem_init(&mutex_escribirEnPantalla,0,0);
 	// ******* Configuración inicial Consola
 
 	printf("Configuracion Inicial:\n");
@@ -111,30 +203,11 @@ int main(void)
 		if(strcmp(comandoConsola[0],"iniciarPrograma") == 0){//Primer Comando iniciarPrograma
 			char** nombreDeArchivo= string_split(comandoConsola[1], "\n");//Toma el parametro que contiene el archivo y le quita el \n
 			char* script = generarScript(nombreDeArchivo[0]);// lee el archivo y guarda en script.
+			crearHiloDetach(script); //Crea el hilo del programa
 
-			pthread_attr_t attr;
-			pthread_t hilo ;
-			//Hilos detachables cpn manejo de errores tienen que ser logs
-			int  res;
-			  res = pthread_attr_init(&attr);
-			    if (res != 0) {
-			        perror("Error en los atributos del hilo");
-			        continue;
-			    }
-			    res = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-			    if (res != 0) {
-			        perror("Error en el seteado del estado de detached");
-			        continue;
-			    }
-
-			    res = pthread_create (&hilo ,&attr,rutinaIniciarPrograma, (void *) script);
-			    if (res != 0) {
-			        perror("Error en la creacion del hilo");
-			        continue;
-			    }
-			    pthread_attr_destroy(&attr);
 			liberarArray(nombreDeArchivo);
 			liberarArray(comandoConsola);
+			sem_wait(&mutex_escribirEnPantalla);
 			continue;
 		}
 		if(strcmp(comandoConsola[0],"limpiarMensajes\n") == 0){
@@ -150,18 +223,18 @@ int main(void)
 
 			int respuesta = recibirMensaje(socketKernel, &pid);
 
+			sem_wait(&mutex_lista);
+			//matarHiloPrograma(pid); DEBE IMPLEMENTARSE
+			sem_post( &mutex_lista );
+			//Futuro wait del mutex_escribirEnPantalla
 			if (respuesta == pidFinalizado)
 				printf("Se finalizo correctamente el pid: %d", *pid);
 			else if (respuesta == errorFinalizacionPid)
 				printf("No se ha finalizado correctamente el pid: %d", *pid);
-
-			// Joako estuvo aqui
-
 			continue;
 		}
 		if(strcmp(comandoConsola[0],"desconectarConsola\n") == 0){
 			liberarArray(comandoConsola);
-
 			enviarMensaje(socketKernel,desconectarConsola, NULL, 0);
 
 			break;
@@ -175,17 +248,25 @@ int main(void)
 	return 0;
 }
 
-void* rutinaIniciarPrograma(void* parametro){
+void* rutinaPrograma(void* parametro){
 	int* pid= malloc(4);
 	char* tiempoInicio = temporal_get_string_time();
 
 	char* script = (char*) parametro;
-
 	enviarMensaje(socketKernel,envioScriptAnsisop, script,strlen(script)+1);
+
 
 	if (recibirMensaje(socketKernel, (void*) &pid) != envioDelPidEnSeco){
 			perror("Error al recibir el pid");
 	}
+	printf("Tiempo de inicio :%s\n",tiempoInicio);
+
+	int tid= process_get_thread_id();
+
+	sem_wait(&mutex_lista);
+	agregarAListaDePidTid(*pid,tid);
+	sem_post( &mutex_lista );
+
 	printf("Numero de pid: %d \n",*pid);
 
 
@@ -200,52 +281,22 @@ void* rutinaIniciarPrograma(void* parametro){
 	}
 	pthread_mutex_unlock( &mutex );*/
 
-	printf("%s\n",tiempoInicio);
+
 
 	char* tiempoFin = temporal_get_string_time();
 
-	printf("%s\n",tiempoFin);
+	printf("Tiempo de Finalización: %s\n",tiempoFin);
 
-	//printf("%s\n",diferencia(tiempoInicio,tiempoFin));
+	printf("Tiempo de Ejecución: %s\n",diferencia(tiempoInicio,tiempoFin));
 
 	free(pid);
 	free(script);
+
+	sem_post(&mutex_escribirEnPantalla);
 }
 
 
 //FALTA TERMINAR Y HACER MAS LINDA CUANDO NO SEAN LAS 5 AM hh:mm:ss:mmmm
-int* transformarFechaAInts(char * fecha){
-	char** arrayCalendario = string_split(fecha,":");
-	int* fechaInt;
-	int i;
-	for (i=0;i<4;i++){
-		fechaInt[i] = atoi(arrayCalendario[i]);
-	}
-	return fechaInt;
-}
+
 //ARREGLAR
-char* diferencia(char* fechaInicio,char* fechaFin){
-	int resultadoInt[4];
-	int* arrayInicio = transformarFechaAInts(fechaInicio);
-	int* arrayFin = transformarFechaAInts(fechaFin);
-	int i;
-	char* resultadoChar[4];
-	for(i=0;i<4;i++){
-		resultadoInt[i] = arrayFin[i]-arrayInicio[i];
-
-		if(resultadoInt[i] < 0){
-			resultadoInt[i-1]--;
-			if(i != 3) {
-				resultadoInt[i] = 60 + resultadoInt[i];
-			}else {
-				resultadoInt[i] = 1000 + resultadoInt[i];
-			};
-		}
-		resultadoChar[i] = string_itoa(resultadoInt[i]);
-	}
-//HACELO CON GANAS NO SEAS FORRO
-
-	char* diferencia = strcat(strcat(strcat(strcat(resultadoChar[0], ":"), strcat(resultadoChar[1], ":")), strcat(resultadoChar[2], ":")), resultadoChar[3]);
-	return diferencia;
-}
 
