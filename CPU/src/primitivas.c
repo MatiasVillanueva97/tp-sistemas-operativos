@@ -162,7 +162,13 @@ void AnSISOP_irAlLabel(t_nombre_etiqueta nombre_etiqueta){
 
 
 	//HARDCODEO ASQUEROSO PARA DEMOSTRAR QUE ANDA EL RESTO DE COSAS SALVO ESTA PARTE
-	pcb->programCounter = 5;
+
+
+	//ESTO ES EL HARDOCDEO PARA EL SCRIPT LVL2
+	//pcb->programCounter = 5;
+
+	//ESTO ES EL HARDOCDEO PARA EL SCRIPT FOR
+	pcb->programCounter = 2;
 
 
 }

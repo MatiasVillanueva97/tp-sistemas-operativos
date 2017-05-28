@@ -402,7 +402,7 @@ void *rutinaCPU(void * arg)
 			case enviarPCBaTerminado:{
 				//TE MANDO UN PCB QUE YA TERMINE DE EJECUTAR POR COMPLETO, ARREGLATE LAS COSAS DE MOVER DE UNA COLA A LA OTRA Y ESO
 
-				printf("[Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- %d!\n", pedirPCB);
+				printf("[Rutina rutinaCPU] - Entramos al Caso de que CPU termino la ejecucion de un proceso: accion- %d!\n", enviarPCBaTerminado);
 
 				PCB_DATA* pcb = deserializarPCB(stream);
 
