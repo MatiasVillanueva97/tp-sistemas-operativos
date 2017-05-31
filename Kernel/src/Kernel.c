@@ -376,27 +376,41 @@ void *rutinaConsola(void * arg)
 }
 
 
-void cpu_actualizarPCBcolaExec(PCB_DATA *pcbDesdeCPU)
-{
-	sem_wait(&mutex_cola_Exec);
+PCB_DATA * pedirPCBDeExec(){
+	//semforo
+	PCB_DATA * pcb = queue_pop(cola_Exec);
+	if(pcb->exitCode != 53)
+		queue_push(cola_Finished, pcb);
+	else{
+		queue_push(cola_Exec, pcb);
+		return pcb;
+	}
 
-/*	bool busqueda(PCB_DATA* unPCB)
+	//fin sem
+}
+
+void modificarPCB(PCB_DATA * pcbNuevo){
+	bool busqueda(PROCESOS * aviso)
 	{
-		if(unPCB->pid == pcbDesdeCPU->pid)
+		if(aviso->pid == pcbNuevo->pid)
 			return true;
-
 		return false;
 	}
-	PCB_DATA* pcbParaActualizar =(PCB_DATA*)list_find(cola_Exec, busqueda);
-*/
-	PCB_DATA* pcbParaActualizar = (PCB_DATA*)queue_peek(cola_Exec);
-
-	if( pcbParaActualizar != NULL){
-
-		pcbParaActualizar=pcbDesdeCPU;
+	sem_wait(&mutex_listaProcesos);
+	PCB_DATA * pcb2 = (PCB_DATA*)list_find(avisos, busqueda);
+	if(pcb2 != NULL && (pcb2->exitCode == 53) ){
+	destruirPCB_Local(*pcb2);
+		pcb2->cantidadDeEntradas = pcbNuevo->cantidadDeEntradas;
+		pcb2->cantidadDeEtiquetas = pcbNuevo->cantidadDeEtiquetas;
+		pcb2->cantidadDeInstrucciones = pcbNuevo->cantidadDeInstrucciones;
+		pcb2->contextoActual = pcbNuevo->contextoActual;
+		pcb2->exitCode = pcbNuevo->exitCode;
+		pcb2->indiceCodigo = pcbNuevo->indiceCodigo;
+		pcb2->indiceEtiquetas = pcbNuevo->indiceEtiquetas;
+		pcb2->indiceStack = pcbNuevo->indiceStack;
+		pcb2->programCounter = pcbNuevo->programCounter;
 	}
-
-	sem_post(&mutex_cola_Exec);
+	sem_post(&mutex_listaProcesos);
 
 }
 
@@ -424,6 +438,8 @@ void *rutinaCPU(void * arg)
 		//*** Recibo la accion por parte de la CPU
 		accionCPU = recibirMensaje(socketCPU,&stream);
 
+		PCB_DATA* pcb = NULL;
+
 		switch(accionCPU){
 			//*** La CPU me pide un PCB para poder trabajar
 			case pedirPCB:{
@@ -431,7 +447,7 @@ void *rutinaCPU(void * arg)
 				printf("[Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- %d!\n", pedirPCB);
 
 				sem_wait(&mutex_cola_Exec);
-					PCB_DATA* pcb = queue_peek(cola_Exec);
+					pcb = pedirPCBDeExec();
 				sem_post(&mutex_cola_Exec);
 
 				void* pcbSerializado = serializarPCB(pcb);
@@ -448,7 +464,11 @@ void *rutinaCPU(void * arg)
 				imprimirPCB(pcb);
 
 				pcb->exitCode=0;
-				cpu_actualizarPCBcolaExec(pcb);
+
+				modificarPCB(pcb);
+
+				//queue_pop(cola_Exec);
+				//queue_push(cola_Finished, pcb);
 
 				planificadorExtraLargoPlazo();
 			}break;
@@ -475,6 +495,7 @@ void *rutinaCPU(void * arg)
 			}break;
 			case 0:{
 				printf("[Rutina rutinaCPU] - Desconecto la CPU N°: %d\n", socketCPU);
+				queue_push(cola_Exec, pcb);
 				todaviaHayTrabajo=false;
 			}break;
 			default:{
