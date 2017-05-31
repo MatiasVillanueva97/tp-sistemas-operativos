@@ -62,7 +62,6 @@ lineaCache* buscarLinea(int pid, int pagina){
 
 void actualizarPaginaDeLaCache(int pid, int pagina, int tamano, int desplazamiento, void* contenidoModificado) {
 	lineaCache* linea = buscarLinea(pid,pagina);
-	puts("hola");
 	void* contenido = linea->contenido;
 	memcpy(contenido+desplazamiento,contenidoModificado,tamano);
 }

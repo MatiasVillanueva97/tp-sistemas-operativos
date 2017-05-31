@@ -78,7 +78,13 @@ int escribirMemoriaPosta(int pid,int pagina,void* contenido){
 void imprimirContenidoCache(){
 	FILE* archivo =  fopen ("contenidoCache.txt", "w+");
 	int i;
-	for (i=0;i<getConfigInt("ENTRADAS_CACHE");i++){
+	if(list_is_empty(tablaDeEntradasDeCache))
+	{
+		printf("La cache esta vacía!" );
+	}
+	else {
+
+		for (i=0;i<list_size(tablaDeEntradasDeCache);i++){
 			lineaCache* linea = list_get(tablaDeEntradasDeCache,i);
 			printf("La pagina %d, del pid %d, tiene este contenido:\n", linea->pagina,linea->pid );
 			puts(linea->contenido);
@@ -86,18 +92,34 @@ void imprimirContenidoCache(){
 			fprintf(archivo, "La pagina %d, del pid %d, tiene este contenido:\n ", linea->pagina,linea->pid );
 			fwrite(linea->contenido,sizeOfPaginas,1,archivo);
 			fwrite("\n",1,1,archivo);
+		}
 	}
 }
 void imprimirContenidoMemoria(){
 	FILE* archivo =  fopen ("file.txt", "w+");
 	int i;
 	sem_wait(&mutex_Memoria);
+	int w;
+	for(i= 0; i < list_size(tablaConCantidadDePaginas);i++){
+		filaTablaCantidadDePaginas fila = *(filaTablaCantidadDePaginas*)list_get(tablaConCantidadDePaginas,i);
+		fprintf(archivo, "El pid %d tiene %d paginas. \n\n", fila.pid ,fila.cantidadDePaginas);
+		printf("El pid %d tiene %d paginas. \n\n", fila.pid ,fila.cantidadDePaginas);
+		for(w=1;w<=fila.cantidadDePaginas;w++){
+			void* contenido =leerMemoriaPosta(fila.pid,w);
+			fprintf(archivo, "\nContenido de la pagina numero %s: \n",  string_itoa(w));
+			fwrite(contenido,sizeOfPaginas,1,archivo);
+			printf( "\n Contenido de la pagina numero %s: \n ",  string_itoa(w));
+			puts(contenido);
+		}
+	}
+/*
 	for (i=0;i<cantidadDeMarcos;i++){
 		fprintf(archivo, "Contenido de la pagina numero %s \n\n",  string_itoa(i+1));
 
 		fwrite(memoriaTotal+i*sizeOfPaginas,sizeOfPaginas,1,archivo);
 		fwrite("\n",1,1,archivo);
 	}
+	*/
 	sem_post(&mutex_Memoria);
 	//fwrite(memoriaTotal,sizeOfPaginas,getConfigInt("MARCOS"),archivo);
 	fclose(archivo);
@@ -150,8 +172,9 @@ void* solicitarBytesDeUnaPagina(int pid, int pagina, int desplazamiento, int tam
 	else{
 		sem_post(&mutex_cache);
 		sem_wait(&mutex_retardo);
-		sleep(retardo);
+		int retardoLocal = retardo;
 		sem_post(&mutex_retardo);
+		sleep(retardoLocal);
 		sem_wait(&mutex_Memoria); //No se si son 2 mutex distintos
 		contenidoDeLaPagina = leerMemoriaPosta(pid,pagina);
 		if ((int)contenidoDeLaPagina == 0){
@@ -282,6 +305,10 @@ void *rutinaConsolaMemoria(void* x){
 					}
 					if(strcmp(comandoConsola[1],"estructuras\n")== 0){
 						imprimirTablaDePaginasInvertida();
+						continue;
+
+					}
+					if(strcmp(comandoConsola[1],"cache\n")== 0){
 						imprimirContenidoCache();
 						continue;
 
