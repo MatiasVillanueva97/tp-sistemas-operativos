@@ -48,7 +48,7 @@ typedef struct{
 	int pid;
 	char* scriptAnsisop;
 	int socketConsola;
-	bool finalizadoExternamente;
+	bool avisoAConsola;
 	PCB_DATA* pcb;
 } PROCESOS;
 

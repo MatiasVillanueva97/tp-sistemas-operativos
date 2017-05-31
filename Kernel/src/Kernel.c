@@ -34,7 +34,24 @@
 #include "funcionesPCB.h"
 #include "funcionesMemoria.h"
 
-
+char * scr_ej="#!/usr/bin/ansisop"
+		"begin"
+		"	f"
+		"end"
+		""
+		"function f"
+		"	variables a"
+		"	a=1"
+		"	print a"
+		"	g"
+		"end"
+		" "
+		"function g"
+		"	variables a"
+		"	a=0"
+		"	print a"
+		"	f"
+		"end";
 
 ///----INICIO SEMAFOROS----///
 pthread_mutex_t mutex_HistoricoPcb; // deberia ser historico pid
@@ -83,10 +100,10 @@ void consola_finalizarTodosLosProcesos(int socketConsola){
 		if(process->socketConsola==socketConsola)
 		{
 			process->pcb->exitCode=-6;
-
-			process->finalizadoExternamente=true;
+			process->avisoAConsola=true;
 
 			enviarMensaje(socketMemoria,finalizarPrograma,&process->pid,sizeof(int));
+
 
 			int* joaquin;
 			recibirMensaje(socketMemoria,&joaquin);
@@ -121,7 +138,7 @@ void newToReady(){
 	PROCESOS* programaAnsisop = queue_peek(cola_New);
 
 	//*** Valido si el programa ya fue finalizado! Si aun no fue finalizado, se procede a valirdar si se puede pasar a ready... En caso de estar finalizado ya se pasa a la cola de terminados
-	if(!programaAnsisop->finalizadoExternamente)
+	if(programaAnsisop->pcb->exitCode == 53)
 	{
 		printf("Estructura:--\nPid: %d\nScript: %s\nSocketConsola:%d\n\n",programaAnsisop->pid,programaAnsisop->scriptAnsisop,programaAnsisop->socketConsola);
 
@@ -182,17 +199,19 @@ void newToReady(){
 		{
 			//***Como memoria no me puede guardar el programa, finalizo este proceso- Lo saco de la cola de new y lo mando a la cola de finished
 			queue_pop(cola_New);
-			programaAnsisop->finalizadoExternamente=true;
 			programaAnsisop->pcb->exitCode=-1; // exit code por falta de memoria
+
+			//***Le aviso a consola que se termino su programa por falta de memoria
+			enviarMensaje(programaAnsisop->socketConsola,pidFinalizadoPorFaltaDeMemoria,&programaAnsisop->pid,sizeof(int));
+			programaAnsisop->avisoAConsola=true;
+
+			sem_post(&mutex_cola_New);
 
 			sem_wait(&mutex_cola_Finished);
 				queue_push(cola_Finished, programaAnsisop);
 			sem_post(&mutex_cola_Finished);
 
-			//***Le aviso a consola que se termino su programa por falta de memoria
-			enviarMensaje(programaAnsisop->socketConsola,pidFinalizadoPorFaltaDeMemoria,&programaAnsisop->pid,sizeof(int));
 
-			sem_post(&mutex_cola_New);
 			printf("[Funcion newToReady] - No hubo espacio para guardar en memoria!\n");
 		}
 		free(ok);
@@ -229,7 +248,6 @@ bool proceso_finalizacionExterna(int pid, int exitCode)
 
 	if( procesoAFianalizar != NULL){
 		procesoAFianalizar->pcb->exitCode=exitCode;
-		procesoAFianalizar->finalizadoExternamente=true;
 		flag=true;
 	}
 
@@ -237,11 +255,6 @@ bool proceso_finalizacionExterna(int pid, int exitCode)
 
 	return flag;
 }
-
-
-
-
-
 
 
 
@@ -281,7 +294,7 @@ void *rutinaConsola(void * arg)
 
 				nuevoPrograma->scriptAnsisop = scripAnsisop;
 				nuevoPrograma->socketConsola = socketConsola;
-				nuevoPrograma->finalizadoExternamente = false;
+				nuevoPrograma->avisoAConsola = false;
 
 				//***Creo el PCB
 				PCB_DATA * pcbNuevo = crearPCB(nuevoPrograma->scriptAnsisop, nuevoPrograma->pid, 0);
@@ -363,6 +376,30 @@ void *rutinaConsola(void * arg)
 }
 
 
+void cpu_actualizarPCBcolaExec(PCB_DATA *pcbDesdeCPU)
+{
+	sem_wait(&mutex_cola_Exec);
+
+/*	bool busqueda(PCB_DATA* unPCB)
+	{
+		if(unPCB->pid == pcbDesdeCPU->pid)
+			return true;
+
+		return false;
+	}
+	PCB_DATA* pcbParaActualizar =(PCB_DATA*)list_find(cola_Exec, busqueda);
+*/
+	PCB_DATA* pcbParaActualizar = (PCB_DATA*)queue_peek(cola_Exec);
+
+	if( pcbParaActualizar != NULL){
+
+		pcbParaActualizar=pcbDesdeCPU;
+	}
+
+	sem_post(&mutex_cola_Exec);
+
+}
+
 /// *** Esta rutina se comenzará a hacer cuando podramos comenzar a enviar mensajes entre procesos
 void *rutinaCPU(void * arg)
 {
@@ -393,7 +430,10 @@ void *rutinaCPU(void * arg)
 
 				printf("[Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- %d!\n", pedirPCB);
 
-				PCB_DATA* pcb = queue_peek(cola_Exec);
+				sem_wait(&mutex_cola_Exec);
+					PCB_DATA* pcb = queue_peek(cola_Exec);
+				sem_post(&mutex_cola_Exec);
+
 				void* pcbSerializado = serializarPCB(pcb);
 
 				enviarMensaje(socketCPU,envioPCB,pcbSerializado,tamanoPCB(pcb) + 4);
@@ -405,15 +445,16 @@ void *rutinaCPU(void * arg)
 				printf("[Rutina rutinaCPU] - Entramos al Caso de que CPU termino la ejecucion de un proceso: accion- %d!\n", enviarPCBaTerminado);
 
 				PCB_DATA* pcb = deserializarPCB(stream);
+				imprimirPCB(pcb);
 
-				queue_pop(cola_Exec);
+				pcb->exitCode=0;
+				cpu_actualizarPCBcolaExec(pcb);
 
-				queue_push(cola_Finished,pcb);
-
-
+				planificadorExtraLargoPlazo();
 			}break;
 			case enviarPCBaReady:{
 				//TE MANDO UN PCB QUE TERMINA PORQUE SE QUEDO SIN QUANTUM, ARREGLATE LAS COSAS DE MOVER DE UNA COLA A LA OTRA Y ESO
+
 			}break;
 			case mensajeParaEscribir:{
 				//TE MANDO UNA ESTRUCTURA CON {PID, DESCRIPTOR, MENSAJE(CHAR*)} PARA QUE:
@@ -433,7 +474,7 @@ void *rutinaCPU(void * arg)
 				//TE MANDO EL NOMBRE DE UNA VARIABLE COMPARTIDA Y ME DEBERIAS DEVOLVER SU VALOR
 			}break;
 			case 0:{
-				printf("[Rutina rutinaCPU] - Desconecta la CPU N°: %d\n", socketCPU);
+				printf("[Rutina rutinaCPU] - Desconecto la CPU N°: %d\n", socketCPU);
 				todaviaHayTrabajo=false;
 			}break;
 			default:{
@@ -466,7 +507,7 @@ void * aceptarConexiones_Cpu_o_Consola( void *arg ){
 		{
 			case Consola: // Si es un cliente conectado es una CPU
 			{
-				printf("\nNueva Consola Conectada!\nSocket Consola %d\n\n", nuevoSocket);
+				printf("\n[rutina aceptarConexiones] - Nueva Consola Conectada!\nSocket Consola %d\n\n", nuevoSocket);
 
 				/// CAmbiar este hilo a uno desetachable
 				pthread_create(&hilo_M, NULL, rutinaConsola, nuevoSocket);
@@ -475,7 +516,7 @@ void * aceptarConexiones_Cpu_o_Consola( void *arg ){
 
 			case CPU: // Si el cliente conectado es el cpu
 			{
-				printf("Nueva CPU Conectada\nSocket CPU %d\n\n", nuevoSocket);
+				printf("\n[rutina aceptarConexiones] - Nueva CPU Conectada\nSocket CPU %d\n\n", nuevoSocket);
 
 				sem_wait(&mutex_cola_CPUs_libres);
 					queue_push(cola_CPUs_libres,nuevoSocket);
@@ -518,7 +559,7 @@ bool hayProgramasEnNew()
 //*** Rutina que te pasa los procesos de new a ready - anda bien
 void * planificadorLargoPlazo()
 {
-	printf("[rutina planificadorLargoPlazo] - Entramos al planificador de largo plazo!\n");
+	printf("\n[rutina planificadorLargoPlazo] - Entramos al planificador de largo plazo!\n");
 
 	//*** el booleano finPorConsolaDelKernel esta en false desde el inicio, en el momento en el que el kernel quiera frenar la planificiacion esta variable pasara a true, y se frenara la planificacion
 	while(!finPorConsolaDelKernel)
@@ -528,9 +569,100 @@ void * planificadorLargoPlazo()
 		{
 			newToReady();
 		}
-		sleep(5);
+//		sleep(5);
 	}
 }
+
+
+
+
+
+//*** Esta funcion pasa todos los procesos que esten finalizados dentro de la cola de exec a la cola de Finished, y retorna el pid del proceso que se acaba de mover de cola, sino encontro ninguno retorna -1
+int execToFinished()
+{
+	//**Tomo el primer elemento de la lista,
+	PCB_DATA* pcb=queue_peek(cola_Exec);
+
+	//Valido que el proceso haya finalizado
+
+	/// DEBERIA VALIDAR ADEMAS DE ESTO; SI EL PROCESO YA FUE FINALIZADO!!!! TENGO QUE VER TODOS LOS EXITCODE de FINALIZACIONES QUE NO SEAN DE CPU Y PONERLOS EN EL IF
+	if(pcb->exitCode != 53){
+
+		//*** si el proceso ya finalizo, lo saco de la cola de exec y lo paso a la cola de finished
+		queue_pop(cola_Exec);
+
+		sem_wait(&mutex_cola_Finished);
+		queue_push(cola_Finished,pcb);
+		sem_post(&mutex_cola_Finished);
+
+		//*** Retorno el pid del proceso que acabo de psar a finalizado
+		return  pcb->pid;
+	}
+
+	return -1;
+}
+
+
+void planificadorExtraLargoPlazo(){
+	int pidParaAvisar;
+
+	bool busqueda(PROCESOS * aviso)
+	{
+		if(aviso->pid == pidParaAvisar)
+			return true;
+
+		return false;
+	}
+
+	//*** el booleano finPorConsolaDelKernel esta en false desde el inicio, en el momento en el que el kernel quiera frenar la planificiacion esta variable pasara a true, y se frenara la planificacion
+//	while(!finPorConsolaDelKernel)
+	{
+		sem_wait(&mutex_cola_Exec);
+
+		//***Validamos que haya procesos en la cola de exec
+		if(queue_size(cola_Exec)>0){
+
+			//***Llamamos a la funcion excetToReady que pasa los procesos que ya hallan finalizado a la cola de finalizados, y retorna el pid del proceso que acaba de pasar. No haber encotrado ninguno retorna -1
+			pidParaAvisar = execToFinished();
+			sem_post(&mutex_cola_Exec);
+
+			//*** Si hay un pid para avisar
+			if(pidParaAvisar>0){
+
+				//*** Buscamos el procesos en la lista de procesos, a travez del pid que acaba de ser psado a finalizado
+				PROCESOS* procesoFinalizado =(PROCESOS*)list_find(avisos, busqueda);
+
+				//*** En caso de haber encontrado el proceso con el pid finalizado
+				if( procesoFinalizado != NULL){
+
+					//*** Valido que no haya sido avisada la consola anteriormente
+					if(!procesoFinalizado->avisoAConsola)
+					{
+
+					// Si la consola no habia sido avisada le envio el mensaje del pid que acaba de finalizar
+//					enviarMensaje(procesoFinalizado->socketConsola,procesoFinalizado,&procesoFinalizado->pid,sizeof(int));	ACA FALTa VER COMO LO RECIBE JULY (consola)
+
+					printf("Se acaba de mandar a la consola n°: %d, que el proceso %d acaba de finalizar exitosamente!\n", procesoFinalizado->socketConsola, procesoFinalizado->pid);
+
+					// y ahora pongo que el este proceso ya le aviso a su consola
+					procesoFinalizado->avisoAConsola=true;
+					}
+				}
+			}
+
+		}
+		else{
+			sem_post(&mutex_cola_Exec);
+		}
+
+//		sleep(5);
+	}
+}
+
+
+
+
+
 
 //*** Esta funcion te dice si hay cpus disponibles
 bool hayCpusDisponibles(){
@@ -597,7 +729,7 @@ PCB_DATA* readyToExec()
 
 void * planificadorCortoPlazo()
 {
-	printf("[Rutina readyToExec] - Entramos al planificador de corto plazo!\n");
+	printf("\n[Rutina planificadorCortoPlazo] - Entramos al planificador de corto plazo!\n");
 
 	//*** el booleano finPorConsolaDelKernel esta en false desde el inicio, en el momento en el que el kernel quiera frenar la planificiacion esta variable pasara a true, y se frenara la planificacion
 	while(!finPorConsolaDelKernel)
@@ -624,7 +756,7 @@ void * planificadorCortoPlazo()
 
 		}
 
-		sleep(10);
+//		sleep(5);
 	}
 }
 
@@ -652,23 +784,15 @@ void imprimirTodosLosProcesosEnColas(){
 	list_iterate(avisos, imprimir);
 }
 
-
+//*** probar esta funcion - no anda, arreglar
 ///*** Esta funcion dada una cola te imprime todos los procesos que esta contenga
 void imprimirProcesosdeCola(t_queue* unaCola)
 {
-	/*void imprimir (t_queue * unaCola)
-	{
+	void imprimir(PCB_DATA * pcb){
+		printf("Pid: %d\n", pcb->pid);
 	}
 
-	list_iterate(avisos, imprimir);*/
-}
-
-
-/// Falta desarrollar toda la funcion
-///*** Esta funcion lo que hace es finalizar un proceso este en la cola que este, se invoca desde la consola del kernel y retorna true al terminar, o false sino exite el pid
-bool finalizarProcesoDesdeKernel(int pid)
-{
-	return true;
+	list_iterate(unaCola, imprimir);
 }
 
 void * consolaKernel()
@@ -707,7 +831,6 @@ void * consolaKernel()
 					case 1:{
 						printf("Procesos de la cola de New:\n");
 
-						imprimirProcesosdeCola(cola_New);
 					}break;
 					case 2:{
 						printf("Procesos de la cola de Ready:\n");
@@ -727,13 +850,12 @@ void * consolaKernel()
 					case 5:{
 						printf("Procesos de la cola de Finish:\n");
 
-
 					}break;
 					case 6:{
 						printf("Estos son todos los procesos:\n");
 
 						sem_wait(&mutex_listaProcesos);
-						imprimirTodosLosProcesosEnColas();
+							imprimirTodosLosProcesosEnColas();
 						sem_post(&mutex_listaProcesos);
 					}break;
 					default:{
@@ -775,7 +897,7 @@ void * consolaKernel()
 				printf("Ingrese pid del proceso a finalizar: ");
 				scanf("%d",&pid);
 
-				if(finalizarProcesoDesdeKernel(pid))
+				if(proceso_finalizacionExterna( pid,  -50681)) //cambiar el numero del exit code, por el que sea el correcto
 					printf("Finalizacion exitosa.\n");
 				else
 					printf("El Pid %d es Incorrecto! Reeintente con un nuevo pid.\n",pid);
@@ -813,10 +935,23 @@ void * consolaKernel()
 ///---- FIN CONSOLA KERNEL----////
 
 
+/*
+-SOLUCIONAR LO DE LAS ETIQUETAS.
+-HACER EN EL KERNEL TODAS LAS OPERACIONES QUE PIDE EL CPU:
+-WAIT
+-SIGNAL
+-VALOR COMPARTIDAS
+-ASIGNAR COMPARTIDAS
+-ESCRIBIR (POR AHORA SOLO POR CONSOLA)
 
 
 
 
+
+-MANEJAR LOS PRINTS DE CONSOLA
+-MANEJAR LA FINALIZACION DE PROGRAMAS POR CONSOLA
+
+*/
 ///--------FUNCIONES DE CONEXIONES-------////
 //***Estas funciones andan
 //*** Esta función se conecta con memoria y recibe de ella el tamaño de las paginas
@@ -875,8 +1010,24 @@ void conectarConFS()
 }
 ///---- FIN FUNCIONES DE CONEXIONES------////
 
+
+
+/*  SEM_IDS=[SEM1, SEM2, SEM3]
+	SEM_INIT=[1, 1 ,1]
+*/
+
+int saberTamanoArray()
+{
+	return 3;
+}
+
+char** ids_semaforos;
+int** init_semaforos;
+int cant_semaforos;
+
 int main(void) {
 	printf("Inicializando Kernel.....\n\n");
+
 
 	///------INICIALIZO TO.DO-------------///
 		historico_pid=1;
@@ -904,7 +1055,14 @@ int main(void) {
 
 		grado_multiprogramacion = getConfigInt("GRADO_MULTIPROG");
 		stack_size = getConfigInt("STACK_SIZE");
-		quantumRR = -1 ;//getConfigInt("QUANTUM");
+		quantumRR = (strcmp("FIFO",getConfigString("ALGORITMO")) == 0)? -1 : getConfigInt("QUANTUM"); // con amor, niñita
+
+
+		// Es muy bueno sizeof(a)/sizeof(*a)
+		ids_semaforos = getConfigStringArray("SEM_IDS");
+		cant_semaforos= 3; // tendriamos qeu tener una cuenta o algo asi
+
+
 	///-----------------------------////
 
 
