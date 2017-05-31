@@ -75,6 +75,19 @@ int escribirMemoriaPosta(int pid,int pagina,void* contenido){
 	memcpy(memoriaTotal+posicion,contenido,getConfigInt("MARCO_SIZE"));
 	return 1;
 }
+void imprimirContenidoCache(){
+	FILE* archivo =  fopen ("contenidoCache.txt", "w+");
+	int i;
+	for (i=0;i<getConfigInt("ENTRADAS_CACHE");i++){
+			lineaCache* linea = list_get(tablaDeEntradasDeCache,i);
+			printf("La pagina %d, del pid %d, tiene este contenido:\n", linea->pagina,linea->pid );
+			puts(linea->contenido);
+			//printf("%s", (char*) &linea->contenido );
+			fprintf(archivo, "La pagina %d, del pid %d, tiene este contenido:\n ", linea->pagina,linea->pid );
+			fwrite(linea->contenido,sizeOfPaginas,1,archivo);
+			fwrite("\n",1,1,archivo);
+	}
+}
 void imprimirContenidoMemoria(){
 	FILE* archivo =  fopen ("file.txt", "w+");
 	int i;
@@ -118,20 +131,38 @@ int almacenarBytesEnPagina(int pid, int pagina, int desplazamiento, int tamano,v
 	sem_wait(&mutex_Memoria);
 	contenidoDeLaPagina = memoriaTotal+frame*getConfigInt("MARCO_SIZE");
 	memcpy(contenidoDeLaPagina+desplazamiento, buffer,tamano);
+	sem_wait(&mutex_cache);
+	if(buscarEnLaCache(pid,pagina) !=NULL){
+		actualizarPaginaDeLaCache(pid,pagina,tamano,desplazamiento,buffer);
+	}
+	sem_post(&mutex_cache);
+
 	sem_post(&mutex_Memoria);
 	return 1;
 }
 void* solicitarBytesDeUnaPagina(int pid, int pagina, int desplazamiento, int tamano){
 	void* contenidoDeLaPagina;
-	sem_wait(&mutex_Memoria); //No se si son 2 mutex distintos
-	contenidoDeLaPagina = leerMemoriaPosta(pid,pagina);
-	if ((int)contenidoDeLaPagina == 0){
-		free(contenidoDeLaPagina);
-		return 0;
+	sem_wait(&mutex_cache);
+	if((contenidoDeLaPagina= buscarEnLaCache(pid,pagina))!=NULL){
+		cacheHit(pid,pagina);
+		sem_post(&mutex_cache);
+	}
+	else{
+		sem_post(&mutex_cache);
+		sem_wait(&mutex_retardo);
+		sleep(retardo);
+		sem_post(&mutex_retardo);
+		sem_wait(&mutex_Memoria); //No se si son 2 mutex distintos
+		contenidoDeLaPagina = leerMemoriaPosta(pid,pagina);
+		if ((int)contenidoDeLaPagina == 0){
+			free(contenidoDeLaPagina);
+			return 0;
+		}
+		cacheMiss(pid,pagina,contenidoDeLaPagina);
+		sem_post(&mutex_Memoria);
 	}
 	void* contenidoADevolver = malloc(tamano);
 	memcpy(contenidoADevolver,contenidoDeLaPagina+desplazamiento,tamano);
-	sem_post(&mutex_Memoria);
 	free(contenidoDeLaPagina);
 	return contenidoADevolver;
 
@@ -251,16 +282,18 @@ void *rutinaConsolaMemoria(void* x){
 					}
 					if(strcmp(comandoConsola[1],"estructuras\n")== 0){
 						imprimirTablaDePaginasInvertida();
+						imprimirContenidoCache();
 						continue;
 
 					}
 						//imprimirEstructuras();
-						//imprimirContenidoCache();
 				}
 
 				if(strcmp(comandoConsola[0],"flush\n") == 0){
-						continue;
+					cacheFlush();
+					continue;
 				}
+
 				if(strcmp(comandoConsola[0],"size") == 0){
 						if(strcmp(comandoConsola[1],"memoria\n")== 0){
 							printf("Su tamaño en frames: %d\n",cantidadDeMarcos);
@@ -436,10 +469,12 @@ int main(void) {
 	sem_init(&mutex_Memoria,0,1);
 	sem_init(&mutex_TablaDeCantidadDePaginas,0,1);
 	sem_init(&mutex_TablaDePaginasInvertida,0,1);
+	sem_init(&mutex_cache,0,1);
+	sem_init(&mutex_retardo,0,1);
 
 
 	// ******* Configuracion de la Memoria a partir de un archivo
-	cache=list_create();
+	tablaDeEntradasDeCache = list_create();
 	tablaConCantidadDePaginas = list_create();
 	printf("Configuracion Inicial: \n");
 	configuracionInicial("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Memoria/memoria.config");
@@ -454,11 +489,39 @@ int main(void) {
 	for(i=0;i<cantidadDeMarcos;i++){//Chequearlo despues
 		memcpy(memoriaTotal+i*sizeOfPaginas,hijodeputa,sizeOfPaginas);
 	}
-	free(hijodeputa); //No me toma el free por algun motivo __	 O	___
+//	free(hijodeputa); //No me toma el free por algun motivo __	 O	___
 													//		  \__|__/
 
 	iniciarTablaDePaginacionInvertida();
 
+	/*	void* pagina = buscarEnLaCache(1,2);
+	cacheMiss(1,2,hijodeputa);
+	cacheMiss(1,3,hijodeputa);
+	cacheMiss(1,3,hijodeputa);
+	cacheMiss(2,2,hijodeputa);
+	cacheMiss(2,2,hijodeputa);
+	cacheMiss(2,2,hijodeputa);
+	cacheMiss(3,2,hijodeputa);
+	cacheMiss(3,2,hijodeputa);
+	cacheMiss(3,2,hijodeputa);
+
+	cacheMiss(4,2,hijodeputa);
+	cacheMiss(4,2,hijodeputa);
+	cacheMiss(4,2,hijodeputa);
+
+	cacheMiss(5,2,hijodeputa);
+	cacheMiss(5,2,hijodeputa);
+	cacheMiss(5,2,hijodeputa);
+
+	cacheMiss(23,2,hijodeputa);
+	char* pagina2 = buscarEnLaCache(1,2);
+//	cacheFlush();
+	lineaCache linea;
+	linea.pid = 2;
+	linea.pagina = 2;
+	//estabaEnCache(linea);
+	pagina2 = buscarEnLaCache(2,2);
+*/
 	// PRUEBAS
 
 //	asignarPaginasAUnProceso(1,2);

@@ -17,11 +17,14 @@ int retardo;
 int sizeOfPaginas;
 int cantidadDeMarcos;
 void* memoriaTotal;
-t_list* cache;
+t_list* tablaDeEntradasDeCache;
 t_list* tablaConCantidadDePaginas;
 sem_t mutex_Memoria;
 sem_t mutex_TablaDePaginasInvertida;
 sem_t mutex_TablaDeCantidadDePaginas;
+
+sem_t mutex_retardo;
+sem_t mutex_cache;
 
 sem_t sem_isKernelConectado;
 
@@ -34,6 +37,12 @@ typedef struct{
 	int pagina;
 	int frame;
 }filaDeTablaPaginaInvertida;
+
+typedef struct{
+	int pid;
+	int pagina;
+	int orden;
+}filaDeTablaOrdenCache;
 
 filaDeTablaPaginaInvertida* tablaDePaginacionInvertida; //Podria ser un t_list
 typedef struct{
