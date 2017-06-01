@@ -35,6 +35,9 @@ int getConfigInt(char * etiqueta);
 //recibe una etiqueta y un indice y devuelve el valor en tipo int
 int getConfigIntArrayElement(char *, int);
 
+//recibe una etiqueta y devuelve la cantidad de elementos que tiene
+int getArraySize(char * etiqueta);
+
 
 //--Setters de parametros
 

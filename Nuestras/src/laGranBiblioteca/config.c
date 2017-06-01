@@ -10,6 +10,15 @@
 #include <stdlib.h>
 #include "config.h"
 
+
+//Cuenta las lineas de un array
+int countSplit(char ** array){
+	int size;
+	for (size = 0; array[size] != NULL; size++);
+	return size;
+}
+
+
 //--------FUNCIONES DE SEGURIDAD-----
 char* getStringFromConfig(t_config *config, char*valor){
 	char* aux;
@@ -163,6 +172,10 @@ int getConfigIntArrayElement(char * etiqueta, int indice){
 	return atoi(getConfigStringArrayElement(etiqueta, indice));
 }
 
+int getArraySize(char * etiqueta){
+ return countSplit(getConfigStringArray(etiqueta));
+}
+
 
 
 ///----------------------------SETTERS------------------------
@@ -217,13 +230,6 @@ char * file_to_string(FILE * stream){
 
 	//No lo lei y me chupa un huevo, es copy-paste de internet
 	return contents;
-}
-
-//Cuenta las lineas de un array
-int countSplit(char ** array){
-	int size;
-	for (size = 0; array[size] != NULL; size++);
-	return size;
 }
 
 

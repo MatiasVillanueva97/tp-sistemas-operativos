@@ -35,6 +35,8 @@
 #include "funcionesMemoria.h"
 
 
+
+
 void inicializarSemaforo(){
 	sem_init(&mutex_HistoricoPcb,0,1);
 	sem_init(&mutex_listaProcesos,0,1);
@@ -458,6 +460,31 @@ void *rutinaCPU(void * arg)
 }
 
 
+void consola_crearHiloDetach(int nuevoSocket){
+	pthread_attr_t attr;
+	pthread_t hilo_M ;
+
+	//Hilos detachables cpn manejo de errores tienen que ser logs
+	int  res;
+	res = pthread_attr_init(&attr);
+	if (res != 0) {
+		perror("Error en los atributos del hilo");
+	}
+
+	res = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+	if (res != 0) {
+		perror("Error en el seteado del estado de detached");
+	}
+
+	res = pthread_create (&hilo_M ,&attr,rutinaConsola, (void *)nuevoSocket);
+	if (res != 0) {
+		perror("Error en la creacion del hilo");
+	}
+
+	pthread_attr_destroy(&attr);
+}
+
+
 /// *** Esta Función esta probada y anda
 void * aceptarConexiones_Cpu_o_Consola( void *arg ){
 	//----DECLARACION DE VARIABLES ------//
@@ -479,8 +506,7 @@ void * aceptarConexiones_Cpu_o_Consola( void *arg ){
 			{
 				printf("\n[rutina aceptarConexiones] - Nueva Consola Conectada!\nSocket Consola %d\n\n", nuevoSocket);
 
-				/// CAmbiar este hilo a uno desetachable
-				pthread_create(&hilo_M, NULL, rutinaConsola, nuevoSocket);
+				consola_crearHiloDetach(nuevoSocket);
 
 			}break;
 
@@ -678,7 +704,7 @@ PCB_DATA* readyToExec()
 			//*** Si como aun quedan porcesos en la cola de ready vuelvo a llamar a la funcion tomarPCBdeReady
 			sem_post(&mutex_cola_Exec);
 			sem_post(&mutex_cola_Ready);
-			pcb = readyToExec();
+			return readyToExec();
 		}
 		else
 		{
@@ -695,6 +721,30 @@ PCB_DATA* readyToExec()
 	sem_post(&mutex_cola_Exec);
 	sem_post(&mutex_cola_Ready);
 	return pcb;
+}
+
+void cpu_crearHiloDetach(int nuevoSocket){
+	pthread_attr_t attr;
+	pthread_t hilo_rutinaCPU ;
+
+	//Hilos detachables cpn manejo de errores tienen que ser logs
+	int  res;
+	res = pthread_attr_init(&attr);
+	if (res != 0) {
+		perror("Error en los atributos del hilo");
+	}
+
+	res = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+	if (res != 0) {
+		perror("Error en el seteado del estado de detached");
+	}
+
+	res = pthread_create (&hilo_rutinaCPU ,&attr,rutinaCPU, (void *)nuevoSocket);
+	if (res != 0) {
+		perror("Error en la creacion del hilo");
+	}
+
+	pthread_attr_destroy(&attr);
 }
 
 void * planificadorCortoPlazo()
@@ -721,7 +771,7 @@ void * planificadorCortoPlazo()
 
 				//*** Llamo a una rutina CPU que va a estar trabajando con la cpu que le paso por parametro -- Cambiar tipo de hilo
 				pthread_t hilo_rutinaCPU;
-				pthread_create(&hilo_rutinaCPU, NULL, rutinaCPU, cpuParaTrabajar);
+				cpu_crearHiloDetach(cpuParaTrabajar);
 			}
 
 		}
@@ -933,6 +983,7 @@ void * consolaKernel()
 /*
 -SOLUCIONAR LO DE LAS ETIQUETAS.
 -HACER EN EL KERNEL TODAS LAS OPERACIONES QUE PIDE EL CPU:
+
 -WAIT
 -SIGNAL
 -VALOR COMPARTIDAS
@@ -947,6 +998,8 @@ void * consolaKernel()
 -MANEJAR LA FINALIZACION DE PROGRAMAS POR CONSOLA
 
 */
+
+
 ///--------FUNCIONES DE CONEXIONES-------////
 //***Estas funciones andan
 //*** Esta función se conecta con memoria y recibe de ella el tamaño de las paginas
@@ -1011,14 +1064,14 @@ void conectarConFS()
 	SEM_INIT=[1, 1 ,1]
 */
 
-int saberTamanoArray()
-{
-	return 3;
-}
-
 char** ids_semaforos;
-int** init_semaforos;
 int cant_semaforos;
+int valor_semaforos[];
+
+char** var_compartidas;
+int cant_var_compartidas;
+int valor_compartidas[];
+
 
 int main(void) {
 	printf("Inicializando Kernel.....\n\n");
@@ -1048,15 +1101,9 @@ int main(void) {
 		configuracionInicial("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Kernel/kernel.config");
 		imprimirConfiguracion();
 
-		grado_multiprogramacion = getConfigInt("GRADO_MULTIPROG");
-		stack_size = getConfigInt("STACK_SIZE");
-		quantumRR = (strcmp("FIFO",getConfigString("ALGORITMO")) == 0)? -1 : getConfigInt("QUANTUM"); // con amor, niñita
-
-
-		// Es muy bueno sizeof(a)/sizeof(*a)
-		ids_semaforos = getConfigStringArray("SEM_IDS");
-		cant_semaforos= 3; // tendriamos qeu tener una cuenta o algo asi
-
+		grado_multiprogramacion = getConfigInt("GRADO_MULTIPROG"); // esta muere
+		stack_size = getConfigInt("STACK_SIZE"); /// esta muere
+		quantumRR = (strcmp("FIFO",getConfigString("ALGORITMO")) == 0)? -1 : getConfigInt("QUANTUM"); // con amor, niñita esta no
 
 	///-----------------------------////
 
