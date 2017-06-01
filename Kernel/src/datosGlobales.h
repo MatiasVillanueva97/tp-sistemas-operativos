@@ -17,6 +17,7 @@
 #include <arpa/inet.h>
 #include <sys/wait.h>
 #include <signal.h>
+#include <semaphore.h>
 #include "commons/collections/list.h"
 #include "commons/collections/queue.h"
 #include "commons/collections/dictionary.h"
@@ -79,6 +80,17 @@ t_queue * cola_CPUs_libres;
 
 ///-------FIN COLAS------//
 
+///----INICIO SEMAFOROS----///
+pthread_mutex_t mutex_HistoricoPcb; // deberia ser historico pid
+pthread_mutex_t mutex_listaProcesos;
+pthread_mutex_t mutex_cola_CPUs_libres;
+pthread_mutex_t mutex_cola_New;
+pthread_mutex_t mutex_cola_Ready;
+pthread_mutex_t mutex_cola_Wait;
+pthread_mutex_t mutex_cola_Exec;
+pthread_mutex_t mutex_cola_Finished;
+
+sem_t sem_ConsolaKernelLenvantada;
 
 
 #endif /* DATOSGLOBALES_H_ */

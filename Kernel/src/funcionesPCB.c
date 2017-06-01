@@ -24,43 +24,38 @@ PCB_DATA* crearPCB(char * scriptAnsisop, int pid, int contPags){
 	return pcb;
 }
 
+void modificarPCB(PCB_DATA * pcbNuevo){
 
-PCB_DATA * buscarPCBPorPidEnCola(t_queue * cola, int pid){
-	bool busquedaDePid(PCB_DATA * pcb){
-		return (pcb->pid == pid);
-	}
-	if(list_any_satisfy(cola->elements,busquedaDePid)){
-		return (PCB_DATA*)list_find(cola->elements,busquedaDePid);
-	}
-	return NULL;
-}
+	bool busqueda(PROCESOS * aviso)
+	{
+		if(aviso->pid == pcbNuevo->pid)
+		{
+			puts("\ndentro de la busqueda");
+			imprimirPCB(aviso->pcb);
+			return true;
+		}
 
-PCB_DATA * buscarPCBPorPidEnColaYBorrar(t_queue * cola, int pid){
-	int i = 0;
-	bool busquedaDePid(PCB_DATA * pcb){
-		if(pcb->pid == pid)	return true;
-		i++;
+
 		return false;
 	}
-	if(list_any_satisfy(cola->elements,busquedaDePid)){
-		list_remove(cola->elements,i);
-		return (PCB_DATA*)list_find(cola->elements,busquedaDePid);
-	}
-	return NULL;
-}
+	sem_wait(&mutex_listaProcesos);
 
-PCB_DATA * buscarPCBPorPidYBorrar(int pid){
-	PCB_DATA * pcb;
-	pcb = buscarPCBPorPidEnColaYBorrar(cola_New, pid);
-	if(pcb != NULL) return pcb;
-	pcb = buscarPCBPorPidEnColaYBorrar(cola_Ready, pid);
-	if(pcb != NULL) return pcb;
-	pcb = buscarPCBPorPidEnColaYBorrar(cola_Wait, pid);
-	if(pcb != NULL) return pcb;
-	pcb = buscarPCBPorPidEnColaYBorrar(cola_Finished, pid);
-	if(pcb != NULL) return pcb;
-	else{
-		printf("No se pudo encontrar el PCB pedido");
-		return NULL;
+
+	PCB_DATA * pcb2 = ((PROCESOS*)list_find(avisos, busqueda))->pcb;
+
+
+	if(pcb2 != NULL){
+	puts("dentro del if\n");
+	destruirPCB_Local(*pcb2);
+		pcb2->cantidadDeEntradas = pcbNuevo->cantidadDeEntradas;
+		pcb2->cantidadDeEtiquetas = pcbNuevo->cantidadDeEtiquetas;
+		pcb2->cantidadDeInstrucciones = pcbNuevo->cantidadDeInstrucciones;
+		pcb2->contextoActual = pcbNuevo->contextoActual;
+		pcb2->exitCode = pcbNuevo->exitCode;
+		pcb2->indiceCodigo = pcbNuevo->indiceCodigo;
+		pcb2->indiceEtiquetas = pcbNuevo->indiceEtiquetas;
+		pcb2->indiceStack = pcbNuevo->indiceStack;
+		pcb2->programCounter = pcbNuevo->programCounter;
 	}
+	sem_post(&mutex_listaProcesos);
 }

@@ -26,23 +26,6 @@ PCB_DATA* crearPCB(char * scriptAnsisop, int pid, int contPags);
  *
  */
 
-PCB_DATA * buscarPCBPorPidEnCola(t_queue * , int );
-/* ******** buscarPCBPorPidEnCola
- * función que dada una cola y un pid te devuelve el PCB completo
- *
- */
-
-
-PCB_DATA * buscarPCBPorPidEnColaYBorrar(t_queue * , int );
-/* ******** buscarPCBPorPidEnColaYBorrar
- * función que dada una cola y un pid te devuelve el PCB completo y lo remueve de la cola
- *
- */
-
-PCB_DATA * buscarPCBPorPidYBorrar(int );
-/* ******** buscarPCBPorPidEnColaYBorrar
- * función que dado un pid, busca en todas las colas si se encuentra tal pid y borra el PCB de la cola
- * busca entre las colas de ready, wait, y finished por ahora
- */
+void modificarPCB(PCB_DATA * pcbNuevo);
 
 #endif /* FUNCIONESPCB_H_ */

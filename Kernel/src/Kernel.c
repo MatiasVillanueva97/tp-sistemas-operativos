@@ -34,45 +34,15 @@
 #include "funcionesPCB.h"
 #include "funcionesMemoria.h"
 
-char * scr_ej="#!/usr/bin/ansisop"
-		"begin"
-		"	f"
-		"end"
-		""
-		"function f"
-		"	variables a"
-		"	a=1"
-		"	print a"
-		"	g"
-		"end"
-		" "
-		"function g"
-		"	variables a"
-		"	a=0"
-		"	print a"
-		"	f"
-		"end";
-
-///----INICIO SEMAFOROS----///
-pthread_mutex_t mutex_HistoricoPcb; // deberia ser historico pid
-pthread_mutex_t mutex_listaProcesos;
-pthread_mutex_t mutex_cola_CPUs_libres;
-pthread_mutex_t mutex_cola_New;
-pthread_mutex_t mutex_cola_Ready;
-pthread_mutex_t mutex_cola_Exec;
-pthread_mutex_t mutex_cola_Finished;
-
-sem_t* contadorDeCpus = 0;
-
-sem_t sem_ConsolaKernelLenvantada;
 
 void inicializarSemaforo(){
 	sem_init(&mutex_HistoricoPcb,0,1);
 	sem_init(&mutex_listaProcesos,0,1);
 	sem_init(&mutex_cola_CPUs_libres,0,1);
 	sem_init(&mutex_cola_New,0,1);
-	sem_init(&mutex_cola_Exec,0,1);
 	sem_init(&mutex_cola_Ready,0,1);
+	sem_init(&mutex_cola_Wait,0,1);
+	sem_init(&mutex_cola_Exec,0,1);
 	sem_init(&mutex_cola_Finished,0,1);
 
 	sem_init(&sem_ConsolaKernelLenvantada,0,0);
@@ -378,6 +348,8 @@ void *rutinaConsola(void * arg)
 
 PCB_DATA * pedirPCBDeExec(){
 	//semforo
+
+
 	PCB_DATA * pcb = queue_pop(cola_Exec);
 	if(pcb->exitCode != 53)
 		queue_push(cola_Finished, pcb);
@@ -386,33 +358,10 @@ PCB_DATA * pedirPCBDeExec(){
 		return pcb;
 	}
 
+
 	//fin sem
 }
 
-void modificarPCB(PCB_DATA * pcbNuevo){
-	bool busqueda(PROCESOS * aviso)
-	{
-		if(aviso->pid == pcbNuevo->pid)
-			return true;
-		return false;
-	}
-	sem_wait(&mutex_listaProcesos);
-	PCB_DATA * pcb2 = (PCB_DATA*)list_find(avisos, busqueda);
-	if(pcb2 != NULL && (pcb2->exitCode == 53) ){
-	destruirPCB_Local(*pcb2);
-		pcb2->cantidadDeEntradas = pcbNuevo->cantidadDeEntradas;
-		pcb2->cantidadDeEtiquetas = pcbNuevo->cantidadDeEtiquetas;
-		pcb2->cantidadDeInstrucciones = pcbNuevo->cantidadDeInstrucciones;
-		pcb2->contextoActual = pcbNuevo->contextoActual;
-		pcb2->exitCode = pcbNuevo->exitCode;
-		pcb2->indiceCodigo = pcbNuevo->indiceCodigo;
-		pcb2->indiceEtiquetas = pcbNuevo->indiceEtiquetas;
-		pcb2->indiceStack = pcbNuevo->indiceStack;
-		pcb2->programCounter = pcbNuevo->programCounter;
-	}
-	sem_post(&mutex_listaProcesos);
-
-}
 
 /// *** Esta rutina se comenzará a hacer cuando podramos comenzar a enviar mensajes entre procesos
 void *rutinaCPU(void * arg)
@@ -463,7 +412,7 @@ void *rutinaCPU(void * arg)
 				PCB_DATA* pcb = deserializarPCB(stream);
 				imprimirPCB(pcb);
 
-				pcb->exitCode=0;
+				pcb->exitCode = 0;
 
 				modificarPCB(pcb);
 
@@ -796,6 +745,8 @@ void imprimirTodosLosProcesosEnColas(){
 	{
 		printf("Pid: %d\n", aviso->pid);
 
+		imprimirPCB(aviso->pcb);
+
 		if(aviso->pcb->exitCode == 53)
 			printf("Estado: en procesamiento\n");
 		else
@@ -810,11 +761,21 @@ void imprimirTodosLosProcesosEnColas(){
 void imprimirProcesosdeCola(t_queue* unaCola)
 {
 	void imprimir(PCB_DATA * pcb){
-		printf("Pid: %d\n", pcb->pid);
+		printf("Pid: %d\n",pcb->pid);
+		//imprimirPCB(pcb);
 	}
 
-	list_iterate(unaCola, imprimir);
+	int a=queue_size(unaCola);
+	printf("kiusaiz: %d\n",a);//,(char*)unaCola->elements->head->data);
+
+	if(a>0 )
+		list_iterate(unaCola->elements, imprimir);
+	else
+		printf("No hay elementos en esta cola.\n");
 }
+
+
+
 
 void * consolaKernel()
 {
@@ -852,25 +813,38 @@ void * consolaKernel()
 					case 1:{
 						printf("Procesos de la cola de New:\n");
 
+						sem_wait(&mutex_cola_New);
+							imprimirProcesosdeCola(cola_New);
+						sem_post(&mutex_cola_New);
 					}break;
 					case 2:{
 						printf("Procesos de la cola de Ready:\n");
 
+						sem_wait(&mutex_cola_Ready);
+							imprimirProcesosdeCola(cola_Ready);
+						sem_post(&mutex_cola_Ready);
 
 					}break;
 					case 3:{
 						printf("Procesos de la cola de Exec:\n");
 
-
+						sem_wait(&mutex_cola_Exec);
+							imprimirProcesosdeCola(cola_Exec);
+						sem_post(&mutex_cola_Exec);
 					}break;
 					case 4:{
 						printf("Procesos de la cola de Bloq:\n");
 
-
+						sem_wait(&mutex_cola_Wait);
+							imprimirProcesosdeCola(cola_Wait);
+						sem_post(&mutex_cola_Wait);
 					}break;
 					case 5:{
 						printf("Procesos de la cola de Finish:\n");
 
+						sem_wait(&mutex_cola_Finished);
+							imprimirProcesosdeCola(cola_Finished);
+						sem_post(&mutex_cola_Finished);
 					}break;
 					case 6:{
 						printf("Estos son todos los procesos:\n");
@@ -918,7 +892,7 @@ void * consolaKernel()
 				printf("Ingrese pid del proceso a finalizar: ");
 				scanf("%d",&pid);
 
-				if(proceso_finalizacionExterna( pid,  -50681)) //cambiar el numero del exit code, por el que sea el correcto
+				if(proceso_finalizacionExterna(pid,  -50681)) //cambiar el numero del exit code, por el que sea el correcto
 					printf("Finalizacion exitosa.\n");
 				else
 					printf("El Pid %d es Incorrecto! Reeintente con un nuevo pid.\n",pid);
