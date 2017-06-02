@@ -32,6 +32,7 @@ t_puntero AnSISOP_definirVariable(t_nombre_variable identificador_variable){
 		pcb->indiceStack = malloc(sizeof(t_entrada));
 		pcb->indiceStack->argumentos = list_create();
 		pcb->indiceStack->variables = list_create();
+		pcb->cantidadDeEntradas++;
 	}
 
 	direccion = calcularNuevaDireccion();
@@ -158,17 +159,16 @@ void AnSISOP_irAlLabel(t_nombre_etiqueta nombre_etiqueta){
 	//Como es el numero de la siguiente instruccion a ejecutar se le asigna al ProgramCounter para que el programa siga a partir de ahi
 
 	//ESTO ES LO QUE DEBERIA ANDAR
-	//pcb->programCounter = puntero-1;
+	pcb->programCounter = puntero-1;
 
 
 	//HARDCODEO ASQUEROSO PARA DEMOSTRAR QUE ANDA EL RESTO DE COSAS SALVO ESTA PARTE
 
-
 	//ESTO ES EL HARDOCDEO PARA EL SCRIPT LVL2
-	//pcb->programCounter = 5;
+	if(strcmp(nombre_etiqueta,"doble") == 0) pcb->programCounter = 5;
 
 	//ESTO ES EL HARDOCDEO PARA EL SCRIPT FOR
-	pcb->programCounter = 2;
+	if(strcmp(nombre_etiqueta,"inicio") == 0) pcb->programCounter = 2;
 
 
 }

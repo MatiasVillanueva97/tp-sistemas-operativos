@@ -155,8 +155,10 @@ int main(void)
 
 		//ACA AVISARLE A KERNEL QUE TERMINE QUE CON ESTE PROCESO
 		if(terminoPrograma){
+			printf("Envie el PCB al Kernel porque termine toda su ejecucion\n");
 			enviarMensaje(socketKernel,enviarPCBaTerminado,serializarPCB(pcb),tamanoPCB(pcb) + 4);
 		}else{
+			printf("Envie el PCB al Kernel porque me quede sin quantum\n");
 			enviarMensaje(socketKernel,enviarPCBaReady,serializarPCB(pcb),tamanoPCB(pcb) + 4);
 		}
 
