@@ -33,8 +33,8 @@
 #include "datosGlobales.h"
 #include "funcionesPCB.h"
 #include "funcionesMemoria.h"
-
-
+#include "funcionesConsolaKernel.h"
+#include "funcionesCPU.h"
 
 
 void inicializarSemaforo(){
@@ -53,55 +53,50 @@ void inicializarSemaforo(){
 ///----FIN SEMAFOROS----///
 
 
-
-///-----FUNCIONES CONSOLA-------//
-
-
-/// *** Falta probar! Necesitamos que ande el enviar mensajes
-///*** Esta funcion le avisa a la consola que un cierto proceso (pid) ya termino
-void consola_enviarAvisoDeFinalizacion(int socketConsola, int pid){
-	printf("[Función consola_enviarAvisoDeFinalizacion] - Se Envía a Consola el pid: %d, porque ha finalizado!\n", pid);
-	enviarMensaje(socketConsola,envioDelPidEnSeco,&pid,sizeof(int));
-}
-
-
-/// *** Funciona
-/// *** Esta funcion finalizara todos los procesos que sean de una consola que se acaba de desconectar
-void consola_finalizarTodosLosProcesos(int socketConsola){
-
-	void cambiar(PROCESOS * process){
-		if(process->socketConsola==socketConsola)
-		{
-			process->pcb->exitCode=-6;
-			process->avisoAConsola=true;
-
-			enviarMensaje(socketMemoria,finalizarPrograma,&process->pid,sizeof(int));
-
-
-			int* joaquin;
-			recibirMensaje(socketMemoria,&joaquin);
-			free(joaquin);
-
-			printf("Murio el proceso: %d\n", process->pid);
-		}
-	}
-
-	bool busqueda(PROCESOS * process)	{
-		return process->socketConsola==socketConsola;
-	}
-
-	list_iterate(avisos, cambiar);
-}
-
-////----FIN FUNCIONES CONSOLA-----///
-
-
-
 ///---FUNCIONES DEL KERNEL----//
 
 
-/// *** Esta función Anda
-//***Funciones de Planificador a largo plazo - Esta funcion te pasa los procesos, (que no hayan finalizado), a la cola de ready;
+///***Esta función tiene que buscar en todas las colas y fijarse donde esta el procesos y cambiar su estado a estado finalizado
+bool proceso_finalizacionExterna(int pid, int exitCode)
+{
+	bool flag=false;
+	sem_wait(&mutex_listaProcesos);
+
+	bool busqueda(PROCESOS * aviso)
+	{
+		if(aviso->pid == pid)
+			return true;
+
+		return false;
+	}
+	PROCESOS* procesoAFianalizar =(PROCESOS*)list_find(avisos, busqueda);
+
+	if( procesoAFianalizar != NULL){
+		procesoAFianalizar->pcb->exitCode=exitCode;
+		flag=true;
+	}
+
+	sem_post(&mutex_listaProcesos);
+
+	return flag;
+}
+
+
+///---FIN FUNCIONES DEL KERNEL----//
+
+
+
+
+///---- FUNCIONES DE PLANIFICACION ----///
+
+
+
+/// ********************************************************************************************************///
+/// ***************************** PRIMER PARTE - PASAR PROCESOS DE NEW A READY *****************************///
+/// ********************************************************************************************************///
+
+
+//***Funciones de Planificador a largo plazo - Esta funcion te pasa los procesos, (que no hayan finalizado), a la cola de ready; - anda bien
 void newToReady(){
 
 	printf("\n\n\nEstamos en la función newToReady a largo plazo!\n\n");
@@ -204,151 +199,176 @@ void newToReady(){
 	/// Que onda con programaAnsisop? No hay que liberarlo? Yo creo que no, onda perderia todas las referencias a los punteros... o no lo sé
 }
 
-///***Esta función tiene que buscar en todas las colas y fijarse donde esta el procesos y cambiar su estado a estado finalizado
-bool proceso_finalizacionExterna(int pid, int exitCode)
+
+//***Esta Función lo que hace es sumar el size de todas las colas que determinan el grado de multiplicacion y devuelve la suma ///***Esta Función esta Probada y anda (falta meterle tres semaforos mutex)
+int cantidadProgramasEnProcesamiento()
 {
-	bool flag=false;
-	sem_wait(&mutex_listaProcesos);
+	//HAcer Semaforos para todas las colas
+	int cantidadProcesosEnLasColas = queue_size(cola_Ready)+queue_size(cola_Wait)+queue_size(cola_Exec);
+	return cantidadProcesosEnLasColas;
+}
 
-	bool busqueda(PROCESOS * aviso)
+
+//*** Esta función te dice si hay programas en new - anda bien
+bool hayProgramasEnNew()
+{
+	sem_wait(&mutex_cola_New);
+		bool valor = queue_size(cola_New) > 0;
+	sem_post(&mutex_cola_New);
+
+	return valor;
+}
+
+
+//*** Rutina que te pasa los procesos de new a ready - anda bien
+void * planificadorLargoPlazo()
+{
+	printf("\n[rutina planificadorLargoPlazo] - Entramos al planificador de largo plazo!\n");
+
+	//*** el booleano finPorConsolaDelKernel esta en false desde el inicio, en el momento en el que el kernel quiera frenar la planificiacion esta variable pasara a true, y se frenara la planificacion
+	while(!finPorConsolaDelKernel)
 	{
-		if(aviso->pid == pid)
-			return true;
-
-		return false;
-	}
-	PROCESOS* procesoAFianalizar =(PROCESOS*)list_find(avisos, busqueda);
-
-	if( procesoAFianalizar != NULL){
-		procesoAFianalizar->pcb->exitCode=exitCode;
-		flag=true;
+		//*** Validamos que haya programas en alguna de la cola de new y que la cantidad de procesos que haya entre las colas de ready-excec-bloq sea menor al grado de multiprogramacion permitida
+		if(cantidadProgramasEnProcesamiento() < grado_multiprogramacion && hayProgramasEnNew())
+		{
+			newToReady();
+		}
+//		sleep(5);
 	}
 
-	sem_post(&mutex_listaProcesos);
-
-	return flag;
+	return NULL;
 }
 
 
 
-
-///---FIN FUNCIONES DEL KERNEL----//
-
-
-
-///---RUTINAS DE HILOS----///
+/// ********************************************************************************************************///
+/// ***************************************** FIN PRIMERA PARTE ********************************************///
+/// ********************************************************************************************************///
 
 
 
-/// *** A esta función hay que probarle tuodo el sistema de envio de mensajes entre consola y kernel ( falla en el recivir mensaje que esta dentro del swich, nose porque no recibe mensajes
-//***Esta rutina se levanta por cada consola que se cree. Donde se va a quedar escuchandola hasta que la misma se desconecte.
-void *rutinaConsola(void * arg)
+
+
+
+
+/// ********************************************************************************************************///
+/// **************************** SEGUNDA PARTE - PASAR PROCESOS DE READY A EXEC ****************************///
+/// ********************************************************************************************************///
+
+
+///*** Quito el primer elemento de la cola de ready, valido que no haya sido finalizado y lo pongo en la cola de exec //**** Esta funcion anda bien,
+PCB_DATA* readyToExec()
 {
+	sem_wait(&mutex_cola_Ready);
+	sem_wait(&mutex_cola_Exec);
 
-	int socketConsola = (int)arg;
-	bool todaviaHayTrabajo = true;
-	void * stream;
-	printf("[Rutina rutinaConsola] - Entramos al hilo de la consola: %d!\n", socketConsola);
+	//*** Tomo el primer elemento de la cola de ready y lo quito
+	PCB_DATA* pcb = queue_peek(cola_Ready);
+	queue_pop(cola_Ready);
 
-	while(todaviaHayTrabajo){
-		int a = recibirMensaje(socketConsola,&stream);
-	switch(a){
-			case envioScriptAnsisop:{
-				//***Estoy recibiendo un script para inicializar. Creo un neuvo proceso y ya comeizno a rellenarlo con los datos que ya tengo
-				printf("[Rutina rutinaConsola] - Nuevo script recibido!\n");
+	//*** Valido que el proceso no haya sido terminado ya
+	if(pcb->exitCode != 53)
+	{
+		//*** Si ya fue finalizado lo paso a la cola de finalizados
+		sem_wait(&mutex_cola_Finished);
+			queue_push(cola_Finished,pcb);
+		sem_post(&mutex_cola_Finished);
 
-				char* scripAnsisop = (char *)stream;
-				printf("El stream es : %s /n",scripAnsisop);
+		//*** valido si aun quedan procesos en la cola de ready para seguir buscando un pcb para trabajar
+		if(queue_size(cola_Ready)>0){
 
-				PROCESOS * nuevoPrograma = malloc(sizeof(PROCESOS));
-
-				sem_wait(&mutex_HistoricoPcb);
-					nuevoPrograma->pid= historico_pid;
-					historico_pid++;
-				sem_post(&mutex_HistoricoPcb);
-
-				nuevoPrograma->scriptAnsisop = scripAnsisop;
-				nuevoPrograma->socketConsola = socketConsola;
-				nuevoPrograma->avisoAConsola = false;
-
-				//***Creo el PCB
-				PCB_DATA * pcbNuevo = crearPCB(nuevoPrograma->scriptAnsisop, nuevoPrograma->pid, 0);
-				nuevoPrograma->pcb = pcbNuevo;
-
-				//***Lo Agrego a la Cola de New
-				sem_wait(&mutex_cola_New);
-					queue_push(cola_New,nuevoPrograma);
-				sem_post(&mutex_cola_New);
-
-				//***Le envio a consola el pid del script que me acaba de enviar
-				enviarMensaje(socketConsola,envioDelPidEnSeco,&nuevoPrograma->pid,sizeof(int));
-
-				sem_wait(&mutex_listaProcesos);
-					list_add(avisos,nuevoPrograma);
-				sem_post(&mutex_listaProcesos);
-
-				/* Cuando un consola envia un pid para finalizar, lo que vamos a hacer es una funci+on que cambie el estado de ese proceso a finalizado,
-				 * de modo que en el mommento en que un proceso pase de cola en cola se valide como esta su estado, de estar en finalizado externamente
-				 *  se pasa automaticamente ala cola de finalizados ---
-				 *  Asi que se elimina la estructura de avisos de finalizacion y se agrega el elemento "finalizadoExternamente" a todos las estructuras
-				 *  Tambien, cabe destacar que hay una sola estructura procesos
-				 */
-				break;
-			}
-
-			case finalizarCiertoScript:{
-
-				//***Estoy recibiendo un script para finalizar, le digo a memoria que lo finalize y si sale bien le aviso a consola, sino tambien le aviso, pero que salio mal xd
-				int pid = leerInt(stream);
-				int* respuesta = malloc(sizeof(int));
-
-				printf("Entramos a finalizar el script, del pid: %d\n", pid);
-
-				//***Le digo a memoria que mate a este programa
-				enviarMensaje(socketMemoria,finalizarPrograma, &pid,sizeof(int));//CAMBIAR
-
-				//***Esta función actualizará el estado de finalizacion de un proceso
-				if(proceso_finalizacionExterna(pid, -7) )
-				{
-					enviarMensaje(socketConsola,pidFinalizado, &pid,sizeof(int));
-
-					//***Memoria me avisa si no encontro el pid
-					recibirMensaje(socketMemoria, &respuesta);
-					if(!respuesta){
-						errorEn(respuesta, "[Rutina rutinaConsola] - La Memoria no pudo finalizar el proceso\n");
-					}
-				}
-				else{
-					errorEn(respuesta, "[Rutina rutinaConsola] - No existe el pid\n");
-					enviarMensaje(socketConsola,errorFinalizacionPid, &pid,sizeof(int));
-				}
-
-
-				free(respuesta);
-			}break;
-			case desconectarConsola:{ // podria ser 0
-				//***Se desconecta la consola
-				//int pid = leerInt(stream);
-
-				//***Ya no hay mas nada que hacer, entonces cambio el bool de todaviahaytrabajo a false, asi salgo del while
-				todaviaHayTrabajo = false;
-
-				consola_finalizarTodosLosProcesos(socketConsola);
-
-			}break;
-			case 0:{
-				printf("[Rutina rutinaConsola] - La consola ha perecido\n");
-						todaviaHayTrabajo=false;
-			}break;
-			default:{
-				printf("[Rutina rutinaConsola] - Se recibio una accion que no esta contemplada:%d se cerrara el socket\n",a);
-				todaviaHayTrabajo=false;
-			}break;
+			//*** Si como aun quedan porcesos en la cola de ready vuelvo a llamar a la funcion tomarPCBdeReady
+			sem_post(&mutex_cola_Exec);
+			sem_post(&mutex_cola_Ready);
+			return readyToExec();
+		}
+		else
+		{
+			//** En caso de que ya no haya mas procesos para trabajar, devuelvo null
+			sem_post(&mutex_cola_Exec);
+			sem_post(&mutex_cola_Ready);
+			return NULL;
 		}
 	}
-	printf("Se decontecta a la consola socket: %d\n", socketConsola);
-	close(socketConsola);
+
+	//*** Como el proceso que encontre no esta terminado, entonces lo pongo en la cola de excec y lo retorno
+	queue_push(cola_Exec,pcb);
+
+	sem_post(&mutex_cola_Exec);
+	sem_post(&mutex_cola_Ready);
+	return pcb;
 }
+
+
+//*** Esta funcion te dice si hay cpus disponibles
+bool hayCpusDisponibles(){
+	sem_wait(&mutex_cola_CPUs_libres);
+		bool valor = queue_size(cola_CPUs_libres) > 0;
+	sem_post(&mutex_cola_CPUs_libres);
+
+	return valor;
+}
+
+
+//*** Esta funcion te dice si hay programas en ready
+bool hayProcesosEnReady(){
+	sem_wait(&mutex_cola_Ready);
+		bool valor = queue_size(cola_Ready) > 0;
+	sem_post(&mutex_cola_Ready);
+
+	return valor;
+}
+
+
+//*** pasar procesos de ready a exec
+void * planificadorCortoPlazo()
+{
+	printf("\n[Rutina planificadorCortoPlazo] - Entramos al planificador de corto plazo!\n");
+
+	//*** el booleano finPorConsolaDelKernel esta en false desde el inicio, en el momento en el que el kernel quiera frenar la planificiacion esta variable pasara a true, y se frenara la planificacion
+	while(!finPorConsolaDelKernel)
+	{
+		if(hayCpusDisponibles() && hayProcesosEnReady())
+		{
+			PCB_DATA* pcb;
+			///*** Quito el primer elemento de la cola de ready, valido que no haya sido finalizado y lo pongo en la cola de exec - en caso de no encontrar uno para poder trabajar no hago nada
+			if((pcb = readyToExec()) != NULL)
+			{
+				//*** Agarro una cpu que este disponible
+				sem_wait(&mutex_cola_CPUs_libres);
+					int cpuParaTrabajar = queue_peek(cola_CPUs_libres);
+					queue_pop(cola_CPUs_libres);
+				sem_post(&mutex_cola_CPUs_libres);
+
+				printf("[Rutina readyToExec] - Se crea un nuevo hilo para que la CPU N°: %d trabaje con el proceso N°: %d\n", cpuParaTrabajar, pcb->pid);
+
+
+				//*** Llamo a una rutina CPU que va a estar trabajando con la cpu que le paso por parametro -- Cambiar tipo de hilo
+				pthread_t hilo_rutinaCPU;
+				cpu_crearHiloDetach(cpuParaTrabajar);
+			}
+
+		}
+
+//		sleep(5);
+	}
+	return NULL;
+}
+
+
+/// ********************************************************************************************************///
+/// ***************************************** FIN SEGUNDA PARTE ********************************************///
+/// ********************************************************************************************************///
+
+
+
+
+
+
+/// ********************************************************************************************************///
+/// ************************** TERCERA PARTE - PASAR PROCESOS DE EXEC A FINISHED ***************************///
+/// ********************************************************************************************************///
+
 
 enum estadosDeUnProcesoEnExec{
 	loEstaUsandoUnaCPU = 1,
@@ -370,7 +390,6 @@ PCB_DATA * pedirPCBDeExec(){
 		sem_post(&mutex_cola_Exec);
 	}
 }
-
 
 
 void * proceso_GestorDeColaExec(){
@@ -414,215 +433,6 @@ void * proceso_GestorDeColaExec(){
 }
 
 
-/// *** Esta rutina se comenzará a hacer cuando podramos comenzar a enviar mensajes entre procesos
-void *rutinaCPU(void * arg)
-{
-	int socketCPU = (int)arg;
-
-	//*** Le envio a la CPU todos los datos qeu esta necesitara para poder trabajar, como el tamaño de una pagina de memoria, el quantum y la cantidad de paginas que ocupa un stack
-	DATOS_PARA_CPU datosCPU;
-	datosCPU.size_pag=size_pagina;
-	datosCPU.quantum=quantumRR;
-	datosCPU.size_stack=stack_size;
-	enviarMensaje(socketCPU,enviarDatosCPU,&datosCPU,sizeof(int)*3);
-
-	bool todaviaHayTrabajo = true;
-	void * stream;
-	int accionCPU;
-
-	printf("[Rutina rutinaCPU] - Entramos al hilo de la CPU: %d!\n", socketCPU);
-
-	//*** Voy a trabajar con esta CPU hasta que se deconecte
-	while(todaviaHayTrabajo){
-
-		//*** Recibo la accion por parte de la CPU
-		accionCPU = recibirMensaje(socketCPU,&stream);
-
-		PCB_DATA* pcb = NULL;
-
-		switch(accionCPU){
-			//*** La CPU me pide un PCB para poder trabajar
-			case pedirPCB:{
-
-				printf("[Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- %d!\n", pedirPCB);
-
-				pcb = pedirPCBDeExec();
-
-				pcb->exitCode = loEstaUsandoUnaCPU;
-
-				void* pcbSerializado = serializarPCB(pcb);
-
-				enviarMensaje(socketCPU,envioPCB,pcbSerializado,tamanoPCB(pcb) + 4);
-
-			}break;
-			case enviarPCBaTerminado:{
-				//TE MANDO UN PCB QUE YA TERMINE DE EJECUTAR POR COMPLETO, ARREGLATE LAS COSAS DE MOVER DE UNA COLA A LA OTRA Y ESO
-
-				printf("[Rutina rutinaCPU] - Entramos al Caso de que CPU termino la ejecucion de un proceso: accion- %d!\n", enviarPCBaTerminado);
-
-				PCB_DATA* pcb = deserializarPCB(stream);
-				imprimirPCB(pcb);
-
-				pcb->exitCode = 0;
-
-				//sem_wait(&cola_Exec);
-					modificarPCB(pcb);
-				//sem_post(&cola_Exec);
-
-				//queue_pop(cola_Exec);
-				//queue_push(cola_Finished, pcb);
-
-				//proceso_GestorDeColaExec();
-
-				//planificadorExtraLargoPlazo();
-			}break;
-			case enviarPCBaReady:{
-				//TE MANDO UN PCB QUE TERMINA PORQUE SE QUEDO SIN QUANTUM, ARREGLATE LAS COSAS DE MOVER DE UNA COLA A LA OTRA Y ESO
-
-			}break;
-			case mensajeParaEscribir:{
-				//TE MANDO UNA ESTRUCTURA CON {PID, DESCRIPTOR, MENSAJE(CHAR*)} PARA QUE:
-				//IF(DESCRIPTOR == 1) ESCRIBE EN LA CONSOLA QUE LE CORRESPONDE
-				//ELSE ESCRIBE EN EL ARCHIVO ASOCIADO A ESE DESCRIPTOR
-			}break;
-			case waitSemaforo:{
-				//TE MANDO UN NOMBRE DE UN SEMAFORO Y QUIERO QUE HAGAS UN WAIT, ME DEBERIAS DECIR SI ME BLOQUEO O NO
-			}break;
-			case signalSemaforo:{
-				//TE MANDO UN NOMBRE DE UN SEMAFORO Y QUIERO QUE HAGAS UN SIGNAL, LE DEBERIAS INFORMAR A ALGUIEN SI ESTABA BLOQUEADO EN UN WAIT DE ESTE SEMAFORO
-			}break;
-			case asignarValorCompartida:{
-				//TE MANDO UNA ESTRUCTURA CON {VALOR, NOMBRE_VARIABLE(CHAR*)} PARA QUE LE ASIGNES ESE VALOR A DICHA VARIABLE
-			}break;
-			case pedirValorCompartida:{
-				//TE MANDO EL NOMBRE DE UNA VARIABLE COMPARTIDA Y ME DEBERIAS DEVOLVER SU VALOR
-			}break;
-			case 0:{
-				printf("[Rutina rutinaCPU] - Desconecto la CPU N°: %d\n", socketCPU);
-				queue_push(cola_Exec, pcb);
-				todaviaHayTrabajo=false;
-			}break;
-			default:{
-				printf("[Rutina rutinaCPU] - Se recibio una accion que no esta contemplada: %d se cerrara el socket\n",accionCPU);
-				todaviaHayTrabajo=false;
-			}break;
-		}
-	}
-
-	close(socketCPU);
-}
-
-
-void consola_crearHiloDetach(int nuevoSocket){
-	pthread_attr_t attr;
-	pthread_t hilo_M ;
-
-	//Hilos detachables cpn manejo de errores tienen que ser logs
-	int  res;
-	res = pthread_attr_init(&attr);
-	if (res != 0) {
-		perror("Error en los atributos del hilo");
-	}
-
-	res = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-	if (res != 0) {
-		perror("Error en el seteado del estado de detached");
-	}
-
-	res = pthread_create (&hilo_M ,&attr,rutinaConsola, (void *)nuevoSocket);
-	if (res != 0) {
-		perror("Error en la creacion del hilo");
-	}
-
-	pthread_attr_destroy(&attr);
-}
-
-
-/// *** Esta Función esta probada y anda
-void * aceptarConexiones_Cpu_o_Consola( void *arg ){
-	//----DECLARACION DE VARIABLES ------//
-	int listener = (int)arg;
-	int id_clienteConectado, nuevoSocket;
-	int aceptados[] = {CPU, Consola};
-	///-----FIN DECLARACION----///
-
-	while(1)
-	{
-		//***Acepto una conexion
-		id_clienteConectado = aceptarConexiones(listener, &nuevoSocket, Kernel, &aceptados, 2);
-
-		pthread_t hilo_M;
-
-		switch(id_clienteConectado)
-		{
-			case Consola: // Si es un cliente conectado es una CPU
-			{
-				printf("\n[rutina aceptarConexiones] - Nueva Consola Conectada!\nSocket Consola %d\n\n", nuevoSocket);
-
-				consola_crearHiloDetach(nuevoSocket);
-
-			}break;
-
-			case CPU: // Si el cliente conectado es el cpu
-			{
-				printf("\n[rutina aceptarConexiones] - Nueva CPU Conectada\nSocket CPU %d\n\n", nuevoSocket);
-
-				sem_wait(&mutex_cola_CPUs_libres);
-					queue_push(cola_CPUs_libres,nuevoSocket);
-				sem_post(&mutex_cola_CPUs_libres);
-
-			}break;
-
-			default:
-			{
-				printf("Papi, fijate se te esta conectado cualquier cosa\n");
-				close(nuevoSocket);
-			}
-		}
-	}
-}
-///--- FIN RUTINAS DE HILOS----///
-
-
-///---- FUNCIONES DE PLANIFICACION ----///
-
-///***Esta Función esta Probada y anda (falta meterle tres semaforos mutex)
-//***Esta Función lo que hace es sumar el size de todas las colas que determinan el grado de multiplicacion y devuelve la suma
-int cantidadProgramasEnProcesamiento()
-{
-	//HAcer Semaforos para todas las colas
-	int cantidadProcesosEnLasColas = queue_size(cola_Ready)+queue_size(cola_Wait)+queue_size(cola_Exec);
-	return cantidadProcesosEnLasColas;
-}
-
-//*** Esta función te dice si hay programas en new
-bool hayProgramasEnNew()
-{
-	sem_wait(&mutex_cola_New);
-		bool valor = queue_size(cola_New) > 0;
-	sem_post(&mutex_cola_New);
-
-	return valor;
-}
-
-//*** Rutina que te pasa los procesos de new a ready - anda bien
-void * planificadorLargoPlazo()
-{
-	printf("\n[rutina planificadorLargoPlazo] - Entramos al planificador de largo plazo!\n");
-
-	//*** el booleano finPorConsolaDelKernel esta en false desde el inicio, en el momento en el que el kernel quiera frenar la planificiacion esta variable pasara a true, y se frenara la planificacion
-	while(!finPorConsolaDelKernel)
-	{
-		//*** Validamos que haya programas en alguna de la cola de new y que la cantidad de procesos que haya entre las colas de ready-excec-bloq sea menor al grado de multiprogramacion permitida
-		if(cantidadProgramasEnProcesamiento() < grado_multiprogramacion && hayProgramasEnNew())
-		{
-			newToReady();
-		}
-//		sleep(5);
-	}
-}
-
-
 
 
 
@@ -652,7 +462,6 @@ int execToFinished()
 
 	return -1;
 }
-
 
 void planificadorExtraLargoPlazo(){
 	int pidParaAvisar;
@@ -713,327 +522,59 @@ void planificadorExtraLargoPlazo(){
 
 
 
-
-
-//*** Esta funcion te dice si hay cpus disponibles
-bool hayCpusDisponibles(){
-	sem_wait(&mutex_cola_CPUs_libres);
-		bool valor = queue_size(cola_CPUs_libres) > 0;
-	sem_post(&mutex_cola_CPUs_libres);
-
-	return valor;
-}
-
-//*** Esta funcion te dice si hay programas en ready
-bool hayProcesosEnReady(){
-	sem_wait(&mutex_cola_Ready);
-		bool valor = queue_size(cola_Ready) > 0;
-	sem_post(&mutex_cola_Ready);
-
-	return valor;
-}
-
-
-//**** Esta funcion anda bien, el tema es que tengo comentados todos los semaforos, nose porque tiran error
-///*** Quito el primer elemento de la cola de ready, valido que no haya sido finalizado y lo pongo en la cola de exec
-PCB_DATA* readyToExec()
-{
-	sem_wait(&mutex_cola_Ready);
-	sem_wait(&mutex_cola_Exec);
-
-	//*** Tomo el primer elemento de la cola de ready y lo quito
-	PCB_DATA* pcb = queue_peek(cola_Ready);
-	queue_pop(cola_Ready);
-
-	//*** Valido que el proceso no haya sido terminado ya
-	if(pcb->exitCode != 53)
-	{
-		//*** Si ya fue finalizado lo paso a la cola de finalizados
-		sem_wait(&mutex_cola_Finished);
-			queue_push(cola_Finished,pcb);
-		sem_post(&mutex_cola_Finished);
-
-		//*** valido si aun quedan procesos en la cola de ready para seguir buscando un pcb para trabajar
-		if(queue_size(cola_Ready)>0){
-
-			//*** Si como aun quedan porcesos en la cola de ready vuelvo a llamar a la funcion tomarPCBdeReady
-			sem_post(&mutex_cola_Exec);
-			sem_post(&mutex_cola_Ready);
-			return readyToExec();
-		}
-		else
-		{
-			//** En caso de que ya no haya mas procesos para trabajar, devuelvo null
-			sem_post(&mutex_cola_Exec);
-			sem_post(&mutex_cola_Ready);
-			return NULL;
-		}
-	}
-
-	//*** Como el proceso que encontre no esta terminado, entonces lo pongo en la cola de excec y lo retorno
-	queue_push(cola_Exec,pcb);
-
-	sem_post(&mutex_cola_Exec);
-	sem_post(&mutex_cola_Ready);
-	return pcb;
-}
-
-void cpu_crearHiloDetach(int nuevoSocket){
-	pthread_attr_t attr;
-	pthread_t hilo_rutinaCPU ;
-
-	//Hilos detachables cpn manejo de errores tienen que ser logs
-	int  res;
-	res = pthread_attr_init(&attr);
-	if (res != 0) {
-		perror("Error en los atributos del hilo");
-	}
-
-	res = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-	if (res != 0) {
-		perror("Error en el seteado del estado de detached");
-	}
-
-	res = pthread_create (&hilo_rutinaCPU ,&attr,rutinaCPU, (void *)nuevoSocket);
-	if (res != 0) {
-		perror("Error en la creacion del hilo");
-	}
-
-	pthread_attr_destroy(&attr);
-}
-
-void * planificadorCortoPlazo()
-{
-	printf("\n[Rutina planificadorCortoPlazo] - Entramos al planificador de corto plazo!\n");
-
-	//*** el booleano finPorConsolaDelKernel esta en false desde el inicio, en el momento en el que el kernel quiera frenar la planificiacion esta variable pasara a true, y se frenara la planificacion
-	while(!finPorConsolaDelKernel)
-	{
-		if(hayCpusDisponibles() && hayProcesosEnReady())
-		{
-			PCB_DATA* pcb;
-			///*** Quito el primer elemento de la cola de ready, valido que no haya sido finalizado y lo pongo en la cola de exec - en caso de no encontrar uno para poder trabajar no hago nada
-			if((pcb = readyToExec()) != NULL)
-			{
-				//*** Agarro una cpu que este disponible
-				sem_wait(&mutex_cola_CPUs_libres);
-					int cpuParaTrabajar = queue_peek(cola_CPUs_libres);
-					queue_pop(cola_CPUs_libres);
-				sem_post(&mutex_cola_CPUs_libres);
-
-				printf("[Rutina readyToExec] - Se crea un nuevo hilo para que la CPU N°: %d trabaje con el proceso N°: %d\n", cpuParaTrabajar, pcb->pid);
-
-
-				//*** Llamo a una rutina CPU que va a estar trabajando con la cpu que le paso por parametro -- Cambiar tipo de hilo
-				pthread_t hilo_rutinaCPU;
-				cpu_crearHiloDetach(cpuParaTrabajar);
-			}
-
-		}
-
-//		sleep(5);
-	}
-}
+/// ********************************************************************************************************///
+/// ***************************************** FIN TERCERA PARTE ********************************************///
+/// ********************************************************************************************************///
 
 
 
 ///---- FIN FUNCIONES DE PLANIFICACION ----///
 
 
-///---- CONSOLA DEL KERNEL -----////
-
-//**Esta funcion anda
-///***Esta funcion imprime todos los pids de sistema
-void imprimirTodosLosProcesosEnColas(){
-
-	void imprimir (PROCESOS * aviso)
-	{
-		printf("Pid: %d\n", aviso->pid);
-
-		imprimirPCB(aviso->pcb);
-
-		if(aviso->pcb->exitCode == 53)
-			printf("Estado: en procesamiento\n");
-		else
-			printf("Estado: finalizado (%d)\n",aviso->pcb->exitCode);
-	}
-
-	list_iterate(avisos, imprimir);
-}
-
-//*** probar esta funcion - no anda, arreglar
-///*** Esta funcion dada una cola te imprime todos los procesos que esta contenga
-void imprimirProcesosdeCola(t_queue* unaCola)
-{
-	void imprimir(PCB_DATA * pcb){
-		printf("Pid: %d\n",pcb->pid);
-		//imprimirPCB(pcb);
-	}
-
-	int a=queue_size(unaCola);
-	printf("kiusaiz: %d\n",a);//,(char*)unaCola->elements->head->data);
-
-	if(a>0 )
-		list_iterate(unaCola->elements, imprimir);
-	else
-		printf("No hay elementos en esta cola.\n");
-}
-
-
-
-
-void * consolaKernel()
-{
-	int opcion;
-	printf("Hola Bienvenido al Kernel!\n\n"
-			"Aca esta el menu de todas las opciones que tiene para hacer:\n"
-			"1- Obtener el listado de procesos del sistema de alguna cola.\n"
-			"2- Obtener datos sobre un proceso.\n"
-			"3- Obtener la tabla global de archivos.\n"
-			"4- Modificar el grado de multiprogramación del sistema.\n"
-			"5- Finalizar un proceso.\n"
-			"6- Detener la planificación.\n"
-			"7- Reactivar la planificación.\n"
-			"8- Imprimir de nuevo el menu.\n\n"
-			"Elija el numero de su opcion: ");
-	sem_post(&sem_ConsolaKernelLenvantada);
-	scanf("%d", &opcion);
-
+/// *** Esta Función esta probada y anda
+void * aceptarConexiones_Cpu_o_Consola( void *arg ){
+	//----DECLARACION DE VARIABLES ------//
+	int listener = (int)arg;
+	int id_clienteConectado, nuevoSocket;
+	int aceptados[] = {CPU, Consola};
+	///-----FIN DECLARACION----///
 
 	while(1)
 	{
-		switch(opcion){
-			case 1:{
-				printf("Selecione la cola que quiere imprimir:\n"
-						"1- Cola de New.\n"
-						"2- Cola de Ready.\n"
-						"3- Cola de Exec.\n"
-						"4- Cola de Bloq.\n"
-						"5- Cola de Finish.\n"
-						"6- Todas las colas.\n"
-						"Elija el numero de su opcion: ");
-						scanf("%d", &opcion);
+		//***Acepto una conexion
+		id_clienteConectado = aceptarConexiones(listener, &nuevoSocket, Kernel, &aceptados, 2);
 
-				switch(opcion){
-					case 1:{
-						printf("Procesos de la cola de New:\n");
+		pthread_t hilo_M;
 
-						sem_wait(&mutex_cola_New);
-							imprimirProcesosdeCola(cola_New);
-						sem_post(&mutex_cola_New);
-					}break;
-					case 2:{
-						printf("Procesos de la cola de Ready:\n");
+		switch(id_clienteConectado)
+		{
+			case Consola: // Si es un cliente conectado es una CPU
+			{
+				printf("\n[rutina aceptarConexiones] - Nueva Consola Conectada!\nSocket Consola %d\n\n", nuevoSocket);
 
-						sem_wait(&mutex_cola_Ready);
-							imprimirProcesosdeCola(cola_Ready);
-						sem_post(&mutex_cola_Ready);
-
-					}break;
-					case 3:{
-						printf("Procesos de la cola de Exec:\n");
-
-						sem_wait(&mutex_cola_Exec);
-							imprimirProcesosdeCola(cola_Exec);
-						sem_post(&mutex_cola_Exec);
-					}break;
-					case 4:{
-						printf("Procesos de la cola de Bloq:\n");
-
-						sem_wait(&mutex_cola_Wait);
-							imprimirProcesosdeCola(cola_Wait);
-						sem_post(&mutex_cola_Wait);
-					}break;
-					case 5:{
-						printf("Procesos de la cola de Finish:\n");
-
-						sem_wait(&mutex_cola_Finished);
-							imprimirProcesosdeCola(cola_Finished);
-						sem_post(&mutex_cola_Finished);
-					}break;
-					case 6:{
-						printf("Estos son todos los procesos:\n");
-
-						sem_wait(&mutex_listaProcesos);
-							imprimirTodosLosProcesosEnColas();
-						sem_post(&mutex_listaProcesos);
-					}break;
-					default:{
-						printf("Opcion invalida! Intente nuevamente.\n");
-					}break;
-				}
-
+				consola_crearHiloDetach(nuevoSocket);
 
 			}break;
-			case 2:{
-				int pid;
-				printf("Ingrese pid del proceso a finalizar: ");
-				scanf("%d",&pid);
-/*
-				2. Obtener para un proceso dado:
-				a. La cantidad de rafagas ejecutadas.
-				b. La cantidad de operaciones privilegiadas que ejecutó.
-				c. Obtener la tabla de archivos abiertos por el proceso.
-				d. La cantidad de páginas de Heap utilizadas
-				i. Cantidad de acciones alocar realizadas en cantidad de operaciones y en
-				bytes
-				ii. Cantidad de acciones liberar realizadas en cantidad de operaciones y en
-				bytes
-				e. Cantidad de syscalls ejecutadas*/
-			}break;
-			case 3:{
-				/// ni idea que es esto
-			}break;
-			case 4:{
-				int gradoNuevo;
-				printf("Ingrese nuevo Grado de multiprogramacion: ");
-				scanf("%d",&gradoNuevo);
 
-				//probablemente tengamos qeu poner un semaforo para la variable global de grado multiprogramacion
-				grado_multiprogramacion=gradoNuevo;
-			}break;
-			case 5:{
-				int pid;
-				printf("Ingrese pid del proceso a finalizar: ");
-				scanf("%d",&pid);
+			case CPU: // Si el cliente conectado es el cpu
+			{
+				printf("\n[rutina aceptarConexiones] - Nueva CPU Conectada\nSocket CPU %d\n\n", nuevoSocket);
 
-				if(proceso_finalizacionExterna(pid,  -50681)) //cambiar el numero del exit code, por el que sea el correcto
-					printf("Finalizacion exitosa.\n");
-				else
-					printf("El Pid %d es Incorrecto! Reeintente con un nuevo pid.\n",pid);
+				sem_wait(&mutex_cola_CPUs_libres);
+					queue_push(cola_CPUs_libres,nuevoSocket);
+				sem_post(&mutex_cola_CPUs_libres);
 
 			}break;
-			case 6:{
-				finPorConsolaDelKernel=true;
-				printf("Planificacion detenida.\n");
-			}break;
-			case 7:{
-				finPorConsolaDelKernel=false;
-				printf("Planificacion reactivada.\n");
-			}break;
-			case 8:{
-				printf("Hola Bienvenido al Kernel!\n\n"
-						"Aca esta el menu de todas las opciones que tiene para hacer:\n"
-						"1- Obtener el listado de procesos del sistema.\n"
-						"2- Obtener datos sobre un proceso.\n"
-						"3- Obtener la tabla global de archivos.\n"
-						"4- Modificar el grado de multiprogramación del sistema.\n"
-						"5- Finalizar un proceso.\n"
-						"6- Detener la planificación.\n"
-						"7- Imprimir de nuevo el menu.\n\n");
-			}break;
-			default:{
 
-			}break;
+			default:
+			{
+				printf("Papi, fijate se te esta conectado cualquier cosa\n");
+				close(nuevoSocket);
+			}
 		}
-
-		printf("Elija el numero de su opcion: ");
-		scanf("%d", &opcion);
 	}
 }
-
-///---- FIN CONSOLA KERNEL----////
-
+///--- FIN RUTINAS DE HILOS----///
 
 /*
 -SOLUCIONAR LO DE LAS ETIQUETAS.
@@ -1044,11 +585,6 @@ void * consolaKernel()
 -VALOR COMPARTIDAS
 -ASIGNAR COMPARTIDAS
 -ESCRIBIR (POR AHORA SOLO POR CONSOLA)
-
-
-
-
-
 -MANEJAR LOS PRINTS DE CONSOLA
 -MANEJAR LA FINALIZACION DE PROGRAMAS POR CONSOLA
 
@@ -1112,20 +648,6 @@ void conectarConFS()
 	printf("Conexión exitosa con el FileSystem(%i)!!\n",rta_conexion);
 }
 ///---- FIN FUNCIONES DE CONEXIONES------////
-
-
-
-/*  SEM_IDS=[SEM1, SEM2, SEM3]
-	SEM_INIT=[1, 1 ,1]
-*/
-
-char** ids_semaforos;
-int cant_semaforos;
-int valor_semaforos[];
-
-char** var_compartidas;
-int cant_var_compartidas;
-int valor_compartidas[];
 
 
 int main(void) {
@@ -1199,7 +721,7 @@ int main(void) {
 
 	//----ME PONGO A ESCUCHAR CONEXIONES---//
 	pthread_t hilo_aceptarConexiones_Cpu_o_Consola;
-	pthread_create(&hilo_aceptarConexiones_Cpu_o_Consola, NULL, aceptarConexiones_Cpu_o_Consola, listener);
+	pthread_create(&hilo_aceptarConexiones_Cpu_o_Consola, NULL, aceptarConexiones_Cpu_o_Consola, (void*)listener);
 
 
 	pthread_join(hilo_aceptarConexiones_Cpu_o_Consola, NULL);
