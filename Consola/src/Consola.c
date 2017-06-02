@@ -51,6 +51,7 @@ pthread_mutex_t mutex_lista;
 pthread_mutex_t mutex_imprimir;
 pthread_mutex_t mutex_pidActual;
 
+
 size_t tamanoArchivo(FILE * archivo){
 	size_t tamano;
 	fseek(archivo,0,SEEK_END);//ACA FALTA HANDELEAR ERROR
@@ -65,7 +66,7 @@ char * generarScript(char * nombreDeArchivo){
     if ( !(archivo = fopen(nombreDeArchivo, "r")) )
     {
     	perror("Error: el archivo no esta en el directorio o no existe \n");
-    	exit(-1);// Va si o si , en caso de que exista el error sino tira segmentation fault
+    	return NULL;// Va si o si , en caso de que exista el error sino tira segmentation fault
     }
 	size_t tamano = tamanoArchivo(archivo);
 	char* script = malloc(tamano+1);//lee el archivo y lo guarda en el script AnsiSOP
@@ -142,9 +143,9 @@ void matarHiloPrograma(int pid){
 		return  elementos->pid == pid;
 	}
 	t_Estado * ret = malloc(sizeof(t_Estado));
-
+	sem_wait(&mutex_lista);
 	ret = list_find(listaEstadoPrograma, (void*) sonIguales);
-
+	sem_post(&mutex_lista);
 	if(ret == NULL){
 		perror("Error: el pid no existe o ya ha finalizado el programa");
 	}
@@ -155,7 +156,7 @@ void matarHiloPrograma(int pid){
 	}
 }
 
-void crearHiloDetach(int* pid){
+void crearHiloDetachPrograma(int* pid){
 	pthread_attr_t attr;
 	pthread_t hilo ;
 	//Hilos detachables cpn manejo de errores tienen que ser logs
@@ -211,7 +212,10 @@ int main(void)
 
 		if(strcmp(comandoConsola[0],"iniciarPrograma") == 0){//Primer Comando iniciarPrograma
 			char** nombreDeArchivo= string_split(comandoConsola[1], "\n");//Toma el parametro que contiene el archivo y le quita el \n
-			char* script = generarScript(nombreDeArchivo[0]);// lee el archivo y guarda en script.
+			char* script = generarScript(nombreDeArchivo[0]);
+			if (script==NULL){
+				continue;
+			}// lee el archivo y guarda en script.
 			enviarMensaje(socketKernel,envioScriptAnsisop, script,strlen(script)+1);
 			liberarArray(nombreDeArchivo);
 			liberarArray(comandoConsola);
@@ -234,11 +238,13 @@ int main(void)
 		if(strcmp(comandoConsola[0],"desconectarConsola\n") == 0){
 			liberarArray(comandoConsola);
 			enviarMensaje(socketKernel,desconectarConsola, NULL, 0);
-
 			break;
 		}
-		puts("Comando Inválido!");
+
+	puts("Comando Inválido!");
 	}
+
+	pthread_join(hiloMaster,NULL);
 	list_destroy_and_destroy_elements(listaEstadoPrograma,free);
 	close(socketKernel);
 	free(mensaje);
@@ -252,37 +258,33 @@ void* rutinaPrograma(void* parametro){
 	int* pid= malloc(4);
 	char* tiempoInicio = temporal_get_string_time();
 
-
-
 	pid = parametro;
-
-
 
 	bool sonIguales(t_Estado * elementos){
 		return  elementos->pid == *pid;
 	}
 
 	t_Estado * programaEstado;
-
+	sem_wait(&mutex_lista);
 	agregarAListaEstadoPrograma(*pid,false);
 	programaEstado = list_find(listaEstadoPrograma, (void*) sonIguales);
-
+	sem_post(&mutex_lista);
 
 
 
 	char* stream;
 	printf("Numero de pid: %d \n",*pid);
 	while(1){
-
+		sem_wait(&mutex_pidActual);
 		if(pid==pidActual){
 			recibirMensaje(socketKernel,(void*) stream);
 			puts(stream);
 			sem_post(&mutex_imprimir);
 		}
-
+		sem_post(&mutex_pidActual);
 			if(programaEstado->estaTerminado){
 
-				break;
+				return (-1);
 			}
 		}
 	char* tiempoFin = temporal_get_string_time();
@@ -296,15 +298,15 @@ void* rutinaPrograma(void* parametro){
 
 void* rutinaEscucharKernel(){
 	int* pid = malloc(4);
-	bool flag=true;
-	while(flag){
+
+	while(1){
 		int operacion;
 		void * stream;
 		operacion =recibirMensaje(socketKernel,&stream);
 		switch(operacion){
 		case(envioDelPidEnSeco):{
 			pid = (int*)stream;
-			crearHiloDetach(pid);
+			crearHiloDetachPrograma(pid);
 			break;
 		}
 		case(imprimirPorPantalla):{
@@ -330,15 +332,16 @@ void* rutinaEscucharKernel(){
 			printf("No se ha finalizado correctamente el pid: %d \n", *pid);
 			break;
 		}
+		case 0:{
+				printf("Se desconecto el kernel\n");
+
+				exit(-1);
+				}
 		default:{
 			perror("Error: no se pudo obtener mensaje \n");
 		}
-		case 0:
-		{
-			printf("Se desconecto el kernel\n");
-			flag=false;
-		}
-		}
+
+}
 
 }
 }
