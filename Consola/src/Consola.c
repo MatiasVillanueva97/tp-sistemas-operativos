@@ -296,7 +296,8 @@ void* rutinaPrograma(void* parametro){
 
 void* rutinaEscucharKernel(){
 	int* pid = malloc(4);
-	while(1){
+	bool flag=true;
+	while(flag){
 		int operacion;
 		void * stream;
 		operacion =recibirMensaje(socketKernel,&stream);
@@ -316,6 +317,8 @@ void* rutinaEscucharKernel(){
 		case(pidFinalizado):{
 			pid = (int*)stream;
 
+			printf("Acaba de finalizar el pid: %d\n", *pid);
+
 			matarHiloPrograma(*pid);
 
 			break;
@@ -330,14 +333,14 @@ void* rutinaEscucharKernel(){
 		default:{
 			perror("Error: no se pudo obtener mensaje \n");
 		}
+		case 0:
+		{
+			printf("Se desconecto el kernel\n");
+			flag=false;
+		}
 		}
 
 }
 }
 
-
-
-//FALTA TERMINAR Y HACER MAS LINDA CUANDO NO SEAN LAS 5 AM hh:mm:ss:mmmm
-
-//ARREGLAR
 

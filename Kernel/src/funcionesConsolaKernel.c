@@ -53,7 +53,7 @@ void imprimirProcesosdeCola(t_queue* unaCola)
 void * consolaKernel()
 {
 	int opcion;
-	printf("Hola Bienvenido al Kernel!\n\n"
+	printf("\nHola Bienvenido al Kernel!\n\n"
 			"Aca esta el menu de todas las opciones que tiene para hacer:\n"
 			"1- Obtener el listado de procesos del sistema de alguna cola.\n"
 			"2- Obtener datos sobre un proceso.\n"
@@ -72,7 +72,7 @@ void * consolaKernel()
 	{
 		switch(opcion){
 			case 1:{
-				printf("Selecione la cola que quiere imprimir:\n"
+				printf("\nSelecione la cola que quiere imprimir:\n"
 						"1- Cola de New.\n"
 						"2- Cola de Ready.\n"
 						"3- Cola de Exec.\n"
@@ -84,14 +84,14 @@ void * consolaKernel()
 
 				switch(opcion){
 					case 1:{
-						printf("Procesos de la cola de New:\n");
+						printf("\nProcesos de la cola de New:\n");
 
 						sem_wait(&mutex_cola_New);
 							imprimirProcesosdeCola(cola_New);
 						sem_post(&mutex_cola_New);
 					}break;
 					case 2:{
-						printf("Procesos de la cola de Ready:\n");
+						printf("\nProcesos de la cola de Ready:\n");
 
 						sem_wait(&mutex_cola_Ready);
 							imprimirProcesosdeCola(cola_Ready);
@@ -99,35 +99,35 @@ void * consolaKernel()
 
 					}break;
 					case 3:{
-						printf("Procesos de la cola de Exec:\n");
+						printf("\nProcesos de la cola de Exec:\n");
 
 						sem_wait(&mutex_cola_Exec);
 							imprimirProcesosdeCola(cola_Exec);
 						sem_post(&mutex_cola_Exec);
 					}break;
 					case 4:{
-						printf("Procesos de la cola de Bloq:\n");
+						printf("\nProcesos de la cola de Bloq:\n");
 
 						sem_wait(&mutex_cola_Wait);
 							imprimirProcesosdeCola(cola_Wait);
 						sem_post(&mutex_cola_Wait);
 					}break;
 					case 5:{
-						printf("Procesos de la cola de Finish:\n");
+						printf("\nProcesos de la cola de Finish:\n");
 
 						sem_wait(&mutex_cola_Finished);
 							imprimirProcesosdeCola(cola_Finished);
 						sem_post(&mutex_cola_Finished);
 					}break;
 					case 6:{
-						printf("Estos son todos los procesos:\n");
+						printf("\nEstos son todos los procesos:\n");
 
 						sem_wait(&mutex_listaProcesos);
 							imprimirTodosLosProcesosEnColas();
 						sem_post(&mutex_listaProcesos);
 					}break;
 					default:{
-						printf("Opcion invalida! Intente nuevamente.\n");
+						printf("\nOpcion invalida! Intente nuevamente.\n");
 					}break;
 				}
 
@@ -135,7 +135,7 @@ void * consolaKernel()
 			}break;
 			case 2:{
 				int pid;
-				printf("Ingrese pid del proceso a finalizar: ");
+				printf("\nIngrese pid del proceso a finalizar: ");
 				scanf("%d",&pid);
 /*
 				2. Obtener para un proceso dado:
@@ -154,7 +154,7 @@ void * consolaKernel()
 			}break;
 			case 4:{
 				int gradoNuevo;
-				printf("Ingrese nuevo Grado de multiprogramacion: ");
+				printf("\nIngrese nuevo Grado de multiprogramacion: ");
 				scanf("%d",&gradoNuevo);
 
 				//probablemente tengamos qeu poner un semaforo para la variable global de grado multiprogramacion
@@ -162,25 +162,25 @@ void * consolaKernel()
 			}break;
 			case 5:{
 				int pid;
-				printf("Ingrese pid del proceso a finalizar: ");
+				printf("\nIngrese pid del proceso a finalizar: ");
 				scanf("%d",&pid);
 
 				if(proceso_finalizacionExterna(pid,  -50681)) //cambiar el numero del exit code, por el que sea el correcto
-					printf("Finalizacion exitosa.\n");
+					printf("\nFinalizacion exitosa.\n");
 				else
-					printf("El Pid %d es Incorrecto! Reeintente con un nuevo pid.\n",pid);
+					printf("\nEl Pid %d es Incorrecto! Reeintente con un nuevo pid.\n",pid);
 
 			}break;
 			case 6:{
 				finPorConsolaDelKernel=true;
-				printf("Planificacion detenida.\n");
+				printf("\nPlanificacion detenida.\n");
 			}break;
 			case 7:{
 				finPorConsolaDelKernel=false;
-				printf("Planificacion reactivada.\n");
+				printf("\nPlanificacion reactivada.\n");
 			}break;
 			case 8:{
-				printf("Hola Bienvenido al Kernel!\n\n"
+				printf("\n\nHola Bienvenido al Kernel!\n\n"
 						"Aca esta el menu de todas las opciones que tiene para hacer:\n"
 						"1- Obtener el listado de procesos del sistema.\n"
 						"2- Obtener datos sobre un proceso.\n"
@@ -195,7 +195,16 @@ void * consolaKernel()
 			}break;
 		}
 
-		printf("Elija el numero de su opcion: ");
+		printf("\n\nAca esta el menu de todas las opciones que tiene para hacer:\n"
+			"1- Obtener el listado de procesos del sistema de alguna cola.\n"
+			"2- Obtener datos sobre un proceso.\n"
+			"3- Obtener la tabla global de archivos.\n"
+			"4- Modificar el grado de multiprogramación del sistema.\n"
+			"5- Finalizar un proceso.\n"
+			"6- Detener la planificación.\n"
+			"7- Reactivar la planificación.\n"
+			"8- Imprimir de nuevo el menu.\n\n"
+			"Elija el numero de su opcion: ");
 		scanf("%d", &opcion);
 	}
 }

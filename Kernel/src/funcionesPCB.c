@@ -46,7 +46,7 @@ void modificarPCB(PCB_DATA * pcbNuevo){
 
 
 	if(pcb2 != NULL){
-	puts("dentro del if\n");
+	puts("\n\nDentro del if\n");
 	destruirPCB_Local(*pcb2);
 		pcb2->cantidadDeEntradas = pcbNuevo->cantidadDeEntradas;
 		pcb2->cantidadDeEtiquetas = pcbNuevo->cantidadDeEtiquetas;

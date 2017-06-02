@@ -370,69 +370,6 @@ void * planificadorCortoPlazo()
 /// ********************************************************************************************************///
 
 
-enum estadosDeUnProcesoEnExec{
-	loEstaUsandoUnaCPU = 1,
-	estaEsperandoASerEjecutado = 53
-};
-
-PCB_DATA * pedirPCBDeExec(){
-
-	while(1){
-		sem_wait(&mutex_cola_Exec);
-		if(queue_size(cola_Exec) > 0){
-			PCB_DATA * pcb = queue_peek(cola_Exec);
-			if(pcb->exitCode == estaEsperandoASerEjecutado){
-				pcb->exitCode = loEstaUsandoUnaCPU;
-				sem_post(&mutex_cola_Exec);
-				return pcb;
-			}
-		}
-		sem_post(&mutex_cola_Exec);
-	}
-}
-
-
-void * proceso_GestorDeColaExec(){
-	PCB_DATA * pcb;
-	while(1){
-
-		sem_wait(&mutex_cola_Exec);
-
-		//***Pregunto si la cola esta vacia y reviso el primer elemento
-		if(queue_size(cola_Exec) > 0){
-			pcb = queue_peek(cola_Exec);
-			if(pcb != NULL){
-
-				if(pcb->exitCode == loEstaUsandoUnaCPU){
-					//***Lo mando al final de la cola
-					pcb = queue_pop(cola_Exec);
-					queue_push(cola_Exec, pcb);
-				}
-
-				if(pcb->exitCode <= 0){
-
-					//pcb->exitCode = 1234;
-
-					pcb = queue_pop(cola_Exec);
-
-					sem_wait(&mutex_cola_Finished);
-						queue_push(cola_Finished, pcb);
-					sem_post(&mutex_cola_Finished);
-
-				}
-
-			sleep(1);
-			printf("[proceso_GestorDeColaExec]: --- en el proceso %d el exitcode es: %d\n",pcb->pid,  pcb->exitCode);
-			}
-		}
-
-		sem_post(&mutex_cola_Exec);
-
-
-	}
-}
-
-
 
 
 
@@ -442,14 +379,10 @@ int execToFinished()
 	//**Tomo el primer elemento de la lista,
 	PCB_DATA* pcb=queue_pop(cola_Exec);
 
-	//Valido que el proceso haya finalizado
+	//***Valido que el proceso haya finalizado
+	if(pcb->exitCode != paraEjecutar && pcb->exitCode != loEstaUsandoUnaCPU){
 
-	/// DEBERIA VALIDAR ADEMAS DE ESTO; SI EL PROCESO YA FUE FINALIZADO!!!! TENGO QUE VER TODOS LOS EXITCODE de FINALIZACIONES QUE NO SEAN DE CPU Y PONERLOS EN EL IF
-	if(pcb->exitCode != 53){
-
-		//*** si el proceso ya finalizo, lo saco de la cola de exec y lo paso a la cola de finished
-
-
+		//*** si el proceso ya finalizo lo paso a la cola de finished
 		sem_wait(&mutex_cola_Finished);
 			queue_push(cola_Finished,pcb);
 		sem_post(&mutex_cola_Finished);
@@ -457,13 +390,14 @@ int execToFinished()
 		//*** Retorno el pid del proceso que acabo de psar a finalizado
 		return  pcb->pid;
 	}
-	else
+	else{
 		queue_push(cola_Exec, pcb);
+	}
 
 	return -1;
 }
 
-void planificadorExtraLargoPlazo(){
+void* planificadorExtraLargoPlazo(){
 	int pidParaAvisar;
 
 	bool busqueda(PROCESOS * aviso)
@@ -475,7 +409,7 @@ void planificadorExtraLargoPlazo(){
 	}
 
 	//*** el booleano finPorConsolaDelKernel esta en false desde el inicio, en el momento en el que el kernel quiera frenar la planificiacion esta variable pasara a true, y se frenara la planificacion
-//	while(!finPorConsolaDelKernel)
+	while(!finPorConsolaDelKernel)
 	{
 		sem_wait(&mutex_cola_Exec);
 
@@ -500,7 +434,8 @@ void planificadorExtraLargoPlazo(){
 					{
 
 					// Si la consola no habia sido avisada le envio el mensaje del pid que acaba de finalizar
-//					enviarMensaje(procesoFinalizado->socketConsola,procesoFinalizado,&procesoFinalizado->pid,sizeof(int));	ACA FALTa VER COMO LO RECIBE JULY (consola)
+					puts("\n");
+					enviarMensaje(procesoFinalizado->socketConsola, pidFinalizado, &procesoFinalizado->pid, sizeof(int));//	ACA FALTa VER COMO LO RECIBE JULY (consola)
 
 					printf("Se acaba de mandar a la consola n°: %d, que el proceso %d acaba de finalizar exitosamente!\n", procesoFinalizado->socketConsola, procesoFinalizado->pid);
 
@@ -515,8 +450,9 @@ void planificadorExtraLargoPlazo(){
 			sem_post(&mutex_cola_Exec);
 		}
 
-//		sleep(5);
+	sleep(5);
 	}
+	return NULL;
 }
 
 
@@ -710,8 +646,8 @@ int main(void) {
 	pthread_create(&hilo_planificadorLargoPlazo, NULL, planificadorLargoPlazo, NULL);
 
 
-	pthread_t hilo_gestorColaExec;
-	pthread_create(&hilo_gestorColaExec, NULL, proceso_GestorDeColaExec, NULL);
+	pthread_t hilo_planificadorExtraLargoPlazo;
+	pthread_create(&hilo_planificadorExtraLargoPlazo, NULL, planificadorExtraLargoPlazo, NULL);
 
 
 	//---ABRO EL HILO DEL PLANIFICADOR A CORTO PLAZO---//
@@ -729,7 +665,7 @@ int main(void) {
 	pthread_join(hilo_planificadorLargoPlazo, NULL);
 	pthread_join(hilo_consolaKernel, NULL);
 
-	pthread_join(hilo_gestorColaExec, NULL);
+	pthread_join(hilo_planificadorExtraLargoPlazo, NULL);
 
 	while(1)
 	{

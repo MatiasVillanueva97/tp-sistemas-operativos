@@ -25,6 +25,8 @@
 
 void cpu_crearHiloDetach(int nuevoSocket);
 
+PCB_DATA * cpu_pedirPCBDeExec();
+
 void *rutinaCPU(void * arg);
 
 

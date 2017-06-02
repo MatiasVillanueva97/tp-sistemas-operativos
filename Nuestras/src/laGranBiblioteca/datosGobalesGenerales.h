@@ -61,7 +61,7 @@ enum tipos_de_Acciones{
 		envioDelPidEnSeco = 1,
 		envioCantidadPaginas = 2,
 		envioPaginaMemoria = 3,
-		pidFinalizadoPorFaltaDeMemoria = 4,
+		pidFinalizadoPorFaltaDeMemoria = 8,
 		errorFinalizacionPid = 5,
 		pidFinalizado = 6,
 		enviarDatosCPU = 7,

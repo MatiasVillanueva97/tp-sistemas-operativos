@@ -39,6 +39,23 @@ bool finPorConsolaDelKernel;
 
 ///------ESTRUCTURAS AUXILIARES ADMNISTRATIVAS------///
 
+
+enum exitCode{
+	noSePudoReservarRecursos = -1,
+	accesoArchivoInexistente = -2,
+	lecturaDenegada = -3,
+	escrituraDenegada = -4,
+	excepcionMemoria = -5,
+	deconexionConsola = -6,
+	finalizacionDesdeConsola = -7,
+	reservarMasMemoriaQueTamanoPagina = -8,
+	noSePuedenAsignarMasPaginas = -9,
+	finalizacionDesdeKenel = -10,
+	finalizadoCorrectamente =0,
+	loEstaUsandoUnaCPU = 1,
+	paraEjecutar = 53,
+};
+
 //*** Esta lista es porque una consola puede tener una serie de procesos --- Igual creo que esto tiene que morir
 t_list * avisos;
 

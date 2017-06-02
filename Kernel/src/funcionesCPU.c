@@ -32,6 +32,49 @@ void cpu_crearHiloDetach(int nuevoSocket){
 }
 
 
+//***Esa funcion devuelve un un PCB que este listo para mandarse a ejecutar , en caso de que ninguno este listo retorna null
+PCB_DATA * cpu_pedirPCBDeExec(){
+
+	bool encontroPCB = false;
+	PCB_DATA* pcb;
+	int i, cantidadProcesos=0;
+
+	//***Voy a estar buscando en la cola de exec hasta que encuentre alguno
+	while(!encontroPCB)
+	{
+		//sem_wait(&cola_Exec);
+		//***Me fijo la cantidad de procesos que hay en la cola de exec
+		cantidadProcesos = queue_size(cola_Exec);
+
+		//***Voy a iterar tantas veces como elementos tenga en la cola de exec
+		for(i=0; i < cantidadProcesos; i++)
+		{
+			//***Tomo el primer pcb de la cola
+			pcb = queue_pop(cola_Exec);
+
+			//*** Valido si el pcb se puede mandar a ejecutar
+			if(pcb->exitCode == paraEjecutar)
+			{
+				//***Esta listo para ejecutar, le cambio el exitcode
+				pcb->exitCode = loEstaUsandoUnaCPU;
+
+				//***Lo agrego al final de la cola de exec
+				queue_push(cola_Exec, pcb);
+
+				//***Cambio el booleano a true, porque acabo de encontrar un pcb y asi cortar el while y hago el break del for
+				encontroPCB=true;
+				break;
+			}
+			else{
+				queue_push(cola_Exec, pcb);
+			}
+		}
+		//sem_post(&cola_Exec);
+	}
+
+	return pcb;
+}
+
 void *rutinaCPU(void * arg)
 {
 	int socketCPU = (int)arg;
@@ -61,15 +104,10 @@ void *rutinaCPU(void * arg)
 
 				printf("[Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- %d!\n", pedirPCB);
 
-				//pcb = pedirPCBDeExec();
 
-				PCB_DATA* pcb = queue_pop(cola_Exec);
-
-
-				pcb->exitCode = 1;//loEstaUsandoUnaCPU;
+				PCB_DATA* pcb = cpu_pedirPCBDeExec();
 
 				void* pcbSerializado = serializarPCB(pcb);
-
 				enviarMensaje(socketCPU,envioPCB,pcbSerializado,tamanoPCB(pcb) + 4);
 
 			}break;
@@ -83,10 +121,8 @@ void *rutinaCPU(void * arg)
 
 				pcb->exitCode = 0;
 
-				queue_push(cola_Finished, pcb);
-				//sem_wait(&cola_Exec);
-				//	modificarPCB(pcb);
-				//sem_post(&cola_Exec);
+				modificarPCB(pcb);
+
 
 				//queue_pop(cola_Exec);
 				//queue_push(cola_Finished, pcb);
