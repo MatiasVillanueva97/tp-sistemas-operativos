@@ -143,23 +143,23 @@ void *rutinaCPU(void * arg)
 			case mensajeParaEscribir:{
 				printf("[Rutina rutinaCPU] - Entramos al Caso de que CPU me mande a imprimir algo a la consola: accion- %d!\n", mensajeParaEscribir);
 
-			/*	MENSAJE_PARA_ESCRIBIR_CPU msj = (MENSAJE_PARA_ESCRIBIR_CPU)stream;
+				MENSAJE_PARA_ESCRIBIR_CPU* msj = stream;
 
 
-				if(msj.descriptorArchivo)
+				if(msj->descriptorArchivo)
 				{
 					MENSAJE_PARA_ESCRIBIR_CONSOLA msjConsola = {
-							.pid = msj.pid,
-							.mensaje = msj.mensaje
+							.pid = msj->pid,
+							.mensaje = msj->mensaje
 					};
 
-					int socketConsola = consola_buscarSocketConsola(msj.pid);
-					enviarMensaje(socketConsola, imprimirPorPantalla, &msjConsola, sizeof(int)+strlen(msjConsola)+1);
+					int socketConsola = consola_buscarSocketConsola(msj->pid);
+					enviarMensaje(socketConsola, imprimirPorPantalla, &msjConsola, sizeof(int)+strlen(msjConsola.mensaje)+1);
 				}
 				else
 				{
 					//evniar algo a filesystem
-				}*/
+				}
 
 			}break;
 			case waitSemaforo:{

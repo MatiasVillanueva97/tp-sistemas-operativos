@@ -14,7 +14,19 @@
 
 int consola_buscarSocketConsola(int pid){
 
-	return 5;
+	bool busqueda(PROCESOS * process)	{
+		return process->pid==pid;
+	}
+
+
+	PROCESOS* proceso = list_find(avisos,busqueda);
+
+
+	if(proceso != NULL){
+		return proceso->socketConsola;
+	}
+
+	return -1;
 }
 
 /// *** Falta probar! Necesitamos que ande el enviar mensajes
@@ -93,7 +105,7 @@ void *rutinaConsola(void * arg)
 
 	while(todaviaHayTrabajo){
 		int a = recibirMensaje(socketConsola,&stream);
-	switch(a){
+		switch(a){
 			case envioScriptAnsisop:{
 				//***Estoy recibiendo un script para inicializar. Creo un neuvo proceso y ya comeizno a rellenarlo con los datos que ya tengo
 				printf("[Rutina rutinaConsola] - Nuevo script recibido!\n");
