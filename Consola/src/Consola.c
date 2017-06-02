@@ -307,7 +307,7 @@ void* rutinaEscucharKernel(){
 			crearHiloDetach(pid);
 			break;
 		}
-		case(8):{//Imprimir
+		case(imprimirPorPantalla):{
 			sem_wait(&mutex_pidActual);
 			pidActual = (int*)stream;
 			sem_post(&mutex_pidActual);

@@ -12,7 +12,10 @@
 ///-----FUNCIONES CONSOLA-------//
 
 
+int consola_buscarSocketConsola(int pid){
 
+	return 5;
+}
 
 /// *** Falta probar! Necesitamos que ande el enviar mensajes
 ///*** Esta funcion le avisa a la consola que un cierto proceso (pid) ya termino
@@ -51,8 +54,7 @@ void consola_finalizarTodosLosProcesos(int socketConsola){
 	list_iterate(avisos, cambiar);
 }
 
-/// *** A esta función hay que probarle tuodo el sistema de envio de mensajes entre consola y kernel ( falla en el recivir mensaje que esta dentro del swich, nose porque no recibe mensajes
-//***Esta rutina se levanta por cada consola que se cree. Donde se va a quedar escuchandola hasta que la misma se desconecte.
+
 void consola_crearHiloDetach(int nuevoSocket){
 	pthread_attr_t attr;
 	pthread_t hilo_M ;
@@ -79,7 +81,8 @@ void consola_crearHiloDetach(int nuevoSocket){
 
 
 
-
+/// *** A esta función hay que probarle tuodo el sistema de envio de mensajes entre consola y kernel ( falla en el recivir mensaje que esta dentro del swich, nose porque no recibe mensajes
+//***Esta rutina se levanta por cada consola que se cree. Donde se va a quedar escuchandola hasta que la misma se desconecte.
 void *rutinaConsola(void * arg)
 {
 

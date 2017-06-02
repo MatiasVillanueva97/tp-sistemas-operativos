@@ -110,5 +110,16 @@ pthread_mutex_t mutex_cola_Finished;
 sem_t sem_ConsolaKernelLenvantada;
 
 
+//***Estra esttructura me la manda la cpu cuando quiere escribir algo, ya sea por pantalla o en filesystem
+typedef struct{
+	int pid;
+	int descriptorArchivo;
+	char* mensaje;
+}__attribute__((packed)) MENSAJE_PARA_ESCRIBIR_CPU;
+
+typedef struct{
+	int pid;
+	char* mensaje;
+}__attribute__((packed))MENSAJE_PARA_ESCRIBIR_CONSOLA;
 
 #endif /* DATOSGLOBALES_H_ */

@@ -65,6 +65,7 @@ enum tipos_de_Acciones{
 		errorFinalizacionPid = 5,
 		pidFinalizado = 6,
 		enviarDatosCPU = 7,
+		imprimirPorPantalla = 8,
 
 	//***Todas las acciones del CPU
 		asignarValor = 101,

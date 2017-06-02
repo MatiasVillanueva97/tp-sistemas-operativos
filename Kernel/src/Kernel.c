@@ -37,19 +37,10 @@
 #include "funcionesCPU.h"
 
 
-void inicializarSemaforo(){
-	sem_init(&mutex_HistoricoPcb,0,1);
-	sem_init(&mutex_listaProcesos,0,1);
-	sem_init(&mutex_cola_CPUs_libres,0,1);
-	sem_init(&mutex_cola_New,0,1);
-	sem_init(&mutex_cola_Ready,0,1);
-	sem_init(&mutex_cola_Wait,0,1);
-	sem_init(&mutex_cola_Exec,0,1);
-	sem_init(&mutex_cola_Finished,0,1);
+void inicializarSemaforo();
+void conectarConMemoria();
+void conectarConFS();
 
-
-	sem_init(&sem_ConsolaKernelLenvantada,0,0);
-}
 ///----FIN SEMAFOROS----///
 
 
@@ -94,7 +85,6 @@ bool proceso_finalizacionExterna(int pid, int exitCode)
 /// ********************************************************************************************************///
 /// ***************************** PRIMER PARTE - PASAR PROCESOS DE NEW A READY *****************************///
 /// ********************************************************************************************************///
-
 
 //***Funciones de Planificador a largo plazo - Esta funcion te pasa los procesos, (que no hayan finalizado), a la cola de ready; - anda bien
 void newToReady(){
@@ -240,7 +230,6 @@ void * planificadorLargoPlazo()
 }
 
 
-
 /// ********************************************************************************************************///
 /// ***************************************** FIN PRIMERA PARTE ********************************************///
 /// ********************************************************************************************************///
@@ -370,9 +359,6 @@ void * planificadorCortoPlazo()
 /// ********************************************************************************************************///
 
 
-
-
-
 //*** Esta funcion pasa todos los procesos que esten finalizados dentro de la cola de exec a la cola de Finished, y retorna el pid del proceso que se acaba de mover de cola, sino encontro ninguno retorna -1
 int execToFinished()
 {
@@ -397,6 +383,8 @@ int execToFinished()
 	return -1;
 }
 
+
+//*** esta funcion te pasa las cosas de excet a finshed, sea el caso que sea y te manda el mensaje a cnsola de cada cosa que acaba de mover -- Aunque esta accion de enviar a consola las cosas terminadas no deberia estar aca.. este hilo va a cambiar muchisimo
 void* planificadorExtraLargoPlazo(){
 	int pidParaAvisar;
 
@@ -456,8 +444,6 @@ void* planificadorExtraLargoPlazo(){
 }
 
 
-
-
 /// ********************************************************************************************************///
 /// ***************************************** FIN TERCERA PARTE ********************************************///
 /// ********************************************************************************************************///
@@ -467,7 +453,9 @@ void* planificadorExtraLargoPlazo(){
 ///---- FIN FUNCIONES DE PLANIFICACION ----///
 
 
-/// *** Esta Función esta probada y anda
+
+
+/// *** Esta Función esta probada y anda - Te acepta CPUs y las encola, o te hacepta consolas y te la levanta en hilos dettachables
 void * aceptarConexiones_Cpu_o_Consola( void *arg ){
 	//----DECLARACION DE VARIABLES ------//
 	int listener = (int)arg;
@@ -510,80 +498,7 @@ void * aceptarConexiones_Cpu_o_Consola( void *arg ){
 		}
 	}
 }
-///--- FIN RUTINAS DE HILOS----///
 
-/*
--SOLUCIONAR LO DE LAS ETIQUETAS.
--HACER EN EL KERNEL TODAS LAS OPERACIONES QUE PIDE EL CPU:
-
--WAIT
--SIGNAL
--VALOR COMPARTIDAS
--ASIGNAR COMPARTIDAS
--ESCRIBIR (POR AHORA SOLO POR CONSOLA)
--MANEJAR LOS PRINTS DE CONSOLA
--MANEJAR LA FINALIZACION DE PROGRAMAS POR CONSOLA
-
-*/
-
-
-///--------FUNCIONES DE CONEXIONES-------////
-//***Estas funciones andan
-//*** Esta función se conecta con memoria y recibe de ella el tamaño de las paginas
-void conectarConMemoria()
-{
-	bool flag=true;
-
-	while(flag)
-	{
-		int rta_conexion;
-		socketMemoria = conexionConServidor(getConfigString("PUERTO_MEMORIA"),getConfigString("IP_MEMORIA")); // Asignación del socket que se conectara con la memoria
-		if (socketMemoria == 1){
-			perror("Falla en el protocolo de comunicación");
-		}
-		if (socketMemoria == 2){
-			perror("No se conectado con Memoria, asegurese de que este abierto el proceso");
-		}
-		rta_conexion = handshakeCliente(socketMemoria, Kernel);
-
-		if ( rta_conexion != Memoria) {
-			perror("Error en el handshake con Memoria");
-			close(socketMemoria);
-			exit(-1);
-		}
-		else{
-			printf("Conexión exitosa con el Memoria(%i)!!\n",rta_conexion);
-
-			int* sizePag;
-			recibirMensaje(socketMemoria, &sizePag);
-
-			size_pagina = *sizePag;
-
-			printf("[Conexion con Memoria] - El Size pag es: %d", size_pagina);
-
-			free(sizePag);
-
-			flag=false;
-		}
-	}
-}
-void conectarConFS()
-{
-	int rta_conexion;
-	socketFS = conexionConServidor(getConfigString("PUERTO_FS"),getConfigString("IP_FS")); // Asignación del socket que se conectara con el filesytem
-	if (socketFS == 1){
-		perror("Falla en el protocolo de comunicación");
-	}
-	if (socketFS == 2){
-		perror("No se conectado con el FileSystem, asegurese de que este abierto el proceso");
-	}
-	if ( (rta_conexion = handshakeCliente(socketFS, Kernel)) == -1) {
-		perror("Error en el handshake con FileSystem");
-		close(socketFS);
-	}
-	printf("Conexión exitosa con el FileSystem(%i)!!\n",rta_conexion);
-}
-///---- FIN FUNCIONES DE CONEXIONES------////
 
 
 int main(void) {
@@ -678,3 +593,84 @@ int main(void) {
 
 	return 0;
 }
+
+
+
+// *************************************************************************************************************************************************** //
+// ****************************************************** COSAS MOLESTAS PERO NECESARIAS ************************************************************* //
+// *************************************************************************************************************************************************** //
+
+void inicializarSemaforo(){
+	sem_init(&mutex_HistoricoPcb,0,1);
+	sem_init(&mutex_listaProcesos,0,1);
+	sem_init(&mutex_cola_CPUs_libres,0,1);
+	sem_init(&mutex_cola_New,0,1);
+	sem_init(&mutex_cola_Ready,0,1);
+	sem_init(&mutex_cola_Wait,0,1);
+	sem_init(&mutex_cola_Exec,0,1);
+	sem_init(&mutex_cola_Finished,0,1);
+
+
+	sem_init(&sem_ConsolaKernelLenvantada,0,0);
+}
+
+
+///--------FUNCIONES DE CONEXIONES-------////
+
+//*** Esta función se conecta con memoria y recibe de ella el tamaño de las paginas
+void conectarConMemoria()
+{
+	bool flag=true;
+
+	while(flag)
+	{
+		int rta_conexion;
+		socketMemoria = conexionConServidor(getConfigString("PUERTO_MEMORIA"),getConfigString("IP_MEMORIA")); // Asignación del socket que se conectara con la memoria
+		if (socketMemoria == 1){
+			perror("Falla en el protocolo de comunicación");
+		}
+		if (socketMemoria == 2){
+			perror("No se conectado con Memoria, asegurese de que este abierto el proceso");
+		}
+		rta_conexion = handshakeCliente(socketMemoria, Kernel);
+
+		if ( rta_conexion != Memoria) {
+			perror("Error en el handshake con Memoria");
+			close(socketMemoria);
+			exit(-1);
+		}
+		else{
+			printf("Conexión exitosa con el Memoria(%i)!!\n",rta_conexion);
+
+			int* sizePag;
+			recibirMensaje(socketMemoria, &sizePag);
+
+			size_pagina = *sizePag;
+
+			printf("[Conexion con Memoria] - El Size pag es: %d", size_pagina);
+
+			free(sizePag);
+
+			flag=false;
+		}
+	}
+}
+void conectarConFS()
+{
+	int rta_conexion;
+	socketFS = conexionConServidor(getConfigString("PUERTO_FS"),getConfigString("IP_FS")); // Asignación del socket que se conectara con el filesytem
+	if (socketFS == 1){
+		perror("Falla en el protocolo de comunicación");
+	}
+	if (socketFS == 2){
+		perror("No se conectado con el FileSystem, asegurese de que este abierto el proceso");
+	}
+	if ( (rta_conexion = handshakeCliente(socketFS, Kernel)) == -1) {
+		perror("Error en el handshake con FileSystem");
+		close(socketFS);
+	}
+	printf("Conexión exitosa con el FileSystem(%i)!!\n",rta_conexion);
+}
+
+///---- FIN FUNCIONES DE CONEXIONES------////
+

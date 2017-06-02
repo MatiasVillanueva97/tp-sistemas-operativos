@@ -21,6 +21,8 @@
 #ifndef FUNCIONESCONSOLA_H_
 #define FUNCIONESCONSOLA_H_
 
+int consola_buscarSocketConsola(int pid);
+
 void consola_enviarAvisoDeFinalizacion(int socketConsola, int pid);
 
 void consola_finalizarTodosLosProcesos(int socketConsola);

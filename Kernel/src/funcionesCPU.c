@@ -90,7 +90,7 @@ void *rutinaCPU(void * arg)
 	void * stream;
 	int accionCPU;
 
-	printf("[Rutina rutinaCPU] - Entramos al hilo de la CPU: %d!\n", socketCPU);
+	printf("[Rutina rutinaCPU] - Entramos al hilo de la CPU cuyo socket es: %d.\n", socketCPU);
 
 	//*** Voy a trabajar con esta CPU hasta que se deconecte
 	while(todaviaHayTrabajo){
@@ -101,9 +101,7 @@ void *rutinaCPU(void * arg)
 		switch(accionCPU){
 			//*** La CPU me pide un PCB para poder trabajar
 			case pedirPCB:{
-
 				printf("[Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- %d!\n", pedirPCB);
-
 
 				PCB_DATA* pcb = cpu_pedirPCBDeExec();
 
@@ -111,37 +109,54 @@ void *rutinaCPU(void * arg)
 				enviarMensaje(socketCPU,envioPCB,pcbSerializado,tamanoPCB(pcb) + 4);
 
 			}break;
-			case enviarPCBaTerminado:{
-				//TE MANDO UN PCB QUE YA TERMINE DE EJECUTAR POR COMPLETO, ARREGLATE LAS COSAS DE MOVER DE UNA COLA A LA OTRA Y ESO
 
+			//TE MANDO UN PCB QUE YA TERMINE DE EJECUTAR POR COMPLETO, ARREGLATE LAS COSAS DE MOVER DE UNA COLA A LA OTRA Y ESO
+			case enviarPCBaTerminado:{
 				printf("[Rutina rutinaCPU] - Entramos al Caso de que CPU termino la ejecucion de un proceso: accion- %d!\n", enviarPCBaTerminado);
 
 				PCB_DATA* pcb = deserializarPCB(stream);
-				imprimirPCB(pcb);
-
 				pcb->exitCode = 0;
-
 				modificarPCB(pcb);
 
-
-				//queue_pop(cola_Exec);
-				//queue_push(cola_Finished, pcb);
-
-				//proceso_GestorDeColaExec();
-
-				//planificadorExtraLargoPlazo();
 			}break;
+
+			//TE MANDO UN PCB QUE TERMINA PORQUE SE QUEDO SIN QUANTUM, ARREGLATE LAS COSAS DE MOVER DE UNA COLA A LA OTRA Y ESO
 			case enviarPCBaReady:{
-				//TE MANDO UN PCB QUE TERMINA PORQUE SE QUEDO SIN QUANTUM, ARREGLATE LAS COSAS DE MOVER DE UNA COLA A LA OTRA Y ESO
+				printf("[Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- %d!\n", enviarPCBaReady);
 
+				PCB_DATA* pcb = deserializarPCB(stream);
+				modificarPCB(pcb);
+
+				queue_pop(cola_Exec);
+				queue_push(cola_Ready, pcb);
 			}break;
+
+			//TE MANDO UNA ESTRUCTURA CON {PID, DESCRIPTOR, MENSAJE(CHAR*)} PARA QUE:  iF(DESCRIPTOR == 1) ESCRIBE EN LA CONSOLA QUE LE CORRESPONDE ; ELSE ESCRIBE EN EL ARCHIVO ASOCIADO A ESE DESCRIPTOR
 			case mensajeParaEscribir:{
-				//TE MANDO UNA ESTRUCTURA CON {PID, DESCRIPTOR, MENSAJE(CHAR*)} PARA QUE:
-				//IF(DESCRIPTOR == 1) ESCRIBE EN LA CONSOLA QUE LE CORRESPONDE
-				//ELSE ESCRIBE EN EL ARCHIVO ASOCIADO A ESE DESCRIPTOR
+				printf("[Rutina rutinaCPU] - Entramos al Caso de que CPU me mande a imprimir algo a la consola: accion- %d!\n", mensajeParaEscribir);
+
+			/*	MENSAJE_PARA_ESCRIBIR_CPU msj = (MENSAJE_PARA_ESCRIBIR_CPU)stream;
+
+
+				if(msj.descriptorArchivo)
+				{
+					MENSAJE_PARA_ESCRIBIR_CONSOLA msjConsola = {
+							.pid = msj.pid,
+							.mensaje = msj.mensaje
+					};
+
+					int socketConsola = consola_buscarSocketConsola(msj.pid);
+					enviarMensaje(socketConsola, imprimirPorPantalla, &msjConsola, sizeof(int)+strlen(msjConsola)+1);
+				}
+				else
+				{
+					//evniar algo a filesystem
+				}*/
+
 			}break;
 			case waitSemaforo:{
 				//TE MANDO UN NOMBRE DE UN SEMAFORO Y QUIERO QUE HAGAS UN WAIT, ME DEBERIAS DECIR SI ME BLOQUEO O NO
+
 			}break;
 			case signalSemaforo:{
 				//TE MANDO UN NOMBRE DE UN SEMAFORO Y QUIERO QUE HAGAS UN SIGNAL, LE DEBERIAS INFORMAR A ALGUIEN SI ESTABA BLOQUEADO EN UN WAIT DE ESTE SEMAFORO
