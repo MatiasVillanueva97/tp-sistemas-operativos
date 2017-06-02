@@ -61,12 +61,13 @@ void* leerMemoriaPosta (int pid, int pagina ){
 }
 int escribirMemoriaPosta(int pid,int pagina,void* contenido){
 	//Antes de poder escribir, se deben haber reservado los frame.
-	if(strlen(contenido)>getConfigInt("MARCO_SIZE")){
+/*	if(strlen(contenido)>getConfigInt("MARCO_SIZE")){
 		puts(contenido);
 		puts(string_itoa(strlen(contenido)));
 		perror("El tamaño del contenido es mayor al tamaño de una pagina con la configuracion actual idiota");
 		return 0;
 	}
+*/
 	int frame = buscarFrameCorrespondiente(pid,pagina);
 	if (frame == -1){
 		return 0;

@@ -118,6 +118,14 @@ void *rutinaCPU(void * arg)
 				pcb->exitCode = 0;
 				modificarPCB(pcb);
 
+				int* socket = malloc(sizeof(int));
+
+				*socket = socketCPU;
+
+				sem_wait(&mutex_cola_CPUs_libres);
+					queue_push(cola_CPUs_libres,socket);
+				sem_post(&mutex_cola_CPUs_libres);
+
 			}break;
 
 			//TE MANDO UN PCB QUE TERMINA PORQUE SE QUEDO SIN QUANTUM, ARREGLATE LAS COSAS DE MOVER DE UNA COLA A LA OTRA Y ESO

@@ -325,16 +325,15 @@ void * planificadorCortoPlazo()
 			{
 				//*** Agarro una cpu que este disponible
 				sem_wait(&mutex_cola_CPUs_libres);
-					int cpuParaTrabajar = queue_peek(cola_CPUs_libres);
-					queue_pop(cola_CPUs_libres);
+					int* cpuParaTrabajar = queue_pop(cola_CPUs_libres);
 				sem_post(&mutex_cola_CPUs_libres);
 
-				printf("[Rutina readyToExec] - Se crea un nuevo hilo para que la CPU N°: %d trabaje con el proceso N°: %d\n", cpuParaTrabajar, pcb->pid);
+				printf("[Rutina readyToExec] - Se crea un nuevo hilo para que la CPU N°: %d trabaje con el proceso N°: %d\n", *cpuParaTrabajar, pcb->pid);
 
 
 				//*** Llamo a una rutina CPU que va a estar trabajando con la cpu que le paso por parametro -- Cambiar tipo de hilo
 				pthread_t hilo_rutinaCPU;
-				cpu_crearHiloDetach(cpuParaTrabajar);
+				cpu_crearHiloDetach(*cpuParaTrabajar);
 			}
 
 		}
@@ -484,8 +483,12 @@ void * aceptarConexiones_Cpu_o_Consola( void *arg ){
 			{
 				printf("\n[rutina aceptarConexiones] - Nueva CPU Conectada\nSocket CPU %d\n\n", nuevoSocket);
 
+				int* socket = malloc(sizeof(int));
+
+				*socket = nuevoSocket;
+
 				sem_wait(&mutex_cola_CPUs_libres);
-					queue_push(cola_CPUs_libres,nuevoSocket);
+					queue_push(cola_CPUs_libres,socket);
 				sem_post(&mutex_cola_CPUs_libres);
 
 			}break;

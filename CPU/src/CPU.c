@@ -173,7 +173,7 @@ int main(void)
 		//libera la memoria malloqueada por el PCB
 		destruirPCB_Puntero(pcb);
 
-	//}
+//	}
 
 
 	close(socketKernel);
