@@ -26,6 +26,7 @@ PCB_DATA* crearPCB(char * scriptAnsisop, int pid, int contPags){
 
 void modificarPCB(PCB_DATA * pcbNuevo){
 
+
 	bool busqueda(PROCESOS * aviso)
 	{
 		if(aviso->pid == pcbNuevo->pid)
@@ -57,5 +58,9 @@ void modificarPCB(PCB_DATA * pcbNuevo){
 		pcb2->indiceStack = pcbNuevo->indiceStack;
 		pcb2->programCounter = pcbNuevo->programCounter;
 	}
+
+	//****Esta linea no se si va
+	free(pcbNuevo);
+
 	sem_post(&mutex_listaProcesos);
 }

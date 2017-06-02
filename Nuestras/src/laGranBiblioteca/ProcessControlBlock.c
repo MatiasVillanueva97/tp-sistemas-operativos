@@ -436,17 +436,19 @@ void imprimirListaDe__t_variables(t_list* lista, char* nombreLista){
 }
 
 void imprimirEntradas(t_entrada* indiceStack, int cantidadDeEntradas){
-	int i;
-	for(i=0;i<cantidadDeEntradas;i++){
-		printf("\n\nPara la entrada numero %d", i);
-		printf("\nSu retPos es %d",indiceStack[i].retPos);
-		printf("\nSu retVar.offset es %d",indiceStack[i].retVar.offset);
-		printf("\nSu retVar.page es %d",indiceStack[i].retVar.page);
-		printf("\nSu retVar.size es %d",indiceStack[i].retVar.size);
-		imprimirListaDe__t_variables(indiceStack[i].argumentos,"argumentos");
-		imprimirListaDe__t_variables(indiceStack[i].variables,"variables");
+	if(indiceStack != NULL){
+		int i;
+		for(i=0;i<cantidadDeEntradas;i++){
+			printf("\n\nPara la entrada numero %d", i);
+			printf("\nSu retPos es %d",indiceStack[i].retPos);
+			printf("\nSu retVar.offset es %d",indiceStack[i].retVar.offset);
+			printf("\nSu retVar.page es %d",indiceStack[i].retVar.page);
+			printf("\nSu retVar.size es %d",indiceStack[i].retVar.size);
+			imprimirListaDe__t_variables(indiceStack[i].argumentos,"argumentos");
+			imprimirListaDe__t_variables(indiceStack[i].variables,"variables");
+		}
+		if(cantidadDeEntradas == 0) printf("\nNo hay entradas cargadas en el PCB");
 	}
-	if(cantidadDeEntradas == 0) printf("\nNo hay entradas cargadas en el PCB");
 }
 
 void imprimirIndiceDeCodigo(t_intructions* indiceDeCodigo, int cantidadDeInstrucciones){

@@ -47,6 +47,7 @@ void inicializarSemaforo(){
 	sem_init(&mutex_cola_Exec,0,1);
 	sem_init(&mutex_cola_Finished,0,1);
 
+
 	sem_init(&sem_ConsolaKernelLenvantada,0,0);
 }
 ///----FIN SEMAFOROS----///
@@ -237,6 +238,8 @@ bool proceso_finalizacionExterna(int pid, int exitCode)
 
 ///---RUTINAS DE HILOS----///
 
+
+
 /// *** A esta función hay que probarle tuodo el sistema de envio de mensajes entre consola y kernel ( falla en el recivir mensaje que esta dentro del swich, nose porque no recibe mensajes
 //***Esta rutina se levanta por cada consola que se cree. Donde se va a quedar escuchandola hasta que la misma se desconecte.
 void *rutinaConsola(void * arg)
@@ -347,21 +350,67 @@ void *rutinaConsola(void * arg)
 	close(socketConsola);
 }
 
+enum estadosDeUnProcesoEnExec{
+	loEstaUsandoUnaCPU = 1,
+	estaEsperandoASerEjecutado = 53
+};
 
 PCB_DATA * pedirPCBDeExec(){
-	//semforo
 
-
-	PCB_DATA * pcb = queue_pop(cola_Exec);
-	if(pcb->exitCode != 53)
-		queue_push(cola_Finished, pcb);
-	else{
-		queue_push(cola_Exec, pcb);
-		return pcb;
+	while(1){
+		sem_wait(&mutex_cola_Exec);
+		if(queue_size(cola_Exec) > 0){
+			PCB_DATA * pcb = queue_peek(cola_Exec);
+			if(pcb->exitCode == estaEsperandoASerEjecutado){
+				pcb->exitCode = loEstaUsandoUnaCPU;
+				sem_post(&mutex_cola_Exec);
+				return pcb;
+			}
+		}
+		sem_post(&mutex_cola_Exec);
 	}
+}
 
 
-	//fin sem
+
+void * proceso_GestorDeColaExec(){
+	PCB_DATA * pcb;
+	while(1){
+
+		sem_wait(&mutex_cola_Exec);
+
+		//***Pregunto si la cola esta vacia y reviso el primer elemento
+		if(queue_size(cola_Exec) > 0){
+			pcb = queue_peek(cola_Exec);
+			if(pcb != NULL){
+
+				if(pcb->exitCode == loEstaUsandoUnaCPU){
+					//***Lo mando al final de la cola
+					pcb = queue_pop(cola_Exec);
+					queue_push(cola_Exec, pcb);
+				}
+
+				if(pcb->exitCode <= 0){
+
+					//pcb->exitCode = 1234;
+
+					pcb = queue_pop(cola_Exec);
+
+					sem_wait(&mutex_cola_Finished);
+						queue_push(cola_Finished, pcb);
+					sem_post(&mutex_cola_Finished);
+
+				}
+
+			sleep(1);
+			printf("[proceso_GestorDeColaExec]: --- en el proceso %d el exitcode es: %d\n",pcb->pid,  pcb->exitCode);
+			}
+		}
+
+		sem_post(&mutex_cola_Exec);
+
+
+	}
 }
 
 
@@ -397,9 +446,9 @@ void *rutinaCPU(void * arg)
 
 				printf("[Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- %d!\n", pedirPCB);
 
-				sem_wait(&mutex_cola_Exec);
-					pcb = pedirPCBDeExec();
-				sem_post(&mutex_cola_Exec);
+				pcb = pedirPCBDeExec();
+
+				pcb->exitCode = loEstaUsandoUnaCPU;
 
 				void* pcbSerializado = serializarPCB(pcb);
 
@@ -416,12 +465,16 @@ void *rutinaCPU(void * arg)
 
 				pcb->exitCode = 0;
 
-				modificarPCB(pcb);
+				//sem_wait(&cola_Exec);
+					modificarPCB(pcb);
+				//sem_post(&cola_Exec);
 
 				//queue_pop(cola_Exec);
 				//queue_push(cola_Finished, pcb);
 
-				planificadorExtraLargoPlazo();
+				//proceso_GestorDeColaExec();
+
+				//planificadorExtraLargoPlazo();
 			}break;
 			case enviarPCBaReady:{
 				//TE MANDO UN PCB QUE TERMINA PORQUE SE QUEDO SIN QUANTUM, ARREGLATE LAS COSAS DE MOVER DE UNA COLA A LA OTRA Y ESO
@@ -577,7 +630,7 @@ void * planificadorLargoPlazo()
 int execToFinished()
 {
 	//**Tomo el primer elemento de la lista,
-	PCB_DATA* pcb=queue_peek(cola_Exec);
+	PCB_DATA* pcb=queue_pop(cola_Exec);
 
 	//Valido que el proceso haya finalizado
 
@@ -585,15 +638,17 @@ int execToFinished()
 	if(pcb->exitCode != 53){
 
 		//*** si el proceso ya finalizo, lo saco de la cola de exec y lo paso a la cola de finished
-		queue_pop(cola_Exec);
+
 
 		sem_wait(&mutex_cola_Finished);
-		queue_push(cola_Finished,pcb);
+			queue_push(cola_Finished,pcb);
 		sem_post(&mutex_cola_Finished);
 
 		//*** Retorno el pid del proceso que acabo de psar a finalizado
 		return  pcb->pid;
 	}
+	else
+		queue_push(cola_Exec, pcb);
 
 	return -1;
 }
@@ -1127,9 +1182,14 @@ int main(void) {
 	sem_wait(&sem_ConsolaKernelLenvantada);
 
 
+
 	//---ABRO EL HILO DEL PLANIFICADOR A LARGO PLAZO---//
 	pthread_t hilo_planificadorLargoPlazo;
 	pthread_create(&hilo_planificadorLargoPlazo, NULL, planificadorLargoPlazo, NULL);
+
+
+	pthread_t hilo_gestorColaExec;
+	pthread_create(&hilo_gestorColaExec, NULL, proceso_GestorDeColaExec, NULL);
 
 
 	//---ABRO EL HILO DEL PLANIFICADOR A CORTO PLAZO---//
@@ -1146,6 +1206,8 @@ int main(void) {
 	pthread_join(hilo_planificadorCortoPlazo, NULL);
 	pthread_join(hilo_planificadorLargoPlazo, NULL);
 	pthread_join(hilo_consolaKernel, NULL);
+
+	pthread_join(hilo_gestorColaExec, NULL);
 
 	while(1)
 	{

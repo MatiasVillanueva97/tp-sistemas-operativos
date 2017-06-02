@@ -93,4 +93,5 @@ pthread_mutex_t mutex_cola_Finished;
 sem_t sem_ConsolaKernelLenvantada;
 
 
+
 #endif /* DATOSGLOBALES_H_ */
