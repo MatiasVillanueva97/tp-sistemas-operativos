@@ -35,7 +35,12 @@ void* rutinaEscucharKernel();
 typedef struct {
 	int pid;
 	bool estaTerminado;
+	bool hayParaImprimir;
 }t_Estado;
+typedef struct{
+		 int pid;
+		 char* mensaje;
+}__attribute__((packed))MENSAJE_PARA_ESCRIBIR_CONSOLA;
 
 struct{
 	int pid;
@@ -43,13 +48,14 @@ struct{
 } mensajeDeProceso;
 
 int socketKernel;
-int* pidActual;
+char* mensajeActual;
 t_list* listaEstadoPrograma;
+bool error;
 
 
 pthread_mutex_t mutex_lista;
-pthread_mutex_t mutex_imprimir;
-pthread_mutex_t mutex_pidActual;
+pthread_mutex_t mutex_ordenDeEscritura;
+pthread_mutex_t mutex_mensajeActual;
 
 
 size_t tamanoArchivo(FILE * archivo){
@@ -134,25 +140,32 @@ void agregarAListaEstadoPrograma(int pid, bool estado){
 	t_Estado*	aux = malloc(sizeof(t_Estado));
 	aux->pid = pid;
 	aux->estaTerminado = estado;
+	aux->hayParaImprimir = false;
+	sem_wait(&mutex_lista);
 	list_add(listaEstadoPrograma, aux);
-
+	sem_post(&mutex_lista);
 }
-
+t_Estado* encontrarElDeIgualPid(int pid){
+		t_Estado * programaEstado;
+		bool sonIguales(t_Estado * elementos){
+			return  elementos->pid == pid;
+		}
+		sem_wait(&mutex_lista);
+		programaEstado = list_find(listaEstadoPrograma, (void*) sonIguales);
+		sem_post(&mutex_lista);
+		return programaEstado;
+	}
 void matarHiloPrograma(int pid){
 	bool sonIguales(t_Estado * elementos){
 		return  elementos->pid == pid;
 	}
 	t_Estado * ret = malloc(sizeof(t_Estado));
-	sem_wait(&mutex_lista);
-	ret = list_find(listaEstadoPrograma, (void*) sonIguales);
-	sem_post(&mutex_lista);
+	ret = encontrarElDeIgualPid(pid);
 	if(ret == NULL){
 		perror("Error: el pid no existe o ya ha finalizado el programa");
 	}
 	else{
-
 		ret->estaTerminado=true;
-
 	}
 }
 
@@ -178,6 +191,11 @@ void crearHiloDetachPrograma(int* pid){
 	}
 	pthread_attr_destroy(&attr);
 }
+void inicializarSemaforos(){
+	sem_init(&mutex_lista,0,1);
+	sem_init(&mutex_ordenDeEscritura,0,0);
+	sem_init(&mutex_mensajeActual,0,1);
+}
 
 int main(void)
 {
@@ -186,11 +204,8 @@ int main(void)
 	size_t len = 0;
 	char* mensaje = NULL;
 	listaEstadoPrograma = list_create();
-
-	sem_init(&mutex_lista,0,1);
-	sem_init(&mutex_pidActual,0,1);
-	sem_init(&mutex_imprimir,0,1);
-
+	error = false;
+	inicializarSemaforos();
 
 	// ******* Configuración inicial Consola
 
@@ -201,7 +216,7 @@ int main(void)
 	conectarConKernel();
 	pthread_t hiloMaster ;
 	pthread_create(hiloMaster, NULL,rutinaEscucharKernel, NULL);
-	while(1){//Ciclo donde se ejecutan los comandos principales.
+	while(!error){//Ciclo donde se ejecutan los comandos principales.
 
 		printf("\nIngrese Comando: \n");
 
@@ -214,12 +229,12 @@ int main(void)
 			char** nombreDeArchivo= string_split(comandoConsola[1], "\n");//Toma el parametro que contiene el archivo y le quita el \n
 			char* script = generarScript(nombreDeArchivo[0]);
 			if (script==NULL){
-				continue;
-			}// lee el archivo y guarda en script.
+				continue;}
 			enviarMensaje(socketKernel,envioScriptAnsisop, script,strlen(script)+1);
 			liberarArray(nombreDeArchivo);
 			liberarArray(comandoConsola);
 			free(script);
+			sem_wait(&mutex_ordenDeEscritura);
 			continue;
 		}
 		if(strcmp(comandoConsola[0],"limpiarMensajes\n") == 0){
@@ -240,6 +255,9 @@ int main(void)
 			enviarMensaje(socketKernel,desconectarConsola, NULL, 0);
 			break;
 		}
+		if (error){
+			break;
+		}
 
 	puts("Comando Inválido!");
 	}
@@ -254,41 +272,32 @@ int main(void)
 
 
 
+
+
 void* rutinaPrograma(void* parametro){
 	int* pid= malloc(4);
 	char* tiempoInicio = temporal_get_string_time();
 
 	pid = parametro;
 
-	bool sonIguales(t_Estado * elementos){
-		return  elementos->pid == *pid;
-	}
-
 	t_Estado * programaEstado;
-	sem_wait(&mutex_lista);
 	agregarAListaEstadoPrograma(*pid,false);
-	programaEstado = list_find(listaEstadoPrograma, (void*) sonIguales);
-	sem_post(&mutex_lista);
+	programaEstado = encontrarElDeIgualPid(*pid);
+		printf("Numero de pid del proces: %d \n",*pid);
+		sem_post(&mutex_ordenDeEscritura);
+		while(1){
 
-
-
-	char* stream;
-	printf("Numero de pid: %d \n",*pid);
-	while(1){
-		sem_wait(&mutex_pidActual);
-		if(pid==pidActual){
-			recibirMensaje(socketKernel,(void*) stream);
-			puts(stream);
-			sem_post(&mutex_imprimir);
+		if(programaEstado->hayParaImprimir){
+			sem_wait(&mutex_mensajeActual);
+			printf("Mensaja del pid %d: %s\n", *pid,mensajeActual);
+			sem_wait(&mutex_mensajeActual);
 		}
-		sem_post(&mutex_pidActual);
 			if(programaEstado->estaTerminado){
-
-				return (-1);
+				break;
 			}
 		}
 	char* tiempoFin = temporal_get_string_time();
-	printf("Numero de pid: %d \n",*pid);
+	printf("Acaba de finalizar el pid: %d\n", *pid);
 	printf("Tiempo de inicio :%s\n",tiempoInicio);
 	printf("Tiempo de Finalización: %s\n",tiempoFin);
 	printf("Tiempo de Ejecución: %s\n",diferencia(tiempoInicio,tiempoFin));
@@ -299,7 +308,7 @@ void* rutinaPrograma(void* parametro){
 void* rutinaEscucharKernel(){
 	int* pid = malloc(4);
 
-	while(1){
+	while(!error){
 		int operacion;
 		void * stream;
 		operacion =recibirMensaje(socketKernel,&stream);
@@ -310,17 +319,19 @@ void* rutinaEscucharKernel(){
 			break;
 		}
 		case(imprimirPorPantalla):{
-			sem_wait(&mutex_pidActual);
-			pidActual = (int*)stream;
-			sem_post(&mutex_pidActual);
-			sem_wait(&mutex_imprimir);
+			MENSAJE_PARA_ESCRIBIR_CONSOLA * aux;
+			aux = (MENSAJE_PARA_ESCRIBIR_CONSOLA*) stream;
+			sem_wait(&mutex_mensajeActual);
+			mensajeActual = aux->mensaje;
+			sem_post(&mutex_mensajeActual);
+			 t_Estado* programaEstado;
+			programaEstado = encontrarElDeIgualPid(aux->pid);
+			programaEstado->hayParaImprimir = true;
+
 			break;
 		}
 		case(pidFinalizado):{
 			pid = (int*)stream;
-
-			printf("Acaba de finalizar el pid: %d\n", *pid);
-
 			matarHiloPrograma(*pid);
 
 			break;
@@ -332,10 +343,11 @@ void* rutinaEscucharKernel(){
 			printf("No se ha finalizado correctamente el pid: %d \n", *pid);
 			break;
 		}
-		case 0:{
+		case (0):{
 				printf("Se desconecto el kernel\n");
-
-				exit(-1);
+				error = true;
+				printf("Ingrese una tecla cualquiera para salir\n");
+				break;
 				}
 		default:{
 			perror("Error: no se pudo obtener mensaje \n");
