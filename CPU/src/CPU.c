@@ -93,6 +93,7 @@ int main(void)
  		int quantumRestante = datosIniciales->quantum;
 
  		terminoPrograma = false;
+ 		bloqueado = false;
 
 		// Recepcion del pcb
 
@@ -106,7 +107,7 @@ int main(void)
 
 		free(pcbSerializado);
 
-		while(!terminoPrograma && quantumRestante != 0){
+		while(!terminoPrograma && quantumRestante != 0 && !bloqueado){
 
 			t_pedidoMemoria pedido;
 			pedido.id = pcb->pid;
@@ -157,7 +158,14 @@ int main(void)
 		if(terminoPrograma){
 			printf("Envie el PCB al Kernel porque termine toda su ejecucion\n");
 			enviarMensaje(socketKernel,enviarPCBaTerminado,serializarPCB(pcb),tamanoPCB(pcb) + 4);
-		}else{
+		}
+
+/*		if(bloqueado){
+			printf("Envie el PCB al Kernel porque se bloqueo el programa\n");
+			enviarMensaje(socketKernel,enviarPCBaWaiting,serializarPCB(pcb),tamanoPCB(pcb) + 4);
+		}
+*/
+		if(quantumRestante == 0){
 			printf("Envie el PCB al Kernel porque me quede sin quantum\n");
 			enviarMensaje(socketKernel,enviarPCBaReady,serializarPCB(pcb),tamanoPCB(pcb) + 4);
 		}

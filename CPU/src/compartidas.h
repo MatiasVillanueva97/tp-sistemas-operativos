@@ -22,5 +22,6 @@ int socketKernel;
 int socketMemoria;
 PCB_DATA* pcb;
 bool terminoPrograma;
+bool bloqueado;
 t_datosIniciales* datosIniciales;
 #endif //ESTACOSA

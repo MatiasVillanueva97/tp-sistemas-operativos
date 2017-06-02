@@ -294,6 +294,7 @@ void AnSISOP_wait(t_nombre_semaforo identificador_semaforo){
 	//RECIBIR UN MENSAJE DICIENDO SI ESE SEMAFORO EXISTIA REALMENTE
 
 	//RECIBIR UN MENSAJE DICIENDO SI SE BLOQUEA O NO POR EL WAIT... SUPONGO
+	bloqueado = true;
 
 }
 
