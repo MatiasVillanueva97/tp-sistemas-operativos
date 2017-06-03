@@ -22,6 +22,7 @@
 
 #include "../../Nuestras/src/laGranBiblioteca/sockets.c"
 #include "../../Nuestras/src/laGranBiblioteca/config.c"
+#include "../../Nuestras/src/laGranBiblioteca/funcionesParaTodosYTodas.c"
 
 #include <arpa/inet.h>
 
@@ -37,10 +38,7 @@ typedef struct {
 	bool estaTerminado;
 	bool hayParaImprimir;
 }t_Estado;
-typedef struct{
-		 int pid;
-		 char* mensaje;
-}__attribute__((packed))MENSAJE_PARA_ESCRIBIR_CONSOLA;
+
 
 struct{
 	int pid;
@@ -319,13 +317,12 @@ void* rutinaEscucharKernel(){
 			break;
 		}
 		case(imprimirPorPantalla):{
-			MENSAJE_PARA_ESCRIBIR_CONSOLA * aux;
-			aux = (MENSAJE_PARA_ESCRIBIR_CONSOLA*) stream;
+			t_mensajeDeProceso aux = deserializarMensajeAEscribir(stream);
 			sem_wait(&mutex_mensajeActual);
-			mensajeActual = aux->mensaje;
+			mensajeActual = aux.mensaje;
 			sem_post(&mutex_mensajeActual);
 			 t_Estado* programaEstado;
-			programaEstado = encontrarElDeIgualPid(aux->pid);
+			programaEstado = encontrarElDeIgualPid(aux.pid);
 			programaEstado->hayParaImprimir = true;
 
 			break;
