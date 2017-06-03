@@ -37,6 +37,7 @@ typedef struct {
 	int pid;
 	bool estaTerminado;
 	bool hayParaImprimir;
+	char * mensajeAImprimir;
 }t_Estado;
 
 
@@ -139,6 +140,7 @@ void agregarAListaEstadoPrograma(int pid, bool estado){
 	aux->pid = pid;
 	aux->estaTerminado = estado;
 	aux->hayParaImprimir = false;
+	aux->mensajeAImprimir = NULL;
 	sem_wait(&mutex_lista);
 	list_add(listaEstadoPrograma, aux);
 	sem_post(&mutex_lista);
@@ -157,7 +159,7 @@ void matarHiloPrograma(int pid){
 	bool sonIguales(t_Estado * elementos){
 		return  elementos->pid == pid;
 	}
-	t_Estado * ret = malloc(sizeof(t_Estado));
+	t_Estado * ret;
 	ret = encontrarElDeIgualPid(pid);
 	if(ret == NULL){
 		perror("Error: el pid no existe o ya ha finalizado el programa");
@@ -278,7 +280,7 @@ void* rutinaPrograma(void* parametro){
 
 	pid = parametro;
 
-	t_Estado * programaEstado;
+	t_Estado * programaEstado ;
 	agregarAListaEstadoPrograma(*pid,false);
 	programaEstado = encontrarElDeIgualPid(*pid);
 		printf("Numero de pid del proces: %d \n",*pid);
@@ -286,9 +288,10 @@ void* rutinaPrograma(void* parametro){
 		while(1){
 
 		if(programaEstado->hayParaImprimir){
-			sem_wait(&mutex_mensajeActual);
-			printf("Mensaja del pid %d: %s\n", *pid,mensajeActual);
-			sem_wait(&mutex_mensajeActual);
+
+			printf("Mensaja del pid %d: %s\n", *pid, programaEstado->mensajeAImprimir);
+			programaEstado->hayParaImprimir = false;
+
 		}
 			if(programaEstado->estaTerminado){
 				break;
@@ -318,11 +321,9 @@ void* rutinaEscucharKernel(){
 		}
 		case(imprimirPorPantalla):{
 			t_mensajeDeProceso aux = deserializarMensajeAEscribir(stream);
-			sem_wait(&mutex_mensajeActual);
-			mensajeActual = aux.mensaje;
-			sem_post(&mutex_mensajeActual);
 			 t_Estado* programaEstado;
 			programaEstado = encontrarElDeIgualPid(aux.pid);
+			programaEstado->mensajeAImprimir = string_duplicate(aux.mensaje);
 			programaEstado->hayParaImprimir = true;
 
 			break;

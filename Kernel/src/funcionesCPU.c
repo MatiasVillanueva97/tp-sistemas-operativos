@@ -149,11 +149,17 @@ void *rutinaCPU(void * arg)
 
 				t_mensajeDeProceso msj = deserializarMensajeAEscribir(stream);
 
-
-				if(msj.descriptorArchivo == 1){
-
+				puts(msj.mensaje);
+				printf("Descriptor: %d \n",msj.descriptorArchivo);
+				printf("Pid: %d \n",msj.pid);
+				if(msj.descriptorArchivo == 0){
+					void * stream2 = serializarMensajeAEscribir(msj,strlen(msj.mensaje)+1);
 					int socketConsola = consola_buscarSocketConsola(msj.pid);
-					enviarMensaje(socketConsola, imprimirPorPantalla, &stream, tamanoMensajeAEscribir(strlen(msj.mensaje)+1));
+					int s =  tamanoMensajeAEscribir(strlen(msj.mensaje)+1);
+					printf("Lo que envia %d \n",s);
+
+					printf("%d \n",socketConsola);
+					enviarMensaje(socketConsola,imprimirPorPantalla,stream2,s);
 				}
 				else{
 					//evniar algo a filesystem

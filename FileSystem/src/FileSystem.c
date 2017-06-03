@@ -86,3 +86,25 @@ int main(void) {
 	// free(mensajeRecibido); esto tira violacion de segmento
 	return EXIT_SUCCESS;
 }
+bool existeElArchivo(char* path){
+ char* pathTotal = string_new();
+ char* x = getConfigString("PUNTO_MONTAJE");
+ string_append(&pathTotal,x);
+ string_append(&pathTotal,"/Archivos");
+ string_append(&pathTotal,path);
+ FILE* archivo = fopen(pathTotal,"r");
+ fclose(archivo);
+ return archivo != NULL;
+}
+
+int devolverTamano(char* path){
+ char* pathTotal = string_new();
+ char* x = getConfigString("PUNTO_MONTAJE");
+ string_append(&pathTotal,x);
+ string_append(&pathTotal,"/Archivos");
+ string_append(&pathTotal,path);
+ t_config* configuracion =config_create(pathTotal);
+ int w =config_get_int_value(configuracion,"tamanio");
+ config_destroy(configuracion);
+ return w;
+}

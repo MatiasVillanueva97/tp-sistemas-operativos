@@ -450,10 +450,17 @@ void recibirMensajesMemoria(void* arg){
 
 					break;
 				}
+				case 208:{
+				     int* pid = stream;
+				     int* pagina = stream+sizeof(int);
+				     liberarPagina(*pid,*pagina);
+				     break;
+				}
 				case 0:{
 					close(socket);
 					break;
 				}
+
 				default:{
 					perror("Error de comando");
 				}
@@ -512,12 +519,12 @@ int main(void) {
 	cantidadDeMarcos = getConfigInt("MARCOS");
 	memoriaTotal = malloc(sizeOfPaginas*cantidadDeMarcos);
 	int i;
-	char* hijodeputa;
-	hijodeputa = string_repeat(' ',sizeOfPaginas);
+	char* joaco;
+	joaco = string_repeat(' ',sizeOfPaginas);
 	for(i=0;i<cantidadDeMarcos;i++){//Chequearlo despues
-		memcpy(memoriaTotal+i*sizeOfPaginas,hijodeputa,sizeOfPaginas);
+		memcpy(memoriaTotal+i*sizeOfPaginas,joaco,sizeOfPaginas);
 	}
-//	free(hijodeputa); //No me toma el free por algun motivo __	 O	___
+//	free(hijodemama); //No me toma el free por algun motivo __	 O	___
 													//		  \__|__/
 
 	iniciarTablaDePaginacionInvertida();

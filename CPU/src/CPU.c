@@ -34,7 +34,6 @@ void pedidoValido(int*,void*,int);
 void recibirInstruccion(void*,char**,int,int*);
 
 
-char* script = "begin\nvariables a, b\na = 3\nb = 5\na = b + 12\nprints l \"Hola Mundo\"\nend\n";
 
 
 int main(void)
@@ -103,7 +102,7 @@ int main(void)
 		puts("esperando pcb\n");
 		if(recibirMensaje(socketKernel,&pcbSerializado) != envioPCB) perror("Error en la accion maquinola");
 
-		pcb=deserializarPCB(pcbSerializado); /// puto el que lee
+		pcb=deserializarPCB(pcbSerializado);
 
 		free(pcbSerializado);
 
