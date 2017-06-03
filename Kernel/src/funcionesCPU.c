@@ -96,6 +96,15 @@ void *rutinaCPU(void * arg)
 
 	printf("[Rutina rutinaCPU] - Entramos al hilo de la CPU cuyo socket es: %d.\n", socketCPU);
 
+	bool busqueda(t_CPU* cpu){
+		return cpu->socketCPU == socketCPU;
+	}
+
+	sem_wait(&mutex_cola_CPUs_libres);
+			t_CPU* estaCPU = list_find(lista_CPUS,busqueda);
+	sem_post(&mutex_cola_CPUs_libres);
+
+
 	//*** Voy a trabajar con esta CPU hasta que se deconecte
 	while(todaviaHayTrabajo){
 
@@ -127,7 +136,7 @@ void *rutinaCPU(void * arg)
 				*socket = socketCPU;
 
 				sem_wait(&mutex_cola_CPUs_libres);
-					queue_push(cola_CPUs_libres,socket);
+						estaCPU->esperaTrabajo = true;
 				sem_post(&mutex_cola_CPUs_libres);
 
 			}break;
@@ -152,7 +161,7 @@ void *rutinaCPU(void * arg)
 				puts(msj.mensaje);
 				printf("Descriptor: %d \n",msj.descriptorArchivo);
 				printf("Pid: %d \n",msj.pid);
-				if(msj.descriptorArchivo == 0){
+				if(msj.descriptorArchivo == 1){
 					void * stream2 = serializarMensajeAEscribir(msj,strlen(msj.mensaje)+1);
 					int socketConsola = consola_buscarSocketConsola(msj.pid);
 					int s =  tamanoMensajeAEscribir(strlen(msj.mensaje)+1);

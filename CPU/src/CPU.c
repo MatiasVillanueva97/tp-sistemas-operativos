@@ -87,7 +87,7 @@ int main(void)
 
  	//ESTE GRAN WHILE(1) ESTA COMENTADO PORQUE EN REALIDAD ES PARA RECIBIR UN PCB ATRAS DE OTRO Y EJECUTARLOS HASTA QUE EL KERNEL ME DIGA MORITE HIPPIE
 
-	//while(1){
+	while(1){
 
  		int quantumRestante = datosIniciales->quantum;
 
@@ -172,7 +172,7 @@ int main(void)
 		//libera la memoria malloqueada por el PCB
 		destruirPCB_Puntero(pcb);
 
-//	}
+	}
 
 
 	close(socketKernel);

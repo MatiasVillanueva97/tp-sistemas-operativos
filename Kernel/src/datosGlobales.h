@@ -58,6 +58,17 @@ enum exitCode{
 
 };
 
+//ESTRUCTURA PARA MANEJAR LAS CPUS
+
+typedef struct{
+	int socketCPU;
+	bool esperaTrabajo;
+	bool hiloCreado;
+}t_CPU;
+
+t_list* lista_CPUS;
+
+
 //*** Esta lista es porque una consola puede tener una serie de procesos --- Igual creo que esto tiene que morir
 t_list * avisos;
 

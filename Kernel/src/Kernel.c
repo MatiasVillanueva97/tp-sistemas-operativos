@@ -290,24 +290,34 @@ PCB_DATA* readyToExec()
 }
 
 
-//*** Esta funcion te dice si hay cpus disponibles
-bool hayCpusDisponibles(){
-	sem_wait(&mutex_cola_CPUs_libres);
-		bool valor = queue_size(cola_CPUs_libres) > 0;
-	sem_post(&mutex_cola_CPUs_libres);
+//*** Esta funcion te dice si hay programas en ready
+bool hayProcesosEnReady(){
+ sem_wait(&mutex_cola_Ready);
+  bool valor = queue_size(cola_Ready) > 0;
+ sem_post(&mutex_cola_Ready);
 
-	return valor;
+ return valor;
 }
 
 
-//*** Esta funcion te dice si hay programas en ready
-bool hayProcesosEnReady(){
+//*** Esta funcion te dice si hay cpus disponibles
+bool hayCpusDisponibles(){
+
+	//SI LA CPU ESTA ESPERANDO TRABAJO es porque esta disponible y espera un PCB para trabajar
+	int sumaSi(t_CPU* cpu){
+		if(cpu->esperaTrabajo)
+			return 1;
+		return 0;
+	}
+
 	sem_wait(&mutex_cola_Ready);
-		bool valor = queue_size(cola_Ready) > 0;
+		bool valor = sum(lista_CPUS,sumaSi) > 0;
 	sem_post(&mutex_cola_Ready);
 
 	return valor;
 }
+
+
 
 
 //*** pasar procesos de ready a exec
@@ -324,17 +334,28 @@ void * planificadorCortoPlazo()
 			///*** Quito el primer elemento de la cola de ready, valido que no haya sido finalizado y lo pongo en la cola de exec - en caso de no encontrar uno para poder trabajar no hago nada
 			if((pcb = readyToExec()) != NULL)
 			{
+
+				bool busqueda(t_CPU* cpu){
+					return cpu->esperaTrabajo;
+				}
+
+
 				//*** Agarro una cpu que este disponible
 				sem_wait(&mutex_cola_CPUs_libres);
-					int* cpuParaTrabajar = queue_pop(cola_CPUs_libres);
+					t_CPU* cpuParaTrabajar = list_find(lista_CPUS,busqueda);
 				sem_post(&mutex_cola_CPUs_libres);
 
 				printf("[Rutina readyToExec] - Se crea un nuevo hilo para que la CPU N°: %d trabaje con el proceso N°: %d\n", *cpuParaTrabajar, pcb->pid);
 
 
-				//*** Llamo a una rutina CPU que va a estar trabajando con la cpu que le paso por parametro -- Cambiar tipo de hilo
-				pthread_t hilo_rutinaCPU;
-				cpu_crearHiloDetach(*cpuParaTrabajar);
+				//VER POR EL OTRO CASO
+
+				if(!cpuParaTrabajar->hiloCreado){
+					//*** Llamo a una rutina CPU que va a estar trabajando con la cpu que le paso por parametro -- Cambiar tipo de hilo
+					cpuParaTrabajar->hiloCreado = true;
+					pthread_t hilo_rutinaCPU;
+					cpu_crearHiloDetach(cpuParaTrabajar->socketCPU);
+				}
 			}
 
 		}
@@ -484,12 +505,14 @@ void * aceptarConexiones_Cpu_o_Consola( void *arg ){
 			{
 				printf("\n[rutina aceptarConexiones] - Nueva CPU Conectada\nSocket CPU %d\n\n", nuevoSocket);
 
-				int* socket = malloc(sizeof(int));
+				t_CPU* nuevaCPU = malloc(sizeof(t_CPU));
 
-				*socket = nuevoSocket;
+				nuevaCPU->socketCPU = nuevoSocket;
+				nuevaCPU->esperaTrabajo = true;
+				nuevaCPU->hiloCreado = false;
 
 				sem_wait(&mutex_cola_CPUs_libres);
-					queue_push(cola_CPUs_libres,socket);
+					list_add(lista_CPUS,nuevaCPU);
 				sem_post(&mutex_cola_CPUs_libres);
 
 			}break;
@@ -515,6 +538,7 @@ int main(void) {
 
 		//***Inicializo las listas
 		avisos = list_create();
+		lista_CPUS = list_create();
 
 		//***Inicializo las colas
 		cola_New = queue_create();
@@ -524,6 +548,7 @@ int main(void) {
 		cola_Finished = queue_create();
 
 		cola_CPUs_libres = queue_create();
+
 
 		//***Inicializo los semaforos
 		inicializarSemaforo();
