@@ -92,6 +92,8 @@ void *rutinaCPU(void * arg)
 	void * stream;
 	int accionCPU;
 
+	PCB_DATA* pcb;
+
 	printf("[Rutina rutinaCPU] - Entramos al hilo de la CPU cuyo socket es: %d.\n", socketCPU);
 
 	//*** Voy a trabajar con esta CPU hasta que se deconecte
@@ -105,7 +107,7 @@ void *rutinaCPU(void * arg)
 			case pedirPCB:{
 				printf("[Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- %d!\n", pedirPCB);
 
-				PCB_DATA* pcb = cpu_pedirPCBDeExec();
+				pcb = cpu_pedirPCBDeExec();
 
 				void* pcbSerializado = serializarPCB(pcb);
 				enviarMensaje(socketCPU,envioPCB,pcbSerializado,tamanoPCB(pcb) + 4);
@@ -116,7 +118,7 @@ void *rutinaCPU(void * arg)
 			case enviarPCBaTerminado:{
 				printf("[Rutina rutinaCPU] - Entramos al Caso de que CPU termino la ejecucion de un proceso: accion- %d!\n", enviarPCBaTerminado);
 
-				PCB_DATA* pcb = deserializarPCB(stream);
+				pcb = deserializarPCB(stream);
 				pcb->exitCode = 0;
 				modificarPCB(pcb);
 
@@ -134,7 +136,7 @@ void *rutinaCPU(void * arg)
 			case enviarPCBaReady:{
 				printf("[Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- %d!\n", enviarPCBaReady);
 
-				PCB_DATA* pcb = deserializarPCB(stream);
+				pcb = deserializarPCB(stream);
 				modificarPCB(pcb);
 
 				queue_pop(cola_Exec);
@@ -148,24 +150,39 @@ void *rutinaCPU(void * arg)
 				t_mensajeDeProceso msj = deserializarMensajeAEscribir(stream);
 
 
-				if(msj.descriptorArchivo == 1)
-				{
-					MENSAJE_PARA_ESCRIBIR_CONSOLA msjConsola = {
-							.pid = msj.pid,
-							.mensaje = msj.mensaje
-					};
+				if(msj.descriptorArchivo == 1){
 
 					int socketConsola = consola_buscarSocketConsola(msj.pid);
-					enviarMensaje(socketConsola, imprimirPorPantalla, &msjConsola, sizeof(int)+strlen(msjConsola.mensaje)+1);
+					enviarMensaje(socketConsola, imprimirPorPantalla, &stream, tamanoMensajeAEscribir(strlen(msj.mensaje)+1));
 				}
-				else
-				{
+				else{
 					//evniar algo a filesystem
 				}
 
 			}break;
+
+			//TE MANDO UN NOMBRE DE UN SEMAFORO Y QUIERO QUE HAGAS UN WAIT, ME DEBERIAS DECIR SI ME BLOQUEO O NO
 			case waitSemaforo:{
-				//TE MANDO UN NOMBRE DE UN SEMAFORO Y QUIERO QUE HAGAS UN WAIT, ME DEBERIAS DECIR SI ME BLOQUEO O NO
+
+				char* etiquetaSemaforo = leerString(stream);
+/*
+				int i;
+				for(i=0; i < getArraySize("SEM_IDS"); i++){
+
+					char* sem= getConfigStringArrayElement("SEM_IDS", i);
+					//**** me fijo cual es el semaforo
+					if( strcmp(sem, etiquetaSemaforo) == 0 ){
+
+						//**** si entro aca, significa que encontre el semaforo y lo decrementeo
+						setConfigIntArrayElement("SEM_INIT", i, getConfigIntArrayElement("SEM_INIT", i)-1 );
+
+						if( getConfigIntArrayElement("SEM_INIT", i) < 0)
+						{
+							pcb->exitCode= bloqueado;
+							queue_push(cola_Wait, pcb);
+						}
+					}
+				}*/
 
 			}break;
 			case signalSemaforo:{
@@ -191,31 +208,3 @@ void *rutinaCPU(void * arg)
 	close(socketCPU);
 }
 
-
-
-
-
-
-
-
-
-
-t_mensajeDeProceso deserializarMensajeAEscribir(void* stream){
-	t_mensajeDeProceso mensaje;
-
-	memcpy(&mensaje.pid,stream,sizeof(int));
-
-	memcpy(&mensaje.descriptorArchivo,stream + sizeof(int),sizeof(int));
-
-	int tamanoContenido;
-
-	memcpy(&tamanoContenido,stream + sizeof(int) * 2,sizeof(int));
-
-	char* contenidoAuxiliar = malloc(tamanoContenido);
-
-	memcpy(contenidoAuxiliar,stream + sizeof(int) * 3, tamanoContenido);
-
-	mensaje.mensaje = contenidoAuxiliar;
-
-	return mensaje;
-}

@@ -53,7 +53,9 @@ enum exitCode{
 	finalizacionDesdeKenel = -10,
 	finalizadoCorrectamente =0,
 	loEstaUsandoUnaCPU = 1,
+	bloqueado = 2,
 	paraEjecutar = 53,
+
 };
 
 //*** Esta lista es porque una consola puede tener una serie de procesos --- Igual creo que esto tiene que morir

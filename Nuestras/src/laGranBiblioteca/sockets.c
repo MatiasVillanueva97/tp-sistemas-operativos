@@ -31,8 +31,6 @@
 #define MAXDATASIZE 100 // max number of bytes we can get at once
 #define BACKLOG 10	 // how many pending connections queue will hold
 
-// get sockaddr, IPv4 or IPv6:
-
 typedef struct{
 	int tipo;
 	int cantidad;
@@ -41,12 +39,6 @@ typedef struct{
 
 void *getSin_Addr(struct sockaddr *sa)
 {
-	/*if (sa->sa_family == AF_INET) {
-		return &(((struct sockaddr_in*)sa)->sin_addr);
-	}
-
-	return &(((struct sockaddr_in6*)sa)->sin6_addr);*/
-
 	return &(((struct sockaddr_in*)sa)->sin_addr); //IPV4
 }
 
@@ -182,15 +174,6 @@ void escuchar(int sockfd)
 			perror("listen");
 			exit(1);
 		}
-
-		/*sa.sa_handler = sigchld_handler; // reap all dead processes
-		sigemptyset(&sa.sa_mask); //manejo de errores
-		sa.sa_flags = SA_RESTART;
-		if (sigaction(SIGCHLD, &sa, NULL) == -1) {
-			perror("sigaction");
-			exit(1);
-		}
-		*/
 		printf("\n\nEstableciendo Conexiones:\n\n");
 }
 
@@ -239,9 +222,6 @@ int recibirMensaje(int socket,void** stream) // Toda esta funcion deberá ccambi
 
 //////////////////////////////////////////////////////////////////
 
-// stream tiene: """ un int con su tipo (4 bytes) + un int que dice el tanaño (4bytes) """ + *(puede estar o no) el contenido que peude ser variable o no
-
-//
 
 void* serializar (int tipoDeOperacion, void* contenido, int tamanioMensaje)
 {
@@ -266,10 +246,6 @@ int enviarMensaje(int socket, int TipoDeOperacion, void* contenido, int tamanioM
 
 	auxiliar = serializar(TipoDeOperacion, contenido, tamanioMensaje);
 
-	/*if(send(socket, auxiliar , ((2*sizeof(uint32_t))+tamanioMensaje), 0) == -1 ){
-			perror("recv");
-			return -1;
-	}*/
 	while(total < longitud){ /// NO OLVIDAR //// 32 añso 1974
 		n = send(socket, auxiliar + total, longitud - total,0);
 		if(n == -1)

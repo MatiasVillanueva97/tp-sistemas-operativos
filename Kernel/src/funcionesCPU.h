@@ -19,6 +19,7 @@
 #include "../../Nuestras/src/laGranBiblioteca/datosGobalesGenerales.h"
 
 
+
 #ifndef FUNCIONESCPU_H_
 #define FUNCIONESCPU_H_
 
@@ -31,3 +32,25 @@ void *rutinaCPU(void * arg);
 
 
 #endif /* FUNCIONESCPU_H_ */
+
+
+/*
+t_mensajeDeProceso deserializarMensajeAEscribir(void* stream){
+	t_mensajeDeProceso mensaje;
+
+	memcpy(&mensaje.pid,stream,sizeof(int));
+
+	memcpy(&mensaje.descriptorArchivo,stream + sizeof(int),sizeof(int));
+
+	int tamanoContenido;
+
+	memcpy(&tamanoContenido,stream + sizeof(int) * 2,sizeof(int));
+
+	char* contenidoAuxiliar = malloc(tamanoContenido);
+
+	memcpy(contenidoAuxiliar,stream + sizeof(int) * 3, tamanoContenido);
+
+	mensaje.mensaje = contenidoAuxiliar;
+
+	return mensaje;
+}*/

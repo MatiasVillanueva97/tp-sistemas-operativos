@@ -29,6 +29,7 @@
 #include "../../Nuestras/src/laGranBiblioteca/datosGobalesGenerales.h"
 
 #include "../../Nuestras/src/laGranBiblioteca/ProcessControlBlock.c"
+#include "../../Nuestras/src/laGranBiblioteca/funcionesParaTodosYTodas.c"
 
 #include "datosGlobales.h"
 #include "funcionesPCB.h"
@@ -359,7 +360,7 @@ void * planificadorCortoPlazo()
 
 
 //*** Esta funcion pasa todos los procesos que esten finalizados dentro de la cola de exec a la cola de Finished, y retorna el pid del proceso que se acaba de mover de cola, sino encontro ninguno retorna -1
-int execToFinished()
+int execTo()
 {
 	//**Tomo el primer elemento de la lista,
 	PCB_DATA* pcb=queue_pop(cola_Exec);
@@ -404,7 +405,7 @@ void* planificadorExtraLargoPlazo(){
 		if(queue_size(cola_Exec)>0){
 
 			//***Llamamos a la funcion excetToReady que pasa los procesos que ya hallan finalizado a la cola de finalizados, y retorna el pid del proceso que acaba de pasar. No haber encotrado ninguno retorna -1
-			pidParaAvisar = execToFinished();
+			pidParaAvisar = execTo();
 			sem_post(&mutex_cola_Exec);
 
 			//*** Si hay un pid para avisar

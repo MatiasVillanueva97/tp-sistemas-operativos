@@ -289,7 +289,6 @@ void AnSISOP_retornar(t_valor_variable retorno){
 }
 
 //Operaciones de Kernel
-
 void AnSISOP_wait(t_nombre_semaforo identificador_semaforo){
 	puts("AnSISOP_wait");
 
