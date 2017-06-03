@@ -7,6 +7,8 @@
 
 #include "funcionesCPU.h"
 
+t_mensajeDeProceso deserializarMensajeAEscribir(void* stream);
+
 void cpu_crearHiloDetach(int nuevoSocket){
 	pthread_attr_t attr;
 	pthread_t hilo_rutinaCPU ;
@@ -143,17 +145,17 @@ void *rutinaCPU(void * arg)
 			case mensajeParaEscribir:{
 				printf("[Rutina rutinaCPU] - Entramos al Caso de que CPU me mande a imprimir algo a la consola: accion- %d!\n", mensajeParaEscribir);
 
-				MENSAJE_PARA_ESCRIBIR_CPU* msj = stream;
+				t_mensajeDeProceso msj = deserializarMensajeAEscribir(stream);
 
 
-				if(msj->descriptorArchivo)
+				if(msj.descriptorArchivo == 1)
 				{
 					MENSAJE_PARA_ESCRIBIR_CONSOLA msjConsola = {
-							.pid = msj->pid,
-							.mensaje = msj->mensaje
+							.pid = msj.pid,
+							.mensaje = msj.mensaje
 					};
 
-					int socketConsola = consola_buscarSocketConsola(msj->pid);
+					int socketConsola = consola_buscarSocketConsola(msj.pid);
 					enviarMensaje(socketConsola, imprimirPorPantalla, &msjConsola, sizeof(int)+strlen(msjConsola.mensaje)+1);
 				}
 				else
@@ -187,4 +189,33 @@ void *rutinaCPU(void * arg)
 	}
 
 	close(socketCPU);
+}
+
+
+
+
+
+
+
+
+
+
+t_mensajeDeProceso deserializarMensajeAEscribir(void* stream){
+	t_mensajeDeProceso mensaje;
+
+	memcpy(&mensaje.pid,stream,sizeof(int));
+
+	memcpy(&mensaje.descriptorArchivo,stream + sizeof(int),sizeof(int));
+
+	int tamanoContenido;
+
+	memcpy(&tamanoContenido,stream + sizeof(int) * 2,sizeof(int));
+
+	char* contenidoAuxiliar = malloc(tamanoContenido);
+
+	memcpy(contenidoAuxiliar,stream + sizeof(int) * 3, tamanoContenido);
+
+	mensaje.mensaje = contenidoAuxiliar;
+
+	return mensaje;
 }

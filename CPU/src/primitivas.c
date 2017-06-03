@@ -21,6 +21,11 @@ void asignarDireccionRespectoA(int, t_direccion*);
 
 int paginaInicio();
 
+int tamanoMensajeAEscribir(int tamanioContenido);
+
+void* serializarMensajeAEscribir(t_mensajeDeProceso mensaje, int tamanio);
+
+
 
 t_puntero AnSISOP_definirVariable(t_nombre_variable identificador_variable){
 	puts("AnSISOP_definirVariable");
@@ -342,11 +347,13 @@ void AnSISOP_escribir(t_descriptor_archivo descriptor_archivo, void* informacion
 	t_mensajeDeProceso mensajeDeProceso = {
 			.pid = pcb->pid,
 			.descriptorArchivo = descriptor_archivo,
-			.mensaje = informacion
+			.mensaje = (char*)informacion
 	};
 	printf("%s \n",mensajeDeProceso.mensaje);
 
-	enviarMensaje(socketKernel,mensajeParaEscribir,&mensajeDeProceso,tamanio + sizeof(int)*2);
+	void* mensajeSerializado = serializarMensajeAEscribir(mensajeDeProceso,tamanio);
+
+	enviarMensaje(socketKernel,mensajeParaEscribir,mensajeSerializado,tamanoMensajeAEscribir(tamanio));
 
 	//RECIBIR UN MENSAJE DICIENDO SI ESE ARCHIVO EXISTIA REALMENTE
 
@@ -620,3 +627,50 @@ void asignarDireccionRespectoA(int contexto, t_direccion* direccion){
 int paginaInicio(){
 	return pcb->contPags_pcb - datosIniciales->size_stack + 1;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+int tamanoMensajeAEscribir(int tamanioContenido){
+	return sizeof(int)*3 + tamanioContenido;
+}
+
+void* serializarMensajeAEscribir(t_mensajeDeProceso mensaje, int tamanio){
+	void* stream = malloc(tamanoMensajeAEscribir(tamanio));
+
+	memcpy(stream,&mensaje.pid,sizeof(int));
+
+	memcpy(stream + sizeof(int),&mensaje.descriptorArchivo,sizeof(int));
+
+	memcpy(stream + sizeof(int) * 2,&tamanio,sizeof(int));
+
+	memcpy(stream + sizeof(int) * 3,mensaje.mensaje,tamanio);
+
+	return stream;
+}
+
+
+
+
+
+
+

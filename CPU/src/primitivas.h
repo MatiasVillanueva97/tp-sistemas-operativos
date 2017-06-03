@@ -22,6 +22,7 @@
 #include "../../Nuestras/src/laGranBiblioteca/ProcessControlBlock.h"
 #include "../../Nuestras/src/laGranBiblioteca/datosGobalesGenerales.h"
 
+
 	//IMPLEMENTADA
 	t_direccion calcularDireccion(t_puntero puntero);
 
