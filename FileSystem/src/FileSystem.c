@@ -12,10 +12,10 @@
 #include <dirent.h>
 #include <signal.h>
 #include <string.h>
-
 #include "commons/config.h"
 #include "commons/string.h"
 #include "commons/bitarray.h"
+#include <sys/mman.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -31,6 +31,28 @@ int bloqueSize;
 t_bitarray* bitMap ;
 t_list* listaDeArchivosAbiertos;
 int socketKernel;
+void* serializarEstaVerga(int size, int offset,char* path, char* buffer){
+	void *contenido = malloc(4+strlen(path)+size+sizeof(int)*2);
+	memcpy(contenido,&size,sizeof(int));
+	memcpy(contenido+sizeof(int),buffer,size);
+	int tamanoRuta= strlen(path);
+	memcpy(contenido+sizeof(int)+size,&tamanoRuta,sizeof(int));
+	memcpy(contenido+sizeof(int)*2+size,path,tamanoRuta);
+	memcpy(contenido+sizeof(int)*2+tamanoRuta+size,&offset,sizeof(int));
+	return contenido;
+}
+t_escritura deserializaEstaPoronga(void* contenido){
+	t_escritura escritura;
+	escritura.size= *(int*)contenido;
+	escritura.buffer= malloc(escritura.size);
+	memcpy(escritura.buffer,(contenido+sizeof(int)),escritura.size);
+	int tamanoRuta =  *(int*)(contenido +sizeof(int)+escritura.size);
+	escritura.path = malloc(tamanoRuta);
+	memcpy(escritura.path,contenido+sizeof(int)*2+escritura.size,tamanoRuta);
+	memcpy(&escritura.offset,contenido+sizeof(int)*2+tamanoRuta+escritura.size,sizeof(int));
+
+	return escritura;
+}
 char* obtenerRutaTotal(char* path, char* tipoDeArchivo){
 
 	char* pathTotal = string_new();
@@ -269,10 +291,14 @@ void* configurarTodo(){
 		exit(-2);
 	}
 	FILE* archivoDeBitmap = fopen(obtenerRutaTotal("Bitmap.bin","Metadata"),"rb");
-	void* bitmap = malloc(cantidadDeBloques);
-	fread(bitmap,1,cantidadDeBloques,archivoDeBitmap); // Falta leer bien esto
-	return bitmap;
-
+	int fd = fileno(archivoDeBitmap);
+	void* bitmap2 = malloc(cantidadDeBloques);
+	mmap(bitmap2, cantidadDeBloques, PROT_READ, MAP_SHARED, fd, (off_t) 0);
+	bitMap= bitarray_create(bitmap2,cantidadDeBloques);
+	int pos = buscarPosicionLibre();
+	bitarray_set_bit(bitMap,pos);
+	munmap( bitmap2, cantidadDeBloques );
+	fclose(archivoDeBitmap);
 
 
 }
@@ -339,12 +365,13 @@ void tramitarPeticionesDelKernel(int socketKernel){
 		}
 }
 int main(void) {
+	int x = 24141;
+	void* w =
+			serializarEstaVerga(sizeof(int),123,"hola.bin",&x);
+	deserializaEstaPoronga(w);
 	printf("Inicializando FileSystem.....\n\n");
 	// ******* Declaración de la mayoria de las variables a utilizar
 	listaDeArchivosAbiertos = list_create();
-	socklen_t sin_size;
-
-	struct sockaddr_storage their_addr; // connector's address information
 
 	// ******* Configuracion del FileSystem a partir de un archivo
 
@@ -352,6 +379,7 @@ int main(void) {
 	configuracionInicial("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/FileSystem/fileSystem.config");
 	imprimirConfiguracion();
 	configurarTodo();
+
 	int listener = crearSocketYBindeo(getConfigString("PUERTO"));
 	escuchar(listener);
 	int aceptados[] = {Kernel};
@@ -362,13 +390,9 @@ int main(void) {
 
 	//t_config* configuracionFileSystem = config_create(getConfigString("PUNTO_MONTAJE"));
 	//cantidadDeBloques = config_get_int_value(configuracionFileSystem,"CANTIDAD_BLOQUES");
-	bloqueSize = 64;
-	cantidadDeBloques= 256;
-	t_size size = 256;
-	char* bitmap2 = malloc(size);
-	bitMap= bitarray_create(bitmap2,size);
+
 	//crearElArchivo("passwords/hola.bin");
-	char* x = "hola como andashola como andashola como andashola como andashola como andas hola como andashola como andashola como andashola como andashola como andas";
+	//char* x = "hola como andashola como andashola como andashola como andashola como andas hola como andashola como andashola como andashola como andashola como andas";
 	char* rutaDelArchivo = obtenerRutaTotal("passwords/hola2.bin","Archivos");
 	//FILE* archivoDondeEscriboLosNuevosDatos = conseguirFileAbierto(rutaDelArchivo);
 
@@ -376,8 +400,6 @@ int main(void) {
 	//guardarDatos("passwords/hola.bin",48,strlen(x),x);
 	//guardarDatos("passwords/hola.bin",64,strlen(x),x);
 	//guardarDatos("passwords/hola.bin",128,strlen(x),x);
-	guardarDatos("passwords/hola.bin",11,strlen(x),x);
-	obtenerDatos("passwords/hola.bin",11,strlen(x));
 // bitarray_set_bit(bitMap,2);
 //	bitarray_set_bit(bitMap,1);
 //	obtenerRutaTotal("hola.bin","Archivos");

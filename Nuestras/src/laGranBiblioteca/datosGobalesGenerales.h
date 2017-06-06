@@ -43,7 +43,7 @@ typedef struct{
 	int size;
 	int offset;
 	char* path;
-	char* buffer;
+	void* buffer;
 }__attribute__((packed)) t_escritura;
 
 typedef struct{
