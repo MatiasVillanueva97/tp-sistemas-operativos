@@ -34,6 +34,19 @@ enum id_Modulos{
 };
 
 typedef struct{
+	int size;
+	int offset;
+	char* path;
+}__attribute__((packed)) t_pedidoFS;
+
+typedef struct{
+	int size;
+	int offset;
+	char* path;
+	char* buffer;
+}__attribute__((packed)) t_escritura;
+
+typedef struct{
 	int id;
 	t_direccion direccion;
 	void* valor;
@@ -89,6 +102,7 @@ enum tipos_de_Acciones{
 		almacenarBytes = 205,
 		asignarPaginas = 206, /// asigna paginas a un proceso, esto es mas que nada para el heap
 		finalizarPrograma = 207,
+		liberarUnaPagina = 208,
 
 
 	//***Todas las acciones de Consola
@@ -97,7 +111,13 @@ enum tipos_de_Acciones{
 		desconectarConsola = 303,
 
 	//***Todas las acciones de FileSystem
-		algoharaelFS = 403
+		validacionDerArchivo = 401,
+		creacionDeArchivo = 402,
+		borrarArchivo = 403,
+		obtenerDatosDeArchivo= 404,
+		guardarDatosDeArchivo = 405,
+		respuestaBooleanaDeFs = 407,
+		respuestaConContenidoDeFs = 408
 };
 
 

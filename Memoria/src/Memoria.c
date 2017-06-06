@@ -242,13 +242,20 @@ int asignarPaginasAUnProceso(int pid, int cantidadDePaginas){
 	sem_post(&mutex_TablaDeCantidadDePaginas);
 	return 1;
 }
+void borraDeLaCache(int pid){
+	bool buscarPid(lineaCache* fila){
+				return (fila->pid== pid);
+	}
+	list_remove_and_destroy_by_condition(tablaDeEntradasDeCache,buscarPid,free);//faltaria un destroyer decente
+
+}
 int finalizarUnPrograma(int pid){
 	sem_wait(&mutex_TablaDeCantidadDePaginas);
 	int paginas = buscarCantidadDePaginas(pid);
 	bool buscarPid(filaTablaCantidadDePaginas* fila){
 			return (fila->pid== pid);
 	}
-	list_remove_and_destroy_by_condition(tablaConCantidadDePaginas,buscarPid,free);
+	list_remove_and_destroy_by_condition(tablaConCantidadDePaginas,buscarPid,free);//faltaria un destroyer decente
 	sem_post(&mutex_TablaDeCantidadDePaginas);
 	if(paginas == 0){
 		return 0;
@@ -258,7 +265,10 @@ int finalizarUnPrograma(int pid){
 	for(i = 1; i<= paginas;i++){
 		liberarPagina(pid,i);
 	}
-	sem_wait(&mutex_TablaDePaginasInvertida);
+	sem_post(&mutex_TablaDePaginasInvertida);
+	sem_wait(&mutex_cache);
+	borraDeLaCache(pid);
+	sem_post(&mutex_cache);
 	return 1;
 }
 
@@ -450,7 +460,7 @@ void recibirMensajesMemoria(void* arg){
 
 					break;
 				}
-				case 208:{
+				case liberarUnaPagina:{
 				     int* pid = stream;
 				     int* pagina = stream+sizeof(int);
 				     liberarPagina(*pid,*pagina);
