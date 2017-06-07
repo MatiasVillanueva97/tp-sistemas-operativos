@@ -61,7 +61,7 @@ void * consolaKernel()
 			"4- Modificar el grado de multiprogramación del sistema.\n"
 			"5- Finalizar un proceso.\n"
 			"6- Detener la planificación.\n"
-			"7- Reactivar la planificación.\n"
+			"7- Ver cuantas CPUs hay.\n"
 			"8- Imprimir de nuevo el menu.\n\n"
 			"Elija el numero de su opcion: ");
 	sem_post(&sem_ConsolaKernelLenvantada);
@@ -176,8 +176,9 @@ void * consolaKernel()
 				printf("\nPlanificacion detenida.\n");
 			}break;
 			case 7:{
-				finPorConsolaDelKernel=false;
-				printf("\nPlanificacion reactivada.\n");
+
+				int a= list_size(lista_CPUS);
+				printf("Pc en lista: %d", a);
 			}break;
 			case 8:{
 				printf("\n\nHola Bienvenido al Kernel!\n\n"
@@ -202,7 +203,7 @@ void * consolaKernel()
 			"4- Modificar el grado de multiprogramación del sistema.\n"
 			"5- Finalizar un proceso.\n"
 			"6- Detener la planificación.\n"
-			"7- Reactivar la planificación.\n"
+			"7- Ver cuantas CPUs hay.\n"
 			"8- Imprimir de nuevo el menu.\n\n"
 			"Elija el numero de su opcion: ");
 		scanf("%d", &opcion);

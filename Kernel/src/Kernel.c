@@ -339,6 +339,7 @@ void * planificadorCortoPlazo()
 					return cpu->esperaTrabajo;
 				}
 
+				//// SACAR ESTO DE ACA Y MANDARLO AL HILO / crear el hilo en aceptar conexiones.
 
 				//*** Agarro una cpu que este disponible
 				sem_wait(&mutex_cola_CPUs_libres);
@@ -526,15 +527,7 @@ void * aceptarConexiones_Cpu_o_Consola( void *arg ){
 	}
 }
 
-char* escrip ="begin\n:declaro\nvariables a\n:asigno\na=1\n:termino\nend";
-
 int main(void) {
-
-	PCB_DATA* pcb = crearPCB(escrip, 7,92);
-
-	void* pcbSerializado = serializarPCB(pcb);
-
-	PCB_DATA* pcb2 = deserializarPCB(pcbSerializado);
 
 	printf("Inicializando Kernel.....\n\n");
 

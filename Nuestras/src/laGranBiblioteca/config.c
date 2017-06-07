@@ -121,12 +121,18 @@ void configuracionInicial(char*PATH){
 	config = config_create(PATH);
 }
 
+///// A PARTIR DE ACA
+
+
+
 
 //--Hice esta funcion porque sino tenia que recorrer el diccionario 2 veces
 void modConfigIntArrayElem(char* etiqueta, int indice, int mod){
 	int valor = getConfigIntArrayElement(etiqueta, indice) + mod;
 	setConfigIntArrayElement(etiqueta, indice, valor);
 }
+
+
 
 void decrementarConfigArray(char* etiqueta, int indice){
 	modConfigIntArrayElem(etiqueta, indice, -1);

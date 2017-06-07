@@ -9,6 +9,17 @@
 
 t_mensajeDeProceso deserializarMensajeAEscribir(void* stream);
 
+
+void cpu_quitarDeLista(socketCPU){
+
+	bool busqueda(t_CPU* nodo)
+	{
+		return nodo->socketCPU == socketCPU;
+	}
+
+	list_remove_and_destroy_by_condition(lista_CPUS,busqueda,free);
+}
+
 void cpu_crearHiloDetach(int nuevoSocket){
 	pthread_attr_t attr;
 	pthread_t hilo_rutinaCPU ;
@@ -44,7 +55,7 @@ PCB_DATA * cpu_pedirPCBDeExec(){
 	//***Voy a estar buscando en la cola de exec hasta que encuentre alguno
 	while(!encontroPCB)
 	{
-		//sem_wait(&cola_Exec);
+		sem_wait(&mutex_cola_Exec);
 		//***Me fijo la cantidad de procesos que hay en la cola de exec
 		cantidadProcesos = queue_size(cola_Exec);
 
@@ -71,7 +82,7 @@ PCB_DATA * cpu_pedirPCBDeExec(){
 				queue_push(cola_Exec, pcb);
 			}
 		}
-		//sem_post(&cola_Exec);
+		sem_post(&mutex_cola_Exec);
 	}
 
 	return pcb;
@@ -212,10 +223,15 @@ void *rutinaCPU(void * arg)
 			case 0:{
 				printf("[Rutina rutinaCPU] - Desconecto la CPU N°: %d\n", socketCPU);
 				todaviaHayTrabajo=false;
+
+				cpu_quitarDeLista(socketCPU);
+
 			}break;
 			default:{
 				printf("[Rutina rutinaCPU] - Se recibio una accion que no esta contemplada: %d se cerrara el socket\n",accionCPU);
 				todaviaHayTrabajo=false;
+
+				cpu_quitarDeLista(socketCPU);
 			}break;
 		}
 	}
