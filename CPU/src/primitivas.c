@@ -163,18 +163,7 @@ void AnSISOP_irAlLabel(t_nombre_etiqueta nombre_etiqueta){
 
 	//Como es el numero de la siguiente instruccion a ejecutar se le asigna al ProgramCounter para que el programa siga a partir de ahi
 
-	//ESTO ES LO QUE DEBERIA ANDAR
 	pcb->programCounter = puntero-1;
-
-
-	//HARDCODEO ASQUEROSO PARA DEMOSTRAR QUE ANDA EL RESTO DE COSAS SALVO ESTA PARTE
-
-	//ESTO ES EL HARDOCDEO PARA EL SCRIPT LVL2
-	if(strcmp(nombre_etiqueta,"doble") == 0) pcb->programCounter = 5;
-
-	//ESTO ES EL HARDOCDEO PARA EL SCRIPT FOR
-	if(strcmp(nombre_etiqueta,"inicio") == 0) pcb->programCounter = 2;
-
 
 }
 
