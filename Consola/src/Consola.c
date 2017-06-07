@@ -197,6 +197,7 @@ void inicializarSemaforos(){
 	sem_init(&mutex_mensajeActual,0,1);
 }
 
+
 int main(void)
 {
 	printf("Inicializando Consola.....\n\n");

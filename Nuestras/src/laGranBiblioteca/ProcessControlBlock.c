@@ -302,11 +302,9 @@ void *  serializarPCB(PCB_DATA * pcb){
 	int tamanoPcb = tamanoPCB(pcb);
 	void * stream = malloc(tamanoPcb);//el tamaño del pcb mas su header
 
-	memcpy(stream, &pcb->sizeEtiquetas, sizeof(uint32_t));
-	recorrido += sizeof(uint32_t);
 
-	memcpy(stream + recorrido, &(pcb->cantidadDeEntradas), sizeof(uint32_t));
-	recorrido += sizeof(uint32_t);
+	memcpy(stream, &(pcb->cantidadDeEntradas), sizeof(uint32_t));
+		recorrido += sizeof(uint32_t);
 
 
 	void* indiceStack = serializarEntradas(pcb->indiceStack, pcb->cantidadDeEntradas);
@@ -340,21 +338,14 @@ void *  serializarPCB(PCB_DATA * pcb){
 	free(indiceCodigo);
 	recorrido += tamanoInstrucciones;
 
+	//recorrido += sizeof(uint32_t);
 
 
-
-
-	//****Esto no se si hay que cambiarlo
-	int largoIndiceEtiquetas = pcb->sizeEtiquetas;
-
-	//int largoIndiceEtiquetas = strlen(pcb->indiceEtiquetas)+1;//es el largo del char*
-	memcpy(stream + recorrido, &largoIndiceEtiquetas, sizeof(uint32_t));
+	memcpy(stream + recorrido, &(pcb->sizeEtiquetas), sizeof(uint32_t));
 	recorrido += sizeof(uint32_t);
-	memcpy(stream + recorrido, pcb->indiceEtiquetas, largoIndiceEtiquetas);
-	recorrido += largoIndiceEtiquetas;
 
-
-
+	memcpy(stream + recorrido, pcb->indiceEtiquetas, pcb->sizeEtiquetas);
+	recorrido += pcb->sizeEtiquetas;
 
 
 	memcpy(stream + recorrido, &(pcb->cantidadDeEtiquetas), sizeof(uint32_t));
@@ -364,7 +355,7 @@ void *  serializarPCB(PCB_DATA * pcb){
 	memcpy(stream + recorrido, &(pcb->exitCode), sizeof(uint32_t));
 	recorrido += sizeof(uint32_t);
 
-	 if(recorrido == tamanoPCB(pcb)) printf("LA TENGO ENORME");
+	 //if(recorrido == tamanoPCB(pcb)) printf("LA TENGO ENORME");
 
 	 return stream;
 }
@@ -377,12 +368,12 @@ PCB_DATA* deserializarPCB(void* stream){
 	PCB_DATA * pcb = malloc(sizeof(PCB_DATA));
 	//PCB_DATA pcb;
 
-	pcb->sizeEtiquetas = leerUINT32(stream, &recorrido);
-	int cantidadEntradas = leerUINT32(stream, &recorrido);
+	//leerUINT32(stream, &recorrido);
+	pcb->cantidadDeEntradas = leerUINT32(stream, &recorrido);
 
 
-	pcb->indiceStack = deserializarEntradas(stream, &recorrido, cantidadEntradas);
-	pcb->cantidadDeEntradas = cantidadEntradas;
+	pcb->indiceStack = deserializarEntradas(stream, &recorrido, pcb->cantidadDeEntradas);
+
 
 
 	pcb->pid = leerUINT32(stream, &recorrido);
@@ -393,10 +384,11 @@ PCB_DATA* deserializarPCB(void* stream){
 	pcb->contextoActual = leerUINT32(stream,&recorrido);
 	pcb->indiceCodigo = deserializar__t_instructions(stream,&recorrido,pcb->cantidadDeInstrucciones);
 
-	int largoIndiceEtiquetas = leerUINT32(stream, &recorrido);
-	pcb->indiceEtiquetas = malloc(largoIndiceEtiquetas);
-	memcpy(pcb->indiceEtiquetas, stream + recorrido, largoIndiceEtiquetas);
-	recorrido += largoIndiceEtiquetas;
+
+	pcb->sizeEtiquetas = leerUINT32(stream, &recorrido);
+	pcb->indiceEtiquetas = malloc(pcb->sizeEtiquetas);
+	memcpy(pcb->indiceEtiquetas, stream + recorrido, pcb->sizeEtiquetas);
+	recorrido += pcb->sizeEtiquetas;
 
 
 

@@ -23,7 +23,7 @@ PCB_DATA* crearPCB(char * scriptAnsisop, int pid, int contPags){
 
 
 
-		pcb->estadoDeProceso = 0;
+		pcb->estadoDeProceso = 1947;
 
 
 

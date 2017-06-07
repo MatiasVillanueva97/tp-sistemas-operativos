@@ -1,15 +1,19 @@
-/*
- * config2.c
-
- *
- *  Created on: 22/4/2017
- *      Author: utnso
- */
-
 #include <stdio.h>
 #include <stdlib.h>
-#include "config.h"
+#include "commons/config.h"
+#include "commons/collections/list.h"
+#include "commons/string.h"
+#include "string.h"
+#include "commons/collections/dictionary.h"
 
+
+void liberarArray(char ** lista){
+	int i = 0;
+	for (i = 0; i < countSplit(lista); i++)
+			free(lista[i]);
+	free(lista);
+}
+t_config * config;
 
 //Cuenta las lineas de un array
 int countSplit(char ** array){
@@ -18,150 +22,23 @@ int countSplit(char ** array){
 	return size;
 }
 
-
-//--------FUNCIONES DE SEGURIDAD-----
-char* getStringFromConfig(t_config *config, char*valor){
-	char* aux;
-
-	if(config_has_property(config, valor)){
-		aux = string_duplicate(config_get_string_value(config, valor));
-	}
-
-	else perror("Archivo config mal hecho");
-
-	return aux;
+bool esArray(char* valor){
+	return string_contains(valor, "[");
 }
 
-
-
-char** getStringArrayFromConfig(t_config *config, char*valor){
-	char** aux;
-
-	if(config_has_property(config, valor)){
-		aux = config_get_array_value(config, valor);
-	}
-
-	else perror("Archivo config mal hecho");
-
-	return aux;
-}
-
-
-typedef struct{
-	char * etiqueta;
-	void* contenido;
-	int tipo;//0 = char*, 1=char**
-}parametro;
-
-//Sirve para liberar un char** por completo
-void liberarArray(char ** lista){
-	int i = 0;
-	for (i = 0; i < countSplit(lista); i++)
-			free(lista[i]);
-	free(lista);
-}
-
-///---------------LIBERACION DE VARIABLES-------------
-void liberarParametro(parametro * param){
-	if(param->tipo == 0)
-		free(param->contenido);
-	else
-		liberarArray(param->contenido);
-	free(param->etiqueta);
-	free(param);
-}
-
-void liberarConfiguracion(){
-
-	list_clean_and_destroy_elements(listaDeConfig, liberarParametro);
-	list_destroy(listaDeConfig);
-}
-
-
-//---------FUNCIONES PARA BUSCAR LOS PARAMETROS EN EL CONFIG
-parametro * obtenerParametroString(t_config * config, char * etiqueta){
-	parametro * parametro = malloc(sizeof(*parametro));
-	parametro->contenido = getStringFromConfig(config,etiqueta);
-	parametro->tipo = 0;
-	parametro->etiqueta = etiqueta;
-	return parametro;
-}
-parametro * obtenerParametroArray(t_config * config, char * etiqueta){
-	parametro * parametro = malloc(sizeof(*parametro)) ;
-	parametro->contenido = config_get_array_value(config,etiqueta);
-	parametro->tipo = 1;
-	parametro->etiqueta = etiqueta;
-	return parametro;
-}
-
-//---------FUNCIONES DE BUSQUEDA
-parametro * buscarParametro(char * etiqueta){
-	bool busqueda(parametro * parametro){
-		return strcmp(etiqueta, parametro->etiqueta) == 0;
-	}
-	if(!list_any_satisfy(listaDeConfig, busqueda)){
-		perror("No se encontro el parametro buscado en el archivo de configuracion");
-		exit(-1);
-	}
-	parametro * par = list_find(listaDeConfig, busqueda);
-	return par;
-}
-int buscarIdParametro(char * etiqueta){
-	int cont = 0;
-	bool busqueda(parametro * parametro){
-		cont++;
-		return strcmp(etiqueta, parametro->etiqueta) == 0;
-	}
-	parametro * par = list_find(listaDeConfig, busqueda);
-	return cont-1;
-}
-
-//------------FUNCIONES EXTRA PARA EL FUNCIONAMIENTO DE LOS SETTERS-------
-parametro * parametroModificado(parametro * viejo, char* contenido){
-	parametro * nuevo = malloc(sizeof(parametro));
-	nuevo->tipo = viejo->tipo;
-	nuevo->etiqueta = string_duplicate(viejo->etiqueta);
-	nuevo->contenido = string_duplicate(contenido);
-	return nuevo;
-}
-char ** nuevoArrayConModificacion(parametro * viejo, char* contenidoNuevo, int indice){
-	int i = 0;
-	char * salida = string_new();
-	string_append(&salida,"[");
-	for(i=0;((char**)viejo->contenido)[i] != NULL;i++){
-		if(i != indice)
-			string_append(&salida,getConfigStringArrayElement(viejo->etiqueta,i));
-		else
-			string_append(&salida,contenidoNuevo);
-		if(((char**)viejo->contenido)[i+1] != NULL)
-			string_append(&salida,",");
-	}
-	string_append(&salida,"]");
-
-	char ** aux = string_get_string_as_array(salida);
-	free(salida);
-	return aux;
-}
-parametro * parametroArrayModificado(parametro * viejo, char* contenidoNuevo, int indice){
-	parametro * nuevo = malloc(sizeof(parametro));
-	nuevo->tipo = viejo->tipo;
-	nuevo->etiqueta = string_duplicate(viejo->etiqueta);
-	nuevo->contenido = nuevoArrayConModificacion(viejo,contenidoNuevo,indice);
-	return nuevo;
-}
-
-///------------------------GETTERS-----------------------
-char * getConfigStringArrayElement(char * etiqueta, int indice){
-	parametro * par = buscarParametro(etiqueta);//no hay que hacer un free aca o se rompe la lista
-	return ((char**)par->contenido)[indice];
-}
-char ** getConfigStringArray(char * etiqueta){
-	parametro * par = buscarParametro(etiqueta);//no hay que hacer un free aca o se rompe la lista
-	return (char**)par->contenido;
-}
 char * getConfigString(char * etiqueta){
-	parametro * par = buscarParametro(etiqueta);//no hay que hacer un free aca o se rompe la lista
-	return (char*)par->contenido;
+	return config_get_string_value(config, etiqueta);
+}
+
+char ** getConfigStringArray(char * etiqueta){
+	return config_get_array_value(config, etiqueta);
+}
+
+char * getConfigStringArrayElement(char * etiqueta, int indice){
+	char** array =  getConfigStringArray(etiqueta);
+	char* copia = string_duplicate(array[indice]);
+	liberarArray(array);
+	return copia;
 }
 
 int getConfigInt(char * etiqueta){
@@ -169,118 +46,150 @@ int getConfigInt(char * etiqueta){
 }
 
 int getConfigIntArrayElement(char * etiqueta, int indice){
-	return atoi(getConfigStringArrayElement(etiqueta, indice));
+	char* elemento = getConfigStringArrayElement(etiqueta, indice);
+	int elementoParseado = atoi(elemento);
+	free(elemento);
+	return elementoParseado;
 }
 
 int getArraySize(char * etiqueta){
- return countSplit(getConfigStringArray(etiqueta));
+	char** array = getConfigStringArray(etiqueta);
+	int cant = countSplit(array);
+	liberarArray(array);
+	return cant;
+}
+////------------FIN GETTERS-------
+
+void modificarArray(char** array, int indiceAModificar, char * contenidoNuevo){
+	free(array[indiceAModificar]);
+	array[indiceAModificar] = string_duplicate(contenidoNuevo);
 }
 
-
-
-///----------------------------SETTERS------------------------
-//tienen logica repetida, si querés arreglarlos te invito xdxdxd
-void setConfigString(char * etiqueta, char * contenidoNuevo){
-	parametro * viejo = buscarParametro(etiqueta);
-	int indiceParam = buscarIdParametro(etiqueta);
-	char * aux = string_duplicate(contenidoNuevo);
-	parametro * nuevo = parametroModificado(viejo, contenidoNuevo);
-	free(aux);
-	list_replace_and_destroy_element(listaDeConfig, indiceParam, nuevo, liberarParametro);
+char* arrayFormateado(char** array){
+	char* nuevo = string_duplicate("[");
+	int i;
+	int cantElementos = countSplit(array);
+	for(i = 0; i< cantElementos; i++){
+		string_append(&nuevo, array[i]);
+		if(i < cantElementos -1) string_append(&nuevo, ", ");
+	}
+	string_append(&nuevo, "]");
+	return nuevo;
 }
 
-void setConfigStringArrayElement(char * etiqueta, int indice, char * contenidoNuevo){
-	parametro * viejo = buscarParametro(etiqueta);
-	int indiceParam = buscarIdParametro(etiqueta);
-	parametro * nuevo = parametroArrayModificado(viejo, contenidoNuevo, indice);
-	list_replace_and_destroy_element(listaDeConfig, indiceParam, nuevo, liberarParametro);
+////------------SETTERS-------
+
+void setConfigString(char * etiqueta, char * valor){
+	dictionary_remove_and_destroy(config->properties, etiqueta, free);
+	dictionary_put(config->properties, etiqueta, string_duplicate(valor));
+}
+
+void setConfigStringArrayElement(char * etiqueta, int indice, char * valor){
+	char** array = getConfigStringArray(etiqueta);
+	modificarArray(array, indice, valor);
+	char* arrayFormatead = arrayFormateado(array);
+	liberarArray(array);
+	setConfigString(etiqueta, arrayFormatead);
+	free(arrayFormatead);
 }
 
 void setConfigInt(char * etiqueta, int valor){
-	parametro * viejo = buscarParametro(etiqueta);
-	int indiceParam = buscarIdParametro(etiqueta);
 	char * aux = string_itoa(valor);
-	parametro * nuevo = parametroModificado(viejo, aux);
+	setConfigString(etiqueta, aux);
 	free(aux);
-	list_replace_and_destroy_element(listaDeConfig, indiceParam, nuevo, liberarParametro);
 }
 
 void setConfigIntArrayElement(char * etiqueta, int indice, int valor){
-	parametro * viejo = buscarParametro(etiqueta);
-	int indiceParam = buscarIdParametro(etiqueta);
 	char * aux = string_itoa(valor);
-	parametro * nuevo = parametroArrayModificado(viejo, aux, indice);
+	setConfigStringArrayElement(etiqueta, indice, aux);
 	free(aux);
-	list_replace_and_destroy_element(listaDeConfig, indiceParam, nuevo, liberarParametro);
-}
-
-//Convierte un archivo en un char*
-char * file_to_string(FILE * stream){
-	char *contents;
-	fseek(stream, 0L, SEEK_END);
-	long fileSize = ftell(stream);
-	fseek(stream, 0L, SEEK_SET);
-
-	//Allocate enough memory (add 1 for the \0, since fread won't add it)
-	contents = malloc(fileSize+1);
-
-	//Read the file
-	size_t size=fread(contents,1,fileSize,stream);
-	contents[size]=0; // Add terminating zero.
-
-	//No lo lei y me chupa un huevo, es copy-paste de internet
-	return contents;
 }
 
 
-//Decide si un parametro es un array o un string/int y lo obtiene para que este sea agregado a la lista
-parametro * agregarParametro(char * linea, t_config * config){
-	char ** cadenas = string_split(linea,"=");
-	parametro * param =
-			cadenas[1][0] == '[' ? obtenerParametroArray(config, string_duplicate(cadenas[0])) : obtenerParametroString(config, string_duplicate(cadenas[0]));
-	liberarArray(cadenas);
-	return param;
+void imprimirConfiguracion(){
+	void impresion(char * etiqueta, char* valor){
+		printf("%s: %s\n", etiqueta, valor);
+	}
+	dictionary_iterator(config->properties, impresion);
 }
 
-///--------------INICIALIZACION-------------
+void liberarConfiguracion(){
+	config_destroy(config);
+}
 
 void configuracionInicial(char*PATH){
-	t_config * config;
-	t_list * lista = list_create();
 	config = config_create(PATH);
-
-	FILE* archivo = fopen(PATH,"rb");
-	char * contenidoArchivo = file_to_string(archivo);		//Se carga el contenido del archivo en una sola cadena
-	char ** cadenas = string_split(contenidoArchivo,"\n");
-	int i = 0;
-	for (i = 0; i < countSplit(cadenas); i++)
-			list_add(lista,agregarParametro(cadenas[i], config));//Se agregan a la lista todos los elementos
-
-		//Se liberan las cosas que ya no uso y se cierra el archivo
-	liberarArray(cadenas);
-	free(contenidoArchivo);
-	fclose(archivo);
-
-	config_destroy(config);
-	listaDeConfig = lista;//listaDeConfig es una variable publica que guarda las configuraciones
 }
 
 
-///-----------IMPRESIONES-----------
-
-
-void imprimirParametroString(parametro* par){
-	printf("%s: %s\n", par->etiqueta, (char*)par->contenido);
+//--Hice esta funcion porque sino tenia que recorrer el diccionario 2 veces
+void modConfigIntArrayElem(char* etiqueta, int indice, int mod){
+	int valor = getConfigIntArrayElement(etiqueta, indice) + mod;
+	setConfigIntArrayElement(etiqueta, indice, valor);
 }
-void imprimirParametroArray(parametro* par){//no hay que hacer free o se borra de la lista
-	printf("%s: [", par->etiqueta);
+
+void decrementarConfigArray(char* etiqueta, int indice){
+	modConfigIntArrayElem(etiqueta, indice, -1);
+}
+void incrementarConfigArray(char* etiqueta, int indice){
+	modConfigIntArrayElem(etiqueta, indice, 1);
+}
+
+//---Estas funciones son solo para el kernel---
+int indiceDeSemaforo(char* sem){
 	int i = 0;
-	for(i=0;((char**)par->contenido)[i] != NULL;i++){
-		printf("%s",getConfigStringArrayElement(par->etiqueta,i));
-		if(((char**)par->contenido)[i+1] != NULL) printf(",");
+	char** array = getConfigStringArray(("SEM_IDS"));
+	for(i = 0; i< countSplit(array); i++)
+		if(strcmp(sem, array[i]) == 0){
+			liberarArray(array);
+			return i;
+		}
+	return NULL;
+}
+
+//Recorro el diccionario 2 veces, porque no me queda otra. Uno es para conseguir el id y el otro es para cambiar el valor
+void decrementarSEM(char* sem){
+	decrementarConfigArray("SEM_INIT", indiceDeSemaforo(sem));
+}
+void incrementarSEM(char* sem){
+	incrementarConfigArray("SEM_INIT", indiceDeSemaforo(sem));
+}
+int valorDelSemaforo(char * sem){
+	return getConfigIntArrayElement("SEM_INIT", indiceDeSemaforo(sem));
+}
+
+typedef struct{
+	char* sem;
+	//PCB_DATA * pcb; ---//Tambien podria ser solo el pid
+}esperaDeSemaforo;
+
+t_list * listaDeEspera;
+
+void proceso_wait(char* sem){ // void wait(char* sem, PCB_DATA* pcb)
+	if(valorDelSemaforo(sem) <= 0){
+		//pcb->estado = esperandoSemaforo
+		//agregarProcesoAListaDeEspera(
 	}
-	printf("]\n");
+	decrementarSEM(sem);
 }
+void despertarProceso(char* sem){
+	//pcb = list_find(listaDeEspera, buscarPorSem)->pcb;
+	//pcb->estado = listoParaEjecutar;
+	//--Tambien hay que sacar el pcb de la lista de alguna manera
+}
+
+//Hay que contemplar el caso en el que un proceso muera externamente y haya hecho un wait
+//si pasa, ¿hay que sumar un signal al semaforo? (Deberia, cuando un proceso muere libera sus recursos)
+void proceso_signal(char* sem){
+	if(valorDelSemaforo(sem) < 0)
+		despertarProceso(sem);
+	incrementarSEM(sem);
+}
+
+//No se si hay que validar que hagan un wait de un semaforo que no existe
+
+
+
 //El mejor invento de la galaxia
 void list_forEach(t_list * self, void (*funcion) (void*)){
 	t_link_element *element = self->head;
@@ -289,13 +198,4 @@ void list_forEach(t_list * self, void (*funcion) (void*)){
 		element = element->next;
 	}
 }
-void imprimirParametro(parametro* par){
-	if(par->tipo == 0) imprimirParametroString(par);
-	if(par->tipo == 1) imprimirParametroArray(par);
-}
-
-void imprimirConfiguracion(){
-	list_forEach(listaDeConfig, imprimirParametro);
-}
-
 

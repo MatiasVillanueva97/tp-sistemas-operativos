@@ -102,9 +102,8 @@ int main(void)
 		puts("esperando pcb\n");
 		if(recibirMensaje(socketKernel,&pcbSerializado) != envioPCB) perror("Error en la accion maquinola");
 
-		PCB_DATA* pcb2;
 
-		pcb2=deserializarPCB(pcbSerializado);
+		pcb=deserializarPCB(pcbSerializado);
 
 		free(pcbSerializado);
 
