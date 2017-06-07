@@ -43,13 +43,6 @@ int tamanoDe__t_entradas(t_entrada* entradas, int cantidadDeEntradas){
 }
 
 int tamanoPCB(PCB_DATA * pcb){
-	int tamanoEtiquetas;
-	if(pcb->cantidadDeEtiquetas == 0){
-		tamanoEtiquetas = 0;
-	}
-	else{
-		tamanoEtiquetas = (strlen(pcb->indiceEtiquetas)+1);
-	}
 		return 	sizeof(uint32_t)  												//por el pid
 				+sizeof(t_puntero_instruccion)  								//por el program counter
 				+sizeof(uint32_t) 												//por el contador de paginas
@@ -58,12 +51,14 @@ int tamanoPCB(PCB_DATA * pcb){
 				+sizeof(uint32_t) 												//por la cantidad de instrucciones
 				+tamanoDe__t_instructions(pcb->cantidadDeInstrucciones)			//por las instrucciones
 
-				+tamanoEtiquetas								//por el indice de stack ---- esto no se sabe si es un char*
+				+pcb->sizeEtiquetas								//es para el header del char*
+				+sizeof(uint32_t) 								//para el sze de etiquetas
+				+sizeof(uint32_t) 								//para el estado de proceso
 
 				+sizeof(uint32_t) 												//por la cantidad de entradas
 				+tamanoDe__t_entradas(pcb->indiceStack,pcb->cantidadDeEntradas)//por las entradas
 				+sizeof(uint32_t)												//por la cantidadDeEtiquetas
-				+sizeof(uint32_t)*2;												//por el exit code
+				+sizeof(uint32_t);												//por el exit code
 				//+sizeof(uint32_t)*2; 											//Creo que es por los headers de las listas
 }
 
@@ -305,9 +300,9 @@ t_intructions * deserializar__t_instructions(void* stream, int* pos, int cantida
 void *  serializarPCB(PCB_DATA * pcb){
 	int recorrido = 0;
 	int tamanoPcb = tamanoPCB(pcb);
-	void * stream = malloc(tamanoPcb + sizeof(uint32_t));//el tamaño del pcb mas su header
+	void * stream = malloc(tamanoPcb);//el tamaño del pcb mas su header
 
-	memcpy(stream, &tamanoPcb, sizeof(uint32_t));
+	memcpy(stream, &pcb->sizeEtiquetas, sizeof(uint32_t));
 	recorrido += sizeof(uint32_t);
 
 	memcpy(stream + recorrido, &(pcb->cantidadDeEntradas), sizeof(uint32_t));
@@ -322,6 +317,9 @@ void *  serializarPCB(PCB_DATA * pcb){
 
 
 	memcpy(stream+recorrido, &(pcb->pid), sizeof(uint32_t));
+	recorrido += sizeof(uint32_t);
+
+	memcpy(stream+recorrido, &(pcb->estadoDeProceso), sizeof(uint32_t));
 	recorrido += sizeof(uint32_t);
 
 	memcpy(stream + recorrido, &(pcb->programCounter), sizeof(t_puntero_instruccion));
@@ -343,11 +341,11 @@ void *  serializarPCB(PCB_DATA * pcb){
 	recorrido += tamanoInstrucciones;
 
 
+
+
+
 	//****Esto no se si hay que cambiarlo
-	int largoIndiceEtiquetas = 0;
-	if(pcb->cantidadDeEtiquetas != 0){
-		largoIndiceEtiquetas = strlen(pcb->indiceEtiquetas)+1;
-	}
+	int largoIndiceEtiquetas = pcb->sizeEtiquetas;
 
 	//int largoIndiceEtiquetas = strlen(pcb->indiceEtiquetas)+1;//es el largo del char*
 	memcpy(stream + recorrido, &largoIndiceEtiquetas, sizeof(uint32_t));
@@ -374,12 +372,12 @@ void *  serializarPCB(PCB_DATA * pcb){
 PCB_DATA* deserializarPCB(void* stream){
 
 	int recorrido = 0;
-	int tamanoPCB = leerUINT32(stream, &recorrido);
 
 
 	PCB_DATA * pcb = malloc(sizeof(PCB_DATA));
 	//PCB_DATA pcb;
 
+	pcb->sizeEtiquetas = leerUINT32(stream, &recorrido);
 	int cantidadEntradas = leerUINT32(stream, &recorrido);
 
 
@@ -388,6 +386,7 @@ PCB_DATA* deserializarPCB(void* stream){
 
 
 	pcb->pid = leerUINT32(stream, &recorrido);
+	pcb->estadoDeProceso = leerUINT32(stream, &recorrido);
 	pcb->programCounter = leerUINT32(stream, &recorrido);
 	pcb->cantidadDeInstrucciones = leerUINT32(stream,&recorrido);
 	pcb->contPags_pcb = leerUINT32(stream,&recorrido);

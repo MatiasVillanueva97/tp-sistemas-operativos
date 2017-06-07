@@ -60,6 +60,8 @@ typedef struct{
 char* indiceEtiquetas; // ¡??¡?'¿¿'??¡ que es¡?
  int cantidadDeEntradas;//Es un contador para meterlo en un for
  int cantidadDeEtiquetas;
+ int sizeEtiquetas;
+ int estadoDeProceso;
  t_entrada* indiceStack;//Es otro array
 
 

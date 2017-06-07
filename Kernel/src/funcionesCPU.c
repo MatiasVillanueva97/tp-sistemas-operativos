@@ -119,7 +119,7 @@ void *rutinaCPU(void * arg)
 				pcb = cpu_pedirPCBDeExec();
 
 				void* pcbSerializado = serializarPCB(pcb);
-				enviarMensaje(socketCPU,envioPCB,pcbSerializado,tamanoPCB(pcb) + 4);
+				enviarMensaje(socketCPU,envioPCB,pcbSerializado,tamanoPCB(pcb));
 
 			}break;
 
