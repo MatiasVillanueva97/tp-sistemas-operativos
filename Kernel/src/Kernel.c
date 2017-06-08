@@ -102,8 +102,8 @@ void newToReady(){
 		printf("Estructura:--\nPid: %d\nScript: %s\nSocketConsola:%d\n\n",programaAnsisop->pid,programaAnsisop->scriptAnsisop,programaAnsisop->socketConsola);
 
 		//***Calculo cuantas paginas necesitara la memoria para este script
-		int cant_paginas = memoria_CalcularCantidadPaginas(programaAnsisop->scriptAnsisop);
-
+		int cant_paginas;// = memoria_CalcularCantidadPaginas(programaAnsisop->scriptAnsisop);
+		char** scriptEnPaginas = memoria_dividirScriptEnPaginas4(&cant_paginas,programaAnsisop->scriptAnsisop);
 		INICIALIZAR_PROGRAMA dataParaMemoria;
 		dataParaMemoria.cantPags=cant_paginas+stack_size;
 		dataParaMemoria.pid=programaAnsisop->pid;
@@ -122,7 +122,7 @@ void newToReady(){
 			sem_post(&mutex_cola_New);
 
 			//*** Divido el script en la cantidad de paginas necesarias
-			char** scriptEnPaginas = memoria_dividirScriptEnPaginas(cant_paginas, programaAnsisop->scriptAnsisop);
+
 
 			//***Le envio a memoria tiodo el scrip pagina a pagina
 			int i;
@@ -130,7 +130,8 @@ void newToReady(){
 			{
 				enviarMensaje(socketMemoria,envioCantidadPaginas,scriptEnPaginas[i],size_pagina);
 				printf("Envio una pagina: %d\n", i);
-
+				printf("La pagina %d, contiene:",i);
+				puts(scriptEnPaginas[i]);
 				recibirMensaje(socketMemoria,&ok);
 			}
 
@@ -508,8 +509,17 @@ void * aceptarConexiones_Cpu_o_Consola( void *arg ){
 	}
 }
 
+char * pruebaGlobalAsco ="begin\nvariables f, i, t\n#`i`: Iterador\ni=0\n#`f`: Hasta donde contar\nf=20\n:inicio\n#Incrementar el iterador\ni=i+1\n#Imprimir el contador\nprints n i\n#`t`: Comparador entre `i` y `f`\nt=f-i\n#De no ser iguales, salta a inicio\njnz t inicio\nend";
+
 int main(void) {
 
+	/*int cant;
+	size_pagina = 256;
+	char** prueba = memoria_dividirScriptEnPaginas4(&cant,pruebaGlobalAsco);
+
+	int k = strlen(prueba[0]);
+	int j = strlen(prueba[1]);
+*/
 	printf("Inicializando Kernel.....\n\n");
 
 
