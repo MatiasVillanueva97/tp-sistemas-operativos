@@ -27,18 +27,12 @@ void* serializarMensajeAEscribir(t_mensajeDeProceso mensaje, int tamanio);
 
 
 
+
 t_puntero AnSISOP_definirVariable(t_nombre_variable identificador_variable){
 	puts("AnSISOP_definirVariable");
 	t_direccion direccion;
 	t_variable* variable = malloc(sizeof(t_variable));
 
-	//En el caso que esta sea la primera vez que el proceso entra en una CPU su indice de stack estara NULL porque no habia entradas anteriores, entonces se inicializa la primera entrada
-	if(pcb->indiceStack == NULL){
-		pcb->indiceStack = malloc(sizeof(t_entrada));
-		pcb->indiceStack->argumentos = list_create();
-		pcb->indiceStack->variables = list_create();
-		pcb->cantidadDeEntradas++;
-	}
 
 	direccion = calcularNuevaDireccion();
 
@@ -595,6 +589,9 @@ bool mayor(t_direccion unaDireccion,t_direccion otraDireccion){
 
 }
 
+bool direccionInvalida(t_direccion direccion){
+	return (direccion.page == -1 && direccion.offset == -1 && direccion.size == -1);
+}
 
 //Esto es para no repetir codigo, era muy asqueroso sino
 void asignarDireccionRespectoA(int contexto, t_direccion* direccion){
@@ -608,6 +605,10 @@ void asignarDireccionRespectoA(int contexto, t_direccion* direccion){
 	}else{
 		direccion->page = argumento.page;
 		direccion->offset = argumento.offset + 4;
+	}
+	if(direccionInvalida(variable) && direccionInvalida(argumento)){
+		direccion->page = paginaInicio();
+		direccion->offset = 4;
 	}
 }
 

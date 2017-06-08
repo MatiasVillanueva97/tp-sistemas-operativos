@@ -107,6 +107,14 @@ int main(void)
 
 		free(pcbSerializado);
 
+		//En el caso que esta sea la primera vez que el proceso entra en una CPU su indice de stack estara NULL porque no habia entradas anteriores, entonces se inicializa la primera entrada
+		if(pcb->indiceStack == NULL){
+			pcb->indiceStack = malloc(sizeof(t_entrada));
+			pcb->indiceStack->argumentos = list_create();
+			pcb->indiceStack->variables = list_create();
+			pcb->cantidadDeEntradas++;
+		}
+
 		while(!terminoPrograma && quantumRestante != 0 && !bloqueado){
 
 			t_pedidoMemoria pedido;

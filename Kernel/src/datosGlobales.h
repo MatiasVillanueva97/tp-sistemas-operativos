@@ -63,7 +63,6 @@ enum exitCode{
 typedef struct{
 	int socketCPU;
 	bool esperaTrabajo;
-	bool hiloCreado;
 }t_CPU;
 
 t_list* lista_CPUS;

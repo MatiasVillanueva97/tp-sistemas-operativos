@@ -141,7 +141,7 @@ void newToReady(){
 			for(i=0; i<stack_size && *ok;i++)
 			{
 				enviarMensaje(socketMemoria,envioCantidadPaginas,paginasParaElStack,size_pagina);
-				printf("Envio una pagina: %d\n", i);
+				printf("Envio una pagina: %d\n", i+cant_paginas);
 
 				recibirMensaje(socketMemoria,&ok);
 			}
@@ -330,34 +330,10 @@ void * planificadorCortoPlazo()
 	{
 		if(hayCpusDisponibles() && hayProcesosEnReady())
 		{
-			PCB_DATA* pcb;
+
 			///*** Quito el primer elemento de la cola de ready, valido que no haya sido finalizado y lo pongo en la cola de exec - en caso de no encontrar uno para poder trabajar no hago nada
-			if((pcb = readyToExec()) != NULL)
-			{
+			readyToExec();
 
-				bool busqueda(t_CPU* cpu){
-					return cpu->esperaTrabajo;
-				}
-
-				//// SACAR ESTO DE ACA Y MANDARLO AL HILO / crear el hilo en aceptar conexiones.
-
-				//*** Agarro una cpu que este disponible
-				sem_wait(&mutex_cola_CPUs_libres);
-					t_CPU* cpuParaTrabajar = list_find(lista_CPUS,busqueda);
-				sem_post(&mutex_cola_CPUs_libres);
-
-				printf("[Rutina readyToExec] - Se crea un nuevo hilo para que la CPU N°: %d trabaje con el proceso N°: %d\n", *cpuParaTrabajar, pcb->pid);
-
-
-				//VER POR EL OTRO CASO
-
-				if(!cpuParaTrabajar->hiloCreado){
-					//*** Llamo a una rutina CPU que va a estar trabajando con la cpu que le paso por parametro -- Cambiar tipo de hilo
-					cpuParaTrabajar->hiloCreado = true;
-					pthread_t hilo_rutinaCPU;
-					cpu_crearHiloDetach(cpuParaTrabajar->socketCPU);
-				}
-			}
 
 		}
 
@@ -510,11 +486,16 @@ void * aceptarConexiones_Cpu_o_Consola( void *arg ){
 
 				nuevaCPU->socketCPU = nuevoSocket;
 				nuevaCPU->esperaTrabajo = true;
-				nuevaCPU->hiloCreado = false;
+
 
 				sem_wait(&mutex_cola_CPUs_libres);
 					list_add(lista_CPUS,nuevaCPU);
 				sem_post(&mutex_cola_CPUs_libres);
+
+				pthread_t hilo_rutinaCPU;
+				cpu_crearHiloDetach(nuevaCPU->socketCPU);
+
+
 
 			}break;
 
