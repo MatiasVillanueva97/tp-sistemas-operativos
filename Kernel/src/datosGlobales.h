@@ -91,6 +91,13 @@ typedef struct{
 	PCB_DATA* pcb;
 } PROCESOS;
 
+
+//*** Tabla para procesos fs
+
+
+
+///
+
 //*** Esta es la escructura que le envio a memoria para que inicialize un programa
 typedef struct{
 int pid;

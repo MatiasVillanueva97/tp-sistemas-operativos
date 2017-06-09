@@ -358,8 +358,10 @@ void * planificadorCortoPlazo()
 
 
 
+
+
 /// ********************************************************************************************************///
-/// ************************** TERCERA PARTE - PASAR PROCESOS DE EXEC A FINISHED ***************************///
+/// *********************** TERCERA PARTE - PASAR PROCESOS DE EXEC A FINISHED O BLOQ ***********************///
 /// ********************************************************************************************************///
 
 
@@ -515,9 +517,6 @@ void * aceptarConexiones_Cpu_o_Consola( void *arg ){
 
 				pthread_t hilo_rutinaCPU;
 				cpu_crearHiloDetach(nuevaCPU->socketCPU);
-
-
-
 			}break;
 
 			default:

@@ -66,10 +66,10 @@ PCB_DATA * cpu_pedirPCBDeExec(){
 			pcb = queue_pop(cola_Exec);
 
 			//*** Valido si el pcb se puede mandar a ejecutar
-			if(pcb->exitCode == paraEjecutar)
+			if(pcb->estadoDeProceso == paraEjecutar)
 			{
 				//***Esta listo para ejecutar, le cambio el exitcode
-				pcb->exitCode = loEstaUsandoUnaCPU;
+				pcb->estadoDeProceso = loEstaUsandoUnaCPU;
 
 				//***Lo agrego al final de la cola de exec
 				queue_push(cola_Exec, pcb);
@@ -163,6 +163,9 @@ void *rutinaCPU(void * arg)
 
 				queue_pop(cola_Exec);
 				queue_push(cola_Ready, pcb);
+
+
+				/// Revisar esto - y poner semaforos
 			}break;
 
 			//TE MANDO UNA ESTRUCTURA CON {PID, DESCRIPTOR, MENSAJE(CHAR*)} PARA QUE:  iF(DESCRIPTOR == 1) ESCRIBE EN LA CONSOLA QUE LE CORRESPONDE ; ELSE ESCRIBE EN EL ARCHIVO ASOCIADO A ESE DESCRIPTOR
@@ -171,21 +174,31 @@ void *rutinaCPU(void * arg)
 
 				t_mensajeDeProceso msj = deserializarMensajeAEscribir(stream);
 
-//				puts(msj.mensaje);
-//				printf("Descriptor: %d \n",msj.descriptorArchivo);
-//				printf("Pid: %d \n",msj.pid);
+
+				//***Si el fileDescriptro es 1, se imprime por consola
 				if(msj.descriptorArchivo == 1){
 					void * stream2 = serializarMensajeAEscribir(msj,strlen(msj.mensaje)+1);
 					int socketConsola = consola_buscarSocketConsola(msj.pid);
 					int s =  tamanoMensajeAEscribir(strlen(msj.mensaje)+1);
-//					printf("Lo que envia %d \n",s);
 
-//					printf("%d \n",socketConsola);
 					enviarMensaje(socketConsola,imprimirPorPantalla,stream2,s);
 				}
 				else{
+					//*** Si es otro valor trabajar aca
+
+					/// validar que ese proceso (el pid dentro de esta estructura) tenga los permisos
 					//evniar algo a filesystem
 				}
+			}break;
+
+			case 2324324: // crear archv:
+			{
+
+			}break;
+
+			case 232344324: // leer archv:
+			{
+
 			}break;
 
 			//TE MANDO UN NOMBRE DE UN SEMAFORO Y QUIERO QUE HAGAS UN WAIT, ME DEBERIAS DECIR SI ME BLOQUEO O NO
@@ -249,12 +262,17 @@ void *rutinaCPU(void * arg)
 				}
 
 			}break;
+
+			//TE MANDO UNA ESTRUCTURA CON {VALOR, NOMBRE_VARIABLE(CHAR*)} PARA QUE LE ASIGNES ESE VALOR A DICHA VARIABLE
 			case asignarValorCompartida:{
-				//TE MANDO UNA ESTRUCTURA CON {VALOR, NOMBRE_VARIABLE(CHAR*)} PARA QUE LE ASIGNES ESE VALOR A DICHA VARIABLE
 			}break;
+
+			//TE MANDO EL NOMBRE DE UNA VARIABLE COMPARTIDA Y ME DEBERIAS DEVOLVER SU VALOR
 			case pedirValorCompartida:{
-				//TE MANDO EL NOMBRE DE UNA VARIABLE COMPARTIDA Y ME DEBERIAS DEVOLVER SU VALOR
 			}break;
+
+
+			//QUE PASA SI SE DESCONECTA LA CPU
 			case 0:{
 				printf("[Rutina rutinaCPU] - Desconecto la CPU N°: %d\n", socketCPU);
 				todaviaHayTrabajo=false;
@@ -262,6 +280,8 @@ void *rutinaCPU(void * arg)
 				cpu_quitarDeLista(socketCPU);
 
 			}break;
+
+			//QUE PASA CUANDO SE MUERTE LA CPU
 			default:{
 				printf("[Rutina rutinaCPU] - Se recibio una accion que no esta contemplada: %d se cerrara el socket\n",accionCPU);
 				todaviaHayTrabajo=false;
