@@ -30,8 +30,6 @@
 int socketMemoria;
 int socketFS;
 int historico_pid;
-int stack_size;
-int grado_multiprogramacion;
 int size_pagina;
 int quantumRR;
 bool finPorConsolaDelKernel;
@@ -52,10 +50,13 @@ enum exitCode{
 	noSePuedenAsignarMasPaginas = -9,
 	finalizacionDesdeKenel = -10,
 	finalizadoCorrectamente =0,
+};
+
+enum estadosProcesos
+{
 	loEstaUsandoUnaCPU = 1,
 	bloqueado = 2,
 	paraEjecutar = 53,
-
 };
 
 //ESTRUCTURA PARA MANEJAR LAS CPUS
@@ -66,6 +67,14 @@ typedef struct{
 }t_CPU;
 
 t_list* lista_CPUS;
+
+/// Estructura para manejar los semaforos
+typedef struct{
+	char* sem;
+	int pid;//PCB_DATA * pcb; //Tambien podria ser solo el pid
+}esperaDeSemaforo;
+
+t_list * listaDeEsperaSemaforos;
 
 
 //*** Esta lista es porque una consola puede tener una serie de procesos --- Igual creo que esto tiene que morir

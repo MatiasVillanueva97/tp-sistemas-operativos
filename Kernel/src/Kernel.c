@@ -36,6 +36,7 @@
 #include "funcionesMemoria.h"
 #include "funcionesConsolaKernel.h"
 #include "funcionesCPU.h"
+#include "funcionesSemaforos.h"
 
 
 void inicializarSemaforo();
@@ -97,7 +98,7 @@ void newToReady(){
 	PROCESOS* programaAnsisop = queue_peek(cola_New);
 
 	//*** Valido si el programa ya fue finalizado! Si aun no fue finalizado, se procede a valirdar si se puede pasar a ready... En caso de estar finalizado ya se pasa a la cola de terminados
-	if(programaAnsisop->pcb->exitCode == 53)
+	if(programaAnsisop->pcb->estadoDeProceso == paraEjecutar)
 	{
 		printf("Estructura:--\nPid: %d\nScript: %s\nSocketConsola:%d\n\n",programaAnsisop->pid,programaAnsisop->scriptAnsisop,programaAnsisop->socketConsola);
 
@@ -105,7 +106,7 @@ void newToReady(){
 		int cant_paginas;// = memoria_CalcularCantidadPaginas(programaAnsisop->scriptAnsisop);
 		char** scriptEnPaginas = memoria_dividirScriptEnPaginas4(&cant_paginas,programaAnsisop->scriptAnsisop);
 		INICIALIZAR_PROGRAMA dataParaMemoria;
-		dataParaMemoria.cantPags=cant_paginas+stack_size;
+		dataParaMemoria.cantPags=cant_paginas+getConfigInt("STACK_SIZE");
 		dataParaMemoria.pid=programaAnsisop->pid;
 
 		//***Le Enviamos a memoria el pid con el que vamos a trabajar - Junto a la accion que vamos a realizar - Le envio a memeoria la cantidad de paginas que necesitaré reservar
@@ -139,7 +140,7 @@ void newToReady(){
 			char * paginasParaElStack;
 			// puto el que lee
 			paginasParaElStack = string_repeat(' ',size_pagina);
-			for(i=0; i<stack_size && *ok;i++)
+			for(i=0; i<getConfigInt("STACK_SIZE") && *ok;i++)
 			{
 				enviarMensaje(socketMemoria,envioCantidadPaginas,paginasParaElStack,size_pagina);
 				printf("Envio una pagina: %d\n", i+cant_paginas);
@@ -150,7 +151,7 @@ void newToReady(){
 			//***Termino de completar el PCB
 
 
-			programaAnsisop->pcb->contPags_pcb= cant_paginas+stack_size;
+			programaAnsisop->pcb->contPags_pcb= cant_paginas+getConfigInt("STACK_SIZE");
 
 			//***Añado el pcb a la cola de Ready
 			queue_push(cola_Ready,programaAnsisop->pcb);
@@ -195,8 +196,14 @@ void newToReady(){
 //***Esta Función lo que hace es sumar el size de todas las colas que determinan el grado de multiplicacion y devuelve la suma ///***Esta Función esta Probada y anda (falta meterle tres semaforos mutex)
 int cantidadProgramasEnProcesamiento()
 {
-	//HAcer Semaforos para todas las colas
-	int cantidadProcesosEnLasColas = queue_size(cola_Ready)+queue_size(cola_Wait)+queue_size(cola_Exec);
+	sem_wait(&mutex_cola_Ready);
+	sem_wait(&mutex_cola_Wait);
+	sem_wait(&mutex_cola_Exec);
+		int cantidadProcesosEnLasColas = queue_size(cola_Ready)+queue_size(cola_Wait)+queue_size(cola_Exec);
+	sem_post(&mutex_cola_Exec);
+	sem_post(&mutex_cola_Wait);
+	sem_post(&mutex_cola_Ready);
+
 	return cantidadProcesosEnLasColas;
 }
 
@@ -221,7 +228,7 @@ void * planificadorLargoPlazo()
 	while(!finPorConsolaDelKernel)
 	{
 		//*** Validamos que haya programas en alguna de la cola de new y que la cantidad de procesos que haya entre las colas de ready-excec-bloq sea menor al grado de multiprogramacion permitida
-		if(cantidadProgramasEnProcesamiento() < grado_multiprogramacion && hayProgramasEnNew())
+		if(cantidadProgramasEnProcesamiento() <  getConfigInt("GRADO_MULTIPROG") && hayProgramasEnNew())
 		{
 			newToReady();
 		}
@@ -258,7 +265,7 @@ PCB_DATA* readyToExec()
 	queue_pop(cola_Ready);
 
 	//*** Valido que el proceso no haya sido terminado ya
-	if(pcb->exitCode != 53)
+	if(pcb->estadoDeProceso != paraEjecutar)
 	{
 		//*** Si ya fue finalizado lo paso a la cola de finalizados
 		sem_wait(&mutex_cola_Finished);
@@ -319,8 +326,6 @@ bool hayCpusDisponibles(){
 }
 
 
-
-
 //*** pasar procesos de ready a exec
 void * planificadorCortoPlazo()
 {
@@ -365,7 +370,7 @@ int execTo()
 	PCB_DATA* pcb=queue_pop(cola_Exec);
 
 	//***Valido que el proceso haya finalizado
-	if(pcb->exitCode != paraEjecutar && pcb->exitCode != loEstaUsandoUnaCPU){
+	if(pcb->estadoDeProceso != paraEjecutar && pcb->estadoDeProceso != loEstaUsandoUnaCPU){
 
 		//*** si el proceso ya finalizo lo paso a la cola de finished
 		sem_wait(&mutex_cola_Finished);
@@ -378,6 +383,21 @@ int execTo()
 	else{
 		queue_push(cola_Exec, pcb);
 	}
+
+	//*** Valido que el proceso este bloqueado, si lo esta lo mando a wait
+	if(pcb->estadoDeProceso == bloqueado){
+
+			//*** si el proceso esta  bloqueado lo paso ala cola de bloqueado
+			sem_wait(&mutex_cola_Wait);
+				queue_push(cola_Wait,pcb);
+			sem_post(&mutex_cola_Wait);
+
+			//*** Retorno el pid del proceso que acabo de psar a bloqueado
+			return  pcb->pid;
+		}
+		else{
+			queue_push(cola_Exec, pcb);
+		}
 
 	return -1;
 }
@@ -502,24 +522,15 @@ void * aceptarConexiones_Cpu_o_Consola( void *arg ){
 
 			default:
 			{
-				printf("Papi, fijate se te esta conectado cualquier cosa\n");
+				printf("[rutina aceptarConexiones_CPU_o_Consola] - Se esta conectado cualquier cosa, algo que no es ni cpu ni consola\n");
 				close(nuevoSocket);
 			}
 		}
 	}
 }
 
-char * pruebaGlobalAsco ="begin\nvariables f, i, t\n#`i`: Iterador\ni=0\n#`f`: Hasta donde contar\nf=20\n:inicio\n#Incrementar el iterador\ni=i+1\n#Imprimir el contador\nprints n i\n#`t`: Comparador entre `i` y `f`\nt=f-i\n#De no ser iguales, salta a inicio\njnz t inicio\nend";
-
 int main(void) {
 
-	/*int cant;
-	size_pagina = 256;
-	char** prueba = memoria_dividirScriptEnPaginas4(&cant,pruebaGlobalAsco);
-
-	int k = strlen(prueba[0]);
-	int j = strlen(prueba[1]);
-*/
 	printf("Inicializando Kernel.....\n\n");
 
 
@@ -530,6 +541,7 @@ int main(void) {
 		//***Inicializo las listas
 		avisos = list_create();
 		lista_CPUS = list_create();
+		listaDeEsperaSemaforos = list_create();
 
 		//***Inicializo las colas
 		cola_New = queue_create();
@@ -549,9 +561,7 @@ int main(void) {
 		configuracionInicial("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Kernel/kernel.config");
 		imprimirConfiguracion();
 
-		grado_multiprogramacion = getConfigInt("GRADO_MULTIPROG"); // esta muere
-		stack_size = getConfigInt("STACK_SIZE"); /// esta muere
-		quantumRR = (strcmp("FIFO",getConfigString("ALGORITMO")) == 0)? -1 : getConfigInt("QUANTUM"); // con amor, niñita esta no
+		quantumRR = (strcmp("FIFO",getConfigString("ALGORITMO")) == 0)? -1 : getConfigInt("QUANTUM");
 
 	///-----------------------------////
 

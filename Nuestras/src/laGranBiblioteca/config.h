@@ -55,4 +55,13 @@ void setConfigIntArrayElement(char * etiqueta, int indice, int valor);
 
 void liberarArray(char ** lista);
 
+// por ahora esto lo voy a dejar esto por aca
+
+void modConfigIntArrayElem(char* etiqueta, int indice, int mod);
+
+void decrementarConfigArray(char* etiqueta, int indice);
+
+void incrementarConfigArray(char* etiqueta, int indice);
+
+
 #endif /* CARPETA_CONFIG2_H_ */

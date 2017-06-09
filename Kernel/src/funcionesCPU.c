@@ -96,7 +96,7 @@ void *rutinaCPU(void * arg)
 	DATOS_PARA_CPU datosCPU;
 	datosCPU.size_pag=size_pagina;
 	datosCPU.quantum=quantumRR;
-	datosCPU.size_stack=stack_size;
+	datosCPU.size_stack=getConfigInt("STACK_SIZE");
 	enviarMensaje(socketCPU,enviarDatosCPU,&datosCPU,sizeof(int)*3);
 
 	bool todaviaHayTrabajo = true;
@@ -139,6 +139,8 @@ void *rutinaCPU(void * arg)
 				printf("[Rutina rutinaCPU] - Entramos al Caso de que CPU termino la ejecucion de un proceso: accion- %d!\n", enviarPCBaTerminado);
 
 				pcb = deserializarPCB(stream);
+
+				// aca como que deberiamos validar que no haya sido finalizado ya este procesito
 				pcb->exitCode = 0;
 				modificarPCB(pcb);
 
@@ -169,50 +171,83 @@ void *rutinaCPU(void * arg)
 
 				t_mensajeDeProceso msj = deserializarMensajeAEscribir(stream);
 
-				puts(msj.mensaje);
-				printf("Descriptor: %d \n",msj.descriptorArchivo);
-				printf("Pid: %d \n",msj.pid);
+//				puts(msj.mensaje);
+//				printf("Descriptor: %d \n",msj.descriptorArchivo);
+//				printf("Pid: %d \n",msj.pid);
 				if(msj.descriptorArchivo == 1){
 					void * stream2 = serializarMensajeAEscribir(msj,strlen(msj.mensaje)+1);
 					int socketConsola = consola_buscarSocketConsola(msj.pid);
 					int s =  tamanoMensajeAEscribir(strlen(msj.mensaje)+1);
-					printf("Lo que envia %d \n",s);
+//					printf("Lo que envia %d \n",s);
 
-					printf("%d \n",socketConsola);
+//					printf("%d \n",socketConsola);
 					enviarMensaje(socketConsola,imprimirPorPantalla,stream2,s);
 				}
 				else{
 					//evniar algo a filesystem
 				}
-
 			}break;
 
 			//TE MANDO UN NOMBRE DE UN SEMAFORO Y QUIERO QUE HAGAS UN WAIT, ME DEBERIAS DECIR SI ME BLOQUEO O NO
 			case waitSemaforo:{
 
-				char* etiquetaSemaforo = leerString(stream);
-/*
-				int i;
-				for(i=0; i < getArraySize("SEM_IDS"); i++){
+				char* nombreSemaforo = leerString(stream);
 
-					char* sem= getConfigStringArrayElement("SEM_IDS", i);
-					//**** me fijo cual es el semaforo
-					if( strcmp(sem, etiquetaSemaforo) == 0 ){
+				//***Verifico si existe el semaforo que cpu me mando
+				if(sema_existeSemaforo(nombreSemaforo)){
 
-						//**** si entro aca, significa que encontre el semaforo y lo decrementeo
-						setConfigIntArrayElement("SEM_INIT", i, getConfigIntArrayElement("SEM_INIT", i)-1 );
+					//***Si el semaforo existe realizo el wait para este semaforo
+					sema_proceso_wait(nombreSemaforo);
 
-						if( getConfigIntArrayElement("SEM_INIT", i) < 0)
-						{
-							pcb->exitCode= bloqueado;
-							queue_push(cola_Wait, pcb);
-						}
-					}
-				}*/
+					//***Le aviso a la cpu que la acabamos de bloquear
+//					enviarMensaje(socketCPU,bloquearProceso,&accionCPU,sizeof(int)); // agregar al enum bloquearProceso . le paso accion cpu para mandarle algo
+
+					//***Recibo el pcb que voy a bloquear
+					recibirMensaje(socketCPU, &stream); // puedo reciclar el stream?
+					pcb = deserializarPCB(stream);
+
+					//***Cambio el estado de este pcb a bloqueado
+					pcb->estadoDeProceso = bloqueado;
+
+					//***Agrego a la lista de espera que el pid que acabo de recibir esta esperando por el semaforo que se me habia indicado
+					//hacer semaforo para esta lista
+
+					esperaDeSemaforo* esp_sem=malloc(sizeof(esperaDeSemaforo));
+
+					esp_sem->pid=pcb->pid;
+					esp_sem->sem=nombreSemaforo;
+
+					list_add(listaDeEsperaSemaforos,esp_sem);
+				}
+				else{
+					//***Sino existe le digo que me esta pidiendo cualqueir cosa
+
+//					enviarMensaje(socketCPU,errorSemaforo,&accionCPU,sizeof(int)); // agregar al enum errorsemafor . le paso accion cpu para mandarle algo
+				}
+
 
 			}break;
+
+			//TE MANDO UN NOMBRE DE UN SEMAFORO Y QUIERO QUE HAGAS UN SIGNAL, LE DEBERIAS INFORMAR A ALGUIEN SI ESTABA BLOQUEADO EN UN WAIT DE ESTE SEMAFORO
 			case signalSemaforo:{
-				//TE MANDO UN NOMBRE DE UN SEMAFORO Y QUIERO QUE HAGAS UN SIGNAL, LE DEBERIAS INFORMAR A ALGUIEN SI ESTABA BLOQUEADO EN UN WAIT DE ESTE SEMAFORO
+				char* nombreSemaforo = leerString(stream);
+
+				//***Verifico si existe el semaforo que cpu me mando
+				if(sema_existeSemaforo(nombreSemaforo)){
+
+					//***Si el semaforo existe realizo el signal para este semaforo
+					sema_proceso_signal(nombreSemaforo);
+
+					//***Quito de la lista de espera que el pid que acabo de recibir esta esperando por el semaforo que se me habia indicado
+					//hacer semaforo para esta lista
+
+				}
+				else{
+					//***Sino existe le digo que me esta pidiendo cualqueir cosa
+
+//					enviarMensaje(socketCPU,errorSemaforo,&accionCPU,sizeof(int)); // agregar al enum errorsemafor . le paso accion cpu para mandarle algo
+				}
+
 			}break;
 			case asignarValorCompartida:{
 				//TE MANDO UNA ESTRUCTURA CON {VALOR, NOMBRE_VARIABLE(CHAR*)} PARA QUE LE ASIGNES ESE VALOR A DICHA VARIABLE

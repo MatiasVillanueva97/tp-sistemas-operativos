@@ -121,80 +121,6 @@ void configuracionInicial(char*PATH){
 	config = config_create(PATH);
 }
 
-///// A PARTIR DE ACA
-
-
-
-
-//--Hice esta funcion porque sino tenia que recorrer el diccionario 2 veces
-void modConfigIntArrayElem(char* etiqueta, int indice, int mod){
-	int valor = getConfigIntArrayElement(etiqueta, indice) + mod;
-	setConfigIntArrayElement(etiqueta, indice, valor);
-}
-
-
-
-void decrementarConfigArray(char* etiqueta, int indice){
-	modConfigIntArrayElem(etiqueta, indice, -1);
-}
-void incrementarConfigArray(char* etiqueta, int indice){
-	modConfigIntArrayElem(etiqueta, indice, 1);
-}
-
-//---Estas funciones son solo para el kernel---
-int indiceDeSemaforo(char* sem){
-	int i = 0;
-	char** array = getConfigStringArray(("SEM_IDS"));
-	for(i = 0; i< countSplit(array); i++)
-		if(strcmp(sem, array[i]) == 0){
-			liberarArray(array);
-			return i;
-		}
-	return NULL;
-}
-
-//Recorro el diccionario 2 veces, porque no me queda otra. Uno es para conseguir el id y el otro es para cambiar el valor
-void decrementarSEM(char* sem){
-	decrementarConfigArray("SEM_INIT", indiceDeSemaforo(sem));
-}
-void incrementarSEM(char* sem){
-	incrementarConfigArray("SEM_INIT", indiceDeSemaforo(sem));
-}
-int valorDelSemaforo(char * sem){
-	return getConfigIntArrayElement("SEM_INIT", indiceDeSemaforo(sem));
-}
-
-typedef struct{
-	char* sem;
-	//PCB_DATA * pcb; ---//Tambien podria ser solo el pid
-}esperaDeSemaforo;
-
-t_list * listaDeEspera;
-
-void proceso_wait(char* sem){ // void wait(char* sem, PCB_DATA* pcb)
-	if(valorDelSemaforo(sem) <= 0){
-		//pcb->estado = esperandoSemaforo
-		//agregarProcesoAListaDeEspera(
-	}
-	decrementarSEM(sem);
-}
-void despertarProceso(char* sem){
-	//pcb = list_find(listaDeEspera, buscarPorSem)->pcb;
-	//pcb->estado = listoParaEjecutar;
-	//--Tambien hay que sacar el pcb de la lista de alguna manera
-}
-
-//Hay que contemplar el caso en el que un proceso muera externamente y haya hecho un wait
-//si pasa, ¿hay que sumar un signal al semaforo? (Deberia, cuando un proceso muere libera sus recursos)
-void proceso_signal(char* sem){
-	if(valorDelSemaforo(sem) < 0)
-		despertarProceso(sem);
-	incrementarSEM(sem);
-}
-
-//No se si hay que validar que hagan un wait de un semaforo que no existe
-
-
 
 //El mejor invento de la galaxia
 void list_forEach(t_list * self, void (*funcion) (void*)){
@@ -204,4 +130,23 @@ void list_forEach(t_list * self, void (*funcion) (void*)){
 		element = element->next;
 	}
 }
+
+///////
+
+
+//--Hice esta funcion porque sino tenia que recorrer el diccionario 2 veces
+void modConfigIntArrayElem(char* etiqueta, int indice, int mod){
+	int valor = getConfigIntArrayElement(etiqueta, indice) + mod;
+	setConfigIntArrayElement(etiqueta, indice, valor);
+}
+
+void decrementarConfigArray(char* etiqueta, int indice){
+	modConfigIntArrayElem(etiqueta, indice, -1);
+}
+
+void incrementarConfigArray(char* etiqueta, int indice){
+	modConfigIntArrayElem(etiqueta, indice, 1);
+}
+
+
 

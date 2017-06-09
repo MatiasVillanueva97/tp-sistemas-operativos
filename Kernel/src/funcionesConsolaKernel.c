@@ -158,7 +158,7 @@ void * consolaKernel()
 				scanf("%d",&gradoNuevo);
 
 				//probablemente tengamos qeu poner un semaforo para la variable global de grado multiprogramacion
-				grado_multiprogramacion=gradoNuevo;
+				setConfigInt("GRADO_MULTIPROG", gradoNuevo);
 			}break;
 			case 5:{
 				int pid;
