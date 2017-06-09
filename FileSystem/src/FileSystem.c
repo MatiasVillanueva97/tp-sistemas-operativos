@@ -31,7 +31,29 @@ int bloqueSize;
 t_bitarray* bitMap ;
 t_list* listaDeArchivosAbiertos;
 int socketKernel;
-void* serializarEstaVerga(int size, int offset,char* path, char* buffer){
+
+void* serializarPedidoFs(int size, int offset,char* path){
+	void *contenido = malloc(4+strlen(path)+sizeof(int)*2);
+	memcpy(contenido,&size,sizeof(int));
+	memcpy(contenido+sizeof(int),&offset,sizeof(int));
+	int tamanoRuta = strlen(path);
+	memcpy(contenido+sizeof(int)*2,&tamanoRuta,sizeof(int));
+	memcpy(contenido+sizeof(int)*3,path,strlen(path));
+	return contenido;
+}
+
+t_pedidoFS deseralizarPedidoFs(void* contenido){
+	t_pedidoFS pedido;
+	pedido.size= *(int*)contenido;
+	int tamanoRuta =  *(int*)(contenido +sizeof(int)*2);
+	pedido.path = malloc(tamanoRuta);
+	memcpy(&pedido.offset,contenido+sizeof(int),sizeof(int));
+	memcpy(pedido.path,contenido+sizeof(int)*3,tamanoRuta);
+
+	return pedido;
+}
+
+void* serializarEscribirMemoria(int size, int offset,char* path, char* buffer){
 	void *contenido = malloc(4+strlen(path)+size+sizeof(int)*2);
 	memcpy(contenido,&size,sizeof(int));
 	memcpy(contenido+sizeof(int),buffer,size);
@@ -41,7 +63,7 @@ void* serializarEstaVerga(int size, int offset,char* path, char* buffer){
 	memcpy(contenido+sizeof(int)*2+tamanoRuta+size,&offset,sizeof(int));
 	return contenido;
 }
-t_escritura deserializaEstaPoronga(void* contenido){
+t_escritura deserializarEscribirMemoria(void* contenido){
 	t_escritura escritura;
 	escritura.size= *(int*)contenido;
 	escritura.buffer= malloc(escritura.size);
@@ -367,8 +389,8 @@ void tramitarPeticionesDelKernel(int socketKernel){
 int main(void) {
 	int x = 24141;
 	void* w =
-			serializarEstaVerga(sizeof(int),123,"hola.bin",&x);
-	deserializaEstaPoronga(w);
+			serializarPedidoFs(123,321,"hola.bin");
+	deseralizarPedidoFs(w);
 	printf("Inicializando FileSystem.....\n\n");
 	// ******* Declaración de la mayoria de las variables a utilizar
 	listaDeArchivosAbiertos = list_create();
