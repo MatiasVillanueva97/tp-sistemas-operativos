@@ -88,10 +88,10 @@ void imprimirContenidoCache(){
 		for (i=0;i<list_size(tablaDeEntradasDeCache);i++){
 			lineaCache* linea = list_get(tablaDeEntradasDeCache,i);
 			printf("La pagina %d, del pid %d, tiene este contenido:\n", linea->pagina,linea->pid );
-			puts(linea->contenido);
+			puts((char*)linea->contenido);
 			//printf("%s", (char*) &linea->contenido );
 			fprintf(archivo, "La pagina %d, del pid %d, tiene este contenido:\n ", linea->pagina,linea->pid );
-			fwrite(linea->contenido,sizeOfPaginas,1,archivo);
+			fwrite((char*)linea->contenido,sizeOfPaginas,1,archivo);
 			fwrite("\n",1,1,archivo);
 		}
 	}
@@ -106,7 +106,7 @@ void imprimirContenidoMemoria(){
 		fprintf(archivo, "El pid %d tiene %d paginas. \n\n", fila.pid ,fila.cantidadDePaginas);
 		printf("El pid %d tiene %d paginas. \n\n", fila.pid ,fila.cantidadDePaginas);
 		for(w=1;w<=fila.cantidadDePaginas;w++){
-			void* contenido =leerMemoriaPosta(fila.pid,w);
+			char* contenido =leerMemoriaPosta(fila.pid,w);
 			fprintf(archivo, "\nContenido de la pagina numero %s: \n",  string_itoa(w));
 			fwrite(contenido,sizeOfPaginas,1,archivo);
 			printf( "\n Contenido de la pagina numero %s: \n ",  string_itoa(w));
@@ -539,9 +539,17 @@ int main(void) {
 
 	iniciarTablaDePaginacionInvertida();
 
+	cacheMiss(1,2,joaco);
+	cacheMiss(1,3,joaco);
+	cacheMiss(1,4,joaco);
+	cacheMiss(1,5,joaco);
+	lineaCache* linea;
+	linea =list_get(tablaDeEntradasDeCache,0);
+	linea = list_get(tablaDeEntradasDeCache,1);
+
+	linea =list_get(tablaDeEntradasDeCache,2);
+	int x = list_size(tablaDeEntradasDeCache);
 	/*	void* pagina = buscarEnLaCache(1,2);
-	cacheMiss(1,2,hijodeputa);
-	cacheMiss(1,3,hijodeputa);
 	cacheMiss(1,3,hijodeputa);
 	cacheMiss(2,2,hijodeputa);
 	cacheMiss(2,2,hijodeputa);
