@@ -129,6 +129,11 @@ t_valor_variable AnSISOP_obtenerValorCompartida(t_nombre_compartida variable){
 	printf("Le pido al Kernel que me de el valor de la variable compartida: %s\n",variable);
 	enviarMensaje(socketKernel,pedirValorCompartida,variable,strlen(variable));
 
+
+	void* stream;
+
+	recibirMensaje(socketKernel,&stream);
+
 	//RECIBIR UN MENSAJE DICIENDO SI ESA VARIABLE EXISTIA REALMENTE
 
 	//ACA RECIBO EL VALOR QUE SE ASIGNO PARA EL RETURN
@@ -147,6 +152,10 @@ t_valor_variable AnSISOP_asignarValorCompartida(t_nombre_compartida variable,t_v
 	printf("Le pido al Kernel que asigne el valor: %d a la variable compartida: %s\n",valor,variable);
 	enviarMensaje(socketKernel,asignarValorCompartida,&mensaje,strlen(variable));
 
+	void* stream;
+
+	recibirMensaje(socketKernel,&stream);
+
 	//RECIBIR UN MENSAJE DICIENDO SI ESA VARIABLE EXISTIA REALMENTE
 
 	//ACA RECIBO EL VALOR QUE SE ASIGNO PARA EL RETURN
@@ -162,8 +171,7 @@ void AnSISOP_irAlLabel(t_nombre_etiqueta nombre_etiqueta){
 	//Una etiqueta es como un identificador para las funciones del programa ANSISOP
 	//El numero de instruccion al que esta asociada la etiqueta es el numero de la primera instruccion ejecutable de dicha funcion
 	//La funcion devuelve el numero de instruccion al que esta asociada la etiqueta
-	PCB_DATA* pcb2=pcb;
-	puntero = metadata_buscar_etiqueta(nombre_etiqueta,pcb2->indiceEtiquetas,pcb2->sizeEtiquetas);
+	puntero = metadata_buscar_etiqueta(nombre_etiqueta,pcb->indiceEtiquetas,pcb->sizeEtiquetas);
 
 	//Como es el numero de la siguiente instruccion a ejecutar se le asigna al ProgramCounter para que el programa siga a partir de ahi
 
