@@ -319,3 +319,120 @@ int handshakeServidor(int socket,int id, int permitidos[],int cantidadDePermitid
 
 	return id_cliente;
 }
+
+int calcularTamanoDePaquete(int cantInts, int cantStrings, va_list arguments){
+	va_list largoStrings;
+	va_copy(largoStrings, arguments);
+	//va_start(largoStrings, cantStrings);
+	int i;
+	int cantCaracteres = 0;
+	for(i = 0; i < cantStrings + cantInts; i++){
+		if(i > cantInts-1){
+			char* aux = va_arg(largoStrings, char*);
+			cantCaracteres += strlen(aux) + 1;
+		}
+		if(i < cantInts){
+			int aux = va_arg(largoStrings, int);
+			int al =23;
+		}
+
+	}
+	va_end(largoStrings);
+
+
+	return (cantInts + cantStrings + 2) * sizeof(int) + cantCaracteres;//Sumo 2 para saber la cantidad de ints y de strings
+}
+
+void* serializarPaquete(int tamanoDelPack, int cantInts, int cantStrings, va_list parametros){
+
+	va_list arguments;
+	va_copy(arguments, parametros);
+
+	void* stream = malloc(tamanoDelPack);
+
+	int recorrido = 0;
+	memcpy(stream, &cantInts, sizeof(int));
+	recorrido+= sizeof(int);
+	memcpy(stream+recorrido, &cantStrings, sizeof(int));
+	recorrido+= sizeof(int);
+
+
+	int i;
+	for(i = 0; i<cantInts; i++){
+		int valor = va_arg(arguments, int);
+		memcpy(stream+recorrido, &valor, sizeof(int));
+		recorrido+= sizeof(int);
+	}
+
+	for(; i<cantStrings + cantInts; i++){
+		char* copia = va_arg(arguments, char*);
+		int largo = strlen(copia) + 1;
+		memcpy(stream+recorrido, &largo, sizeof(int));
+		recorrido+= sizeof(int);
+		memcpy(stream+recorrido, copia, largo);
+		recorrido += largo;
+	}
+	va_end(arguments);
+
+	return stream;
+
+}
+
+int obtenerTamanoProximoBloquePack(void * stream, int *recorrido){
+	int tamanoProximoBloque;
+	memcpy(&tamanoProximoBloque, stream + *recorrido, sizeof(int));
+	*recorrido += sizeof(int);
+	return tamanoProximoBloque;
+}
+
+int leerINTPack(void * stream, int* recorrido){
+	return obtenerTamanoProximoBloquePack(stream, recorrido);
+}
+
+void deserializarPaquete(void* stream, va_list parametros){
+	int *pos = malloc(sizeof(int));
+	*pos = 0;
+	int cantInts = leerINTPack(stream, pos);
+	int cantStrings = leerINTPack(stream, pos);
+
+	va_list arguments;
+	va_copy(arguments, parametros);
+	int i;
+	for(i=0; i<cantInts; i++){
+		int* entero = va_arg(arguments, int*);
+		int valor = leerINTPack(stream, pos);
+		memcpy(&entero[0], &valor, sizeof(int));
+	}
+
+	for(i=0; i<cantStrings; i++){
+		int tamanoCadena = leerINTPack(stream, pos);
+		char** cadena = va_arg(arguments, char*);
+		*cadena = malloc(tamanoCadena);
+		memcpy(*cadena, stream + (*pos), tamanoCadena);
+		*pos += tamanoCadena;
+	}
+	free(pos);
+	free(stream);
+}
+
+void enviarPaquete(int socket, int cantInts, int cantStrings, ...){
+	va_list arguments;
+
+	va_start(arguments, cantStrings);
+		int tamanoDelPack = calcularTamanoDePaquete(cantInts, cantStrings, arguments);
+		void* stream = serializarPaquete(tamanoDelPack, cantInts, cantStrings, arguments);
+	va_end(arguments);
+
+
+	enviarMensaje(socket, 0, stream, tamanoDelPack);
+	free(stream);
+}
+
+void recibirPaquete(int socket, ...){
+	va_list arguments;
+	va_start(arguments, socket);
+	void * stream;
+	recibirMensaje(socket, &stream);
+	deserializarPaquete(stream, arguments);
+	va_end(arguments);
+}

@@ -103,8 +103,10 @@ void *rutinaConsola(void * arg)
 	void * stream;
 	printf("[Rutina rutinaConsola] - Entramos al hilo de la consola: %d!\n", socketConsola);
 
+
 	while(todaviaHayTrabajo){
 		int a = recibirMensaje(socketConsola,&stream);
+
 		switch(a){
 			case envioScriptAnsisop:{
 				//***Estoy recibiendo un script para inicializar. Creo un neuvo proceso y ya comeizno a rellenarlo con los datos que ya tengo

@@ -259,6 +259,8 @@ int main(void)
 	imprimirConfiguracion();
 
 	conectarConKernel();
+
+
 	pthread_t hiloMaster ;
 	pthread_create(hiloMaster, NULL,rutinaEscucharKernel, NULL);
 	while(!error){//Ciclo donde se ejecutan los comandos principales.
@@ -353,6 +355,7 @@ void* rutinaPrograma(void* parametro){
 
 void* rutinaEscucharKernel(){
 	int* pid = malloc(4);
+
 
 	while(!error){
 		int operacion;

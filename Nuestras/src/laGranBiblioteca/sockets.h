@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <stdarg.h>
 #include <unistd.h>
 #include <errno.h>
 #include <string.h>
@@ -92,5 +91,9 @@ void *deserializador(Header header,int socket);
 * @DESC: Crea un string vacio
 */
 void* serializar (int tipoMensaje, void* contenido, int tamanioMensaje);
+
+void enviarPaquete(int socket, int cantInts, int cantStrings, ...);
+
+void recibirPaquete(int socket, ...);
 
 #endif
