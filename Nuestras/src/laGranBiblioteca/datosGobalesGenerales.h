@@ -68,6 +68,12 @@ typedef struct{
 	char* mensaje;
 }__attribute__((packed)) t_mensajeDeProceso;
 
+typedef struct {
+	int pid;
+	char* flags;
+	char* path;
+}__attribute__((packed)) t_crearArchivo;
+
 enum tipos_de_Acciones{
 	//***Todas las acciones del Kernel al enviar
 		envioPCB = 4,
@@ -79,6 +85,7 @@ enum tipos_de_Acciones{
 		pidFinalizado = 6,
 		enviarDatosCPU = 7,
 		imprimirPorPantalla = 8,
+		envioDelFileDescriptor = 9,
 
 	//***Todas las acciones del CPU
 		asignarValor = 101,
@@ -91,6 +98,7 @@ enum tipos_de_Acciones{
 		signalSemaforo = 108,
 		asignarValorCompartida = 109,
 		pedirValorCompartida = 110,
+		abrirArchivo = 111,
 
 
 	//***Todas las acciones del Memoria

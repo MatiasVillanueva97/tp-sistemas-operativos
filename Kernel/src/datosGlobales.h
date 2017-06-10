@@ -91,12 +91,27 @@ typedef struct{
 	PCB_DATA* pcb;
 } PROCESOS;
 
+//***Tabla de archivos para cada proceso
 
-//*** Tabla para procesos fs
+//*** Tabla global de procesos
+typedef struct {
+	int globalFD;// seria algo asi como la posicion del archivo en la tabla global de archivo pero no se me ocurrio un nombre
+	char* flag;
+}ENTRADA_DE_TABLA_DE_PROCESO;
 
+typedef struct{
+	int pid ;
+	t_list* tablaProceso;
+}ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO;
 
+t_list * tablaGlobalDeProcesos;
 
-///
+//**Tabla global de archivos
+typedef struct {
+	char * path;
+	int cantidad_aperturas;//si esta en 0 entonces sale de la lista
+}ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS;
+t_list * tablaGlobalDeArchivos;
 
 //*** Esta es la escructura que le envio a memoria para que inicialize un programa
 typedef struct{
