@@ -141,7 +141,8 @@ void *rutinaCPU(void * arg)
 				pcb = deserializarPCB(stream);
 
 				// aca como que deberiamos validar que no haya sido finalizado ya este procesito
-				pcb->exitCode = 0;
+				pcb->exitCode = finalizadoCorrectamente;
+				pcb->estadoDeProceso = finalizado;
 				modificarPCB(pcb);
 
 				int* socket = malloc(sizeof(int));

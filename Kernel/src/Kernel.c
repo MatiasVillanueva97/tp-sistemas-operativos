@@ -220,9 +220,9 @@ bool hayProgramasEnNew()
 
 
 //*** Rutina que te pasa los procesos de new a ready - anda bien
-void * planificadorLargoPlazo()
+void * estadoNEW()
 {
-	printf("\n[rutina planificadorLargoPlazo] - Entramos al planificador de largo plazo!\n");
+	printf("\n[rutina estadoNEW] - Entramos al planificador de largo plazo!\n");
 
 	//*** el booleano finPorConsolaDelKernel esta en false desde el inicio, en el momento en el que el kernel quiera frenar la planificiacion esta variable pasara a true, y se frenara la planificacion
 	while(!finPorConsolaDelKernel)
@@ -261,11 +261,11 @@ PCB_DATA* readyToExec()
 	sem_wait(&mutex_cola_Exec);
 
 	//*** Tomo el primer elemento de la cola de ready y lo quito
-	PCB_DATA* pcb = queue_peek(cola_Ready);
-	queue_pop(cola_Ready);
+	PCB_DATA* pcb = queue_pop(cola_Ready);
+
 
 	//*** Valido que el proceso no haya sido terminado ya
-	if(pcb->estadoDeProceso != paraEjecutar)
+	if(pcb->estadoDeProceso == finalizado)
 	{
 		//*** Si ya fue finalizado lo paso a la cola de finalizados
 		sem_wait(&mutex_cola_Finished);
@@ -318,16 +318,16 @@ bool hayCpusDisponibles(){
 		return 0;
 	}
 
-	sem_wait(&mutex_cola_Ready);
+	sem_wait(&mutex_cola_CPUs_libres);
 		bool valor = sum(lista_CPUS,sumaSi) > 0;
-	sem_post(&mutex_cola_Ready);
+	sem_post(&mutex_cola_CPUs_libres);
 
 	return valor;
 }
 
 
 //*** pasar procesos de ready a exec
-void * planificadorCortoPlazo()
+void * estadoReady()
 {
 	printf("\n[Rutina planificadorCortoPlazo] - Entramos al planificador de corto plazo!\n");
 
@@ -336,14 +336,9 @@ void * planificadorCortoPlazo()
 	{
 		if(hayCpusDisponibles() && hayProcesosEnReady())
 		{
-
 			///*** Quito el primer elemento de la cola de ready, valido que no haya sido finalizado y lo pongo en la cola de exec - en caso de no encontrar uno para poder trabajar no hago nada
 			readyToExec();
-
-
 		}
-
-//		sleep(5);
 	}
 	return NULL;
 }
@@ -372,7 +367,7 @@ int execTo()
 	PCB_DATA* pcb=queue_pop(cola_Exec);
 
 	//***Valido que el proceso haya finalizado
-	if(pcb->estadoDeProceso != paraEjecutar && pcb->estadoDeProceso != loEstaUsandoUnaCPU){
+	if(pcb->estadoDeProceso == finalizado){
 
 		//*** si el proceso ya finalizo lo paso a la cola de finished
 		sem_wait(&mutex_cola_Finished);
@@ -406,7 +401,7 @@ int execTo()
 
 
 //*** esta funcion te pasa las cosas de excet a finshed, sea el caso que sea y te manda el mensaje a cnsola de cada cosa que acaba de mover -- Aunque esta accion de enviar a consola las cosas terminadas no deberia estar aca.. este hilo va a cambiar muchisimo
-void* planificadorExtraLargoPlazo(){
+void* estadoEXEC(){
 	int pidParaAvisar;
 
 	bool busqueda(PROCESOS * aviso)
@@ -429,7 +424,7 @@ void* planificadorExtraLargoPlazo(){
 			pidParaAvisar = execTo();
 			sem_post(&mutex_cola_Exec);
 
-			//*** Si hay un pid para avisar
+	/*		//*** Si hay un pid para avisar
 			if(pidParaAvisar>0){
 
 				//*** Buscamos el procesos en la lista de procesos, a travez del pid que acaba de ser psado a finalizado
@@ -453,7 +448,7 @@ void* planificadorExtraLargoPlazo(){
 					}
 				}
 			}
-
+*/
 		}
 		else{
 			sem_post(&mutex_cola_Exec);
@@ -468,6 +463,49 @@ void* planificadorExtraLargoPlazo(){
 /// ********************************************************************************************************///
 /// ***************************************** FIN TERCERA PARTE ********************************************///
 /// ********************************************************************************************************///
+
+
+
+
+
+///avisa a al consola que un proceso termino
+void * estadoFINISHED()
+{
+
+	bool busqueda(PROCESOS * process)	{
+		return (process->pcb->estadoDeProceso == finalizado && !process->avisoAConsola);
+	}
+
+	PROCESOS* proceso = list_find(avisos,busqueda);
+
+
+
+	//*** el booleano finPorConsolaDelKernel esta en false desde el inicio, en el momento en el que el kernel quiera frenar la planificiacion esta variable pasara a true, y se frenara la planificacion
+	while(!finPorConsolaDelKernel)
+	{
+		sem_wait(&mutex_listaProcesos);
+
+		PROCESOS* procesoFinalizado = list_find(avisos, busqueda);
+		// Si la consola no habia sido avisada le envio el mensaje del pid que acaba de finalizar
+
+		enviarMensaje(procesoFinalizado->socketConsola, pidFinalizado, &procesoFinalizado->pid, sizeof(int));//	ACA FALTa VER COMO LO RECIBE JULY (consola)
+
+		printf("Se acaba de mandar a la consola n°: %d, que el proceso %d acaba de finalizar exitosamente!\n", procesoFinalizado->socketConsola, procesoFinalizado->pid);
+
+		// y ahora pongo que el este proceso ya le aviso a su consola
+		procesoFinalizado->avisoAConsola=true;
+
+		sem_post(&mutex_listaProcesos);
+	}
+	return NULL;
+}
+
+
+
+
+
+
+
 
 
 
@@ -586,17 +624,17 @@ int main(void) {
 
 
 	//---ABRO EL HILO DEL PLANIFICADOR A LARGO PLAZO---//
-	pthread_t hilo_planificadorLargoPlazo;
-	pthread_create(&hilo_planificadorLargoPlazo, NULL, planificadorLargoPlazo, NULL);
-
-
-	pthread_t hilo_planificadorExtraLargoPlazo;
-	pthread_create(&hilo_planificadorExtraLargoPlazo, NULL, planificadorExtraLargoPlazo, NULL);
+	pthread_t hilo_estadoNEW;
+	pthread_create(&hilo_estadoNEW, NULL, estadoNEW, NULL);
 
 
 	//---ABRO EL HILO DEL PLANIFICADOR A CORTO PLAZO---//
-	pthread_t hilo_planificadorCortoPlazo;
-	pthread_create(&hilo_planificadorCortoPlazo, NULL, planificadorCortoPlazo, NULL);
+	pthread_t hilo_estadoReady;
+	pthread_create(&hilo_estadoReady, NULL, estadoReady, NULL);
+
+
+	pthread_t hilo_estadoEXEC;
+	pthread_create(&hilo_estadoEXEC, NULL, estadoEXEC, NULL);
 
 
 	//----ME PONGO A ESCUCHAR CONEXIONES---//
@@ -605,11 +643,10 @@ int main(void) {
 
 
 	pthread_join(hilo_aceptarConexiones_Cpu_o_Consola, NULL);
-	pthread_join(hilo_planificadorCortoPlazo, NULL);
-	pthread_join(hilo_planificadorLargoPlazo, NULL);
+	pthread_join(hilo_estadoReady, NULL);
+	pthread_join(hilo_estadoNEW, NULL);
+	pthread_join(hilo_estadoEXEC, NULL);
 	pthread_join(hilo_consolaKernel, NULL);
-
-	pthread_join(hilo_planificadorExtraLargoPlazo, NULL);
 
 	while(1)
 	{

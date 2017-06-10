@@ -52,8 +52,8 @@ enum exitCode{
 	finalizadoCorrectamente =0,
 };
 
-enum estadosProcesos
-{
+enum estadosProcesos{
+	finalizado = 0,
 	loEstaUsandoUnaCPU = 1,
 	bloqueado = 2,
 	paraEjecutar = 53,

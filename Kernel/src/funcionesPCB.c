@@ -54,6 +54,7 @@ void modificarPCB(PCB_DATA * pcbNuevo){
 		pcb2->indiceCodigo = pcbNuevo->indiceCodigo;
 		pcb2->indiceEtiquetas = pcbNuevo->indiceEtiquetas;
 		pcb2->indiceStack = pcbNuevo->indiceStack;
+		pcb2->estadoDeProceso = pcbNuevo->estadoDeProceso;
 		pcb2->programCounter = pcbNuevo->programCounter;
 	}
 
