@@ -192,15 +192,66 @@ void *rutinaCPU(void * arg)
 				}
 			}break;
 
-			case 2324324: // crear archv:
-			{
+			case abrirArchivo: {// crear archivo PD : NO PROBAR TODAVIA PORQUE NO ANDA, OK?
+				//HAY QUE INICIALIZAR LAS TABLAS EN EL KERNEL
+						t_crearArchivo estructura = deserializarCrearArchivo(stream);//TODO: Deserializar esta cosa
+						 if(archivoExiste(estructura.path)){
+							ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS auxiliar;
+							int i = 0;
+							bool sonDeIgualPath(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS * elementos){
+									i++;
+									return  elementos->path == estructura.path;
+							}
+							auxiliar = list_find(tablaGlobalDeArchivos,(void *)sonDeIgualPath);
+							auxiliar->cantidad_aperturas ++;
 
-			}break;
+							ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(estructura.pid);
+							nuevaEntradaTablaDeProceso(i,estructura.flags,aux->tablaProceso);
+							enviarMensaje(socketCPU,envioDelFileDescriptor,list_size(aux->tablaProceso),sizeof(int));
 
-			case 232344324: // leer archv:
-			{
+						 }else if (string_contains(estructura.flags,"c")){
+								enviarMensaje(socketFS,creacionDeArchivo,estructura.path,strlen(estructura.path)+1);
+								void* stream2;
+								recibirMensaje(socketFS,stream2);
+								bool rta = (bool*)stream2;
+								if (rta){
+										ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS nuevaEntrada = {
+												.path = estructura.path,
+												.cantidad_de_aperturas = 1,
+										};
 
-			}break;
+										list_add(tablaGlobalDeArchivos,nuevaEntrada);
+										ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(estructura.pid);
+
+										nuevaEntradaTablaDeProceso(list_size(tablaGlobalDeArchivos),estructura.flags,aux->tablaProceso);
+
+										enviarMensaje(socketCPU,envioDelFileDescriptor,list_size(aux->tablaProceso),sizeof(int));
+								}
+						 }
+						//else{EXITCODE}
+					 }
+						break;
+
+					case leerArchivo: // leer PD : NO PROBAR TODAVIA PORQUE NO ANDA, OK?
+					{
+						t_archivo estructura = deserializart_Archivo(stream);
+
+						ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(estructura.pid);
+
+						 ENTRADA_DE_TABLA_DE_PROCESO entrada_a_evaluar= list_get(aux->tablaProceso,estructura.fileDescriptor);
+						if (string_contains(entrada_a_evaluar.flag,"r")){
+							ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS entrada_de_archivo= list_get(tablaGlobalDeArchivos,entrada_a_evaluar.globalFD);
+							void* pedido = serializarPedidoFS(strlen(entrada_de_archivo.path)+1, 0,entrada_de_archivo.path);//Patos, basicamente
+							enviarMensaje(socketFS,obtenerDatosDeArchivo,(void *) pedido,strlen(entrada_de_archivo.path)+1 );
+							void* contenido;
+
+							if(recibirMensaje(socketFS,contenido) != respuestaBooleanaDeFs){
+							//enviarMensaje(socketCPU,10,void * contenido,);algo
+							}
+
+						}
+
+					}break;
 
 			//TE MANDO UN NOMBRE DE UN SEMAFORO Y QUIERO QUE HAGAS UN WAIT, ME DEBERIAS DECIR SI ME BLOQUEO O NO
 			case waitSemaforo:{
