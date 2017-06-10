@@ -444,7 +444,7 @@ void AnSISOP_escribir(t_descriptor_archivo descriptor_archivo, void* informacion
 
 	void* stream;
 
-	recibirMensaje(socketKernel,&stream);
+	//recibirMensaje(socketKernel,&stream);
 
 	//RECIBIR UN MENSAJE DICIENDO SI ESE ARCHIVO EXISTIA REALMENTE
 

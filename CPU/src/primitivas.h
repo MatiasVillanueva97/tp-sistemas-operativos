@@ -44,7 +44,7 @@
 //WORK IN PROGRESS
 	t_valor_variable AnSISOP_asignarValorCompartida(t_nombre_compartida variable,t_valor_variable valor);
 
-//WORK IN PROGRESS
+	//IMPLEMENTADA
 	void AnSISOP_irAlLabel(t_nombre_etiqueta t_nombre_etiqueta);
 
 	//IMPLEMENTADA
@@ -67,26 +67,26 @@
 //WORK IN PROGRESS
 	void AnSISOP_signal(t_nombre_semaforo identificador_semaforo);
 
-//NI SIQUIERA COMENZADA
-t_puntero AnSISOP_reservar(t_valor_variable espacio);
+//WORK IN PROGRESS
+	t_puntero AnSISOP_reservar(t_valor_variable espacio);
 
-//NI SIQUIERA COMENZADA
-void AnSISOP_liberar(t_puntero puntero);
+//WORK IN PROGRESS
+	void AnSISOP_liberar(t_puntero puntero);
 
-//NI SIQUIERA COMENZADA
-t_descriptor_archivo AnSISOP_abrir(t_direccion_archivo direccion,t_banderas flags);
+//WORK IN PROGRESS
+	t_descriptor_archivo AnSISOP_abrir(t_direccion_archivo direccion,t_banderas flags);
 
-//NI SIQUIERA COMENZADA
-void AnSISOP_borrar(t_descriptor_archivo direccion);
+//WORK IN PROGRESS
+	void AnSISOP_borrar(t_descriptor_archivo direccion);
 
-//NI SIQUIERA COMENZADA
-void AnSISOP_cerrar(t_descriptor_archivo descriptor_archivo);
+//WORK IN PROGRESS
+	void AnSISOP_cerrar(t_descriptor_archivo descriptor_archivo);
 
-//NI SIQUIERA COMENZADA
-void AnSISOP_moverCursor(t_descriptor_archivo descriptor_archivo,t_valor_variable posicion);
+//WORK IN PROGRESS
+	void AnSISOP_moverCursor(t_descriptor_archivo descriptor_archivo,t_valor_variable posicion);
 
 //WORK IN PROGRESS
 	void AnSISOP_escribir(t_descriptor_archivo descriptor_archivo,void* informacion, t_valor_variable tamanio);
 
-//NI SIQUIERA COMENZADA
-void AnSISOP_leer(t_descriptor_archivo descriptor_archivo,t_puntero informacion, t_valor_variable tamanio);
+//WORK IN PROGRESS
+	void AnSISOP_leer(t_descriptor_archivo descriptor_archivo,t_puntero informacion, t_valor_variable tamanio);
