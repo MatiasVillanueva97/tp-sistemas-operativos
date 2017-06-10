@@ -32,8 +32,7 @@ void conectarConMemoria();
 void conectarConKernel();
 void pedidoValido(int*,void*,int);
 void recibirInstruccion(void*,char**,int,int*);
-
-
+void sigusr1_handler(int signal);
 
 
 int main(void)
@@ -64,6 +63,10 @@ int main(void)
 			.AnSISOP_leer = AnSISOP_leer
 	};
 
+	signal_SIGUSR1 = false;
+
+	signal(SIGUSR1, sigusr1_handler);
+
 	printf("Inicializando CPU.....\n\n");
 
 
@@ -87,7 +90,7 @@ int main(void)
 
  	//ESTE GRAN WHILE(1) ESTA COMENTADO PORQUE EN REALIDAD ES PARA RECIBIR UN PCB ATRAS DE OTRO Y EJECUTARLOS HASTA QUE EL KERNEL ME DIGA MORITE HIPPIE
 
-	while(1){
+	while(!signal_SIGUSR1){
 
  		int quantumRestante = datosIniciales->quantum;
 
@@ -109,7 +112,7 @@ int main(void)
 
 		//En el caso que esta sea la primera vez que el proceso entra en una CPU su indice de stack estara NULL porque no habia entradas anteriores, entonces se inicializa la primera entrada
 		if(pcb->indiceStack == NULL){
-			pcb->indiceStack = malloc(sizeof(t_entrada));
+			pcb->indiceStack = realloc(pcb->indiceStack,sizeof(t_entrada));
 			pcb->indiceStack->argumentos = list_create();
 			pcb->indiceStack->variables = list_create();
 			pcb->cantidadDeEntradas++;
@@ -165,7 +168,9 @@ int main(void)
 		//ACA AVISARLE A KERNEL QUE TERMINE QUE CON ESTE PROCESO
 		if(terminoPrograma){
 			printf("Envie el PCB al Kernel porque termine toda su ejecucion\n");
-			enviarMensaje(socketKernel,enviarPCBaTerminado,serializarPCB(pcb),tamanoPCB(pcb) + 4);
+			void* pcbSerializado = serializarPCB(pcb);
+			enviarMensaje(socketKernel,enviarPCBaTerminado,pcbSerializado,tamanoPCB(pcb));
+			free(pcbSerializado);
 		}
 
 /*		if(bloqueado){
@@ -175,7 +180,9 @@ int main(void)
 */
 		if(quantumRestante == 0){
 			printf("Envie el PCB al Kernel porque me quede sin quantum\n");
-			enviarMensaje(socketKernel,enviarPCBaReady,serializarPCB(pcb),tamanoPCB(pcb) + 4);
+			void* pcbSerializado = serializarPCB(pcb);
+			enviarMensaje(socketKernel,enviarPCBaReady,pcbSerializado,tamanoPCB(pcb));
+			free(pcbSerializado);
 		}
 
 		//libera la memoria malloqueada por el PCB
@@ -254,15 +261,8 @@ void recibirInstruccion(void *stream, char** instruccion, int size, int* accion)
 	}
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
+void sigusr1_handler(int signal) {
+	signal_SIGUSR1 = true;
+	puts("Se recibio una SIGUSR1, la CPU se desconectara luego de terminada la ejecucion");
+	return;
+}

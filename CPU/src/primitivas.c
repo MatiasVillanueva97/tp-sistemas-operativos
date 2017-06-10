@@ -39,6 +39,13 @@ t_puntero AnSISOP_definirVariable(t_nombre_variable identificador_variable){
 	variable->ID = identificador_variable;
 	variable->direccion = direccion;
 
+	if(direccion.page > pcb->contPags_pcb){
+		printf("STACK OVERFLOW page: %d , offset: %d , size: %d \n",direccion.page,direccion.offset,direccion.size);
+		terminoPrograma = true;
+		pcb->exitCode = -5;
+		return -1;
+	}
+
 	//Si es un digito es un argumento debido a la sintaxis del lenguaje, entonces se debe almacenar en argumentos
 	if(isdigit(identificador_variable)){
 		list_add(pcb->indiceStack[pcb->contextoActual].argumentos,variable);
@@ -153,7 +160,8 @@ void AnSISOP_irAlLabel(t_nombre_etiqueta nombre_etiqueta){
 	//Una etiqueta es como un identificador para las funciones del programa ANSISOP
 	//El numero de instruccion al que esta asociada la etiqueta es el numero de la primera instruccion ejecutable de dicha funcion
 	//La funcion devuelve el numero de instruccion al que esta asociada la etiqueta
-	puntero = metadata_buscar_etiqueta(nombre_etiqueta,pcb->indiceEtiquetas,pcb->cantidadDeEtiquetas);
+	PCB_DATA* pcb2=pcb;
+	puntero = metadata_buscar_etiqueta(nombre_etiqueta,pcb2->indiceEtiquetas,pcb2->sizeEtiquetas);
 
 	//Como es el numero de la siguiente instruccion a ejecutar se le asigna al ProgramCounter para que el programa siga a partir de ahi
 
@@ -181,7 +189,6 @@ void AnSISOP_llamarSinRetorno(t_nombre_etiqueta etiqueta){
 
 	//Para que luego siga la ejecucion en la funcion
 	AnSISOP_irAlLabel(etiqueta);
-
 
 }
 
@@ -223,8 +230,8 @@ void AnSISOP_finalizar(void){
 		terminoPrograma = true;
 
 		//Se libera la memoria de esa entrada
-		list_destroy_and_destroy_elements(pcb->indiceStack[pcb->contextoActual].argumentos, free);
-		list_destroy_and_destroy_elements(pcb->indiceStack[pcb->contextoActual].variables, free);
+		list_destroy_and_destroy_elements(pcb->indiceStack[pcb->contextoActual].argumentos,free);
+		list_destroy_and_destroy_elements(pcb->indiceStack[pcb->contextoActual].variables,free);
 
 
 	}else{
@@ -235,8 +242,8 @@ void AnSISOP_finalizar(void){
 		pcb->programCounter = pcb->indiceStack[pcb->contextoActual].retPos;
 
 		//Se libera la memoria de esa entrada y se vuelve a ajustar el tamanio del indice del stack para tener siempre el tamanio exacto
-		list_destroy_and_destroy_elements(pcb->indiceStack[pcb->contextoActual].argumentos, free);
-		list_destroy_and_destroy_elements(pcb->indiceStack[pcb->contextoActual].variables, free);
+		list_destroy_and_destroy_elements(pcb->indiceStack[pcb->contextoActual].argumentos,free);
+		list_destroy_and_destroy_elements(pcb->indiceStack[pcb->contextoActual].variables,free);
 		pcb->indiceStack = realloc(pcb->indiceStack,sizeof(t_entrada) * (pcb->contextoActual));
 
 		//Se actualiza cual es el Contexto Actual de Ejecucion
@@ -259,8 +266,8 @@ void AnSISOP_retornar(t_valor_variable retorno){
 	pcb->programCounter = pcb->indiceStack[pcb->contextoActual].retPos;
 
 	//Se libera la memoria de esa entrada y se vuelve a ajustar el tamanio del indice del stack para tener siempre el tamanio exacto
-	list_destroy_and_destroy_elements(pcb->indiceStack[pcb->contextoActual].argumentos, free);
-	list_destroy_and_destroy_elements(pcb->indiceStack[pcb->contextoActual].variables, free);
+	list_destroy_and_destroy_elements(pcb->indiceStack[pcb->contextoActual].argumentos,free);
+	list_destroy_and_destroy_elements(pcb->indiceStack[pcb->contextoActual].variables,free);
 	pcb->indiceStack = realloc(pcb->indiceStack,sizeof(t_entrada) * (pcb->contextoActual));
 
 	//Se actualiza cual es el Contexto Actual de Ejecucion
@@ -337,6 +344,11 @@ void AnSISOP_escribir(t_descriptor_archivo descriptor_archivo, void* informacion
 
 	enviarMensaje(socketKernel,mensajeParaEscribir,mensajeSerializado,tamanoMensajeAEscribir(tamanio));
 
+	free(mensajeSerializado);
+
+	//Este free anda si imprime un literal y rompe si es una variable
+	//free(informacion);
+
 	//RECIBIR UN MENSAJE DICIENDO SI ESE ARCHIVO EXISTIA REALMENTE
 
 	//RECIBIR UN MENSAJE DICIENDO SI  PODIA ACCEDER A ESE ARCHIVO REALMENTE
@@ -403,30 +415,6 @@ t_valor_variable pedirValorAMemoria(t_direccion direccion){
 	free(stream);
 
 	return valorVariable;
-
-	//ESTO PARECIA MEJOR PERO NO ANDA, DESPUES REVISALO
-
-/*
-	if(recibirMensaje(socketMemoria,&stream) == RespuestaBooleanaDeMemoria){
-		booleano = stream;
-	}
-	else{
-		perror("Error en la accion maquinola");
-	};
-
-	if(*booleano != 1){
-		free(stream);
-		if(recibirMensaje(socketMemoria,&stream) == lineaDeCodigo){
-			valor = stream;
-			valorVariable = *valor;
-		}else{
-			perror("Error en la accion maquinola");
-		}
-	}else{
-		terminoPrograma = true;
-		pcb->exitCode = -5;		//Excepcion de Memoria STACK OVERFLOW
-	}
-*/
 }
 
 void escribirValorEnMemoria(t_direccion direccion, t_valor_variable valor){
@@ -458,13 +446,7 @@ void escribirValorEnMemoria(t_direccion direccion, t_valor_variable valor){
 			perror("Error en la accion maquinola");
 		}
 	}
-//ESTO PARECIA MEJOR PERO NO ANDA, DESPUES REVISALO
-/*	if(recibirMensaje(socketMemoria,&stream) == RespuestaBooleanaDeMemoria){
-		respuesta = stream;
-	}else{
-		perror("Error en la accion maquinola");
-	}
-*/
+
 	if(*respuesta != 1){
 		terminoPrograma = true;
 		pcb->exitCode = -5;
@@ -499,12 +481,13 @@ t_direccion calcularNuevaDireccion(){
 		asignarDireccionRespectoA(pcb->contextoActual, &direccion);
 	}
 
-	if(direccion.offset > datosIniciales->size_pag){
+	direccion.size = 4;
+
+	if(direccion.offset + direccion.size > datosIniciales->size_pag){
 		direccion.page++;
 		direccion.offset = 0;
 	}
 
-	direccion.size = 4;
 
 	printf("Calcule una nueva direccion jaja saludos, esta es: %d %d %d \n",direccion.page,direccion.offset,direccion.size);
 
@@ -545,15 +528,20 @@ t_direccion ultimaDireccionArg(int contexto){
 	t_direccion direccion;
 	t_variable* variable;
 
-	//Si no hay elementos en la lista devuelve una direccion erronea
-	if(list_is_empty(pcb->indiceStack[contexto].argumentos)){
+	//Si no hay argumentos declarados en ningun contexto se devuelve una direccion erronea
+	if(contexto == -1){
 		direccion.page = -1;
 		direccion.offset = -1;
 		direccion.size = -1;
 	}else{
-		//Devuelve el ultimo elemento de la lista de argumentos
-		variable = list_get(pcb->indiceStack[contexto].argumentos,list_size(pcb->indiceStack[contexto].argumentos)-1);
-		direccion = variable->direccion;
+		//Si no hay elementos en la lista se busca en el contexto anterior
+		if(list_is_empty(pcb->indiceStack[contexto].argumentos)){
+			direccion = ultimaDireccionArg(contexto - 1);
+		}else{
+			//Devuelve el ultimo elemento de la lista de argumentos
+			variable = list_get(pcb->indiceStack[contexto].argumentos,list_size(pcb->indiceStack[contexto].argumentos)-1);
+			direccion = variable->direccion;
+		}
 	}
 
 	return direccion;
@@ -564,17 +552,21 @@ t_direccion ultimaDireccionVar(int contexto){
 	t_direccion direccion;
 	t_variable* variable;
 
-	//Si no hay elementos en la lista devuelve una direccion erronea
-	if(list_is_empty(pcb->indiceStack[contexto].variables)){
+	//Si no hay variables declaradas en ningun contexto se devuelve una direccion erronea
+	if(contexto == -1){
 		direccion.page = -1;
 		direccion.offset = -1;
 		direccion.size = -1;
 	}else{
-		//Devuelve el ultimo elemento de la lista de variables
-		variable = list_get(pcb->indiceStack[contexto].variables,list_size(pcb->indiceStack[contexto].variables)-1);
-		direccion = variable->direccion;
+		//Si no hay elementos en la lista se busca en el contexto anterior
+		if(list_is_empty(pcb->indiceStack[contexto].variables)){
+			direccion = ultimaDireccionVar(contexto-1);
+		}else{
+			//Devuelve el ultimo elemento de la lista de variables
+			variable = list_get(pcb->indiceStack[contexto].variables,list_size(pcb->indiceStack[contexto].variables)-1);
+			direccion = variable->direccion;
+		}
 	}
-
 	return direccion;
 }
 
@@ -608,7 +600,7 @@ void asignarDireccionRespectoA(int contexto, t_direccion* direccion){
 	}
 	if(direccionInvalida(variable) && direccionInvalida(argumento)){
 		direccion->page = paginaInicio();
-		direccion->offset = 4;
+		direccion->offset = 0;
 	}
 }
 

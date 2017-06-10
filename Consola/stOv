@@ -1,18 +1,18 @@
 #!/usr/bin/ansisop
 begin
-	f
+	prim
 end
 
-function f
+function prim
 	variables a
 	a=1
 	prints n a
-	g
+	seg
 end
 
-function g
+function seg
 	variables a
 	a=0
 	prints n a
-	f
+	prim
 end
