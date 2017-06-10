@@ -8,6 +8,7 @@ C_SRCS += \
 ../src/funcionesCPU.c \
 ../src/funcionesConsola.c \
 ../src/funcionesConsolaKernel.c \
+../src/funcionesFS.c \
 ../src/funcionesMemoria.c \
 ../src/funcionesPCB.c \
 ../src/funcionesSemaforos.c 
@@ -17,6 +18,7 @@ OBJS += \
 ./src/funcionesCPU.o \
 ./src/funcionesConsola.o \
 ./src/funcionesConsolaKernel.o \
+./src/funcionesFS.o \
 ./src/funcionesMemoria.o \
 ./src/funcionesPCB.o \
 ./src/funcionesSemaforos.o 
@@ -26,6 +28,7 @@ C_DEPS += \
 ./src/funcionesCPU.d \
 ./src/funcionesConsola.d \
 ./src/funcionesConsolaKernel.d \
+./src/funcionesFS.d \
 ./src/funcionesMemoria.d \
 ./src/funcionesPCB.d \
 ./src/funcionesSemaforos.d 

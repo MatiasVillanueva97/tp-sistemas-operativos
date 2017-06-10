@@ -25,6 +25,8 @@ int tamanoMensajeAEscribir(int tamanioContenido);
 
 void* serializarMensajeAEscribir(t_mensajeDeProceso mensaje, int tamanio);
 
+char* generarStringFlags(t_banderas flags);
+
 
 
 
@@ -303,31 +305,114 @@ void AnSISOP_signal(t_nombre_semaforo identificador_semaforo){
 
 t_puntero AnSISOP_reservar(t_valor_variable espacio){
 	puts("AnSISOP_reservar");
+
+	t_archivo pedidoMemoriaDinamica;
+	pedidoMemoriaDinamica.pid = pcb->pid;
+	pedidoMemoriaDinamica.fileDescriptor = espacio;
+
+	enviarMensaje(socketKernel,reservarMemoria,(void*)&pedidoMemoriaDinamica,sizeof(int)*2);
+
+	void* stream;
+
+	recibirMensaje(socketKernel,&stream);
+
+	//aca manejar errores
+
 	return 0x10;
 }
 
 void AnSISOP_liberar(t_puntero puntero){
 	puts("AnSISOP_liberar");
 
+	void* stream;
+
+	recibirMensaje(socketKernel,&stream);
+
+	//aca manejar errores
+
 }
 
 t_descriptor_archivo AnSISOP_abrir(t_direccion_archivo direccion,t_banderas flags){
 	puts("AnSISOP_abrir");
+
+	t_crearArchivo archivo;
+	archivo.pid = pcb->pid;
+	archivo.path = direccion;
+	archivo.flags = generarStringFlags(flags);
+
+	if(strcmp(archivo.flags,"") == 0){
+		printf("Quiere abrir un archivo sin permisos \n");
+		//inserte error aqui
+		return 0;
+	}
+
+	//serializar el puto archivo todo
+
+	void* archivoSerializado;// = serializarArchivo(archivo);
+
+	enviarMensaje(socketKernel,abrirArchivo,archivoSerializado,strlen(direccion)+1 + strlen(archivo.flags)+1 + sizeof(int)*3);
+
+	free(archivoSerializado);
+
+	void* stream;
+
+	recibirMensaje(socketKernel,&stream);
+
+	//inserte manejo de errores aqui
+
 	return 0;
 }
 
 void AnSISOP_borrar(t_descriptor_archivo direccion){
 	puts("AnSISOP_borrar");
 
+	t_archivo archivo;
+	archivo.pid = pcb->pid;
+	archivo.fileDescriptor = direccion;
+
+	enviarMensaje(socketKernel,borrarArchivoCPU,(void*)&archivo,sizeof(int)*2);
+
+	void* stream;
+
+	recibirMensaje(socketKernel,&stream);
+
+	//Aca manejar algun error
+
 }
 
 void AnSISOP_cerrar(t_descriptor_archivo descriptor_archivo){
 	puts("AnSISOP_cerrar");
 
+	t_archivo archivo;
+	archivo.pid = pcb->pid;
+	archivo.fileDescriptor = descriptor_archivo;
+
+	enviarMensaje(socketKernel,cerrarArchivo,(void*)&archivo,sizeof(int)*2);
+
+	void* stream;
+
+	recibirMensaje(socketKernel,&stream);
+
+	//Aca manejar algun error
+
 }
 
 void AnSISOP_moverCursor(t_descriptor_archivo descriptor_archivo,t_valor_variable posicion){
 	puts("AnSISOP_moverCursor");
+
+
+	t_moverCursor archivo;
+	archivo.pid = pcb->pid;
+	archivo.fileDescriptor = descriptor_archivo;
+	archivo.posicion = posicion;
+
+	enviarMensaje(socketKernel,moverCursorArchivo,(void*)&archivo,sizeof(int)*3);
+
+	void* stream;
+
+	recibirMensaje(socketKernel,&stream);
+
+	//Aca manejar algun error
 
 }
 
@@ -349,6 +434,10 @@ void AnSISOP_escribir(t_descriptor_archivo descriptor_archivo, void* informacion
 	//Este free anda si imprime un literal y rompe si es una variable
 	//free(informacion);
 
+	void* stream;
+
+	recibirMensaje(socketKernel,&stream);
+
 	//RECIBIR UN MENSAJE DICIENDO SI ESE ARCHIVO EXISTIA REALMENTE
 
 	//RECIBIR UN MENSAJE DICIENDO SI  PODIA ACCEDER A ESE ARCHIVO REALMENTE
@@ -357,6 +446,15 @@ void AnSISOP_escribir(t_descriptor_archivo descriptor_archivo, void* informacion
 
 void AnSISOP_leer(t_descriptor_archivo descriptor_archivo,t_puntero informacion, t_valor_variable tamanio){
 	puts("AnSISOP_leer");
+
+	//insertar una estructura bastante suculenta
+
+	void* stream;
+
+	recibirMensaje(socketKernel,&stream);
+
+	//Inserte manejo de errores aqui
+
 }
 
 
@@ -609,7 +707,16 @@ int paginaInicio(){
 	return pcb->contPags_pcb - datosIniciales->size_stack + 1;
 }
 
+char* generarStringFlags(t_banderas flags){
+	char* ret = string_new();
 
+	if(flags.lectura) strcat(ret,"r");
+	if(flags.escritura) strcat(ret,"w");
+	if(flags.creacion) strcat(ret,"c");
+
+	return ret;
+
+}
 
 
 

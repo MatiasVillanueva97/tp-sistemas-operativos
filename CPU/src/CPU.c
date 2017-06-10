@@ -173,11 +173,13 @@ int main(void)
 			free(pcbSerializado);
 		}
 
-/*		if(bloqueado){
+		if(bloqueado){
 			printf("Envie el PCB al Kernel porque se bloqueo el programa\n");
-			enviarMensaje(socketKernel,enviarPCBaWaiting,serializarPCB(pcb),tamanoPCB(pcb) + 4);
+			void* pcbSerializado = serializarPCB(pcb);
+			enviarMensaje(socketKernel,enviarPCBaBloqueado,pcbSerializado,tamanoPCB(pcb) + 4);
+			free(pcbSerializado);
 		}
-*/
+
 		if(quantumRestante == 0){
 			printf("Envie el PCB al Kernel porque me quede sin quantum\n");
 			void* pcbSerializado = serializarPCB(pcb);

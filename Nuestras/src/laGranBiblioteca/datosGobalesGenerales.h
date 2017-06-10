@@ -74,6 +74,17 @@ typedef struct {
 	char* path;
 }__attribute__((packed)) t_crearArchivo;
 
+typedef struct {
+	int pid;
+	int fileDescriptor;
+}__attribute__((packed)) t_archivo;
+
+typedef struct {
+	int pid;
+	int fileDescriptor;
+	int posicion;
+}__attribute__((packed)) t_moverCursor;
+
 enum tipos_de_Acciones{
 	//***Todas las acciones del Kernel al enviar
 		envioPCB = 4,
@@ -99,6 +110,13 @@ enum tipos_de_Acciones{
 		asignarValorCompartida = 109,
 		pedirValorCompartida = 110,
 		abrirArchivo = 111,
+		cerrarArchivo = 112,
+		borrarArchivoCPU = 113,
+		leerArchivo = 114,
+		moverCursorArchivo = 115,
+		reservarMemoria = 116,
+		liberarMemoria = 117,
+		enviarPCBaBloqueado = 118,
 
 
 	//***Todas las acciones del Memoria
