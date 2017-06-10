@@ -24,7 +24,6 @@ PCB_DATA* crearPCB(char * scriptAnsisop, int pid, int contPags){
 
 void modificarPCB(PCB_DATA * pcbNuevo){
 
-
 	bool busqueda(PROCESOS * aviso)
 	{
 		if(aviso->pid == pcbNuevo->pid)
@@ -39,12 +38,9 @@ void modificarPCB(PCB_DATA * pcbNuevo){
 	}
 	sem_wait(&mutex_listaProcesos);
 
-
 	PCB_DATA * pcb2 = ((PROCESOS*)list_find(avisos, busqueda))->pcb;
 
-
 	if(pcb2 != NULL){
-	puts("\n\nDentro del if\n");
 	destruirPCB_Local(*pcb2);
 		pcb2->cantidadDeEntradas = pcbNuevo->cantidadDeEntradas;
 		pcb2->cantidadDeEtiquetas = pcbNuevo->cantidadDeEtiquetas;

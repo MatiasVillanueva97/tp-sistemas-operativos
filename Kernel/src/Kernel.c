@@ -485,17 +485,21 @@ void * estadoFINISHED()
 	{
 		sem_wait(&mutex_listaProcesos);
 
-		PROCESOS* procesoFinalizado = list_find(avisos, busqueda);
 		// Si la consola no habia sido avisada le envio el mensaje del pid que acaba de finalizar
-
-		enviarMensaje(procesoFinalizado->socketConsola, pidFinalizado, &procesoFinalizado->pid, sizeof(int));//	ACA FALTa VER COMO LO RECIBE JULY (consola)
-
-		printf("Se acaba de mandar a la consola n°: %d, que el proceso %d acaba de finalizar exitosamente!\n", procesoFinalizado->socketConsola, procesoFinalizado->pid);
-
-		// y ahora pongo que el este proceso ya le aviso a su consola
-		procesoFinalizado->avisoAConsola=true;
+		PROCESOS* procesoFinalizado = list_find(avisos, busqueda);
 
 		sem_post(&mutex_listaProcesos);
+
+		if(procesoFinalizado != NULL)
+		{
+			enviarMensaje(procesoFinalizado->socketConsola, pidFinalizado, &procesoFinalizado->pid, sizeof(int));
+
+			printf("Se acaba de mandar a la consola n°: %d, que el proceso %d acaba de finalizar con exit code: %d\n", procesoFinalizado->socketConsola, procesoFinalizado->pid, procesoFinalizado->pcb->exitCode);
+
+			// y ahora pongo que el este proceso ya le aviso a su consola
+			procesoFinalizado->avisoAConsola=true;
+		}
+
 	}
 	return NULL;
 }
@@ -579,6 +583,7 @@ int main(void) {
 		avisos = list_create();
 		lista_CPUS = list_create();
 		listaDeEsperaSemaforos = list_create();
+		tablaGlobalDeArchivos = list_create();
 
 		//***Inicializo las colas
 		cola_New = queue_create();
@@ -623,18 +628,19 @@ int main(void) {
 
 
 
-	//---ABRO EL HILO DEL PLANIFICADOR A LARGO PLAZO---//
 	pthread_t hilo_estadoNEW;
 	pthread_create(&hilo_estadoNEW, NULL, estadoNEW, NULL);
 
 
-	//---ABRO EL HILO DEL PLANIFICADOR A CORTO PLAZO---//
 	pthread_t hilo_estadoReady;
 	pthread_create(&hilo_estadoReady, NULL, estadoReady, NULL);
 
 
 	pthread_t hilo_estadoEXEC;
 	pthread_create(&hilo_estadoEXEC, NULL, estadoEXEC, NULL);
+
+	pthread_t hilo_estadoFINISHED;
+	pthread_create(&hilo_estadoFINISHED, NULL, estadoFINISHED, NULL);
 
 
 	//----ME PONGO A ESCUCHAR CONEXIONES---//
@@ -646,6 +652,7 @@ int main(void) {
 	pthread_join(hilo_estadoReady, NULL);
 	pthread_join(hilo_estadoNEW, NULL);
 	pthread_join(hilo_estadoEXEC, NULL);
+	pthread_join(hilo_estadoFINISHED,NULL);
 	pthread_join(hilo_consolaKernel, NULL);
 
 	while(1)

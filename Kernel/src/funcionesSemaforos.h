@@ -32,7 +32,7 @@ int sema_valorDelSemaforo(char * sem);
 bool sema_existeSemaforo(char * sem);
 
 
-void sema_proceso_wait(char* sem);
+int sema_proceso_wait(char* sem);
 
 void sema_despertarProceso(char* sem);
 

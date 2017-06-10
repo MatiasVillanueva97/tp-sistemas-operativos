@@ -1,0 +1,6 @@
+begin
+wait SEM1
+prints l "hice el primer wait"
+wait SEM2
+prints l "ojala llegue aqui algun dia"
+end

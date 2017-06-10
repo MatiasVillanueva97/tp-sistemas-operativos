@@ -97,6 +97,9 @@ enum tipos_de_Acciones{
 		enviarDatosCPU = 7,
 		imprimirPorPantalla = 8,
 		envioDelFileDescriptor = 9,
+		bloquearProceso = 10,
+		errorSemaforo = 11,
+
 
 	//***Todas las acciones del CPU
 		asignarValor = 101,

@@ -88,6 +88,15 @@ PCB_DATA * cpu_pedirPCBDeExec(){
 	return pcb;
 }
 
+
+bool proceso_EstaFinalizado(int pid)
+{
+	return false;
+}
+
+
+
+
 void *rutinaCPU(void * arg)
 {
 	int socketCPU = (int)arg;
@@ -141,13 +150,14 @@ void *rutinaCPU(void * arg)
 				pcb = deserializarPCB(stream);
 
 				// aca como que deberiamos validar que no haya sido finalizado ya este procesito
-				pcb->exitCode = finalizadoCorrectamente;
+
+				if(pcb->exitCode != excepcionMemoria && !proceso_EstaFinalizado(pcb->pid))
+				{
+					pcb->exitCode = finalizadoCorrectamente;
+				}
+
 				pcb->estadoDeProceso = finalizado;
 				modificarPCB(pcb);
-
-				int* socket = malloc(sizeof(int));
-
-				*socket = socketCPU;
 
 				sem_wait(&mutex_cola_CPUs_libres);
 						estaCPU->esperaTrabajo = true;
@@ -162,9 +172,13 @@ void *rutinaCPU(void * arg)
 				pcb = deserializarPCB(stream);
 				modificarPCB(pcb);
 
-				queue_pop(cola_Exec);
-				queue_push(cola_Ready, pcb);
+				sem_wait(&mutex_cola_Exec);
+					queue_pop(cola_Exec);
+				sem_post(&mutex_cola_Exec);
 
+				sem_wait(&mutex_cola_Ready);
+					queue_push(cola_Ready, pcb);
+				sem_post(&mutex_cola_Ready);
 
 				/// Revisar esto - y poner semaforos
 			}break;
@@ -194,7 +208,7 @@ void *rutinaCPU(void * arg)
 
 			case abrirArchivo: {// crear archivo PD : NO PROBAR TODAVIA PORQUE NO ANDA, OK?
 				//HAY QUE INICIALIZAR LAS TABLAS EN EL KERNEL
-						t_crearArchivo estructura = deserializarCrearArchivo(stream);//TODO: Deserializar esta cosa
+/*						t_crearArchivo estructura = deserializarCrearArchivo(stream);//TODO: Deserializar esta cosa
 						 if(archivoExiste(estructura.path)){
 							ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS auxiliar;
 							int i = 0;
@@ -251,43 +265,60 @@ void *rutinaCPU(void * arg)
 
 						}
 
+*/
 					}break;
-
 			//TE MANDO UN NOMBRE DE UN SEMAFORO Y QUIERO QUE HAGAS UN WAIT, ME DEBERIAS DECIR SI ME BLOQUEO O NO
 			case waitSemaforo:{
 
+				puts("Entro al waitSemaforo\n");
 				char* nombreSemaforo = leerString(stream);
 
 				//***Verifico si existe el semaforo que cpu me mando
 				if(sema_existeSemaforo(nombreSemaforo)){
 
+					puts("Entro al si existe semaforo\n");
 					//***Si el semaforo existe realizo el wait para este semaforo
 					sema_proceso_wait(nombreSemaforo);
 
-					//***Le aviso a la cpu que la acabamos de bloquear
-//					enviarMensaje(socketCPU,bloquearProceso,&accionCPU,sizeof(int)); // agregar al enum bloquearProceso . le paso accion cpu para mandarle algo
 
-					//***Recibo el pcb que voy a bloquear
-					recibirMensaje(socketCPU, &stream); // puedo reciclar el stream?
-					pcb = deserializarPCB(stream);
+					if(sema_indiceDeSemaforo(nombreSemaforo)<0)
+					{
 
-					//***Cambio el estado de este pcb a bloqueado
-					pcb->estadoDeProceso = bloqueado;
+						puts("Entro al si eel indice en menor a 0\n");
 
-					//***Agrego a la lista de espera que el pid que acabo de recibir esta esperando por el semaforo que se me habia indicado
-					//hacer semaforo para esta lista
+						//***Le aviso a la cpu que la acabamos de bloquear
+						enviarMensaje(socketCPU,bloquearProceso,&accionCPU,sizeof(int)); // agregar al enum bloquearProceso . le paso accion cpu para mandarle algo
 
-					esperaDeSemaforo* esp_sem=malloc(sizeof(esperaDeSemaforo));
+						//***Recibo el pcb que voy a bloquear
+						recibirMensaje(socketCPU, &stream); // puedo reciclar el stream?
+						pcb = deserializarPCB(stream);
 
-					esp_sem->pid=pcb->pid;
-					esp_sem->sem=nombreSemaforo;
+						//***Cambio el estado de este pcb a bloqueado
+						pcb->estadoDeProceso = bloqueado;
 
-					list_add(listaDeEsperaSemaforos,esp_sem);
+						imprimirPCB(pcb);
+
+						//***Agrego a la lista de espera que el pid que acabo de recibir esta esperando por el semaforo que se me habia indicado
+						//hacer semaforo para esta lista
+
+						esperaDeSemaforo* esp_sem=malloc(sizeof(esperaDeSemaforo));
+
+						esp_sem->pid=pcb->pid;
+						esp_sem->sem=nombreSemaforo;
+
+						list_add(listaDeEsperaSemaforos,esp_sem);
+					}
+					else
+					{
+
+						puts("Entro al si el indice es 0 o mas\n");
+					}
 				}
 				else{
 					//***Sino existe le digo que me esta pidiendo cualqueir cosa
 
-//					enviarMensaje(socketCPU,errorSemaforo,&accionCPU,sizeof(int)); // agregar al enum errorsemafor . le paso accion cpu para mandarle algo
+					puts("Entro al si hay un error en el semaforo\n");
+					enviarMensaje(socketCPU,errorSemaforo,&accionCPU,sizeof(int)); // agregar al enum errorsemafor . le paso accion cpu para mandarle algo
 				}
 
 
@@ -310,7 +341,7 @@ void *rutinaCPU(void * arg)
 				else{
 					//***Sino existe le digo que me esta pidiendo cualqueir cosa
 
-//					enviarMensaje(socketCPU,errorSemaforo,&accionCPU,sizeof(int)); // agregar al enum errorsemafor . le paso accion cpu para mandarle algo
+				enviarMensaje(socketCPU,errorSemaforo,&accionCPU,sizeof(int)); // agregar al enum errorsemafor . le paso accion cpu para mandarle algo
 				}
 
 			}break;

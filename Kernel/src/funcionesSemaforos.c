@@ -40,11 +40,13 @@ bool sema_existeSemaforo(char * sem){
 
 
 
-void sema_proceso_wait(char* sem){
+int sema_proceso_wait(char* sem){
 	if(sema_valorDelSemaforo(sem) <= 0){
 		//agregarSemaforoAListaDeEspera();
 	}
 	sema_decrementarSEM(sem);
+
+	return sema_valorDelSemaforo(sem);
 }
 
 

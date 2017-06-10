@@ -106,6 +106,7 @@ typedef struct{
 
 t_list * tablaGlobalDeProcesos;
 
+
 //**Tabla global de archivos
 typedef struct {
 	char * path;
