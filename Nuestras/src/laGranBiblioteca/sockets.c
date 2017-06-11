@@ -415,7 +415,7 @@ void deserializarPaquete(void* stream, va_list parametros){
 	free(stream);
 }
 
-void enviarPaquete(int socket, int cantInts, int cantStrings, ...){
+void enviarPaquete(int socket,int tipoDeMensaje, int cantInts, int cantStrings, ...){
 	va_list arguments;
 
 	va_start(arguments, cantStrings);
@@ -424,15 +424,16 @@ void enviarPaquete(int socket, int cantInts, int cantStrings, ...){
 	va_end(arguments);
 
 
-	enviarMensaje(socket, 0, stream, tamanoDelPack);
+	enviarMensaje(socket,tipoDeMensaje, stream, tamanoDelPack);
 	free(stream);
 }
 
-void recibirPaquete(int socket, ...){
+int recibirPaquete(int socket, ...){
 	va_list arguments;
 	va_start(arguments, socket);
 	void * stream;
-	recibirMensaje(socket, &stream);
+	int rta = recibirMensaje(socket, &stream);
 	deserializarPaquete(stream, arguments);
 	va_end(arguments);
+	return rta;
 }

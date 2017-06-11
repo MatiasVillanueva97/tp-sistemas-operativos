@@ -92,8 +92,8 @@ void *deserializador(Header header,int socket);
 */
 void* serializar (int tipoMensaje, void* contenido, int tamanioMensaje);
 
-void enviarPaquete(int socket, int cantInts, int cantStrings, ...);
+void enviarPaquete(int socket,int tipoDeMensaje, int cantInts, int cantStrings, ...);
 
-void recibirPaquete(int socket, ...);
+int recibirPaquete(int socket, ...);
 
 #endif

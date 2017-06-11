@@ -176,7 +176,7 @@ int* obtenerBloques (char* path){
 	return bloques;
 
 }
-FILE* abrirArchivo (int numeroDeBloque){
+FILE* aperturaDeArchivo (int numeroDeBloque){
 	char* pathTotal = obtenerRutaTotal(string_itoa(numeroDeBloque),"Bloques");
 	string_append(&pathTotal,".bin");
 	return fopen(pathTotal,"r");
@@ -198,7 +198,7 @@ void* obtenerDatos(char* path,int offset, int size){
 	int sizeLeido = 0;
 	void* contenido = malloc(size);
 	while(bloques[bloqueInicial] != NULL&&size!=0){ // revisarEsto
-			FILE * archivo = abrirArchivo(*(bloques+bloqueInicial));
+			FILE * archivo = aperturaDeArchivo(*(bloques+bloqueInicial));
 			if(offset+size <= bloqueSize){
 				void* contenidoDelBloque= leerBloque(archivo,offset,size);
 				memcpy(contenido+sizeLeido,contenidoDelBloque,size);

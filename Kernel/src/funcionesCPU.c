@@ -93,6 +93,33 @@ bool proceso_EstaFinalizado(int pid)
 {
 	return false;
 }
+bool archivoExiste(char* path){
+
+	bool sonDeIgualPath(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS * elementos){
+								return  elementos->path == path;
+	}
+	ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* auxiliar;
+	auxiliar = list_find(tablaGlobalDeArchivos,(void *)sonDeIgualPath);
+	if(auxiliar == NULL){
+			return false;}
+	else{return true; }
+}
+
+ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO * encontrarElDeIgualPid(int pid){
+			ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux;
+			bool sonDeIgualPid(ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO * elementos){
+				return  elementos->pid == pid;
+				}
+			aux = list_find(tablaGlobalDeProcesos,(void *)sonDeIgualPid);
+						return aux;
+}
+
+void nuevaEntradaTablaDeProceso(int df, char* flags, t_list* tablaProceso){
+ENTRADA_DE_TABLA_DE_PROCESO * nuevaEntradaProceso = malloc(sizeof(ENTRADA_DE_TABLA_DE_PROCESO));
+nuevaEntradaProceso->globalFD = df;
+nuevaEntradaProceso->flags = string_duplicate(flags);
+list_add(tablaProceso, nuevaEntradaProceso);
+}
 
 
 
@@ -150,7 +177,7 @@ void *rutinaCPU(void * arg)
 				pcb = deserializarPCB(stream);
 
 				// aca como que deberiamos validar que no haya sido finalizado ya este procesito
-
+				//ACA HAY QUE CAMBIAR ESTO
 				if(pcb->exitCode != excepcionMemoria && !proceso_EstaFinalizado(pcb->pid))
 				{
 					pcb->exitCode = finalizadoCorrectamente;
@@ -206,9 +233,9 @@ void *rutinaCPU(void * arg)
 				}
 			}break;
 
-			case abrirArchivo: {// crear archivo PD : NO PROBAR TODAVIA PORQUE NO ANDA, OK?
+	/*		case abrirArchivo: {// crear archivo PD : NO PROBAR TODAVIA PORQUE NO ANDA, OK?
 				//HAY QUE INICIALIZAR LAS TABLAS EN EL KERNEL
-/*						t_crearArchivo estructura = deserializarCrearArchivo(stream);//TODO: Deserializar esta cosa
+						t_crearArchivo estructura = deserializarCrearArchivo(stream);//TODO: Deserializar esta cosa
 						 if(archivoExiste(estructura.path)){
 							ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS auxiliar;
 							int i = 0;
@@ -242,7 +269,7 @@ void *rutinaCPU(void * arg)
 										enviarMensaje(socketCPU,envioDelFileDescriptor,list_size(aux->tablaProceso),sizeof(int));
 								}
 						 }
-						//else{EXITCODE}
+						//else{enviarMensaje(socketCPU,finalizarProcesoErroneamente,(void*)-2, sizeo(int));
 					 }
 						break;
 
@@ -252,21 +279,25 @@ void *rutinaCPU(void * arg)
 
 						ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(estructura.pid);
 
-						 ENTRADA_DE_TABLA_DE_PROCESO entrada_a_evaluar= list_get(aux->tablaProceso,estructura.fileDescriptor);
-						if (string_contains(entrada_a_evaluar.flag,"r")){
-							ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS entrada_de_archivo= list_get(tablaGlobalDeArchivos,entrada_a_evaluar.globalFD);
-							void* pedido = serializarPedidoFS(strlen(entrada_de_archivo.path)+1, 0,entrada_de_archivo.path);//Patos, basicamente
-							enviarMensaje(socketFS,obtenerDatosDeArchivo,(void *) pedido,strlen(entrada_de_archivo.path)+1 );
+						 ENTRADA_DE_TABLA_DE_PROCESO *entrada_a_evaluar= list_get(aux->tablaProceso,estructura.fileDescriptor);
+						if (string_contains(entrada_a_evaluar->flags,"r")){
+							ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_de_archivo= list_get(tablaGlobalDeArchivos,entrada_a_evaluar.globalFD);
+							int tamanioDelPedido =strlen(entrada_de_archivo->path)+1 ;
+							void* pedido = serializarPedidoFS(entrada_de_archivo->path,0,tamanioDelPedido);//Patos, basicamente
+							enviarMensaje(socketFS,obtenerDatosDeArchivo,(void *) pedido,tamanioDelPedido);
 							void* contenido;
 
 							if(recibirMensaje(socketFS,contenido) != respuestaBooleanaDeFs){
-							//enviarMensaje(socketCPU,10,void * contenido,);algo
+							//enviarMensaje(socketCPU,enviarContenidoDeArchivo, contenidoDeArchivo,tamanioDelPedido)
 							}
-
+							else {
+								//enviarMensaje(socketCPU,finalizarProcesoErroneamente,(void*)-1,sizeof(int));
+							}
+							//enviarMensaje(socketCPU,finalizarProcesoErroneamente,(void*)-3,sizeof(int));
 						}
 
-*/
-					}break;
+				}break;
+				*/
 			//TE MANDO UN NOMBRE DE UN SEMAFORO Y QUIERO QUE HAGAS UN WAIT, ME DEBERIAS DECIR SI ME BLOQUEO O NO
 			case waitSemaforo:{
 
