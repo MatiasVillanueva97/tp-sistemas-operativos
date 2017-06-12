@@ -378,23 +378,19 @@ int execTo()
 		return  pcb->pid;
 	}
 	else{
-		queue_push(cola_Exec, pcb);
-	}
-
-	//*** Valido que el proceso este bloqueado, si lo esta lo mando a wait
-	if(pcb->estadoDeProceso == bloqueado){
-
+		//*** Valido que el proceso este bloqueado, si lo esta lo mando a wait
+		if(pcb->estadoDeProceso == bloqueado){
 			//*** si el proceso esta  bloqueado lo paso ala cola de bloqueado
 			sem_wait(&mutex_cola_Wait);
 				queue_push(cola_Wait,pcb);
 			sem_post(&mutex_cola_Wait);
-
 			//*** Retorno el pid del proceso que acabo de psar a bloqueado
 			return  pcb->pid;
 		}
 		else{
 			queue_push(cola_Exec, pcb);
 		}
+	}
 
 	return -1;
 }
