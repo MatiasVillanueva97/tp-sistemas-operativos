@@ -91,7 +91,11 @@ PCB_DATA * cpu_pedirPCBDeExec(){
 
 bool proceso_EstaFinalizado(int pid)
 {
-	return false;
+	bool busqueda(PROCESOS * aviso){
+	  return aviso->pid == pid;
+	 }
+	 PCB_DATA* pcb = ((PROCESOS*)list_find(avisos, busqueda))->pcb;
+	 return pcb->estadoDeProceso == finalizado;
 }
 bool archivoExiste(char* path){
 
@@ -114,7 +118,7 @@ ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO * encontrarElDeIgualPid(int pid){
 						return aux;
 }
 
-void nuevaEntradaTablaDeProceso(int df, char* flags, t_list* tablaProceso){
+void agregarATablaDeProceso(int df, char* flags, t_list* tablaProceso){
 ENTRADA_DE_TABLA_DE_PROCESO * nuevaEntradaProceso = malloc(sizeof(ENTRADA_DE_TABLA_DE_PROCESO));
 nuevaEntradaProceso->globalFD = df;
 nuevaEntradaProceso->flags = string_duplicate(flags);
@@ -204,14 +208,12 @@ void *rutinaCPU(void * arg)
 
 				// aca como que deberiamos validar que no haya sido finalizado ya este procesito
 				//ACA HAY QUE CAMBIAR ESTO
-				if(pcb->exitCode != excepcionMemoria && !proceso_EstaFinalizado(pcb->pid))
+				if(pcb->exitCode != excepcionMemoria || !proceso_EstaFinalizado(pcb->pid))
 				{
 					pcb->exitCode = finalizadoCorrectamente;
+					pcb->estadoDeProceso = finalizado;
+					modificarPCB(pcb);
 				}
-
-				pcb->estadoDeProceso = finalizado;
-				modificarPCB(pcb);
-
 				sem_wait(&mutex_cola_CPUs_libres);
 						estaCPU->esperaTrabajo = true;
 				sem_post(&mutex_cola_CPUs_libres);
@@ -243,6 +245,9 @@ void *rutinaCPU(void * arg)
 				t_mensajeDeProceso msj = deserializarMensajeAEscribir(stream);
 
 					int tamanoDelBuffer =  tamanoMensajeAEscribir(strlen(msj.mensaje)+1);
+					PCB_DATA* pcbaux;
+					pcbaux = buscarPCB(msj.pid);
+					bool respuestaACPU = false;
 
 				//***Si el fileDescriptro es 1, se imprime por consola
 				if(msj.descriptorArchivo == 1){
@@ -252,7 +257,7 @@ void *rutinaCPU(void * arg)
 					enviarMensaje(socketConsola,imprimirPorPantalla,stream2,tamanoDelBuffer);
 				}
 				else{
-					/*ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(msj.pid);
+					ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(msj.pid);
 
 					ENTRADA_DE_TABLA_DE_PROCESO *entrada_a_evaluar= list_get(aux->tablaProceso,msj.descriptorArchivo);
 
@@ -262,27 +267,28 @@ void *rutinaCPU(void * arg)
 							int offset = 0;//DEBE CAMBIAR.QUE ES UN CURSOR?
 							//void* pedidoEscritura = serializarPedidoDeEscritura(entrada_de_archivo->path,offset,tamanoDelBuffer,msj.mensaje);
 							//enviarMensaje(socketFS,guardarDatosDeArchivo,(void *) pedidoEscritura,tamanoDelBuffer);
-							enviarPaquete(socketFS,2,2,offset,tamanoDelBuffer,entrada_de_archivo->path,msj.mensaje);
+							//enviarPaquete(socketFS,2,2,offset,tamanoDelBuffer,entrada_de_archivo->path,msj.mensaje);
 							void* contenido;
 							recibirMensaje(socketFS,contenido);
 							int respuestaFS = leerInt(contenido);
-
-							if(respuestaFS){
-								//enviarMensaje(socketCPU,respuestaOKEscritura, respuestaFS,sizeof(int));
-							}else {
-								//enviarMensaje(socketCPU,finalizarProcesoErroneamente,(void*)-1,sizeof(int));
+							respuestaACPU = respuestaFS;
+							if(!respuestaFS){
+								pcbaux->exitCode = -1;
+								pcbaux->estadoDeProceso = finalizado;
 							}
 						}else{
-							//enviarMensaje(socketCPU,finalizarProcesoErroneamente,(void*)-3,sizeof(int));
+							pcbaux->exitCode = -3;
+							pcbaux->estadoDeProceso = finalizado;
 						}
 					}else{
-						//enviarMensaje(socketCPU,finalizarProcesoErroneamente,(void*)-2,sizeof(int));
+						pcbaux->exitCode = -2;
+						pcbaux->estadoDeProceso = finalizado;
 					}
-*/
+					//enviarMensaje(socketCPU,respuestaEscritura,respuestaACPU,sizeof(bool));
 				}
 			}break;
 
-	/*		case abrirArchivo: {// crear archivo PD : NO PROBAR TODAVIA PORQUE NO ANDA, OK?
+		case abrirArchivo: {// crear archivo PD : NO PROBAR TODAVIA PORQUE NO ANDA, OK?
 					t_crearArchivo estructura = deserializarCrearArchivo(stream);
 					enviarMensaje(socketFS,validacionDerArchivo,estructura.path,sizeof(int));
 					void * stream2;
@@ -320,9 +326,12 @@ void *rutinaCPU(void * arg)
 									enviarMensaje(socketCPU,envioDelFileDescriptor,list_size(aux->tablaProceso),sizeof(int));
 											}
 									 }
-									else{
-										//enviarMensaje(socketCPU,finalizarProcesoErroneamente,(void*)-2, sizeo(int));
-									}
+						else{
+							PCB_DATA* pcbaux;
+							pcbaux = buscarPCB(estructura.pid);
+							pcbaux->exitCode = -2;
+							pcbaux->estadoDeProceso = finalizado;
+						}
 			 }
 			break;
 
@@ -330,8 +339,10 @@ void *rutinaCPU(void * arg)
 
 				t_archivo estructura;
 				estructura = *((t_archivo*)stream);
-
+				PCB_DATA* pcbaux;
+				pcbaux = buscarPCB(estructura.pid);
 				ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(estructura.pid);
+
 
 				ENTRADA_DE_TABLA_DE_PROCESO* entrada_a_evaluar= list_get(aux->tablaProceso,estructura.fileDescriptor);
 
@@ -345,40 +356,51 @@ void *rutinaCPU(void * arg)
 						enviarMensaje(socketFS,obtenerDatosDeArchivo,(void *) pedidoDeLectura,tamanioDelPedido);
 						void* contenido;
 
-						if(recibirMensaje(socketFS,contenido) != respuestaBooleanaDeFs){
-							//enviarMensaje(socketCPU,enviarContenidoDeArchivo, contenido,tamanioDelPedido)
-						}else {
-							//enviarMensaje(socketCPU,finalizarProcesoErroneamente,(void*)-1,sizeof(int));
+						if(recibirMensaje(socketFS,contenido) == respuestaConContenidoDeFs){
+							//enviarMensaje(socketCPU,respuestaLectura, contenido,tamanioDelPedido)
+							}
+						else{
+								pcbaux->exitCode = -1;
+								pcbaux->estadoDeProceso = finalizado;
 								}
-					}else{
-						//enviarMensaje(socketCPU,finalizarProcesoErroneamente,(void*)-3,sizeof(int));
-						}
-				}else{
-					//enviarMensaje(socketCPU,finalizarProcesoErroneamente,(void*)-2,sizeof(int));
+							}else{
+								pcbaux->exitCode = -3;
+								pcbaux->estadoDeProceso = finalizado;
+							}
+							}else{
+							pcbaux->exitCode = -2;
+							pcbaux->estadoDeProceso = finalizado;
 				}
+				//enviarMensaje(socketCPU,noLaburesCPU,,sizeof(bool));
 			}break;
-*/
+
 
 			//TE MANDO UN NOMBRE DE UN SEMAFORO Y QUIERO QUE HAGAS UN WAIT, ME DEBERIAS DECIR SI ME BLOQUEO O NO
 			case waitSemaforo:{
 
-				puts("Entro al waitSemaforo\n");
-				char* nombreSemaforo;
-				PCB_DATA * pcbRecibido = deserializarPCBYSemaforo(stream, &nombreSemaforo);
-				bool respuestaParaCPU = SEM_wait(nombreSemaforo, pcbRecibido);
-				enviarMensaje(socketCPU,respuestaBooleanaKernel, &respuestaParaCPU, sizeof(bool));
+							puts("Entro al waitSemaforo\n");
+							char* nombreSemaforo;
 
-			}break;
+							PCB_DATA* pcbRecibido = deserializarPCBYSemaforo(stream, &nombreSemaforo);
+							//Validar que el proceso no haya sido finalizado, responder siempre a la CPU si
+							PCB_DATA* pcbDelProcesoActual = modificarPCB(pcbRecibido);
+							bool respuestaParaCPU = SEM_wait(nombreSemaforo, pcbDelProcesoActual);
+							free(nombreSemaforo);
+
+							enviarMensaje(socketCPU,respuestaBooleanaKernel, &respuestaParaCPU, sizeof(bool));
+
+						}break;
 
 			//TE MANDO UN NOMBRE DE UN SEMAFORO Y QUIERO QUE HAGAS UN SIGNAL, LE DEBERIAS INFORMAR A ALGUIEN SI ESTABA BLOQUEADO EN UN WAIT DE ESTE SEMAFORO
 			case signalSemaforo:{
-				puts("Entro al signalSemaforo\n");
-				char* nombreSemaforo;
-				PCB_DATA * pcbRecibido = deserializarPCBYSemaforo(stream, &nombreSemaforo);
-				bool respuestaParaCPU = SEM_signal(nombreSemaforo, pcbRecibido);
-				enviarMensaje(socketCPU,respuestaBooleanaKernel, &respuestaParaCPU, sizeof(bool));
-
-			}break;
+					puts("Entro al signalSemaforo\n");
+					char* nombreSemaforo;
+					PCB_DATA* pcbRecibido = deserializarPCBYSemaforo(stream, &nombreSemaforo);
+					PCB_DATA* pcbDelProcesoActual = modificarPCB(pcbRecibido);
+					bool respuestaParaCPU = SEM_signal(nombreSemaforo, pcbDelProcesoActual);
+					free(nombreSemaforo);
+					enviarMensaje(socketCPU,respuestaBooleanaKernel, &respuestaParaCPU, sizeof(bool));
+				}break;
 
 			//TE MANDO UNA ESTRUCTURA CON {VALOR, NOMBRE_VARIABLE(CHAR*)} PARA QUE LE ASIGNES ESE VALOR A DICHA VARIABLE
 			case asignarValorCompartida:{

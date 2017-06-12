@@ -25,6 +25,7 @@ PCB_DATA* crearPCB(char * scriptAnsisop, int pid, int contPags);
  * función que crea el pcb a partir de un scriptAnsisop, un pid y el contador de las paginas asignadas a memoria
  *
  */
+PCB_DATA* buscarPCB (int pid);
 
 void modificarPCB(PCB_DATA * pcbNuevo);
 

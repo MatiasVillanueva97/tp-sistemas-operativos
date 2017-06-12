@@ -21,6 +21,13 @@ PCB_DATA* crearPCB(char * scriptAnsisop, int pid, int contPags){
 
 	return pcb;
 }
+//Sincronizame señor!Por favor!
+PCB_DATA * buscarPCB (int pid){
+	bool sonIguales(PROCESOS* elemento){
+		return elemento->pid == pid;
+	}
+	return((PROCESOS*)list_find(avisos,sonIguales))->pcb;
+}
 
 void modificarPCB(PCB_DATA * pcbNuevo){
 

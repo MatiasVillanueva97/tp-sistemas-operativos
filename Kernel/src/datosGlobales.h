@@ -84,6 +84,7 @@ typedef struct{
 	int socketConsola;
 	bool avisoAConsola;
 	PCB_DATA* pcb;
+	char* semaforoTomado;
 } PROCESOS;
 
 //***Tabla de archivos para cada proceso
