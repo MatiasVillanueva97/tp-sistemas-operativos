@@ -110,7 +110,7 @@ ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO * encontrarElDeIgualPid(int pid){
 			bool sonDeIgualPid(ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO * elementos){
 				return  elementos->pid == pid;
 				}
-			aux = list_find(tablaGlobalDeProcesos,(void *)sonDeIgualPid);
+			aux = list_find(tablaGlobalDeArchivosDeProcesos,(void *)sonDeIgualPid);
 						return aux;
 }
 
@@ -119,6 +119,32 @@ ENTRADA_DE_TABLA_DE_PROCESO * nuevaEntradaProceso = malloc(sizeof(ENTRADA_DE_TAB
 nuevaEntradaProceso->globalFD = df;
 nuevaEntradaProceso->flags = string_duplicate(flags);
 list_add(tablaProceso, nuevaEntradaProceso);
+}
+
+void* serializarPedidoFs(int size, int offset,char* path){
+	void *contenido = malloc(4+strlen(path)+sizeof(int)*2);
+	memcpy(contenido,&size,sizeof(int));
+	memcpy(contenido+sizeof(int),&offset,sizeof(int));
+	int tamanoRuta = strlen(path);
+	memcpy(contenido+sizeof(int)*2,&tamanoRuta,sizeof(int));
+	memcpy(contenido+sizeof(int)*3,path,strlen(path));
+	return contenido;
+}
+//Espero que esto ande
+t_crearArchivo deserializarCrearArchivo(void* stream){
+	t_crearArchivo mensaje;
+		memcpy(&mensaje.pid,stream,sizeof(int));
+		int tamanoContenido;
+		memcpy(&tamanoContenido,stream + sizeof(int), sizeof(int));
+		char* contenidoAuxiliar = malloc(tamanoContenido);
+		memcpy(contenidoAuxiliar,stream + sizeof(int) * 2, tamanoContenido);
+		mensaje.flags = contenidoAuxiliar;
+		int tamanoContenido2;
+		memcpy(&tamanoContenido2,stream + sizeof(int)*3 + tamanoContenido, sizeof(int));
+		char* contenidoAuxiliar2 = malloc(tamanoContenido2);
+		memcpy(contenidoAuxiliar2,stream + sizeof(int) * 4 +tamanoContenido, tamanoContenido2);
+		mensaje.path = contenidoAuxiliar2;
+		return mensaje;
 }
 
 
@@ -216,88 +242,123 @@ void *rutinaCPU(void * arg)
 
 				t_mensajeDeProceso msj = deserializarMensajeAEscribir(stream);
 
+					int tamanoDelBuffer =  tamanoMensajeAEscribir(strlen(msj.mensaje)+1);
 
 				//***Si el fileDescriptro es 1, se imprime por consola
 				if(msj.descriptorArchivo == 1){
 					void * stream2 = serializarMensajeAEscribir(msj,strlen(msj.mensaje)+1);
 					int socketConsola = consola_buscarSocketConsola(msj.pid);
-					int s =  tamanoMensajeAEscribir(strlen(msj.mensaje)+1);
 
-					enviarMensaje(socketConsola,imprimirPorPantalla,stream2,s);
+					enviarMensaje(socketConsola,imprimirPorPantalla,stream2,tamanoDelBuffer);
 				}
 				else{
-					//*** Si es otro valor trabajar aca
+					/*ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(msj.pid);
 
-					/// validar que ese proceso (el pid dentro de esta estructura) tenga los permisos
-					//evniar algo a filesystem
+					ENTRADA_DE_TABLA_DE_PROCESO *entrada_a_evaluar= list_get(aux->tablaProceso,msj.descriptorArchivo);
+
+					ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_de_archivo= list_get(tablaGlobalDeArchivos,entrada_a_evaluar->globalFD);
+					if (entrada_de_archivo != NULL){
+						if (string_contains(entrada_a_evaluar->flags,"r")){
+							int offset = 0;//DEBE CAMBIAR.QUE ES UN CURSOR?
+							//void* pedidoEscritura = serializarPedidoDeEscritura(entrada_de_archivo->path,offset,tamanoDelBuffer,msj.mensaje);
+							//enviarMensaje(socketFS,guardarDatosDeArchivo,(void *) pedidoEscritura,tamanoDelBuffer);
+							enviarPaquete(socketFS,2,2,offset,tamanoDelBuffer,entrada_de_archivo->path,msj.mensaje);
+							void* contenido;
+							recibirMensaje(socketFS,contenido);
+							int respuestaFS = leerInt(contenido);
+
+							if(respuestaFS){
+								//enviarMensaje(socketCPU,respuestaOKEscritura, respuestaFS,sizeof(int));
+							}else {
+								//enviarMensaje(socketCPU,finalizarProcesoErroneamente,(void*)-1,sizeof(int));
+							}
+						}else{
+							//enviarMensaje(socketCPU,finalizarProcesoErroneamente,(void*)-3,sizeof(int));
+						}
+					}else{
+						//enviarMensaje(socketCPU,finalizarProcesoErroneamente,(void*)-2,sizeof(int));
+					}
+*/
 				}
 			}break;
 
 	/*		case abrirArchivo: {// crear archivo PD : NO PROBAR TODAVIA PORQUE NO ANDA, OK?
-				//HAY QUE INICIALIZAR LAS TABLAS EN EL KERNEL
-						t_crearArchivo estructura = deserializarCrearArchivo(stream);//TODO: Deserializar esta cosa
-						 if(archivoExiste(estructura.path)){
-							ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS auxiliar;
-							int i = 0;
-							bool sonDeIgualPath(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS * elementos){
-									i++;
-									return  elementos->path == estructura.path;
-							}
-							auxiliar = list_find(tablaGlobalDeArchivos,(void *)sonDeIgualPath);
-							auxiliar->cantidad_aperturas ++;
+					t_crearArchivo estructura = deserializarCrearArchivo(stream);
+					enviarMensaje(socketFS,validacionDerArchivo,estructura.path,sizeof(int));
+					void * stream2;
+					recibirMensaje(socketFS,stream2);
+					int existeArchivo = leerInt(stream2);
+					 if(existeArchivo){
+						ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS * auxiliar;
+						int i = 0;
+						bool sonDeIgualPath(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS * elementos){
+								i++;
+								return  elementos->path == estructura.path;
+						}
+						auxiliar = list_find(tablaGlobalDeArchivos,(void *)sonDeIgualPath);
+						auxiliar->cantidad_aperturas++;
 
-							ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(estructura.pid);
-							nuevaEntradaTablaDeProceso(i,estructura.flags,aux->tablaProceso);
-							enviarMensaje(socketCPU,envioDelFileDescriptor,list_size(aux->tablaProceso),sizeof(int));
+						ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(estructura.pid);
+						agregarATablaDeProceso(i,estructura.flags,aux->tablaProceso);
+						enviarMensaje(socketCPU,envioDelFileDescriptor,list_size(aux->tablaProceso),sizeof(int));
 
-						 }else if (string_contains(estructura.flags,"c")){
+						}else if (string_contains(estructura.flags,"c")){
 								enviarMensaje(socketFS,creacionDeArchivo,estructura.path,strlen(estructura.path)+1);
 								void* stream2;
 								recibirMensaje(socketFS,stream2);
 								bool rta = (bool*)stream2;
 								if (rta){
-										ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS nuevaEntrada = {
-												.path = estructura.path,
-												.cantidad_de_aperturas = 1,
-										};
+									ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS * nuevaEntrada;
+									nuevaEntrada->path = estructura.path;
+									nuevaEntrada->cantidad_aperturas = 1;
 
-										list_add(tablaGlobalDeArchivos,nuevaEntrada);
-										ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(estructura.pid);
+									list_add(tablaGlobalDeArchivos,nuevaEntrada);
+									ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(estructura.pid);
 
-										nuevaEntradaTablaDeProceso(list_size(tablaGlobalDeArchivos),estructura.flags,aux->tablaProceso);
+									agregarATablaDeProceso(list_size(tablaGlobalDeArchivos),estructura.flags,aux->tablaProceso);
 
-										enviarMensaje(socketCPU,envioDelFileDescriptor,list_size(aux->tablaProceso),sizeof(int));
+									enviarMensaje(socketCPU,envioDelFileDescriptor,list_size(aux->tablaProceso),sizeof(int));
+											}
+									 }
+									else{
+										//enviarMensaje(socketCPU,finalizarProcesoErroneamente,(void*)-2, sizeo(int));
+									}
+			 }
+			break;
+
+			case leerArchivo:{ // leer PD : NO PROBAR TODAVIA PORQUE NO ANDA, OK?
+
+				t_archivo estructura;
+				estructura = *((t_archivo*)stream);
+
+				ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(estructura.pid);
+
+				ENTRADA_DE_TABLA_DE_PROCESO* entrada_a_evaluar= list_get(aux->tablaProceso,estructura.fileDescriptor);
+
+				ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_de_archivo= list_get(tablaGlobalDeArchivos,entrada_a_evaluar->globalFD);
+				if (entrada_de_archivo != NULL){
+					if (string_contains(entrada_a_evaluar->flags,"r")){
+
+						int tamanioDelPedido =strlen(entrada_de_archivo->path)+1 ;
+						int offset = 0;//DEBE CAMBIAR.QUE ES UN CURSOR?
+						void* pedidoDeLectura = serializarPedidoFs(tamanioDelPedido,offset,entrada_de_archivo->path);//Patos, basicamente
+						enviarMensaje(socketFS,obtenerDatosDeArchivo,(void *) pedidoDeLectura,tamanioDelPedido);
+						void* contenido;
+
+						if(recibirMensaje(socketFS,contenido) != respuestaBooleanaDeFs){
+							//enviarMensaje(socketCPU,enviarContenidoDeArchivo, contenido,tamanioDelPedido)
+						}else {
+							//enviarMensaje(socketCPU,finalizarProcesoErroneamente,(void*)-1,sizeof(int));
 								}
-						 }
-						//else{enviarMensaje(socketCPU,finalizarProcesoErroneamente,(void*)-2, sizeo(int));
-					 }
-						break;
-
-					case leerArchivo: // leer PD : NO PROBAR TODAVIA PORQUE NO ANDA, OK?
-					{
-						t_archivo estructura = deserializart_Archivo(stream);
-
-						ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(estructura.pid);
-
-						 ENTRADA_DE_TABLA_DE_PROCESO *entrada_a_evaluar= list_get(aux->tablaProceso,estructura.fileDescriptor);
-						if (string_contains(entrada_a_evaluar->flags,"r")){
-							ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_de_archivo= list_get(tablaGlobalDeArchivos,entrada_a_evaluar.globalFD);
-							int tamanioDelPedido =strlen(entrada_de_archivo->path)+1 ;
-							void* pedido = serializarPedidoFS(entrada_de_archivo->path,0,tamanioDelPedido);//Patos, basicamente
-							enviarMensaje(socketFS,obtenerDatosDeArchivo,(void *) pedido,tamanioDelPedido);
-							void* contenido;
-
-							if(recibirMensaje(socketFS,contenido) != respuestaBooleanaDeFs){
-							//enviarMensaje(socketCPU,enviarContenidoDeArchivo, contenidoDeArchivo,tamanioDelPedido)
-							}
-							else {
-								//enviarMensaje(socketCPU,finalizarProcesoErroneamente,(void*)-1,sizeof(int));
-							}
-							//enviarMensaje(socketCPU,finalizarProcesoErroneamente,(void*)-3,sizeof(int));
+					}else{
+						//enviarMensaje(socketCPU,finalizarProcesoErroneamente,(void*)-3,sizeof(int));
 						}
+				}else{
+					//enviarMensaje(socketCPU,finalizarProcesoErroneamente,(void*)-2,sizeof(int));
+				}
+			}break;
+*/
 
-				}break;
-				*/
 			//TE MANDO UN NOMBRE DE UN SEMAFORO Y QUIERO QUE HAGAS UN WAIT, ME DEBERIAS DECIR SI ME BLOQUEO O NO
 			case waitSemaforo:{
 

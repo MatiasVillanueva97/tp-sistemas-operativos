@@ -99,7 +99,7 @@ typedef struct{
 	t_list* tablaProceso;
 }ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO;
 
-t_list * tablaGlobalDeProcesos;
+t_list * tablaGlobalDeArchivosDeProcesos;
 
 
 //**Tabla global de archivos

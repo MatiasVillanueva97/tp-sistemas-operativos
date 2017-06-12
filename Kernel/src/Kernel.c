@@ -589,6 +589,7 @@ int main(void) {
 		lista_CPUS = list_create();
 		//listaDeEsperaSemaforos = list_create();
 		tablaGlobalDeArchivos = list_create();
+		tablaGlobalDeArchivosDeProcesos= list_create();
 
 		//***Inicializo las colas
 		cola_New = queue_create();
