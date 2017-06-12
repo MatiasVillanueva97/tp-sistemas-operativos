@@ -27,6 +27,6 @@ PCB_DATA* crearPCB(char * scriptAnsisop, int pid, int contPags);
  */
 PCB_DATA* buscarPCB (int pid);
 
-void modificarPCB(PCB_DATA * pcbNuevo);
+PCB_DATA* modificarPCB(PCB_DATA * pcbNuevo);
 
 #endif /* FUNCIONESPCB_H_ */

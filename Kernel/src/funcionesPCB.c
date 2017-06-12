@@ -29,7 +29,7 @@ PCB_DATA * buscarPCB (int pid){
 	return((PROCESOS*)list_find(avisos,sonIguales))->pcb;
 }
 
-void modificarPCB(PCB_DATA * pcbNuevo){
+PCB_DATA* modificarPCB(PCB_DATA * pcbNuevo){
 
 	bool busqueda(PROCESOS * aviso)
 	{
@@ -67,4 +67,5 @@ void modificarPCB(PCB_DATA * pcbNuevo){
 	free(pcbNuevo);
 
 	sem_post(&mutex_listaProcesos);
+	return pcbViejo;
 }

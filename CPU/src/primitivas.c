@@ -293,12 +293,25 @@ void AnSISOP_wait(t_nombre_semaforo identificador_semaforo){
 	puts("AnSISOP_wait");
 
 	printf("Le pido al Kernel que haga wait del semaforo: %s\n",identificador_semaforo);
-	enviarMensaje(socketKernel,waitSemaforo,identificador_semaforo,strlen(identificador_semaforo));
+	pcb->programCounter++;
+	void * stream = serializarPCBYSemaforo(pcb, identificador_semaforo);
+	enviarMensaje(socketKernel,waitSemaforo,stream, tamanoPCB(pcb) + sizeof(int) + strlen(identificador_semaforo) + 1);
+
+	free(stream);
+	pcb->programCounter--;
+	bool respuestaDeKernel;
+	if(recibirMensaje(socketKernel, &stream) == respuestaBooleanaKernel)
+		respuestaDeKernel = *((bool*)stream);
+	else{
+		terminoPrograma = true;
+		perror("Error en el mensaje maquinola j3j3");
+	}
+	if(!respuestaDeKernel)
+		bloqueado = true;
 
 	//RECIBIR UN MENSAJE DICIENDO SI ESE SEMAFORO EXISTIA REALMENTE
 
 	//RECIBIR UN MENSAJE DICIENDO SI SE BLOQUEA O NO POR EL WAIT... SUPONGO
-	bloqueado = true;
 
 }
 

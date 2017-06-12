@@ -572,11 +572,6 @@ void * aceptarConexiones_Cpu_o_Consola( void *arg ){
 
 int main(void) {
 
-	PCB_DATA* pcb = crearPCB("\n",1,3);
-	void* stream = serializarPCBYSemaforo(pcb, "hola que haces");
-	char* sem;
-	deserializarPCBYSemaforo(stream, &sem);
-	puts(sem);
 	printf("Inicializando Kernel.....\n\n");
 
 
@@ -588,6 +583,7 @@ int main(void) {
 		avisos = list_create();
 		lista_CPUS = list_create();
 		//listaDeEsperaSemaforos = list_create();
+
 		tablaGlobalDeArchivos = list_create();
 		tablaGlobalDeArchivosDeProcesos= list_create();
 
@@ -608,6 +604,7 @@ int main(void) {
 		printf("Configuracion Inicial: \n");
 		configuracionInicial("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Kernel/kernel.config");
 		imprimirConfiguracion();
+		cargarSemaforosDesdeConfig();
 
 		quantumRR = (strcmp("FIFO",getConfigString("ALGORITMO")) == 0)? -1 : getConfigInt("QUANTUM");
 

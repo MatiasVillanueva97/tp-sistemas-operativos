@@ -130,9 +130,13 @@ void *rutinaConsola(void * arg)
 				PCB_DATA * pcbNuevo = crearPCB(nuevoPrograma->scriptAnsisop, nuevoPrograma->pid, 0);
 				nuevoPrograma->pcb = pcbNuevo;
 				//**Le doy una tabla para sus archivos abiertos
-				ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO * nuevaEntrada;
+
+
+				ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO * nuevaEntrada = malloc(sizeof(ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO));
 				nuevaEntrada->pid = nuevoPrograma->pid;
 				nuevaEntrada->tablaProceso = list_create();
+
+
 				//aca llenar los primeros con  3 con null
 				//***Lo Agrego a la Cola de New
 				sem_wait(&mutex_cola_New);
