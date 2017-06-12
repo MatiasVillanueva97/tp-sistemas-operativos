@@ -77,11 +77,16 @@ void* serializarPCB(PCB_DATA * pcb);
 
 PCB_DATA* deserializarPCB(void* stream);
 
+
+
 void imprimirPCB(PCB_DATA * pcb);
 
 void harcodeoAsquerosoDePCB();
 
 void destruirPCB_Puntero(PCB_DATA * pcb);
 
+void* serializarPCBYSemaforo(PCB_DATA * pcb, char* sem);
+
+PCB_DATA* deserializarPCBYSemaforo(void * stream, char ** nombreSem);
 
 #endif /* LAGRANBIBLIOTECA_PROCESSCONTROLBLOCK_H_ */

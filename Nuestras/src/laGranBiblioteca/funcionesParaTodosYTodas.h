@@ -7,6 +7,7 @@
 
 #include "commons/collections/list.h"
 #include "datosGobalesGenerales.h"
+#include "ProcessControlBlock.h"
 
 #ifndef LAGRANBIBLIOTECA_FUNCIONESPARATODOSYTODAS_H_
 #define LAGRANBIBLIOTECA_FUNCIONESPARATODOSYTODAS_H_
