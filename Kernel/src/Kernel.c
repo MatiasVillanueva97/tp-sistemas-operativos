@@ -572,6 +572,11 @@ void * aceptarConexiones_Cpu_o_Consola( void *arg ){
 
 int main(void) {
 
+	PCB_DATA* pcb = crearPCB("\n",1,3);
+	void* stream = serializarPCBYSemaforo(pcb, "hola que haces");
+	char* sem;
+	deserializarPCBYSemaforo(stream, &sem);
+	puts(sem);
 	printf("Inicializando Kernel.....\n\n");
 
 
@@ -582,7 +587,7 @@ int main(void) {
 		//***Inicializo las listas
 		avisos = list_create();
 		lista_CPUS = list_create();
-		listaDeEsperaSemaforos = list_create();
+		//listaDeEsperaSemaforos = list_create();
 		tablaGlobalDeArchivos = list_create();
 
 		//***Inicializo las colas

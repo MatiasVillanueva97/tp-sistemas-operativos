@@ -53,3 +53,29 @@ t_mensajeDeProceso deserializarMensajeAEscribir(void* stream){
 
 	return mensaje;
 }
+
+
+void* serializarPCBYSemaforo(PCB_DATA * pcb, char* sem){
+	int largocadena = strlen(sem)+1;
+	int largoPCB = tamanoPCB(pcb);
+	int tamanoTotal = largoPCB + largocadena + sizeof(int);
+	void * stream = malloc(tamanoTotal);
+	void* pcbSerializado = serializarPCB(pcb);
+	memcpy(stream, &largocadena, sizeof(int));
+	memcpy(stream + sizeof(int), sem,largocadena);
+	memcpy(stream + sizeof(int) + largocadena, pcbSerializado, largoPCB);
+	free(pcbSerializado);
+	return stream;
+}
+
+PCB_DATA* deserializarPCBYSemaforo(void * stream, char ** nombreSem){
+	int tamanoString;
+	memcpy(&tamanoString, stream, sizeof(int));
+	char* aux = malloc(tamanoString);
+	memcpy(aux, stream + sizeof(int), tamanoString);
+	*nombreSem = aux;
+	PCB_DATA* pcb = deserializarPCB(stream + sizeof(int) + tamanoString);
+	free(stream);
+	return pcb;
+}
+

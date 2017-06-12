@@ -302,78 +302,20 @@ void *rutinaCPU(void * arg)
 			case waitSemaforo:{
 
 				puts("Entro al waitSemaforo\n");
-				char* nombreSemaforo = leerString(stream);
-
-				//***Verifico si existe el semaforo que cpu me mando
-				if(sema_existeSemaforo(nombreSemaforo)){
-
-					puts("Entro al si existe semaforo\n");
-					//***Si el semaforo existe realizo el wait para este semaforo
-					sema_proceso_wait(nombreSemaforo);
-
-
-					if(sema_indiceDeSemaforo(nombreSemaforo)<0)
-					{
-
-						puts("Entro al si eel indice en menor a 0\n");
-
-						//***Le aviso a la cpu que la acabamos de bloquear
-						enviarMensaje(socketCPU,bloquearProceso,&accionCPU,sizeof(int)); // agregar al enum bloquearProceso . le paso accion cpu para mandarle algo
-
-						//***Recibo el pcb que voy a bloquear
-						recibirMensaje(socketCPU, &stream); // puedo reciclar el stream?
-						pcb = deserializarPCB(stream);
-
-						//***Cambio el estado de este pcb a bloqueado
-						pcb->estadoDeProceso = bloqueado;
-
-						imprimirPCB(pcb);
-
-						//***Agrego a la lista de espera que el pid que acabo de recibir esta esperando por el semaforo que se me habia indicado
-						//hacer semaforo para esta lista
-
-						esperaDeSemaforo* esp_sem=malloc(sizeof(esperaDeSemaforo));
-
-						esp_sem->pid=pcb->pid;
-						esp_sem->sem=nombreSemaforo;
-
-						list_add(listaDeEsperaSemaforos,esp_sem);
-					}
-					else
-					{
-
-						puts("Entro al si el indice es 0 o mas\n");
-					}
-				}
-				else{
-					//***Sino existe le digo que me esta pidiendo cualqueir cosa
-
-					puts("Entro al si hay un error en el semaforo\n");
-					enviarMensaje(socketCPU,errorSemaforo,&accionCPU,sizeof(int)); // agregar al enum errorsemafor . le paso accion cpu para mandarle algo
-				}
-
+				char* nombreSemaforo;
+				PCB_DATA * pcbRecibido = deserializarPCBYSemaforo(stream, &nombreSemaforo);
+				bool respuestaParaCPU = SEM_wait(nombreSemaforo, pcbRecibido);
+				enviarMensaje(socketCPU,respuestaBooleanaKernel, &respuestaParaCPU, sizeof(bool));
 
 			}break;
 
 			//TE MANDO UN NOMBRE DE UN SEMAFORO Y QUIERO QUE HAGAS UN SIGNAL, LE DEBERIAS INFORMAR A ALGUIEN SI ESTABA BLOQUEADO EN UN WAIT DE ESTE SEMAFORO
 			case signalSemaforo:{
-				char* nombreSemaforo = leerString(stream);
-
-				//***Verifico si existe el semaforo que cpu me mando
-				if(sema_existeSemaforo(nombreSemaforo)){
-
-					//***Si el semaforo existe realizo el signal para este semaforo
-					sema_proceso_signal(nombreSemaforo);
-
-					//***Quito de la lista de espera que el pid que acabo de recibir esta esperando por el semaforo que se me habia indicado
-					//hacer semaforo para esta lista
-
-				}
-				else{
-					//***Sino existe le digo que me esta pidiendo cualqueir cosa
-
-				enviarMensaje(socketCPU,errorSemaforo,&accionCPU,sizeof(int)); // agregar al enum errorsemafor . le paso accion cpu para mandarle algo
-				}
+				puts("Entro al signalSemaforo\n");
+				char* nombreSemaforo;
+				PCB_DATA * pcbRecibido = deserializarPCBYSemaforo(stream, &nombreSemaforo);
+				bool respuestaParaCPU = SEM_signal(nombreSemaforo, pcbRecibido);
+				enviarMensaje(socketCPU,respuestaBooleanaKernel, &respuestaParaCPU, sizeof(bool));
 
 			}break;
 

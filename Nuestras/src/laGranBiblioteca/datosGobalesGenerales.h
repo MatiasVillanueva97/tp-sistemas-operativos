@@ -99,6 +99,7 @@ enum tipos_de_Acciones{
 		envioDelFileDescriptor = 9,
 		bloquearProceso = 10,
 		errorSemaforo = 11,
+		respuestaBooleanaKernel=12,
 
 
 	//***Todas las acciones del CPU

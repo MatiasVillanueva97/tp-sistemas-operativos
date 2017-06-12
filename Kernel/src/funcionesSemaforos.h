@@ -21,22 +21,25 @@
 #ifndef FUNCIONESSEMAFOROS_H_
 #define FUNCIONESSEMAFOROS_H_
 
-int sema_indiceDeSemaforo(char* sem);
+typedef struct{
+	char* nombre;
+	int valor;
+}t_variableGlobal;
 
-void sema_decrementarSEM(char* sem);
+typedef struct{
+	char* nombre;
+	int valor;
+	t_queue * cola;
+}t_semaforo;
 
-void sema_incrementarSEM(char* sem);
+t_list * listaDeSemaforos;
 
-int sema_valorDelSemaforo(char * sem);
+//Hacen lo que dice su nombre
+void cargarSemaforosDesdeConfig();
+void cargarVariableGlobalesDesdeConfig();
 
-bool sema_existeSemaforo(char * sem);
+bool SEM_wait(char* nombreSEM, PCB_DATA * pcb);
 
-
-int sema_proceso_wait(char* sem);
-
-void sema_despertarProceso(char* sem);
-
-void sema_proceso_signal(char* sem);
-
+bool SEM_signal(char* nombreSEM, PCB_DATA* pcb);
 
 #endif /* FUNCIONESSEMAFOROS_H_ */

@@ -39,6 +39,7 @@ bool finPorConsolaDelKernel;
 
 
 enum exitCode{
+	finalizadoCorrectamente =0,
 	noSePudoReservarRecursos = -1,
 	accesoArchivoInexistente = -2,
 	lecturaDenegada = -3,
@@ -49,7 +50,7 @@ enum exitCode{
 	reservarMasMemoriaQueTamanoPagina = -8,
 	noSePuedenAsignarMasPaginas = -9,
 	finalizacionDesdeKenel = -10,
-	finalizadoCorrectamente =0,
+	intentoAccederAUnSemaforoInexistente = -11
 };
 
 enum estadosProcesos{
@@ -69,12 +70,6 @@ typedef struct{
 t_list* lista_CPUS;
 
 /// Estructura para manejar los semaforos
-typedef struct{
-	char* sem;
-	int pid;//PCB_DATA * pcb; //Tambien podria ser solo el pid
-}esperaDeSemaforo;
-
-t_list * listaDeEsperaSemaforos;
 
 
 //*** Esta lista es porque una consola puede tener una serie de procesos --- Igual creo que esto tiene que morir

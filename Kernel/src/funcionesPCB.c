@@ -38,20 +38,22 @@ void modificarPCB(PCB_DATA * pcbNuevo){
 	}
 	sem_wait(&mutex_listaProcesos);
 
-	PCB_DATA * pcb2 = ((PROCESOS*)list_find(avisos, busqueda))->pcb;
+	PCB_DATA * pcbViejo = ((PROCESOS*)list_find(avisos, busqueda))->pcb;
 
-	if(pcb2 != NULL){
-	destruirPCB_Local(*pcb2);
-		pcb2->cantidadDeEntradas = pcbNuevo->cantidadDeEntradas;
-		pcb2->cantidadDeEtiquetas = pcbNuevo->cantidadDeEtiquetas;
-		pcb2->cantidadDeInstrucciones = pcbNuevo->cantidadDeInstrucciones;
-		pcb2->contextoActual = pcbNuevo->contextoActual;
-		pcb2->exitCode = pcbNuevo->exitCode;
-		pcb2->indiceCodigo = pcbNuevo->indiceCodigo;
-		pcb2->indiceEtiquetas = pcbNuevo->indiceEtiquetas;
-		pcb2->indiceStack = pcbNuevo->indiceStack;
-		pcb2->estadoDeProceso = pcbNuevo->estadoDeProceso;
-		pcb2->programCounter = pcbNuevo->programCounter;
+	if(pcbViejo != NULL){
+		if(pcbViejo->estadoDeProceso != finalizado){
+			destruirPCB_Local(*pcbViejo);
+			pcbViejo->cantidadDeEntradas = pcbNuevo->cantidadDeEntradas;
+			pcbViejo->cantidadDeEtiquetas = pcbNuevo->cantidadDeEtiquetas;
+			pcbViejo->cantidadDeInstrucciones = pcbNuevo->cantidadDeInstrucciones;
+			pcbViejo->contextoActual = pcbNuevo->contextoActual;
+			pcbViejo->exitCode = pcbNuevo->exitCode;
+			pcbViejo->indiceCodigo = pcbNuevo->indiceCodigo;
+			pcbViejo->indiceEtiquetas = pcbNuevo->indiceEtiquetas;
+			pcbViejo->indiceStack = pcbNuevo->indiceStack;
+			pcbViejo->estadoDeProceso = pcbNuevo->estadoDeProceso;
+			pcbViejo->programCounter = pcbNuevo->programCounter;
+		}
 	}
 
 	//****Esta linea no se si va

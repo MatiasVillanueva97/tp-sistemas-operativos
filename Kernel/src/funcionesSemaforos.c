@@ -8,86 +8,60 @@
 #include "funcionesSemaforos.h"
 
 
+void cargarSemaforosDesdeConfig(){
+	listaDeSemaforos = list_create();
+	int i;
+	for(i=0; i<getArraySize("SEM_IDS"); i++){
+		t_semaforo * sem = malloc(sizeof(t_semaforo));
+		sem->nombre = getConfigStringArrayElement("SEM_IDS", i);
+		sem->valor = getConfigIntArrayElement("SEM_INIT", i);
+		sem->cola = queue_create();
+		list_add(listaDeSemaforos, sem);
+	}
+}
 
-//---Estas funciones son solo para el kernel---
-int sema_indiceDeSemaforo(char* sem){
-	int i = 0;
-	char** array = getConfigStringArray(("SEM_IDS"));
-	for(i = 0; i< countSplit(array); i++)
-		if(strcmp(sem, array[i]) == 0){
-			liberarArray(array);
-			return i;
+t_semaforo* buscarSemaforo(char* nombreSEM){
+	bool busqueda(t_semaforo* sem){
+		return strcmp(sem->nombre, nombreSEM) == 0;
+	}
+	return list_find(listaDeSemaforos, busqueda);
+}
+
+
+//La idea es que la CPU me pase el PCB siempre que quiera hace un wait o signal, en base a eso yo puedo decidir que hacer
+
+//Si encuentra el semaforo pedido hace lo que haria un wait normal.
+//Si no lo encuentra termina el proceso.
+bool SEM_wait(char* nombreSEM, PCB_DATA * pcb){
+	t_semaforo* sem = buscarSemaforo(nombreSEM);
+	if(sem != NULL){
+		if(sem->valor <= 0){
+			pcb->estadoDeProceso = bloqueado;
+			queue_push(sem->cola, pcb);
 		}
-	return NULL;
-}
-
-//Recorro el diccionario 2 veces, porque no me queda otra. Uno es para conseguir el id y el otro es para cambiar el valor
-void sema_decrementarSEM(char* sem){
-	decrementarConfigArray("SEM_INIT", sema_indiceDeSemaforo(sem));
-}
-
-void sema_incrementarSEM(char* sem){
-	incrementarConfigArray("SEM_INIT", sema_indiceDeSemaforo(sem));
-}
-
-int sema_valorDelSemaforo(char * sem){
-	return getConfigIntArrayElement("SEM_INIT", sema_indiceDeSemaforo(sem));
-}
-
-bool sema_existeSemaforo(char * sem){
-	return string_contains(getConfigString("SEM_IDS"),sem);
-}
-
-
-
-int sema_proceso_wait(char* sem){
-	if(sema_valorDelSemaforo(sem) <= 0){
-		//agregarSemaforoAListaDeEspera();
+		sem->valor--;
 	}
-	sema_decrementarSEM(sem);
-
-	return sema_valorDelSemaforo(sem);
+	else{
+		pcb->estadoDeProceso = finalizado;
+		pcb->exitCode = intentoAccederAUnSemaforoInexistente;
+	}
+	return (sem != NULL) && (sem->valor >= 0);//Si se cumplen estas 2 condiciones, la CPU puede seguir ejecutando el PCB
 }
 
 
-
-void sema_despertarProceso(char* sem){
-	int cont=-1;
-	bool buscarPorSem(esperaDeSemaforo* e_sem)
-	{
-		cont++;
-		return (strcmp(sem,e_sem->sem)==0);
+bool SEM_signal(char* nombreSEM, PCB_DATA* pcb){
+	t_semaforo* sem = buscarSemaforo(nombreSEM);
+	if(sem != NULL){
+		if(queue_size(sem->cola) > 0){
+			PCB_DATA* procesoADespertar = queue_pop(sem->cola);
+			procesoADespertar->estadoDeProceso = paraEjecutar;
+		}
+		sem->valor++;
 	}
-
-
-	/*pcb = list_find(listaDeEspera, buscarPorSem)->pcb;
-
-	if(pcv->estado != finalizado)
-	{
-		pcb->estado = listoParaEjecutar;
-
-	list_remove_and_destroy_element(listaDeEspera,cont, free);
-
+	else{
+		pcb->estadoDeProceso = finalizado;
+		pcb->exitCode = intentoAccederAUnSemaforoInexistente;
 	}
-	else
-	{
-
-	}
-
-
-	//--Tambien hay que sacar el pcb de la lista de alguna manera
-*/
+	return (sem != NULL);//Retorna si el semaforo existe, le permite o no a la CPU seguir ejecutando
 }
-//Hay que contemplar el caso en el que un proceso muera externamente y haya hecho un wait
-//si pasa, ¿hay que sumar un signal al semaforo? (Deberia, cuando un proceso muere libera sus recursos)
-
-void sema_proceso_signal(char* sem){
-	if(sema_valorDelSemaforo(sem) < 0)
-		sema_despertarProceso(sem);
-	sema_incrementarSEM(sem);
-}
-
-//No se si hay que validar que hagan un wait de un semaforo que no existe
-
-
 
