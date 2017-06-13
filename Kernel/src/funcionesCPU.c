@@ -97,6 +97,8 @@ bool proceso_EstaFinalizado(int pid)
 	 PCB_DATA* pcb = ((PROCESOS*)list_find(avisos, busqueda))->pcb;
 	 return pcb->estadoDeProceso == finalizado;
 }
+
+
 bool archivoExiste(char* path){
 
 	bool sonDeIgualPath(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS * elementos){
@@ -134,6 +136,7 @@ void* serializarPedidoFs(int size, int offset,char* path){
 	memcpy(contenido+sizeof(int)*3,path,strlen(path));
 	return contenido;
 }
+
 //Espero que esto ande
 t_crearArchivo deserializarCrearArchivo(void* stream){
 	t_crearArchivo mensaje;
@@ -384,12 +387,17 @@ void *rutinaCPU(void * arg)
 							char* nombreSemaforo;
 
 							PCB_DATA* pcbRecibido = deserializarPCBYSemaforo(stream, &nombreSemaforo);
+
 							//Validar que el proceso no haya sido finalizado, responder siempre a la CPU si
 							PCB_DATA* pcbDelProcesoActual = modificarPCB(pcbRecibido);
+
 							bool respuestaParaCPU = SEM_wait(nombreSemaforo, pcbDelProcesoActual);
+
+
 							free(nombreSemaforo);
 
 							enviarMensaje(socketCPU,respuestaBooleanaKernel, &respuestaParaCPU, sizeof(bool));
+
 
 						}break;
 

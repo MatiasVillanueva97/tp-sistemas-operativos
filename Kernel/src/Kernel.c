@@ -361,7 +361,7 @@ void * estadoReady()
 
 
 //*** Esta funcion pasa todos los procesos que esten finalizados dentro de la cola de exec a la cola de Finished, y retorna el pid del proceso que se acaba de mover de cola, sino encontro ninguno retorna -1
-int execTo()
+void execTo()
 {
 	//**Tomo el primer elemento de la lista,
 	PCB_DATA* pcb=queue_pop(cola_Exec);
@@ -374,8 +374,6 @@ int execTo()
 			queue_push(cola_Finished,pcb);
 		sem_post(&mutex_cola_Finished);
 
-		//*** Retorno el pid del proceso que acabo de psar a finalizado
-		return  pcb->pid;
 	}
 	else{
 		//*** Valido que el proceso este bloqueado, si lo esta lo mando a wait
@@ -384,15 +382,12 @@ int execTo()
 			sem_wait(&mutex_cola_Wait);
 				queue_push(cola_Wait,pcb);
 			sem_post(&mutex_cola_Wait);
-			//*** Retorno el pid del proceso que acabo de psar a bloqueado
-			return  pcb->pid;
+
 		}
 		else{
 			queue_push(cola_Exec, pcb);
 		}
 	}
-
-	return -1;
 }
 
 
@@ -417,40 +412,12 @@ void* estadoEXEC(){
 		if(queue_size(cola_Exec)>0){
 
 			//***Llamamos a la funcion excetToReady que pasa los procesos que ya hallan finalizado a la cola de finalizados, y retorna el pid del proceso que acaba de pasar. No haber encotrado ninguno retorna -1
-			pidParaAvisar = execTo();
+			execTo();
 			sem_post(&mutex_cola_Exec);
-
-	/*		//*** Si hay un pid para avisar
-			if(pidParaAvisar>0){
-
-				//*** Buscamos el procesos en la lista de procesos, a travez del pid que acaba de ser psado a finalizado
-				PROCESOS* procesoFinalizado =(PROCESOS*)list_find(avisos, busqueda);
-
-				//*** En caso de haber encontrado el proceso con el pid finalizado
-				if( procesoFinalizado != NULL){
-
-					//*** Valido que no haya sido avisada la consola anteriormente
-					if(!procesoFinalizado->avisoAConsola)
-					{
-
-					// Si la consola no habia sido avisada le envio el mensaje del pid que acaba de finalizar
-					puts("\n");
-					enviarMensaje(procesoFinalizado->socketConsola, pidFinalizado, &procesoFinalizado->pid, sizeof(int));//	ACA FALTa VER COMO LO RECIBE JULY (consola)
-
-					printf("Se acaba de mandar a la consola n°: %d, que el proceso %d acaba de finalizar exitosamente!\n", procesoFinalizado->socketConsola, procesoFinalizado->pid);
-
-					// y ahora pongo que el este proceso ya le aviso a su consola
-					procesoFinalizado->avisoAConsola=true;
-					}
-				}
-			}
-*/
 		}
 		else{
 			sem_post(&mutex_cola_Exec);
 		}
-
-	sleep(5);
 	}
 	return NULL;
 }
@@ -459,6 +426,77 @@ void* estadoEXEC(){
 /// ********************************************************************************************************///
 /// ***************************************** FIN TERCERA PARTE ********************************************///
 /// ********************************************************************************************************///
+
+
+
+
+
+
+void* estadoWAIT(){
+	int pidParaAvisar;
+
+	bool busqueda(PROCESOS * aviso)
+	{
+		if(aviso->pid == pidParaAvisar)
+			return true;
+
+		return false;
+	}
+
+	//*** el booleano finPorConsolaDelKernel esta en false desde el inicio, en el momento en el que el kernel quiera frenar la planificiacion esta variable pasara a true, y se frenara la planificacion
+	while(!finPorConsolaDelKernel)
+	{
+//		sem_wait(&mutex_cola_Wait);
+
+		//***Validamos que haya procesos en la cola de exec
+		if(queue_size(cola_Wait)>0){
+
+
+			PCB_DATA* pcbDeWait = queue_pop(cola_Wait);
+
+//			sem_post(&mutex_cola_Wait);
+
+			if(pcbDeWait->estadoDeProceso == paraEjecutar)
+			{
+				sem_wait(&mutex_cola_Ready);
+					queue_push(cola_Ready, pcbDeWait);
+				sem_post(&mutex_cola_Ready);
+			}
+			else{
+				if(pcbDeWait->estadoDeProceso == finalizado){
+					sem_wait(&mutex_cola_Finished);
+						queue_push(cola_Finished,pcbDeWait);
+					sem_post(&mutex_cola_Finished);
+				}
+				else{
+	//				sem_wait(&mutex_cola_Wait);
+						queue_push(cola_Wait, pcbDeWait);
+	//				sem_post(&mutex_cola_Wait);
+				}
+			}
+		}
+		else{
+	//		sem_post(&mutex_cola_Wait);
+		}
+
+
+	}
+	return NULL;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -638,6 +676,11 @@ int main(void) {
 	pthread_t hilo_estadoEXEC;
 	pthread_create(&hilo_estadoEXEC, NULL, estadoEXEC, NULL);
 
+
+	pthread_t hilo_estadoWAIT;
+	pthread_create(&hilo_estadoWAIT, NULL, estadoWAIT, NULL);
+
+
 	pthread_t hilo_estadoFINISHED;
 	pthread_create(&hilo_estadoFINISHED, NULL, estadoFINISHED, NULL);
 
@@ -651,6 +694,7 @@ int main(void) {
 	pthread_join(hilo_estadoReady, NULL);
 	pthread_join(hilo_estadoNEW, NULL);
 	pthread_join(hilo_estadoEXEC, NULL);
+	pthread_join(hilo_estadoWAIT, NULL);
 	pthread_join(hilo_estadoFINISHED,NULL);
 	pthread_join(hilo_consolaKernel, NULL);
 
