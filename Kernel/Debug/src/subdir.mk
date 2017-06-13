@@ -10,7 +10,7 @@ C_SRCS += \
 ../src/funcionesConsolaKernel.c \
 ../src/funcionesMemoria.c \
 ../src/funcionesPCB.c \
-../src/funcionesSemaforos.c 
+../src/funcionesSemaforosYCompartidas.c 
 
 OBJS += \
 ./src/Kernel.o \
@@ -19,7 +19,7 @@ OBJS += \
 ./src/funcionesConsolaKernel.o \
 ./src/funcionesMemoria.o \
 ./src/funcionesPCB.o \
-./src/funcionesSemaforos.o 
+./src/funcionesSemaforosYCompartidas.o 
 
 C_DEPS += \
 ./src/Kernel.d \
@@ -28,7 +28,7 @@ C_DEPS += \
 ./src/funcionesConsolaKernel.d \
 ./src/funcionesMemoria.d \
 ./src/funcionesPCB.d \
-./src/funcionesSemaforos.d 
+./src/funcionesSemaforosYCompartidas.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

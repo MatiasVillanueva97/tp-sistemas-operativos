@@ -5,7 +5,26 @@
  *      Author: utnso
  */
 
-#include "funcionesSemaforos.h"
+#include "funcionesSemaforosYCompartidas.h"
+
+
+void cargarVariablesGlobalesDesdeConfig(){
+	listaDeVariablesGlobales = list_create();
+	int i;
+	for(i=0; i<getArraySize("SHARED_VARS"); i++){
+		t_variableGlobal * varGlob = malloc(sizeof(t_variableGlobal));
+		varGlob->nombre = getConfigStringArrayElement("SHARED_VARS", i) + sizeof(char);
+		varGlob->valor = 0;
+		list_add(listaDeVariablesGlobales, varGlob);
+	}
+}
+
+t_variableGlobal* buscarVariableGlobal(char* nombreVarGlob){
+	bool busqueda(t_variableGlobal* varGlob){
+		return strcmp(varGlob->nombre, nombreVarGlob) == 0;
+	}
+	return list_find(listaDeVariablesGlobales, busqueda);
+}
 
 
 void cargarSemaforosDesdeConfig(){

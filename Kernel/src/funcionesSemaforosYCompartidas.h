@@ -26,6 +26,8 @@ typedef struct{
 	int valor;
 }t_variableGlobal;
 
+t_list* listaDeVariablesGlobales;
+
 typedef struct{
 	char* nombre;
 	int valor;
@@ -34,9 +36,13 @@ typedef struct{
 
 t_list * listaDeSemaforos;
 
+//funciones de variables compartidas
+void cargarVariablesGlobalesDesdeConfig();
+
+t_variableGlobal* buscarVariableGlobal(char* nombreVarGlob);
+
 //Hacen lo que dice su nombre
 void cargarSemaforosDesdeConfig();
-void cargarVariableGlobalesDesdeConfig();
 
 bool SEM_wait(char* nombreSEM, PCB_DATA * pcb);
 

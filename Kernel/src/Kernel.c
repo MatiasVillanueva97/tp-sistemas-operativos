@@ -35,8 +35,8 @@
 #include "funcionesPCB.h"
 #include "funcionesMemoria.h"
 #include "funcionesConsolaKernel.h"
+#include "funcionesSemaforosYCompartidas.h"
 #include "funcionesCPU.h"
-#include "funcionesSemaforos.h"
 
 
 void inicializarSemaforo();
@@ -639,6 +639,7 @@ int main(void) {
 		configuracionInicial("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Kernel/kernel.config");
 		imprimirConfiguracion();
 		cargarSemaforosDesdeConfig();
+		cargarVariablesGlobalesDesdeConfig();
 
 		quantumRR = (strcmp("FIFO",getConfigString("ALGORITMO")) == 0)? -1 : getConfigInt("QUANTUM");
 

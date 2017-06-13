@@ -100,6 +100,8 @@ enum tipos_de_Acciones{
 		bloquearProceso = 10,
 		errorSemaforo = 11,
 		respuestaBooleanaKernel=12,
+		noExisteVarCompartida = 13,
+		envioValorCompartida = 14,
 
 
 	//***Todas las acciones del CPU

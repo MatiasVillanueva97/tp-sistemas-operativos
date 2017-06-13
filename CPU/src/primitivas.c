@@ -126,19 +126,30 @@ void AnSISOP_asignar(t_puntero direccion_variable, t_valor_variable valor){
 t_valor_variable AnSISOP_obtenerValorCompartida(t_nombre_compartida variable){
 	puts("AnSISOP_obtenerValorCompartida");
 
-	printf("Le pido al Kernel que me de el valor de la variable compartida: %s\n",variable);
-	enviarMensaje(socketKernel,pedirValorCompartida,variable,strlen(variable));
+	t_valor_variable valor = -42;
 
+	printf("Le pido al Kernel que me de el valor de la variable compartida: %s\n",variable);
+
+	enviarMensaje(socketKernel,pedirValorCompartida,variable,strlen(variable) + 1);
 
 	void* stream;
 
-	recibirMensaje(socketKernel,&stream);
+	switch(recibirMensaje(socketKernel,&stream)){
+		case noExisteVarCompartida:{
+			terminoPrograma = true;
+			pcb->exitCode = -12;
+			free(stream);
+		}break;
+		case envioValorCompartida:{
+			valor = leerInt(stream);
+		}break;
+		default:{
+			puts("Error en la accion del mensaje maquinola");
+			free(stream);
+		}
+	}
 
-	//RECIBIR UN MENSAJE DICIENDO SI ESA VARIABLE EXISTIA REALMENTE
-
-	//ACA RECIBO EL VALOR QUE SE ASIGNO PARA EL RETURN
-
-	return 0;
+	return valor;
 }
 
 t_valor_variable AnSISOP_asignarValorCompartida(t_nombre_compartida variable,t_valor_variable valor){
@@ -150,17 +161,27 @@ t_valor_variable AnSISOP_asignarValorCompartida(t_nombre_compartida variable,t_v
 	};
 
 	printf("Le pido al Kernel que asigne el valor: %d a la variable compartida: %s\n",valor,variable);
-	enviarMensaje(socketKernel,asignarValorCompartida,&mensaje,strlen(variable));
+	enviarMensaje(socketKernel,asignarValorCompartida,mensaje.variable,strlen(mensaje.variable)+1);
 
 	void* stream;
 
-	recibirMensaje(socketKernel,&stream);
+	switch(recibirMensaje(socketKernel,&stream)){
+		case noExisteVarCompartida:{
+			terminoPrograma = true;
+			pcb->exitCode = -12;
+			free(stream);
+		}break;
+		case envioValorCompartida:{
+			valor = leerInt(stream);
+			enviarMensaje(socketKernel,asignarValorCompartida,&(mensaje.valor),sizeof(int));
+		}break;
+		default:{
+			puts("Error en la accion del mensaje maquinola");
+			free(stream);
+		}
+	}
 
-	//RECIBIR UN MENSAJE DICIENDO SI ESA VARIABLE EXISTIA REALMENTE
-
-	//ACA RECIBO EL VALOR QUE SE ASIGNO PARA EL RETURN
-
-	return 0;
+	return valor;
 }
 
 void AnSISOP_irAlLabel(t_nombre_etiqueta nombre_etiqueta){
@@ -238,6 +259,7 @@ void AnSISOP_finalizar(void){
 		//Esto se da en el caso que se termine el programa
 		puts("Se finalizo la ultima instruccion del main");
 		terminoPrograma = true;
+		pcb->exitCode = 0;
 
 		//Se libera la memoria de esa entrada
 		list_destroy_and_destroy_elements(pcb->indiceStack[pcb->contextoActual].argumentos,free);

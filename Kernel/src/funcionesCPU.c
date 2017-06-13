@@ -210,17 +210,12 @@ void *rutinaCPU(void * arg)
 				pcb = deserializarPCB(stream);
 
 				// aca como que deberiamos validar que no haya sido finalizado ya este procesito
-				//ACA HAY QUE CAMBIAR ESTO
-				if(pcb->exitCode != excepcionMemoria && !proceso_EstaFinalizado(pcb->pid))
-				{
-					pcb->exitCode = finalizadoCorrectamente;
-				}
-				pcb->estadoDeProceso = finalizado;
 				if(!proceso_EstaFinalizado(pcb->pid)){
-					modificarPCB(pcb);
+				    pcb->estadoDeProceso = finalizado;
+				    modificarPCB(pcb);
 				}
 				sem_wait(&mutex_cola_CPUs_libres);
-						estaCPU->esperaTrabajo = true;
+				   	estaCPU->esperaTrabajo = true;
 				sem_post(&mutex_cola_CPUs_libres);
 
 			}break;
@@ -414,10 +409,35 @@ void *rutinaCPU(void * arg)
 
 			//TE MANDO UNA ESTRUCTURA CON {VALOR, NOMBRE_VARIABLE(CHAR*)} PARA QUE LE ASIGNES ESE VALOR A DICHA VARIABLE
 			case asignarValorCompartida:{
+				puts("Entro al asignarValorCompartida");
+
+				char* nombreVarGlob = leerString(stream);
+
+				t_variableGlobal* varGlob = buscarVariableGlobal(nombreVarGlob);
+				if(varGlob == NULL){
+					enviarMensaje(socketCPU,noExisteVarCompartida,NULL,sizeof(NULL));
+				}else{
+					enviarMensaje(socketCPU,envioValorCompartida,&(varGlob->valor),sizeof(int));
+					free(stream);
+					if(recibirMensaje(socketCPU,stream) == asignarValorCompartida){
+						varGlob->valor = *((int*)stream);
+					}
+				}
+
 			}break;
 
 			//TE MANDO EL NOMBRE DE UNA VARIABLE COMPARTIDA Y ME DEBERIAS DEVOLVER SU VALOR
 			case pedirValorCompartida:{
+				puts("Entro al pedirValorCompartida");
+
+				char* nombreVarGlob = leerString(stream);
+
+				t_variableGlobal* varGlob = buscarVariableGlobal(nombreVarGlob);
+				if(varGlob == NULL){
+					enviarMensaje(socketCPU,noExisteVarCompartida,NULL,sizeof(NULL));
+				}else{
+					enviarMensaje(socketCPU,envioValorCompartida,&(varGlob->valor),sizeof(int));
+				}
 			}break;
 
 

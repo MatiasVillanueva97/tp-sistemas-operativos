@@ -50,7 +50,8 @@ enum exitCode{
 	reservarMasMemoriaQueTamanoPagina = -8,
 	noSePuedenAsignarMasPaginas = -9,
 	finalizacionDesdeKenel = -10,
-	intentoAccederAUnSemaforoInexistente = -11
+	intentoAccederAUnSemaforoInexistente = -11,
+	intentoAccederAUnaVariableCompartidaInexistente = -12
 };
 
 enum estadosProcesos{
