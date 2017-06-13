@@ -208,10 +208,12 @@ void *rutinaCPU(void * arg)
 
 				// aca como que deberiamos validar que no haya sido finalizado ya este procesito
 				//ACA HAY QUE CAMBIAR ESTO
-				if(pcb->exitCode != excepcionMemoria || !proceso_EstaFinalizado(pcb->pid))
+				if(pcb->exitCode != excepcionMemoria && !proceso_EstaFinalizado(pcb->pid))
 				{
 					pcb->exitCode = finalizadoCorrectamente;
-					pcb->estadoDeProceso = finalizado;
+				}
+				pcb->estadoDeProceso = finalizado;
+				if(!proceso_EstaFinalizado(pcb->pid)){
 					modificarPCB(pcb);
 				}
 				sem_wait(&mutex_cola_CPUs_libres);
