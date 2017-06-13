@@ -120,19 +120,18 @@ t_list * deserializarListaDe__t_variable(void * stream, int tamanoLista, int *po
 
 	t_list * lista = list_create();
 	int i = 0;
-	int recorrido = *posicion;
 
 	if(cantidadDeElementos != 0){
-		t_variable **elemento = malloc(sizeof(t_variable)*cantidadDeElementos);
+		t_variable *elemento;
 
 		int recorridoArray = 0;
 		for(i = 0; i<cantidadDeElementos; i++){
-			*elemento = malloc(sizeof(t_variable));
-			memcpy(*elemento,stream + recorrido, sizeof(t_variable));
-			list_add(lista, *elemento);
-			recorrido += sizeof(t_variable);
+			elemento = malloc(sizeof(t_variable));
+			memcpy(elemento,stream + *posicion, sizeof(t_variable));
+			list_add(lista, elemento);
+			*posicion += sizeof(t_variable);
 		}
-		free(elemento);
+		//free(elemento);
 	}
 	return lista;
 }
@@ -212,12 +211,10 @@ t_entrada deserializarEntrada(void* stream, int *posicion){
 	/*uint32_t asd = ((t_variable*)list_get(entrada.argumentos, 0))->direccion.offset;
 	printf("%d", asd);*/
 
-	*posicion += tamanoListaDeArgumentos;
 
 	int tamanoListaDeVariables = obtenerTamanoProximoBloque(stream, posicion);
 	entrada.variables= deserializarListaDe__t_variable(stream, tamanoListaDeVariables, posicion);
 
-	*posicion += tamanoListaDeArgumentos;
 
 	entrada.retPos = leerUINT32(stream, posicion);//Esto ya corre el stream
 
