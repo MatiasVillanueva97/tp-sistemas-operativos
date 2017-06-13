@@ -148,6 +148,9 @@ pthread_mutex_t mutex_cola_Wait;
 pthread_mutex_t mutex_cola_Exec;
 pthread_mutex_t mutex_cola_Finished;
 
+pthread_mutex_t mutex_semaforos_ANSISOP;
+pthread_mutex_t mutex_variables_compartidas;
+
 sem_t sem_ConsolaKernelLenvantada;
 
 

@@ -386,8 +386,9 @@ void *rutinaCPU(void * arg)
 							//Validar que el proceso no haya sido finalizado, responder siempre a la CPU si
 							PCB_DATA* pcbDelProcesoActual = modificarPCB(pcbRecibido);
 
+							sem_wait(&mutex_semaforos_ANSISOP);
 							bool respuestaParaCPU = SEM_wait(nombreSemaforo, pcbDelProcesoActual);
-
+							sem_post(&mutex_semaforos_ANSISOP);
 
 							free(nombreSemaforo);
 
@@ -402,7 +403,9 @@ void *rutinaCPU(void * arg)
 					char* nombreSemaforo;
 					PCB_DATA* pcbRecibido = deserializarPCBYSemaforo(stream, &nombreSemaforo);
 					PCB_DATA* pcbDelProcesoActual = modificarPCB(pcbRecibido);
+					sem_wait(&mutex_semaforos_ANSISOP);
 					bool respuestaParaCPU = SEM_signal(nombreSemaforo, pcbDelProcesoActual);
+					sem_post(&mutex_semaforos_ANSISOP);
 					free(nombreSemaforo);
 					enviarMensaje(socketCPU,respuestaBooleanaKernel, &respuestaParaCPU, sizeof(bool));
 				}break;
@@ -413,8 +416,11 @@ void *rutinaCPU(void * arg)
 
 				char* nombreVarGlob = leerString(stream);
 
+				sem_wait(&mutex_variables_compartidas);
 				t_variableGlobal* varGlob = buscarVariableGlobal(nombreVarGlob);
+
 				if(varGlob == NULL){
+					sem_post(&mutex_variables_compartidas);
 					enviarMensaje(socketCPU,noExisteVarCompartida,NULL,sizeof(NULL));
 				}else{
 					enviarMensaje(socketCPU,envioValorCompartida,&(varGlob->valor),sizeof(int));
@@ -422,6 +428,7 @@ void *rutinaCPU(void * arg)
 					if(recibirMensaje(socketCPU,stream) == asignarValorCompartida){
 						varGlob->valor = *((int*)stream);
 					}
+					sem_post(&mutex_variables_compartidas);
 				}
 
 			}break;
@@ -432,12 +439,15 @@ void *rutinaCPU(void * arg)
 
 				char* nombreVarGlob = leerString(stream);
 
+				sem_wait(&mutex_variables_compartidas);
 				t_variableGlobal* varGlob = buscarVariableGlobal(nombreVarGlob);
 				if(varGlob == NULL){
 					enviarMensaje(socketCPU,noExisteVarCompartida,NULL,sizeof(NULL));
 				}else{
 					enviarMensaje(socketCPU,envioValorCompartida,&(varGlob->valor),sizeof(int));
 				}
+				sem_post(&mutex_variables_compartidas);
+
 			}break;
 
 
