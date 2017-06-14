@@ -30,9 +30,10 @@
 
 void conectarConMemoria();
 void conectarConKernel();
-void pedidoValido(int*,void*,int);
-void recibirInstruccion(void*,char**,int,int*);
 void sigusr1_handler(int signal);
+void pedidoValido(int*,void*,int);
+char* pedirInstruccion();
+void pedidoPCB();
 
 
 int main(void)
@@ -99,60 +100,14 @@ int main(void)
 
 		// Recepcion del pcb
 
-		enviarMensaje(socketKernel,pedirPCB,&quantumRestante,sizeof(int));
-
-		void* pcbSerializado;
-		puts("esperando pcb\n");
-		if(recibirMensaje(socketKernel,&pcbSerializado) != envioPCB) perror("Error en la accion maquinola");
-
-
-		pcb=deserializarPCB(pcbSerializado);
-
-		free(pcbSerializado);
-
-		//En el caso que esta sea la primera vez que el proceso entra en una CPU su indice de stack estara NULL porque no habia entradas anteriores, entonces se inicializa la primera entrada
-		if(pcb->indiceStack == NULL){
-			pcb->indiceStack = realloc(pcb->indiceStack,sizeof(t_entrada));
-			pcb->indiceStack->argumentos = list_create();
-			pcb->indiceStack->variables = list_create();
-			pcb->cantidadDeEntradas++;
-		}
+ 		pedidoPCB();
 
 		while(!terminoPrograma && quantumRestante != 0 && !bloqueado){
 
-			t_pedidoMemoria pedido;
-			pedido.id = pcb->pid;
-			pedido.direccion = calcularDireccion(pcb->indiceCodigo[pcb->programCounter].start);
-			pedido.direccion.size = pcb->indiceCodigo[pcb->programCounter].offset;
-
-
-			// Pedido de Codigo
-			enviarMensaje(socketMemoria,solicitarBytes,(void *)&pedido, sizeof(pedido));
-
-
-			//Recepcion del codigo ANSISOP
-			void* stream;
-			int booleano;
-
-			//Se recibe si tal pedido es valido o rompe por todos lados
-			int accion = recibirMensaje(socketMemoria,&stream);
-
-			pedidoValido(&booleano,stream,accion);
-
-
-			//Si el pedido salio bien se pasa a pedir el codigo concretamente
-			char* instruccion;
-
-
-			if(booleano){
-				recibirInstruccion(stream,&instruccion,pedido.direccion.size,&accion);
-			}else{
-				terminoPrograma = true;
-				pcb->exitCode = -5;		//Excepcion de Memoria STACK OVERFLOW
-			}
+			char* instruccion = pedirInstruccion();
 
 			//Si se recibio una linea de codigo se analiza
-			if(accion == lineaDeCodigo){
+			if(instruccion != NULL){
 				printf("\n%s\n\n",instruccion);
 
 				//Magia del Parser para llamar a las primitivas
@@ -161,7 +116,6 @@ int main(void)
 			}
 
 			free(instruccion);
-			free(stream);
 			quantumRestante--;
 		}
 
@@ -243,21 +197,81 @@ void pedidoValido(int* booleano,void* stream, int accion){
 	}
 }
 
-void recibirInstruccion(void *stream, char** instruccion, int size, int* accion){
-	*accion = recibirMensaje(socketMemoria,&stream);
-	switch(*accion){
-		case lineaDeCodigo:{
-			*instruccion = stream;
-			(*instruccion)[size - 1] = '\0';
-		}break;
-		default:{
-			perror("Error en la accion maquinola");
-		}break;
-	}
-}
-
 void sigusr1_handler(int signal) {
 	signal_SIGUSR1 = true;
 	puts("Se recibio una SIGUSR1, la CPU se desconectara luego de terminada la ejecucion");
 	return;
+}
+
+void pedidoPCB(){
+	enviarMensaje(socketKernel,pedirPCB,&(datosIniciales->quantum),sizeof(int));
+	void* pcbSerializado;
+	puts("esperando pcb\n");
+	if(recibirMensaje(socketKernel,&pcbSerializado) != envioPCB) perror("Error en la accion maquinola");
+	pcb=deserializarPCB(pcbSerializado);
+	free(pcbSerializado);
+	//En el caso que esta sea la primera vez que el proceso entra en una CPU su indice de stack estara NULL porque no habia entradas anteriores, entonces se inicializa la primera entrada
+	if(pcb->indiceStack == NULL){
+		pcb->indiceStack = realloc(pcb->indiceStack,sizeof(t_entrada));
+		pcb->indiceStack->argumentos = list_create();
+		pcb->indiceStack->variables = list_create();
+		pcb->cantidadDeEntradas++;
+	}
+}
+
+void recepcionCodigo(t_pedidoMemoria pedido,char* instruccion,int tamano){
+	//Recepcion del codigo ANSISOP
+	void* stream;
+	int booleano;
+	//Se recibe si tal pedido es valido o rompe por todos lados
+	int accion = recibirMensaje(socketMemoria,&stream);
+	pedidoValido(&booleano,stream,accion);
+	//Si el pedido salio bien se pasa a pedir el codigo concretamente
+	if(booleano){
+		free(stream);
+		if(recibirMensaje(socketMemoria,&stream) == lineaDeCodigo){
+			memcpy(instruccion,stream,tamano);
+			free(stream);
+		}
+	}else{
+		free(stream);
+		terminoPrograma = true;
+		pcb->exitCode = -5;		//Excepcion de Memoria STACK OVERFLOW
+	}
+}
+
+char* pedirInstruccion(){
+	t_pedidoMemoria pedido;
+	pedido.id = pcb->pid;
+	pedido.direccion = calcularDireccion(pcb->indiceCodigo[pcb->programCounter].start);
+	pedido.direccion.size = pcb->indiceCodigo[pcb->programCounter].offset;
+
+	int total = pedido.direccion.size;
+	int segundo = 0;
+	char* instruccion = malloc(total + 1);
+
+	if(pedido.direccion.offset + pedido.direccion.size >= datosIniciales->size_pag){
+		pedido.direccion.size = datosIniciales->size_pag - pedido.direccion.offset;
+		segundo = pedido.direccion.offset + pedido.direccion.size - datosIniciales->size_pag;
+	}
+
+	enviarMensaje(socketMemoria,solicitarBytes,(void *)&pedido, sizeof(pedido));
+
+	recepcionCodigo(pedido,instruccion,total - segundo);
+
+	if(segundo > 0){
+		pedido.direccion.page++;
+		pedido.direccion.offset = 0;
+		pedido.direccion.size = segundo;
+
+		enviarMensaje(socketMemoria,solicitarBytes,(void *)&pedido, sizeof(pedido));
+
+		recepcionCodigo(pedido,instruccion + total - segundo,segundo);
+
+	}
+
+	instruccion[total - 1] = '\0';
+
+	return instruccion;
+
 }
