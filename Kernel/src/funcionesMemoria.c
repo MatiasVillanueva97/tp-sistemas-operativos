@@ -57,7 +57,7 @@ char** memoria_dividirScriptEnPaginas4(int *cant_paginas, char* copiaScriptAnsis
 /// *** Esta función esta probada y anda
 char** memoria_dividirScriptEnPaginas(int cant_paginas, char *copiaScriptAnsisop)
 {
-	char * scriptDivididoEnPaginas[cant_paginas];
+	char ** scriptDivididoEnPaginas = malloc(sizeof(char*)*cant_paginas);
 	int i;
 	for(i=0;i<cant_paginas;i++){
 		scriptDivididoEnPaginas[i] = malloc(size_pagina);

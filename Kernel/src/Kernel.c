@@ -105,8 +105,8 @@ void newToReady(){
 		printf("Estructura:--\nPid: %d\nScript: %s\nSocketConsola:%d\n\n",programaAnsisop->pid,programaAnsisop->scriptAnsisop,programaAnsisop->socketConsola);
 
 		//***Calculo cuantas paginas necesitara la memoria para este script
-		int cant_paginas;// = memoria_CalcularCantidadPaginas(programaAnsisop->scriptAnsisop);
-		char** scriptEnPaginas = memoria_dividirScriptEnPaginas4(&cant_paginas,programaAnsisop->scriptAnsisop);
+		int cant_paginas = memoria_CalcularCantidadPaginas(programaAnsisop->scriptAnsisop);
+		char** scriptEnPaginas = memoria_dividirScriptEnPaginas(cant_paginas,programaAnsisop->scriptAnsisop);
 		INICIALIZAR_PROGRAMA dataParaMemoria;
 		dataParaMemoria.cantPags=cant_paginas+getConfigInt("STACK_SIZE");
 		dataParaMemoria.pid=programaAnsisop->pid;
