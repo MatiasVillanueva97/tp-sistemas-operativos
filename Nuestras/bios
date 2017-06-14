@@ -1,0 +1,10 @@
+#!/bin/bash
+#BIOS MEDIA
+
+x-terminal-emulator --new-tab --working-directory=/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Memoria/Debug --command=./Memoria   &
+
+x-terminal-emulator --new-tab  --working-directory=/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/FileSystem/Debug --command=./FileSystem   &
+
+x-terminal-emulator --new-tab --working-directory=/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Kernel/Debug --command=./Kernel
+
+

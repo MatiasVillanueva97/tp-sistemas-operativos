@@ -308,10 +308,11 @@ void* configurarTodo(){
 	bloqueSize = config_get_int_value(configuracion,"TAMANIO_BLOQUES");
 	cantidadDeBloques = config_get_int_value(configuracion,"CANTIDAD_BLOQUES");
 
-	if(!strcmp(config_get_string_value(configuracion,"MAGIC_NUMBER"),"SADICA")){
+/*	if(!strcmp(config_get_string_value(configuracion,"MAGIC_NUMBER"),"SADICA")){
 		perror("Ingreso mal el punto de montaje");
 		exit(-2);
-	}
+	}*/
+	sleep(1000);
 	FILE* archivoDeBitmap = fopen(obtenerRutaTotal("Bitmap.bin","Metadata"),"rb");
 	int fd = fileno(archivoDeBitmap);
 	void* bitmap2 = malloc(cantidadDeBloques);
