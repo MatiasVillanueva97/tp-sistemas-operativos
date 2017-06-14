@@ -57,15 +57,25 @@ char** memoria_dividirScriptEnPaginas4(int *cant_paginas, char* copiaScriptAnsis
 /// *** Esta función esta probada y anda
 char** memoria_dividirScriptEnPaginas(int cant_paginas, char *copiaScriptAnsisop)
 {
-	char * scriptDivididoEnPaginas[cant_paginas];
+	//char * scriptDivididoEnPaginas[cant_paginas];
+	char** scriptDivididoEnPaginas = malloc(cant_paginas);
 	int i;
 	for(i=0;i<cant_paginas;i++){
+
 		scriptDivididoEnPaginas[i] = malloc(size_pagina);
-		memcpy(scriptDivididoEnPaginas[i],copiaScriptAnsisop+i*size_pagina,size_pagina);
+		if(strlen(copiaScriptAnsisop) > size_pagina){
+			memcpy(scriptDivididoEnPaginas[i],copiaScriptAnsisop+i*size_pagina,size_pagina);
+		}else{
+			memcpy(scriptDivididoEnPaginas[i],copiaScriptAnsisop+i*size_pagina,strlen(copiaScriptAnsisop) % size_pagina);
+		}
 		printf("[memoria_dividirScriptEnPaginas] - %s",scriptDivididoEnPaginas[i]);
+
+
+
+
 	}
 	if(strlen(scriptDivididoEnPaginas[i-1]) < size_pagina){
-		char* x = string_repeat(' ',size_pagina-strlen(scriptDivididoEnPaginas[i-1]));
+		char* x = string_repeat('\0',size_pagina-strlen(scriptDivididoEnPaginas[i-1]));
 		string_append(&(scriptDivididoEnPaginas[i-1]),x);
 	}
 	return scriptDivididoEnPaginas;
