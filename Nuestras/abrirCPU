@@ -1,0 +1,4 @@
+#!/bin/bash
+#ABRIR CPU MEDIA
+
+x-terminal-emulator --new-tab --working-directory=/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/CPU/Debug --command=./CPU

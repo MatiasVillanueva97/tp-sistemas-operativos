@@ -67,6 +67,7 @@ bool proceso_finalizacionExterna(int pid, int exitCode)
 
 	if( procesoAFianalizar != NULL){
 		procesoAFianalizar->pcb->exitCode=exitCode;
+		procesoAFianalizar->pcb->estadoDeProceso=finalizado;
 		flag=true;
 	}
 
