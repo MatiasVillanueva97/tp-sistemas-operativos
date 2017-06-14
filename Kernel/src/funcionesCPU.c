@@ -99,62 +99,6 @@ bool proceso_EstaFinalizado(int pid)
 }
 
 
-bool archivoExiste(char* path){
-
-	bool sonDeIgualPath(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS * elementos){
-								return  elementos->path == path;
-	}
-	ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* auxiliar;
-	auxiliar = list_find(tablaGlobalDeArchivos,(void *)sonDeIgualPath);
-	if(auxiliar == NULL){
-			return false;}
-	else{return true; }
-}
-
-ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO * encontrarElDeIgualPid(int pid){
-			ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux;
-			bool sonDeIgualPid(ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO * elementos){
-				return  elementos->pid == pid;
-				}
-			aux = list_find(tablaGlobalDeArchivosDeProcesos,(void *)sonDeIgualPid);
-						return aux;
-}
-
-void agregarATablaDeProceso(int df, char* flags, t_list* tablaProceso){
-ENTRADA_DE_TABLA_DE_PROCESO * nuevaEntradaProceso = malloc(sizeof(ENTRADA_DE_TABLA_DE_PROCESO));
-nuevaEntradaProceso->globalFD = df;
-nuevaEntradaProceso->flags = string_duplicate(flags);
-list_add(tablaProceso, nuevaEntradaProceso);
-}
-
-void* serializarPedidoFs(int size, int offset,char* path){
-	void *contenido = malloc(4+strlen(path)+sizeof(int)*2);
-	memcpy(contenido,&size,sizeof(int));
-	memcpy(contenido+sizeof(int),&offset,sizeof(int));
-	int tamanoRuta = strlen(path);
-	memcpy(contenido+sizeof(int)*2,&tamanoRuta,sizeof(int));
-	memcpy(contenido+sizeof(int)*3,path,strlen(path));
-	return contenido;
-}
-
-//Espero que esto ande
-t_crearArchivo deserializarCrearArchivo(void* stream){
-	t_crearArchivo mensaje;
-		memcpy(&mensaje.pid,stream,sizeof(int));
-		int tamanoContenido;
-		memcpy(&tamanoContenido,stream + sizeof(int), sizeof(int));
-		char* contenidoAuxiliar = malloc(tamanoContenido);
-		memcpy(contenidoAuxiliar,stream + sizeof(int) * 2, tamanoContenido);
-		mensaje.flags = contenidoAuxiliar;
-		int tamanoContenido2;
-		memcpy(&tamanoContenido2,stream + sizeof(int)*3 + tamanoContenido, sizeof(int));
-		char* contenidoAuxiliar2 = malloc(tamanoContenido2);
-		memcpy(contenidoAuxiliar2,stream + sizeof(int) * 4 +tamanoContenido, tamanoContenido2);
-		mensaje.path = contenidoAuxiliar2;
-		return mensaje;
-}
-
-
 
 
 void *rutinaCPU(void * arg)
@@ -377,44 +321,53 @@ void *rutinaCPU(void * arg)
 
 			//TE MANDO UN NOMBRE DE UN SEMAFORO Y QUIERO QUE HAGAS UN WAIT, ME DEBERIAS DECIR SI ME BLOQUEO O NO
 			case waitSemaforo:{
+				printf("[Rutina rutinaCPU] - Entramos al Caso de que CPU pide wait de un semaforo: accion- %d!\n", waitSemaforo);
 
-							puts("Entro al waitSemaforo\n");
-							char* nombreSemaforo;
+				puts("Entro al waitSemaforo\n");
+				char* nombreSemaforo;
 
-							PCB_DATA* pcbRecibido = deserializarPCBYSemaforo(stream, &nombreSemaforo);
+				PCB_DATA* pcbRecibido = deserializarPCBYSemaforo(stream, &nombreSemaforo);
 
-							//Validar que el proceso no haya sido finalizado, responder siempre a la CPU si
-							PCB_DATA* pcbDelProcesoActual = modificarPCB(pcbRecibido);
+				//Validar que el proceso no haya sido finalizado, responder siempre a la CPU si
+				PCB_DATA* pcbDelProcesoActual = modificarPCB(pcbRecibido);
 
-							bool respuestaParaCPU = SEM_wait(nombreSemaforo, pcbDelProcesoActual);
+				sem_wait(&mutex_semaforos_ANSISOP);
+					bool respuestaParaCPU = SEM_wait(nombreSemaforo, pcbDelProcesoActual);
+				sem_post(&mutex_semaforos_ANSISOP);
 
+				free(nombreSemaforo);
 
-							free(nombreSemaforo);
-
-							enviarMensaje(socketCPU,respuestaBooleanaKernel, &respuestaParaCPU, sizeof(bool));
-
-
-						}break;
+				enviarMensaje(socketCPU,respuestaBooleanaKernel, &respuestaParaCPU, sizeof(bool));
+			}break;
 
 			//TE MANDO UN NOMBRE DE UN SEMAFORO Y QUIERO QUE HAGAS UN SIGNAL, LE DEBERIAS INFORMAR A ALGUIEN SI ESTABA BLOQUEADO EN UN WAIT DE ESTE SEMAFORO
 			case signalSemaforo:{
-					puts("Entro al signalSemaforo\n");
-					char* nombreSemaforo;
-					PCB_DATA* pcbRecibido = deserializarPCBYSemaforo(stream, &nombreSemaforo);
-					PCB_DATA* pcbDelProcesoActual = modificarPCB(pcbRecibido);
+
+				printf("[Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- %d!\n", signalSemaforo);
+
+				char* nombreSemaforo;
+				PCB_DATA* pcbRecibido = deserializarPCBYSemaforo(stream, &nombreSemaforo);
+				PCB_DATA* pcbDelProcesoActual = modificarPCB(pcbRecibido);
+
+				sem_wait(&mutex_semaforos_ANSISOP);
 					bool respuestaParaCPU = SEM_signal(nombreSemaforo, pcbDelProcesoActual);
-					free(nombreSemaforo);
-					enviarMensaje(socketCPU,respuestaBooleanaKernel, &respuestaParaCPU, sizeof(bool));
-				}break;
+				sem_post(&mutex_semaforos_ANSISOP);
+
+				free(nombreSemaforo);
+				enviarMensaje(socketCPU,respuestaBooleanaKernel, &respuestaParaCPU, sizeof(bool));
+			}break;
 
 			//TE MANDO UNA ESTRUCTURA CON {VALOR, NOMBRE_VARIABLE(CHAR*)} PARA QUE LE ASIGNES ESE VALOR A DICHA VARIABLE
 			case asignarValorCompartida:{
-				puts("Entro al asignarValorCompartida");
+				printf("[Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- %d!\n", asignarValorCompartida);
 
 				char* nombreVarGlob = leerString(stream);
 
+				sem_wait(&mutex_variables_compartidas);
 				t_variableGlobal* varGlob = buscarVariableGlobal(nombreVarGlob);
+
 				if(varGlob == NULL){
+					sem_post(&mutex_variables_compartidas);
 					enviarMensaje(socketCPU,noExisteVarCompartida,NULL,sizeof(NULL));
 				}else{
 					enviarMensaje(socketCPU,envioValorCompartida,&(varGlob->valor),sizeof(int));
@@ -422,22 +375,28 @@ void *rutinaCPU(void * arg)
 					if(recibirMensaje(socketCPU,stream) == asignarValorCompartida){
 						varGlob->valor = *((int*)stream);
 					}
+					sem_post(&mutex_variables_compartidas);
 				}
 
 			}break;
 
 			//TE MANDO EL NOMBRE DE UNA VARIABLE COMPARTIDA Y ME DEBERIAS DEVOLVER SU VALOR
 			case pedirValorCompartida:{
-				puts("Entro al pedirValorCompartida");
+				printf("[Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- %d!\n", pedirValorCompartida);
 
 				char* nombreVarGlob = leerString(stream);
 
+				sem_wait(&mutex_variables_compartidas);
+				
 				t_variableGlobal* varGlob = buscarVariableGlobal(nombreVarGlob);
 				if(varGlob == NULL){
 					enviarMensaje(socketCPU,noExisteVarCompartida,NULL,sizeof(NULL));
 				}else{
 					enviarMensaje(socketCPU,envioValorCompartida,&(varGlob->valor),sizeof(int));
 				}
+				
+				sem_post(&mutex_variables_compartidas);
+
 			}break;
 
 

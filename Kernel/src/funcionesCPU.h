@@ -31,6 +31,10 @@ PCB_DATA * cpu_pedirPCBDeExec();
 
 void *rutinaCPU(void * arg);
 
+void* serializarPedidoFs(int size, int offset,char* path);
+
+t_crearArchivo deserializarCrearArchivo(void* stream);
+
 
 #endif /* FUNCIONESCPU_H_ */
 

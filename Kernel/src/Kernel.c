@@ -36,6 +36,7 @@
 #include "funcionesMemoria.h"
 #include "funcionesConsolaKernel.h"
 #include "funcionesSemaforosYCompartidas.h"
+#include "funcionesCapaFS.h"
 #include "funcionesCPU.h"
 
 
@@ -103,11 +104,8 @@ void newToReady(){
 		printf("Estructura:--\nPid: %d\nScript: %s\nSocketConsola:%d\n\n",programaAnsisop->pid,programaAnsisop->scriptAnsisop,programaAnsisop->socketConsola);
 
 		//***Calculo cuantas paginas necesitara la memoria para este script
-		int cant_paginas = memoria_CalcularCantidadPaginas(programaAnsisop->scriptAnsisop);
-		char** scriptEnPaginas = memoria_dividirScriptEnPaginas(cant_paginas,programaAnsisop->scriptAnsisop);
-
-
-
+		int cant_paginas;// = memoria_CalcularCantidadPaginas(programaAnsisop->scriptAnsisop);
+		char** scriptEnPaginas = memoria_dividirScriptEnPaginas4(&cant_paginas,programaAnsisop->scriptAnsisop);
 		INICIALIZAR_PROGRAMA dataParaMemoria;
 		dataParaMemoria.cantPags=cant_paginas+getConfigInt("STACK_SIZE");
 		dataParaMemoria.pid=programaAnsisop->pid;
@@ -135,6 +133,7 @@ void newToReady(){
 				enviarMensaje(socketMemoria,envioCantidadPaginas,scriptEnPaginas[i],size_pagina);
 				printf("Envio una pagina: %d\n", i);
 				printf("La pagina %d, contiene:",i);
+				puts(scriptEnPaginas[i]);
 				recibirMensaje(socketMemoria,&ok);
 			}
 
@@ -433,6 +432,9 @@ void* estadoEXEC(){
 
 
 
+/// ********************************************************************************************************///
+/// **************************** CUARTA PARTE - PASAR PROCESOS DE WAIT A READY *****************************///
+/// ********************************************************************************************************///
 
 void* estadoWAIT(){
 	int pidParaAvisar;
@@ -487,6 +489,9 @@ void* estadoWAIT(){
 }
 
 
+/// ********************************************************************************************************///
+/// ***************************************** FIN CUARTA PARTE ********************************************///
+/// ********************************************************************************************************///
 
 
 
@@ -494,53 +499,70 @@ void* estadoWAIT(){
 
 
 
+/// ********************************************************************************************************///
+/// **************************** QUINTA PARTE - TRABAJAR PROCESOS EN FINISHED ******************************///
+/// ********************************************************************************************************///
 
-
-
-
-
-
-
-
-
-
-///avisa a al consola que un proceso termino
-void * estadoFINISHED()
-{
+void proceso_avisarAConsola(){
 
 	bool busqueda(PROCESOS * process)	{
 		return (process->pcb->estadoDeProceso == finalizado && !process->avisoAConsola);
 	}
 
-	PROCESOS* proceso = list_find(avisos,busqueda);
+	sem_wait(&mutex_listaProcesos);
 
+	// Si la consola no habia sido avisada le envio el mensaje del pid que acaba de finalizar
+	PROCESOS* procesoFinalizado = list_find(avisos, busqueda);
+
+	sem_post(&mutex_listaProcesos);
+
+	if(procesoFinalizado != NULL)
+	{
+		enviarMensaje(procesoFinalizado->socketConsola, pidFinalizado, &procesoFinalizado->pid, sizeof(int));
+
+		printf("Se acaba de mandar a la consola n°: %d, que el proceso %d acaba de finalizar con exit code: %d\n", procesoFinalizado->socketConsola, procesoFinalizado->pid, procesoFinalizado->pcb->exitCode);
+
+		// y ahora pongo que el este proceso ya le aviso a su consola
+		procesoFinalizado->avisoAConsola=true;
+	}
+
+}
+
+void proceso_liberarRecursos(){
+	bool busqueda(PROCESOS * process)	{
+		return (process->pcb->estadoDeProceso == finalizado && !process->avisoAConsola);
+	}
+
+	sem_wait(&mutex_listaProcesos);
+
+	// Si la consola no habia sido avisada le envio el mensaje del pid que acaba de finalizar
+	PROCESOS* procesoFinalizado = list_find(avisos, busqueda);
+
+	sem_post(&mutex_listaProcesos);
+}
+
+///avisa a al consola que un proceso termino
+void * estadoFINISHED()
+{
 
 
 	//*** el booleano finPorConsolaDelKernel esta en false desde el inicio, en el momento en el que el kernel quiera frenar la planificiacion esta variable pasara a true, y se frenara la planificacion
 	while(!finPorConsolaDelKernel)
 	{
-		sem_wait(&mutex_listaProcesos);
+		///***Reviso si algun proceso que esta en finalizado aun no le aviso a su consola que ya finalizo
+		proceso_avisarAConsola();
 
-		// Si la consola no habia sido avisada le envio el mensaje del pid que acaba de finalizar
-		PROCESOS* procesoFinalizado = list_find(avisos, busqueda);
-
-		sem_post(&mutex_listaProcesos);
-
-		if(procesoFinalizado != NULL)
-		{
-			enviarMensaje(procesoFinalizado->socketConsola, pidFinalizado, &procesoFinalizado->pid, sizeof(int));
-
-			printf("Se acaba de mandar a la consola n°: %d, que el proceso %d acaba de finalizar con exit code: %d\n", procesoFinalizado->socketConsola, procesoFinalizado->pid, procesoFinalizado->pcb->exitCode);
-
-			// y ahora pongo que el este proceso ya le aviso a su consola
-			procesoFinalizado->avisoAConsola=true;
-		}
+		///***Reviso si algun proceso finalizado no devolvió todos los recursos que tomo. De ser asi, los libero
+		//proceso_liberarRecursos();
 
 	}
 	return NULL;
 }
 
 
+/// ********************************************************************************************************///
+/// ***************************************** FIN QUINTA PARTE ********************************************///
+/// ********************************************************************************************************///
 
 
 
@@ -728,6 +750,9 @@ void inicializarSemaforo(){
 	sem_init(&mutex_cola_Wait,0,1);
 	sem_init(&mutex_cola_Exec,0,1);
 	sem_init(&mutex_cola_Finished,0,1);
+
+	sem_init(&mutex_semaforos_ANSISOP,0,1);
+	sem_init(&mutex_variables_compartidas,0,1);
 
 
 	sem_init(&sem_ConsolaKernelLenvantada,0,0);

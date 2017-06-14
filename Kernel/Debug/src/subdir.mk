@@ -6,6 +6,7 @@
 C_SRCS += \
 ../src/Kernel.c \
 ../src/funcionesCPU.c \
+../src/funcionesCapaFS.c \
 ../src/funcionesConsola.c \
 ../src/funcionesConsolaKernel.c \
 ../src/funcionesMemoria.c \
@@ -15,6 +16,7 @@ C_SRCS += \
 OBJS += \
 ./src/Kernel.o \
 ./src/funcionesCPU.o \
+./src/funcionesCapaFS.o \
 ./src/funcionesConsola.o \
 ./src/funcionesConsolaKernel.o \
 ./src/funcionesMemoria.o \
@@ -24,6 +26,7 @@ OBJS += \
 C_DEPS += \
 ./src/Kernel.d \
 ./src/funcionesCPU.d \
+./src/funcionesCapaFS.d \
 ./src/funcionesConsola.d \
 ./src/funcionesConsolaKernel.d \
 ./src/funcionesMemoria.d \

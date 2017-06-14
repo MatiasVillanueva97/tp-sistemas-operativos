@@ -86,6 +86,8 @@ typedef struct{
 	bool avisoAConsola;
 	PCB_DATA* pcb;
 	char* semaforoTomado;
+	//archivos tomados
+	//elementos de heap tomados
 } PROCESOS;
 
 //***Tabla de archivos para cada proceso
@@ -147,6 +149,9 @@ pthread_mutex_t mutex_cola_Ready;
 pthread_mutex_t mutex_cola_Wait;
 pthread_mutex_t mutex_cola_Exec;
 pthread_mutex_t mutex_cola_Finished;
+
+pthread_mutex_t mutex_semaforos_ANSISOP;
+pthread_mutex_t mutex_variables_compartidas;
 
 sem_t sem_ConsolaKernelLenvantada;
 

@@ -65,6 +65,45 @@ size_t tamanoArchivo(FILE * archivo){
 return tamano;
 }
 
+void string_iterate(char* strings, void (*closure)(char)) {
+	int i = 0;
+	while (strings[i] != '\0') {
+		closure(strings[i]);
+		i++;
+	}
+}
+
+char* procesarArchivo(char* archivo, int tamano){
+	char ** lineas = string_split(archivo, "\n");
+	char* archivoProcesado = string_new();
+	bool laAnteriorFueUnEnter = false;
+	void agregar(char caracter){
+			if(caracter != '\t'){
+			char* aux = malloc(sizeof(char)*5);
+			aux[0] = caracter;
+			aux[1] = '\0';
+			string_append(&archivoProcesado, aux);
+			free(aux);
+		}
+	}
+	void dejarSoloUnEnter(char caracter){
+		if(caracter == '\n'){
+			if(!laAnteriorFueUnEnter){
+				agregar(caracter);
+			}
+			laAnteriorFueUnEnter = true;
+		}
+		else{
+			agregar(caracter);
+			if(caracter != '\t')
+			laAnteriorFueUnEnter = false;
+		}
+
+	}
+	string_iterate(archivo, dejarSoloUnEnter);
+	return archivoProcesado;
+}
+
 char * generarScript(char * nombreDeArchivo){
 	FILE* archivo;
 
@@ -75,10 +114,12 @@ char * generarScript(char * nombreDeArchivo){
     }
 	size_t tamano = tamanoArchivo(archivo);
 	char* script = malloc(tamano+1);//lee el archivo y lo guarda en el script AnsiSOP
-	fread(script,tamano,1,archivo);
+   fread(script,tamano,1,archivo);
 	script[tamano] = '\0';
+	char* scriptProcesado = procesarArchivo(script, tamano);
+	free(script);
 	fclose(archivo);
-	return script;
+	return scriptProcesado;
 }
 void transformarFechaAInts(char * fecha, int arrayFecha[4]){
 	char** arrayCalendario = string_split(fecha,":");

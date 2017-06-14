@@ -12,7 +12,7 @@ src/Kernel.d: ../src/Kernel.c \
  ../src/../../Nuestras/src/laGranBiblioteca/ProcessControlBlock.h \
  ../src/funcionesPCB.h ../src/funcionesMemoria.h \
  ../src/funcionesConsolaKernel.h ../src/funcionesSemaforosYCompartidas.h \
- ../src/funcionesCPU.h
+ ../src/funcionesCapaFS.h ../src/funcionesCPU.h
 
 ../src/../../Nuestras/src/laGranBiblioteca/sockets.c:
 
@@ -43,5 +43,7 @@ src/Kernel.d: ../src/Kernel.c \
 ../src/funcionesConsolaKernel.h:
 
 ../src/funcionesSemaforosYCompartidas.h:
+
+../src/funcionesCapaFS.h:
 
 ../src/funcionesCPU.h:

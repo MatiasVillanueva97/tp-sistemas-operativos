@@ -510,6 +510,21 @@ void *aceptarConexionesCpu( void *arg ){ // aca le sacamos el asterisco, porque 
 
 int main(void) {
 	//
+	/*char* a = "hola estoy de paro";
+	void* pagina = malloc(100);
+	sizeOfPaginas = 100;
+	HeapMetadata h;
+	h.isFree = true;
+	h.size = 95;
+	memcpy(pagina,&h,sizeof(HeapMetadata));
+	void * prueba =  escribirMemoria(a,strlen(a),pagina);
+	 prueba =  escribirMemoria(a,strlen(a),pagina);
+	 prueba =  escribirMemoria(a,strlen(a),pagina);
+	liberarMemoriaHeap(5,pagina);
+	liberarMemoriaHeap(23,pagina);
+	liberarMemoriaHeap(46,pagina);
+
+*/
 	printf("Inicializando Memoria.....\n\n");
 	sem_init(&mutex_Memoria,0,1);
 	sem_init(&mutex_TablaDeCantidadDePaginas,0,1);
@@ -538,7 +553,7 @@ int main(void) {
 													//		  \__|__/
 
 	iniciarTablaDePaginacionInvertida();
-
+/*
 	cacheMiss(1,2,joaco);
 	cacheMiss(1,3,joaco);
 	cacheMiss(1,4,joaco);
