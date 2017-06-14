@@ -199,11 +199,11 @@ void newToReady(){
 int cantidadProgramasEnProcesamiento()
 {
 	sem_wait(&mutex_cola_Ready);
-	sem_wait(&mutex_cola_Wait);
 	sem_wait(&mutex_cola_Exec);
+	sem_wait(&mutex_cola_Wait);
 		int cantidadProcesosEnLasColas = queue_size(cola_Ready)+queue_size(cola_Wait)+queue_size(cola_Exec);
-	sem_post(&mutex_cola_Exec);
 	sem_post(&mutex_cola_Wait);
+	sem_post(&mutex_cola_Exec);
 	sem_post(&mutex_cola_Ready);
 
 	return cantidadProcesosEnLasColas;
@@ -234,7 +234,6 @@ void * estadoNEW()
 		{
 			newToReady();
 		}
-//		sleep(5);
 	}
 
 	return NULL;
@@ -451,15 +450,14 @@ void* estadoWAIT(){
 	//*** el booleano finPorConsolaDelKernel esta en false desde el inicio, en el momento en el que el kernel quiera frenar la planificiacion esta variable pasara a true, y se frenara la planificacion
 	while(!finPorConsolaDelKernel)
 	{
-//		sem_wait(&mutex_cola_Wait);
+		sem_wait(&mutex_cola_Wait);
 
 		//***Validamos que haya procesos en la cola de exec
 		if(queue_size(cola_Wait)>0){
 
-
 			PCB_DATA* pcbDeWait = queue_pop(cola_Wait);
 
-//			sem_post(&mutex_cola_Wait);
+			sem_post(&mutex_cola_Wait);
 
 			if(pcbDeWait->estadoDeProceso == paraEjecutar)
 			{
@@ -474,14 +472,14 @@ void* estadoWAIT(){
 					sem_post(&mutex_cola_Finished);
 				}
 				else{
-	//				sem_wait(&mutex_cola_Wait);
+					sem_wait(&mutex_cola_Wait);
 						queue_push(cola_Wait, pcbDeWait);
-	//				sem_post(&mutex_cola_Wait);
+					sem_post(&mutex_cola_Wait);
 				}
 			}
 		}
 		else{
-	//		sem_post(&mutex_cola_Wait);
+			sem_post(&mutex_cola_Wait);
 		}
 
 
@@ -530,16 +528,83 @@ void proceso_avisarAConsola(){
 }
 
 void proceso_liberarRecursos(){
-	bool busqueda(PROCESOS * process)	{
-		return (process->pcb->estadoDeProceso == finalizado && !process->avisoAConsola);
+/*
+ 	 int indicadorNumerico=0;
+ 	 bool flag=false;
+
+	bool busquedaRercursoOprimido(PROCESOS * process){
+		if(!process->semaforoTomado == NULL)
+		{
+			indicadorNumerico+=1;
+			flag=true;
+		}
+		if(!process no libero su heap)
+		{
+			indicadorNumerico+=2;
+			flag=true;
+		}
+		if(!process no libero sus archivos abiertos)
+		{
+			indicadorNumerico+=4;
+			flag=true;
+		}
+
+		return flag;
 	}
 
 	sem_wait(&mutex_listaProcesos);
 
-	// Si la consola no habia sido avisada le envio el mensaje del pid que acaba de finalizar
-	PROCESOS* procesoFinalizado = list_find(avisos, busqueda);
+	PROCESOS* procesoOpresor = list_find(avisos, busquedaRercursoOprimido);
 
 	sem_post(&mutex_listaProcesos);
+
+	if(procesoOpresor == NULL)
+	{
+	return null;
+	}
+
+	//// **** la cuestionn es que segun que indicador numerico devuelve al final llamamos a la funcion correspondiente
+
+	switch(indicadorNumerico)
+	{
+	case 1:
+	{
+	// si entro aca es porque tiene que liberar un semaforo
+	}break;
+	case 2:
+	{
+	// si entro aca es porque tiene que liberar algo en heap
+	}break;
+	case 4:
+	{
+	// si entro aca es porque tiene que liberar archivos
+	}break;
+
+	case 3:
+	{
+	// si entro aca es porque tiene que liberar un semaforo y algo en heap
+	}break;
+	case 5:
+	{
+	// si entro aca es porque tiene que liberar un semaforo y algun archivo
+	}break;
+	case 7:
+	{
+	// si entro aca es porque tiene que liberar un semaforo , algo en heap y algun archivo
+	}break;
+
+	case 6:
+	{
+	// si entro aca es porque tiene que liberar un algo en heap y algun archivo
+	}break;
+	}
+
+	default:
+	{
+	/// aca tirar error, no deberia entrar nunna aca
+	}break;
+	}
+	*/
 }
 
 ///avisa a al consola que un proceso termino
