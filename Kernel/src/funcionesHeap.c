@@ -20,8 +20,8 @@ int pedirPagina(int pid){
 			enviarMensaje(socketMemoria,asignarPaginas,&asignar,sizeof(t_asignarPaginas));
 			void* stream;
 			recibirMensaje(socketMemoria,&stream); // Falta inicializar la pagina
-			int x = leerInt(stream);
-			if(!x){
+			int pagina = leerInt(stream);
+			if(!pagina){
 				return false;
 			}
 			t_almacenarBytes w;
@@ -30,7 +30,7 @@ int pedirPagina(int pid){
 			heap->size = size_pagina-sizeof(HeapMetadata);
 			w.buffer = heap;
 			w.pid = pid;
-			w.direccion.page = x;
+			w.direccion.page = pagina;
 			w.direccion.offset = 0;
 			w.direccion.size = sizeof(HeapMetadata);
 			enviarMensaje(socketMemoria,almacenarBytes,&w,sizeof(t_direccion)+sizeof(int)+w.direccion.size);//esta mal, necesito el deserealizador de spisso.
@@ -38,7 +38,7 @@ int pedirPagina(int pid){
 			recibirMensaje(socketMemoria,&stream);
 			if(leerInt(stream)){
 				filaTablaDeHeapMemoria* elemento = malloc(sizeof(filaTablaDeHeapMemoria));
-				elemento->pagina = x;
+				elemento->pagina = pagina;
 				elemento->pid = pid;
 				elemento->tamanoDisponible = size_pagina -5;
 				list_add(tablaDeHeapMemoria,elemento);
@@ -77,7 +77,7 @@ int manejarLiberacionDeHeap(int pid,int offset){
 		enviarMensaje(socketMemoria,almacenarBytes,&almacenamiento,sizeof(int)*4+sizeof(HeapMetadata));
 		free(stream);
 		recibirMensaje(socketMemoria,&stream);
-		return 1;
+		return leerInt(stream);
 	}
 	free(stream);
 	return 0;
@@ -98,7 +98,7 @@ int manejarPedidoDeMemoria(int pid,int tamano){
 		int tamanoLista = list_size(tablaDeHeapMemoria);
 		for(i=0;i<tamanoLista;i++){
 			filaTablaDeHeapMemoria* fila=list_get(tablaDeHeapMemoria,i);
-			if(fila->tamanoDisponible>tamano){
+			if(fila->tamanoDisponible>tamano){//Si podria escribir en esa pagina, se chequea
 				t_pedidoMemoria escritura;
 				escritura.direccion.page = fila->pagina;
 				escritura.direccion.offset = 0;
@@ -108,7 +108,7 @@ int manejarPedidoDeMemoria(int pid,int tamano){
 				enviarMensaje(socketMemoria,solicitarBytes,&escritura,sizeof(t_pedidoMemoria));
 				void* stream;
 				recibirMensaje(socketMemoria,&stream);
-				if(*(int*)stream ){
+				if(*(int*)stream ){//Si no hubo error en memoria
 					free(stream);
 					recibirMensaje(socketMemoria,&stream);
 					offsetYBuffer x = escribirMemoria(tamano,stream);
@@ -128,7 +128,7 @@ int manejarPedidoDeMemoria(int pid,int tamano){
 				}
 			}
 		}
-		return pedirPagina(pid);
+		return pedirPagina(pid);//
 	}
 }
 
@@ -176,6 +176,8 @@ offsetYBuffer escribirMemoria(int tamano,void* memoria){
 	return x;//no hay espacio suficiente
 }
 //Esto es para heap y sufrira modificaciones
+
+
 offsetYHeader liberarMemoriaHeap(int offset,void* pagina){
 	if (offset<0){
 			perror("ingreso una posicion de la pagina negativa.");
@@ -191,27 +193,29 @@ offsetYHeader liberarMemoriaHeap(int offset,void* pagina){
 	int recorridoDesdeDondeTengoQueCopiar=recorrido;
 	recorrido+= tamanoHeader;
 	while(recorrido<size_pagina&&recorrido+sizeof(HeapMetadata)<offset){
-		recorridoDesdeDondeTengoQueCopiar = recorrido-5;
 		headerAnterior = headerActual;
 		recorrido+=headerActual->size;
+		recorridoDesdeDondeTengoQueCopiar = recorrido-5;
 		headerActual = ((HeapMetadata*) (pagina+recorrido));
 		recorrido+= tamanoHeader;
 	}
-	if(recorrido>=size_pagina){
+	recorridoDesdeDondeTengoQueCopiar = recorrido-5;
+		if(recorrido>=size_pagina){
 			perror("pidio una posicion invalida, es decir, que es mayor al numero de posiciones dentro de la pagina"); // esto significa posicion invalida
 	}
+
 	else{
 			headerActual->isFree= true;
 			HeapMetadata* headerSiguiente;
 			HeapMetadata  headerAEscribir = *headerActual;
 			headerSiguiente = ((HeapMetadata*) (pagina+recorrido+headerActual->size));
 			if(headerSiguiente->isFree){
-				headerActual->size += headerSiguiente->size + tamanoHeader;
-				offsetQueTengoQueDevolver = recorrido;
+				headerAEscribir.size += headerSiguiente->size + tamanoHeader;
 			}
+			offsetQueTengoQueDevolver = recorridoDesdeDondeTengoQueCopiar;
 			if(headerAnterior->isFree){
-				headerAnterior->size += headerActual->size + tamanoHeader;
-				offsetQueTengoQueDevolver = recorridoDesdeDondeTengoQueCopiar;
+				offsetQueTengoQueDevolver = recorridoDesdeDondeTengoQueCopiar-headerActual->size - tamanoHeader;
+				headerAnterior->size += headerAEscribir.size + tamanoHeader;
 				headerAEscribir = *headerAnterior;
 			}
 			offsetYHeader x;
@@ -220,6 +224,5 @@ offsetYHeader liberarMemoriaHeap(int offset,void* pagina){
 			return x;
 			//tengo que devolver offsetQueTengoQueDevolver y el headerQueTengaQueEscribir
 	}
-	return *(offsetYHeader*)NULL;
+		return *(offsetYHeader*)NULL;
 }
-
