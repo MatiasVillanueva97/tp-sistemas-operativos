@@ -69,6 +69,13 @@ typedef struct{
 }t_CPU;
 
 t_list* lista_CPUS;
+t_list* tablaDeHeapMemoria;
+typedef struct{
+	int pid;
+	int pagina;
+	int tamanoDisponible;
+
+}filaTablaDeHeapMemoria;
 
 /// Estructura para manejar los semaforos
 

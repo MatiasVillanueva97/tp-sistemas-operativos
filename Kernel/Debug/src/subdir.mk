@@ -9,6 +9,7 @@ C_SRCS += \
 ../src/funcionesCapaFS.c \
 ../src/funcionesConsola.c \
 ../src/funcionesConsolaKernel.c \
+../src/funcionesHeap.c \
 ../src/funcionesMemoria.c \
 ../src/funcionesPCB.c \
 ../src/funcionesSemaforosYCompartidas.c 
@@ -19,6 +20,7 @@ OBJS += \
 ./src/funcionesCapaFS.o \
 ./src/funcionesConsola.o \
 ./src/funcionesConsolaKernel.o \
+./src/funcionesHeap.o \
 ./src/funcionesMemoria.o \
 ./src/funcionesPCB.o \
 ./src/funcionesSemaforosYCompartidas.o 
@@ -29,6 +31,7 @@ C_DEPS += \
 ./src/funcionesCapaFS.d \
 ./src/funcionesConsola.d \
 ./src/funcionesConsolaKernel.d \
+./src/funcionesHeap.d \
 ./src/funcionesMemoria.d \
 ./src/funcionesPCB.d \
 ./src/funcionesSemaforosYCompartidas.d 

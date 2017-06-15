@@ -104,6 +104,11 @@ enum tipos_de_Acciones{
 		envioValorCompartida = 14,
 
 
+		liberarVariable = 70,
+		reservarVariable = 71,
+		enviarOffsetDeVariableReservada = 72,
+		enviarSiSePudoLiberar = 73,
+
 	//***Todas las acciones del CPU
 		asignarValor = 101,
 		pedirValor = 102,
@@ -135,6 +140,8 @@ enum tipos_de_Acciones{
 		asignarPaginas = 206, /// asigna paginas a un proceso, esto es mas que nada para el heap
 		finalizarPrograma = 207,
 		liberarUnaPagina = 208,
+
+
 
 
 	//***Todas las acciones de Consola

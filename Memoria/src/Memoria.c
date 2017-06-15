@@ -364,7 +364,7 @@ typedef struct{
 typedef struct {
 	int pid;
 	int cantPags;
-}t_asignarPaginas;
+}__attribute__((packed)) t_asignarPaginas;
 //Funciones de Conexion
 void recibirMensajesMemoria(void* arg){
 	int socket = (int)arg;
@@ -417,6 +417,7 @@ void recibirMensajesMemoria(void* arg){
 						enviarMensaje(socket,RespuestaBooleanaDeMemoria,&respuesta,sizeof(int));
 					}
 					else{
+
 						enviarMensaje(socket,RespuestaBooleanaDeMemoria,&respuesta,sizeof(int));
 						enviarMensaje(socket,lineaDeCodigo,contenidoDeLaPagina,estructura->direccion.size);
 
@@ -440,7 +441,7 @@ void recibirMensajesMemoria(void* arg){
 				}
 				case asignarPaginas:{//PedirMasPaginas
 					t_asignarPaginas* estructura = stream;
-					int x=1;
+					int x=buscarCantidadDePaginas(estructura->pid)+1;
 					if(asignarPaginasAUnProceso(estructura->pid,estructura->cantPags)==-1){
 							x=0;
 					}

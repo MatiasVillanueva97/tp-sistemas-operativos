@@ -707,7 +707,7 @@ int main(void) {
 		avisos = list_create();
 		lista_CPUS = list_create();
 		//listaDeEsperaSemaforos = list_create();
-
+		tablaDeHeapMemoria = list_create();
 		tablaGlobalDeArchivos = list_create();
 		tablaGlobalDeArchivosDeProcesos= list_create();
 

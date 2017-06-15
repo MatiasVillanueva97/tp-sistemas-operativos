@@ -6,6 +6,7 @@
  */
 
 #include "funcionesCPU.h"
+#include "funcionesHeap.h"
 
 t_mensajeDeProceso deserializarMensajeAEscribir(void* stream);
 
@@ -404,6 +405,19 @@ void *rutinaCPU(void * arg)
 
 			}break;
 
+			case reservarVariable:{
+				int tamano = *(int*) stream;
+				int pid =  *(int*) (stream+4);
+				int offset = manejarPedidoDeMemoria(pid,tamano);
+				enviarMensaje(socketCPU,enviarOffsetDeVariableReservada,&offset,sizeof(offset)); // Negro tene cuidado. Si te tiro un 0, es que rompio. Nunca te puedo dar el 0, porque va el metadata.
+			}break;
+			case liberarVariable:{
+				int offset = *(int*) stream;
+				int pid = *(int*) (stream+4);
+
+				int x = manejarLiberacionDeHeap(pid,offset);
+				enviarMensaje(socketCPU,enviarSiSePudoLiberar,&x,sizeof(int));
+				}break;
 
 			//QUE PASA SI SE DESCONECTA LA CPU
 			case 0:{

@@ -60,9 +60,6 @@ typedef struct{
 	uint32_t pagina;
 	void* contenido;
 	}lineaCache;
-typedef struct{
-	uint32_t size;
-	bool isFree;
-}__attribute__((packed))HeapMetadata;
+
 
 #endif /* ESTRUCTURASDELAMEMORIA_H_ */

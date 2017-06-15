@@ -7,6 +7,12 @@
 
 #include "EstructurasDeLaMemoria.h"
 #include <stdbool.h>
+typedef struct{
+	uint32_t size;
+	bool isFree;
+}__attribute__((packed))HeapMetadata;
+#define tamanoHeader sizeof(HeapMetadata) // not sure si anda esto
+
 #define tamanoHeader sizeof(HeapMetadata) // not sure si anda esto
 
 void* leerMemoria(int posicion_dentro_de_la_pagina, int*tamanioStreamLeido){
