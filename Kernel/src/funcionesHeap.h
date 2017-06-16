@@ -27,8 +27,9 @@ typedef struct{
 }__attribute__((packed))HeapMetadata;
 typedef struct{
 	int offset;
+	int tamanoLibre;
 	HeapMetadata header;
-}offsetYHeader;
+}offsetTamanoYHeader;
 #define tamanoHeader sizeof(HeapMetadata) // not sure si anda esto
 
 typedef struct {
@@ -41,5 +42,5 @@ typedef struct {
 #define FUNCIONESHEAP_H_
 int manejarPedidoDeMemoria(int pid,int tamano);
 offsetYBuffer escribirMemoria(int tamano,void* memoria);
-offsetYHeader liberarMemoriaHeap(int offset,void* pagina);
+offsetTamanoYHeader* liberarMemoriaHeap(int offset,void* pagina);
 #endif /* FUNCIONESHEAP_H_ */

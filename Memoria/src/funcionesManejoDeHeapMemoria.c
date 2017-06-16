@@ -81,9 +81,16 @@ void* escribirMemoria(void* contenido,int tamano,void* memoria){
 	return 0;//no hay espacio suficiente
 }
 //Esto es para heap y sufrira modificaciones
-void liberarMemoriaHeap(int offset,void* pagina){
+typedef struct{
+	int offset;
+	int tamanoLibre;
+	HeapMetadata header;
+}OffsetTamanoYHeader;
+OffsetTamanoYHeader* liberarMemoriaHeap(int offset,void* pagina){
 	if (offset<0){
 			perror("ingreso una posicion de la pagina negativa.");
+			return NULL;
+
 	}
 	int i;
 	int recorrido = 0;
@@ -102,10 +109,14 @@ void liberarMemoriaHeap(int offset,void* pagina){
 		headerActual = ((HeapMetadata*) (pagina+recorrido));
 		recorrido+= tamanoHeader;
 	}
-		if(recorrido>=sizeOfPaginas){
+	if(recorrido>=sizeOfPaginas){
 			perror("pidio una posicion invalida, es decir, que es mayor al numero de posiciones dentro de la pagina"); // esto significa posicion invalida
+
+			return NULL;
 	}
 	else{
+			OffsetTamanoYHeader* x = malloc(sizeof(OffsetTamanoYHeader));
+			x->tamanoLibre = headerActual->size;
 			headerActual->isFree= true;
 			HeapMetadata* headerSiguiente;
 			HeapMetadata  headerAEscribir = *headerActual;
@@ -113,13 +124,19 @@ void liberarMemoriaHeap(int offset,void* pagina){
 			if(headerSiguiente->isFree){
 				headerActual->size += headerSiguiente->size + tamanoHeader;
 				offsetQueTengoQueDevolver = recorrido;
+				x->tamanoLibre	+= 5;
 			}
 			if(headerAnterior->isFree){
 				headerAnterior->size += headerActual->size + tamanoHeader;
 				offsetQueTengoQueDevolver = recorridoDesdeDondeTengoQueCopiar;
 				headerAEscribir = *headerAnterior;
+				x->tamanoLibre	+= 5;
 			}
-
+			x->header = headerAEscribir;
+			x->offset = offsetQueTengoQueDevolver;
+			return x;
 			//tengo que devolver offsetQueTengoQueDevolver y el headerQueTengaQueEscribir
 	}
+
+	return NULL;
 }
