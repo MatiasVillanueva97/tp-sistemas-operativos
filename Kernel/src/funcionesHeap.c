@@ -246,3 +246,16 @@ offsetTamanoYHeader* liberarMemoriaHeap(int offset,void* pagina){
 
 	return NULL;
 }
+
+void liberarRecursosHeap(int pid){
+
+	bool busqueda(filaTablaDeHeapMemoria* fila)
+	{
+			return fila->pid == pid;
+	}
+	int i;
+	int cantidad = list_count_satisfying(tablaDeHeapMemoria,busqueda);
+	for(i=0;i<cantidad;i++){
+		list_remove_and_destroy_by_condition(tablaDeHeapMemoria,busqueda,free);
+	}
+}
