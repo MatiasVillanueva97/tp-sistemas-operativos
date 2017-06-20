@@ -441,9 +441,11 @@ void recibirMensajesMemoria(void* arg){
 				}
 				case asignarPaginas:{//PedirMasPaginas
 					t_asignarPaginas* estructura = stream;
-					int x=buscarCantidadDePaginas(estructura->pid)+1;
+					int x;
 					if(asignarPaginasAUnProceso(estructura->pid,estructura->cantPags)==-1){
 							x=0;
+					}else{
+						x=buscarCantidadDePaginas(estructura->pid);
 					}
 					enviarMensaje(socket,RespuestaBooleanaDeMemoria,&x,sizeof(int));
 

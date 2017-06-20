@@ -64,6 +64,8 @@ int main(void)
 			.AnSISOP_leer = AnSISOP_leer
 	};
 
+
+
 	signal_SIGUSR1 = false;
 
 	signal(SIGUSR1, sigusr1_handler);

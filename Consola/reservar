@@ -1,0 +1,4 @@
+begin
+variables a
+alocar a 50
+end

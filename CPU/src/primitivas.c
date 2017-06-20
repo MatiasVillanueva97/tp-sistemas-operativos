@@ -357,19 +357,20 @@ void AnSISOP_signal(t_nombre_semaforo identificador_semaforo){
 t_puntero AnSISOP_reservar(t_valor_variable espacio){
 	puts("AnSISOP_reservar");
 
-	t_archivo pedidoMemoriaDinamica;
-	pedidoMemoriaDinamica.pid = pcb->pid;
-	pedidoMemoriaDinamica.fileDescriptor = espacio;
+	int dosEnteros[2] = {espacio,pcb->pid};
 
-	enviarMensaje(socketKernel,reservarMemoria,(void*)&pedidoMemoriaDinamica,sizeof(int)*2);
+	enviarMensaje(socketKernel,reservarVariable,(void*)dosEnteros,sizeof(int)*2);
 
 	void* stream;
 
-	recibirMensaje(socketKernel,&stream);
+	if(recibirMensaje(socketKernel,&stream) != enviarOffsetDeVariableReservada) puts("error en la accion maquinola");
+	int offset = *(int*) stream;
+	free(stream);
+	if(offset == 0) puts("algo salio muy mal");
 
-	//aca manejar errores
+	calcularDireccion(offset);
 
-	return 0x10;
+	return offset;
 }
 
 void AnSISOP_liberar(t_puntero puntero){
@@ -643,14 +644,12 @@ t_direccion calcularNuevaDireccion(){
 	return direccion;
 }
 
-//NO HARDCODEAR EL TAMANIO DE LA PAGINA
 t_puntero calcularPuntero(t_direccion direccion){
 	t_puntero puntero = direccion.page * datosIniciales->size_pag + direccion.offset;
 	printf("En base a la direccion %d %d %d calculo la posicion %d \n",direccion.page,direccion.offset,direccion.size,puntero);
 	return puntero;
 }
 
-//NO HARDCODEAR EL TAMANIO DE LA PAGINA
 t_direccion calcularDireccion(t_puntero puntero){
 	t_direccion direccion;
 

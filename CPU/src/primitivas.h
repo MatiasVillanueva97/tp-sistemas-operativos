@@ -25,6 +25,8 @@
 
 	//IMPLEMENTADA
 	t_direccion calcularDireccion(t_puntero puntero);
+	t_puntero calcularPuntero(t_direccion direccion);
+
 
 	//IMPLEMENTADA
 	t_puntero AnSISOP_definirVariable(t_nombre_variable identificador_variable);

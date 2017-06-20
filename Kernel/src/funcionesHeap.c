@@ -34,7 +34,6 @@ int pedirPagina(int pid,int tamano){
 			w.direccion.offset = 0;
 			w.direccion.size = sizeof(HeapMetadata);
 			enviarMensaje(socketMemoria,almacenarBytes,&w,sizeof(t_direccion)+sizeof(int)+w.direccion.size);//esta mal, necesito el deserealizador de spisso.
-			free(stream);
 			recibirMensaje(socketMemoria,&stream);
 			if(leerInt(stream)){
 				filaTablaDeHeapMemoria* elemento = malloc(sizeof(filaTablaDeHeapMemoria));
@@ -42,15 +41,14 @@ int pedirPagina(int pid,int tamano){
 				elemento->pid = pid;
 				elemento->tamanoDisponible = size_pagina -5;
 				list_add(tablaDeHeapMemoria,elemento);
-				return tamanoHeader;
+				return tamanoHeader + pagina*size_pagina;
 			}
-			free(stream);
 			return 0;
 }
 int manejarLiberacionDeHeap(int pid,int offset){
 	bool busqueda(filaTablaDeHeapMemoria* fila)
 		{
-			return fila->pid == pid&&fila->pagina == offset/size_pagina;
+			return fila->pid == pid && fila->pagina == offset/size_pagina;
 		}
 	filaTablaDeHeapMemoria* fila = list_find(tablaDeHeapMemoria,busqueda);
 	if(fila == NULL){
@@ -137,7 +135,7 @@ int manejarPedidoDeMemoria(int pid,int tamano){
 						void* stream2;
 						recibirMensaje(socketMemoria,&stream2);
 						fila->tamanoDisponible -= tamano-tamanoHeader;
-						return x.offset; // +pagina*size_pagina;
+						return x.offset +fila->pagina*size_pagina;
 					}
 				}
 			}
