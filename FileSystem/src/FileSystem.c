@@ -16,7 +16,8 @@
 #include "commons/string.h"
 #include "commons/bitarray.h"
 #include <sys/mman.h>
-
+#include <unistd.h>
+#include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -31,7 +32,7 @@ int bloqueSize;
 t_bitarray* bitMap ;
 t_list* listaDeArchivosAbiertos;
 int socketKernel;
-
+int fd;
 void* serializarPedidoFs(int size, int offset,char* path){
 	void *contenido = malloc(4+strlen(path)+sizeof(int)*2);
 	memcpy(contenido,&size,sizeof(int));
@@ -312,16 +313,30 @@ void* configurarTodo(){
 		perror("Ingreso mal el punto de montaje");
 		exit(-2);
 	}*/
-	sleep(1000);
-	FILE* archivoDeBitmap = fopen(obtenerRutaTotal("Bitmap.bin","Metadata"),"rb");
-	int fd = fileno(archivoDeBitmap);
-	void* bitmap2 = malloc(cantidadDeBloques);
-	mmap(bitmap2, cantidadDeBloques, PROT_READ, MAP_SHARED, fd, (off_t) 0);
+	//sleep(1000);
+	FILE* archivoDeBitmap = fopen(obtenerRutaTotal("Bitmap.bin","Metadata"),"r+");
+	if(archivoDeBitmap == NULL){
+		archivoDeBitmap =fopen(obtenerRutaTotal("Bitmap.bin","Metadata"),"w+");
+		char* cosa = string_repeat('\0',cantidadDeBloques/8);
+		fwrite(cosa,
+				1,cantidadDeBloques/8,archivoDeBitmap);
+		fclose(archivoDeBitmap);
+		fd = open(obtenerRutaTotal("Bitmap.bin","Metadata"),O_RDWR);
+	}
+	else{
+
+		fd = fileno(archivoDeBitmap);
+	}
+
+	struct stat scriptMap;
+	fstat(fd, &scriptMap);
+
+	char* bitmap2 = mmap(0, scriptMap.st_size, PROT_WRITE |PROT_READ , MAP_SHARED, fd,  0);
 	bitMap= bitarray_create(bitmap2,cantidadDeBloques);
-	int pos = buscarPosicionLibre();
-	bitarray_set_bit(bitMap,pos);
-	munmap( bitmap2, cantidadDeBloques );
-	fclose(archivoDeBitmap);
+	//char* w = "hola";
+	//memcpy(bitmap2+4,w,strlen(w));
+    //munmap(bitmap2,strlen(w));
+
 
 
 }
@@ -410,13 +425,13 @@ int main(void) {
 			perror("Conectaste cualquier cosa menos un kernel pa");
 	}
 	tramitarPeticionesDelKernel(socketKernel);
-
+	close(fd);
 	//t_config* configuracionFileSystem = config_create(getConfigString("PUNTO_MONTAJE"));
 	//cantidadDeBloques = config_get_int_value(configuracionFileSystem,"CANTIDAD_BLOQUES");
 
 	//crearElArchivo("passwords/hola.bin");
 	//char* x = "hola como andashola como andashola como andashola como andashola como andas hola como andashola como andashola como andashola como andashola como andas";
-	char* rutaDelArchivo = obtenerRutaTotal("passwords/hola2.bin","Archivos");
+	//char* rutaDelArchivo = obtenerRutaTotal("passwords/hola2.bin","Archivos");
 	//FILE* archivoDondeEscriboLosNuevosDatos = conseguirFileAbierto(rutaDelArchivo);
 
 	//int x = 1235;
