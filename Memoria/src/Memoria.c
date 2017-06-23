@@ -210,7 +210,7 @@ int buscarCantidadDePaginas(int pid){
 	if (x==NULL){
 		return 0;
 	}
-	return x->paginaMaxima;
+	return x->cantidadDePaginasReales;
 
 }
 
@@ -450,7 +450,7 @@ void recibirMensajesMemoria(void* arg){
 					  							x=0;
 					 }
 					  					else{
-					 						x=buscarCantidadDePaginas(estructura->pid);
+					 						x=buscarCantidadDePaginas(estructura->pid) -1;
 					 }
 					enviarMensaje(socket,RespuestaBooleanaDeMemoria,&x,sizeof(int));
 

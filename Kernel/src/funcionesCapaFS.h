@@ -30,6 +30,17 @@ ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO * encontrarElDeIgualPid(int pid);
 
 void agregarATablaDeProceso(int df, char* flags, t_list* tablaProceso);
 
+void finalizarPid(PCB_DATA* pcb,int exitCode);
+
+void liberarEntradaDeTablaProceso(ENTRADA_DE_TABLA_DE_PROCESO* entrada);
+
+void liberarEntradaTablaGlobalDeArchivos(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada);
+
+void liberarEntradaTablaDeArchivosDeProceso(ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO * entrada);
+
+
+
+
 
 
 #endif /* FUNCIONESCAPAFS_H_ */

@@ -62,4 +62,20 @@ t_crearArchivo deserializarCrearArchivo(void* stream){
 		mensaje.path = contenidoAuxiliar2;
 		return mensaje;
 }
+void finalizarPid(PCB_DATA* pcb,int exitCode){
+	pcb->exitCode = exitCode;
+	pcb->estadoDeProceso = finalizado;
+}
+void liberarEntradaDeTablaProceso(ENTRADA_DE_TABLA_DE_PROCESO* entrada){
+	free(entrada->flags);
+	free(entrada->globalFD);
+	free(entrada);
+}
+
+void liberarEntradaTablaGlobalDeArchivos(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada){
+	free(entrada->cantidad_aperturas);
+	free(entrada->path);
+	free(entrada);
+}
+
 

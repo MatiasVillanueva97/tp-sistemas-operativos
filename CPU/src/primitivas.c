@@ -366,7 +366,11 @@ t_puntero AnSISOP_reservar(t_valor_variable espacio){
 	if(recibirMensaje(socketKernel,&stream) != enviarOffsetDeVariableReservada) puts("error en la accion maquinola");
 	int offset = *(int*) stream;
 	free(stream);
-	if(offset == 0) puts("algo salio muy mal");
+	if(offset == 0){
+		puts("algo salio muy mal");
+		bloqueado = true;
+		pcb->exitCode = -42;
+	}
 
 	calcularDireccion(offset);
 
@@ -376,11 +380,24 @@ t_puntero AnSISOP_reservar(t_valor_variable espacio){
 void AnSISOP_liberar(t_puntero puntero){
 	puts("AnSISOP_liberar");
 
+	int dosEnteros[2] = {puntero,pcb->pid};
+
+	enviarMensaje(socketKernel,liberarVariable,dosEnteros,sizeof(int) * 2);
+
 	void* stream;
 
-	recibirMensaje(socketKernel,&stream);
+	if (recibirMensaje(socketKernel,&stream) != enviarSiSePudoLiberar){
+		free(stream);
+		puts("error en la accion maquinola");
+	}else{
+		int entero = leerInt(stream);
+		if(entero == 0){
+			puts("algo salio muy mal");
+			bloqueado = true;
+			pcb->exitCode = -42;
+		}
 
-	//aca manejar errores
+	}
 
 }
 

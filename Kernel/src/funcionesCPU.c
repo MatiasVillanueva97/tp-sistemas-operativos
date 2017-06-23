@@ -7,6 +7,7 @@
 
 #include "funcionesCPU.h"
 #include "funcionesHeap.h"
+#include "funcionesCapaFS.h"
 
 t_mensajeDeProceso deserializarMensajeAEscribir(void* stream);
 
@@ -223,16 +224,13 @@ void *rutinaCPU(void * arg)
 							int respuestaFS = leerInt(contenido);
 							respuestaACPU = respuestaFS;
 							if(!respuestaFS){
-								pcbaux->exitCode = -1;
-								pcbaux->estadoDeProceso = finalizado;
+								finalizarPid(pcbaux,-1);
 							}
 						}else{
-							pcbaux->exitCode = -3;
-							pcbaux->estadoDeProceso = finalizado;
+							finalizarPid(pcbaux,-3);
 						}
 					}else{
-						pcbaux->exitCode = -2;
-						pcbaux->estadoDeProceso = finalizado;
+						finalizarPid(pcbaux,-2);
 					}
 					//enviarMensaje(socketCPU,respuestaEscritura,respuestaACPU,sizeof(bool));
 				}
@@ -279,11 +277,31 @@ void *rutinaCPU(void * arg)
 						else{
 							PCB_DATA* pcbaux;
 							pcbaux = buscarPCB(estructura.pid);
-							pcbaux->exitCode = -2;
-							pcbaux->estadoDeProceso = finalizado;
+							finalizarPid(pcbaux,-2);
 						}
 			 }
 			break;
+		case cerrarArchivo:{
+			t_archivo estructura;
+			estructura = *((t_archivo*)stream);
+			PCB_DATA* pcbaux;
+			pcbaux = buscarPCB(estructura.pid);
+			ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(estructura.pid);
+
+			ENTRADA_DE_TABLA_DE_PROCESO* entrada_de_tabla_proceso= list_get(aux->tablaProceso,estructura.fileDescriptor);
+
+			ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_de_archivo= list_get(tablaGlobalDeArchivos,entrada_de_tabla_proceso->globalFD);
+
+			if (entrada_de_archivo != NULL){
+				entrada_de_archivo->cantidad_aperturas--;
+				if(entrada_de_archivo->cantidad_aperturas==0){
+					list_remove_and_destroy_element(tablaGlobalDeArchivos,entrada_de_tabla_proceso->globalFD,liberarEntradaTablaGlobalDeArchivos);
+				}
+				list_remove_and_destroy_element(tablaGlobalDeArchivosDeProcesos,estructura.fileDescriptor, liberarEntradaDeTablaProceso);
+			}else{
+				finalizarPid(pcbaux,-2);
+			}
+		}break;
 
 			case leerArchivo:{ // leer PD : NO PROBAR TODAVIA PORQUE NO ANDA, OK?
 
@@ -310,16 +328,13 @@ void *rutinaCPU(void * arg)
 							//enviarMensaje(socketCPU,respuestaLectura, contenido,tamanioDelPedido)
 							}
 						else{
-								pcbaux->exitCode = -1;
-								pcbaux->estadoDeProceso = finalizado;
+								finalizarPid(pcbaux,-1);
 								}
 							}else{
-								pcbaux->exitCode = -3;
-								pcbaux->estadoDeProceso = finalizado;
+								finalizarPid(pcbaux,-3);
 							}
 							}else{
-							pcbaux->exitCode = -2;
-							pcbaux->estadoDeProceso = finalizado;
+								finalizarPid(pcbaux,-2);
 				}
 				//enviarMensaje(socketCPU,noLaburesCPU,,sizeof(bool));
 			}break;
