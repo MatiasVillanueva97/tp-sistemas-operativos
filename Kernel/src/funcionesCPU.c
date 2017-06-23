@@ -210,82 +210,68 @@ void *rutinaCPU(void * arg)
 				else{
 					ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(msj.pid);
 
-					ENTRADA_DE_TABLA_DE_PROCESO *entrada_a_evaluar= list_get(aux->tablaProceso,msj.descriptorArchivo);
+					ENTRADA_DE_TABLA_DE_PROCESO *entrada_de_tabla_proceso= list_get(aux->tablaProceso,msj.descriptorArchivo);
 
-					ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_de_archivo= list_get(tablaGlobalDeArchivos,entrada_a_evaluar->globalFD);
+					ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_de_archivo= list_get(tablaGlobalDeArchivos,entrada_de_tabla_proceso->globalFD);
 					if (entrada_de_archivo != NULL){
-						if (string_contains(entrada_a_evaluar->flags,"r")){
+						if (string_contains(entrada_de_tabla_proceso->flags,"w")){
 							int offset = 0;//DEBE CAMBIAR.QUE ES UN CURSOR?
-							//void* pedidoEscritura = serializarPedidoDeEscritura(entrada_de_archivo->path,offset,tamanoDelBuffer,msj.mensaje);
-							//enviarMensaje(socketFS,guardarDatosDeArchivo,(void *) pedidoEscritura,tamanoDelBuffer);
+							void* pedidoEscritura = serializarEscribirMemoria(tamanoDelBuffer,offset,entrada_de_archivo->path, msj.mensaje);
+							enviarMensaje(socketFS,guardarDatosDeArchivo, pedidoEscritura,tamanoDelBuffer);
 							//enviarPaquete(socketFS,2,2,offset,tamanoDelBuffer,entrada_de_archivo->path,msj.mensaje);
 							void* contenido;
 							recibirMensaje(socketFS,contenido);
 							int respuestaFS = leerInt(contenido);
 							respuestaACPU = respuestaFS;
 							if(!respuestaFS){
-								finalizarPid(pcbaux,-1);
-							}
+								finalizarPid(pcbaux,-1);}
 						}else{
-							finalizarPid(pcbaux,-3);
-						}
+							finalizarPid(pcbaux,-3);}
 					}else{
-						finalizarPid(pcbaux,-2);
-					}
+						finalizarPid(pcbaux,-2);}
 					//enviarMensaje(socketCPU,respuestaEscritura,respuestaACPU,sizeof(bool));
 				}
 			}break;
 
-		case abrirArchivo: {// crear archivo PD : NO PROBAR TODAVIA PORQUE NO ANDA, OK?
+		case abrirArchivo: {// No se que tan bien funcionan los deserializar y serializa
+			//Hay que sincronizar...Ayudanos Maiori!
 					t_crearArchivo estructura = deserializarCrearArchivo(stream);
 					enviarMensaje(socketFS,validacionDerArchivo,estructura.path,sizeof(int));
 					void * stream2;
 					recibirMensaje(socketFS,stream2);
 					int existeArchivo = leerInt(stream2);
 					 if(existeArchivo){
-						ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS * auxiliar;
-						int i = 0;
-						bool sonDeIgualPath(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS * elementos){
-								i++;
-								return  elementos->path == estructura.path;
-						}
-						auxiliar = list_find(tablaGlobalDeArchivos,(void *)sonDeIgualPath);
-						auxiliar->cantidad_aperturas++;
-
 						ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(estructura.pid);
-						agregarATablaDeProceso(i,estructura.flags,aux->tablaProceso);
+						ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* archivo= encontrarElDeIgualPath(estructura.path);
+						archivo->cantidad_aperturas++;
+						agregarATablaDeProceso(posicionEnTablaGlobalDeArchivos(archivo),estructura.flags,aux->tablaProceso);
 						enviarMensaje(socketCPU,envioDelFileDescriptor,list_size(aux->tablaProceso),sizeof(int));
-
 						}else if (string_contains(estructura.flags,"c")){
 								enviarMensaje(socketFS,creacionDeArchivo,estructura.path,strlen(estructura.path)+1);
-								void* stream2;
-								recibirMensaje(socketFS,stream2);
-								bool rta = (bool*)stream2;
+								void* stream3;
+								recibirMensaje(socketFS,stream3);
+								int rta = leerInt(rta);
 								if (rta){
-									ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS * nuevaEntrada;
-									nuevaEntrada->path = estructura.path;
-									nuevaEntrada->cantidad_aperturas = 1;
-
-									list_add(tablaGlobalDeArchivos,nuevaEntrada);
+									agregarATablaGlobalDeArchivos(estructura.path,1);
 									ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(estructura.pid);
-
 									agregarATablaDeProceso(list_size(tablaGlobalDeArchivos),estructura.flags,aux->tablaProceso);
-
-									enviarMensaje(socketCPU,envioDelFileDescriptor,list_size(aux->tablaProceso),sizeof(int));
+									enviarMensaje(socketCPU,envioDelFileDescriptor,list_size(aux->tablaProceso)+3,sizeof(int));
 											}
 									 }
-						else{
-							PCB_DATA* pcbaux;
-							pcbaux = buscarPCB(estructura.pid);
+							else{
+								PCB_DATA* pcbaux;
+								pcbaux = buscarPCB(estructura.pid);
 							finalizarPid(pcbaux,-2);
 						}
 			 }
 			break;
 		case cerrarArchivo:{
+
 			t_archivo estructura;
 			estructura = *((t_archivo*)stream);
 			PCB_DATA* pcbaux;
 			pcbaux = buscarPCB(estructura.pid);
+
 			ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(estructura.pid);
 
 			ENTRADA_DE_TABLA_DE_PROCESO* entrada_de_tabla_proceso= list_get(aux->tablaProceso,estructura.fileDescriptor);
@@ -294,7 +280,9 @@ void *rutinaCPU(void * arg)
 
 			if (entrada_de_archivo != NULL){
 				entrada_de_archivo->cantidad_aperturas--;
+				
 				if(entrada_de_archivo->cantidad_aperturas==0){
+					
 					list_remove_and_destroy_element(tablaGlobalDeArchivos,entrada_de_tabla_proceso->globalFD,liberarEntradaTablaGlobalDeArchivos);
 				}
 				list_remove_and_destroy_element(tablaGlobalDeArchivosDeProcesos,estructura.fileDescriptor, liberarEntradaDeTablaProceso);
@@ -309,8 +297,8 @@ void *rutinaCPU(void * arg)
 				estructura = *((t_archivo*)stream);
 				PCB_DATA* pcbaux;
 				pcbaux = buscarPCB(estructura.pid);
-				ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(estructura.pid);
 
+				ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(estructura.pid);
 
 				ENTRADA_DE_TABLA_DE_PROCESO* entrada_a_evaluar= list_get(aux->tablaProceso,estructura.fileDescriptor);
 

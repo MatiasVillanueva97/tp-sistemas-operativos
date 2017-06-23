@@ -28,7 +28,15 @@ bool archivoExiste(char* path);
 
 ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO * encontrarElDeIgualPid(int pid);
 
+ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* encontrarElDeIgualPath(char* path);
+
 void agregarATablaDeProceso(int df, char* flags, t_list* tablaProceso);
+
+void agregarATablaGlobalDeArchivos(char* path,int aperturas);
+
+void* serializarEscribirMemoria(int size, int offset,char* path, char* buffer);
+
+void* serializarPedidoFs(int size, int offset,char* path);
 
 void finalizarPid(PCB_DATA* pcb,int exitCode);
 
@@ -37,6 +45,8 @@ void liberarEntradaDeTablaProceso(ENTRADA_DE_TABLA_DE_PROCESO* entrada);
 void liberarEntradaTablaGlobalDeArchivos(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada);
 
 void liberarEntradaTablaDeArchivosDeProceso(ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO * entrada);
+
+
 
 
 

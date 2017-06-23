@@ -136,8 +136,6 @@ void *rutinaConsola(void * arg)
 				nuevaEntrada->pid = nuevoPrograma->pid;
 				nuevaEntrada->tablaProceso = list_create();
 
-
-				//aca llenar los primeros con  3 con null
 				//***Lo Agrego a la Cola de New
 				sem_wait(&mutex_cola_New);
 					queue_push(cola_New,nuevoPrograma);

@@ -15,9 +15,7 @@ bool archivoExiste(char* path){
 	}
 	ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* auxiliar;
 	auxiliar = list_find(tablaGlobalDeArchivos,(void *)sonDeIgualPath);
-	if(auxiliar == NULL){
-			return false;}
-	else{return true; }
+			return auxiliar !=NULL;
 }
 
 ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO * encontrarElDeIgualPid(int pid){
@@ -29,11 +27,37 @@ ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO * encontrarElDeIgualPid(int pid){
 						return aux;
 }
 
-void agregarATablaDeProceso(int df, char* flags, t_list* tablaProceso){
+ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* encontrarElDeIgualPath(char* path){
+	ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS * auxiliar;
+bool sonDeIgualPath(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS * elementos){
+				return  elementos->path == path;
+		}
+		auxiliar = list_find(tablaGlobalDeArchivos,(void *)sonDeIgualPath);
+		return auxiliar;
+}
+
+int posicionEnTablaGlobalDeArchivos(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* auxiliar){
+	int i = 0;
+	bool buscarPosicion(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS * elementos){
+					i++;
+					return  elementos->path == auxiliar->path;
+			}
+			auxiliar = list_find(tablaGlobalDeArchivos,(void *)buscarPosicion);
+			return i;
+}
+
+void agregarATablaDeProceso(int fd, char* flags, t_list* tablaProceso){
 ENTRADA_DE_TABLA_DE_PROCESO * nuevaEntradaProceso = malloc(sizeof(ENTRADA_DE_TABLA_DE_PROCESO));
-nuevaEntradaProceso->globalFD = df;
+nuevaEntradaProceso->globalFD = fd;
 nuevaEntradaProceso->flags = string_duplicate(flags);
 list_add(tablaProceso, nuevaEntradaProceso);
+}
+
+void agregarATablaGlobalDeArchivos(char* path,int aperturas){
+	ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS * nuevaEntrada = malloc(sizeof(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS));
+	nuevaEntrada->path = path;
+	nuevaEntrada->cantidad_aperturas = aperturas;
+	list_add(tablaGlobalDeArchivos,nuevaEntrada);
 }
 
 void* serializarPedidoFs(int size, int offset,char* path){
@@ -62,6 +86,19 @@ t_crearArchivo deserializarCrearArchivo(void* stream){
 		mensaje.path = contenidoAuxiliar2;
 		return mensaje;
 }
+
+void* serializarEscribirMemoria(int size, int offset,char* path, char* buffer){
+	void *contenido = malloc(4+strlen(path)+size+sizeof(int)*2);
+	memcpy(contenido,&size,sizeof(int));
+	memcpy(contenido+sizeof(int),buffer,size);
+	int tamanoRuta= strlen(path);
+	memcpy(contenido+sizeof(int)+size,&tamanoRuta,sizeof(int));
+	memcpy(contenido+sizeof(int)*2+size,path,tamanoRuta);
+	memcpy(contenido+sizeof(int)*2+tamanoRuta+size,&offset,sizeof(int));
+	return contenido;
+}
+
+
 void finalizarPid(PCB_DATA* pcb,int exitCode){
 	pcb->exitCode = exitCode;
 	pcb->estadoDeProceso = finalizado;
