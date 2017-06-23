@@ -27,7 +27,8 @@ void iniciarTablaDePaginacionInvertida(){
 	}
 	filaTablaCantidadDePaginas* nuevaFila= malloc(sizeof(filaTablaCantidadDePaginas));
 	nuevaFila->pid = 0;
-	nuevaFila->cantidadDePaginas = cantidad;
+	nuevaFila->cantidadDePaginasReales = cantidad;
+	nuevaFila->paginaMaxima = cantidad;
 	list_add(tablaConCantidadDePaginas,nuevaFila);
 
 	for(i = cantidad;getConfigInt("MARCOS")> i;i++){
@@ -117,14 +118,14 @@ int sum(t_list *lista,int(* funcion) (void*)){
 	return contador;
 }*/
 int getCantidadDePaginas(filaTablaCantidadDePaginas * fila){
-	return fila->cantidadDePaginas;
+	return fila->cantidadDePaginasReales;
 }
 int memoriaFramesLibres(){
 	int i = 0;
 	int libres = 0;
 	sem_wait(&mutex_TablaDeCantidadDePaginas);
 	int prueba = sum(tablaConCantidadDePaginas,getCantidadDePaginas);
-	sem_post(&mutex_TablaDePaginasInvertida);
+	sem_post(&mutex_TablaDeCantidadDePaginas);
 	return prueba;
 	/*for(i;getConfigInt("MARCOS") > i;i++){
 			filaDeTablaPaginaInvertida filaActual = tablaDePaginacionInvertida[i];
@@ -155,11 +156,22 @@ int cantidadDePaginasDeUnProcesoDeUnProceso(int pid){
 int liberarPagina(int pid, int pagina){ //Esta sincronizado en finalizarPrograma.
 	int i;
 	int posicionEnLaTabla =funcionHash(pid,pagina);
+
+
+	sem_wait(&mutex_TablaDeCantidadDePaginas);
+	bool buscarPid(filaTablaCantidadDePaginas* fila){
+			return (fila->pid== pid);
+	}
+	filaTablaCantidadDePaginas* fila =list_find(tablaConCantidadDePaginas,buscarPid);
+	fila->cantidadDePaginasReales-=1;
+	sem_post(&mutex_TablaDeCantidadDePaginas);
+	sem_wait(&mutex_TablaDePaginasInvertida);
 	for(i=posicionEnLaTabla;getConfigInt("MARCOS") > i;i++){
 		filaDeTablaPaginaInvertida filaActual = tablaDePaginacionInvertida[i];
 		if(filaActual.pagina == pagina && filaActual.pid == pid){
 			tablaDePaginacionInvertida[i].pagina = -1;
 			tablaDePaginacionInvertida[i].pid = -1;
+			sem_post(&mutex_TablaDePaginasInvertida);
 			return 1;
 		}
 	}
@@ -168,8 +180,10 @@ int liberarPagina(int pid, int pagina){ //Esta sincronizado en finalizarPrograma
 		if(filaActual.pagina == pagina && filaActual.pid == pid){
 			tablaDePaginacionInvertida[i].pagina = -1;
 			tablaDePaginacionInvertida[i].pid = -1;
+			sem_post(&mutex_TablaDePaginasInvertida);
 			return 1;
 		}
 	}
+	sem_post(&mutex_TablaDePaginasInvertida);
 	return 0;
 }

@@ -103,14 +103,16 @@ void imprimirContenidoMemoria(){
 	int w;
 	for(i= 0; i < list_size(tablaConCantidadDePaginas);i++){
 		filaTablaCantidadDePaginas fila = *(filaTablaCantidadDePaginas*)list_get(tablaConCantidadDePaginas,i);
-		fprintf(archivo, "El pid %d tiene %d paginas. \n\n", fila.pid ,fila.cantidadDePaginas);
-		printf("El pid %d tiene %d paginas. \n\n", fila.pid ,fila.cantidadDePaginas);
-		for(w=1;w<=fila.cantidadDePaginas;w++){
+		fprintf(archivo, "El pid %d tiene %d paginas. \n\n", fila.pid ,fila.paginaMaxima);
+		printf("El pid %d tiene %d paginas. \n\n", fila.pid ,fila.paginaMaxima);
+		for(w=1;w<=fila.paginaMaxima;w++){
 			char* contenido =leerMemoriaPosta(fila.pid,w);
-			fprintf(archivo, "\nContenido de la pagina numero %s: \n",  string_itoa(w));
-			fwrite(contenido,sizeOfPaginas,1,archivo);
-			printf( "\n Contenido de la pagina numero %s: \n ",  string_itoa(w));
-			puts(contenido);
+			if(contenido != 0){
+				fprintf(archivo, "\nContenido de la pagina numero %s: \n",  string_itoa(w));
+				fwrite(contenido,sizeOfPaginas,1,archivo);
+				printf( "\n Contenido de la pagina numero %s: \n ",  string_itoa(w));
+				puts(contenido);
+			}
 		}
 	}
 /*
@@ -208,7 +210,7 @@ int buscarCantidadDePaginas(int pid){
 	if (x==NULL){
 		return 0;
 	}
-	return x->cantidadDePaginas;
+	return x->paginaMaxima;
 
 }
 
@@ -228,16 +230,18 @@ int asignarPaginasAUnProceso(int pid, int cantidadDePaginas){
 		}
 	}
 	sem_post(&mutex_TablaDePaginasInvertida);
-	filaTablaCantidadDePaginas * x = malloc(sizeof(filaTablaCantidadDePaginas));
-	x->pid = pid;
-	x->cantidadDePaginas= cantidadDePaginas+paginaMaxima;
 	sem_wait(&mutex_TablaDeCantidadDePaginas);
 	if(paginaMaxima == 0){
+		filaTablaCantidadDePaginas * x = malloc(sizeof(filaTablaCantidadDePaginas));
+		x->paginaMaxima= cantidadDePaginas;
+		x->cantidadDePaginasReales = cantidadDePaginas;
+		x->pid = pid;
 		list_add(tablaConCantidadDePaginas,x);
 	}
 	else{
 		filaTablaCantidadDePaginas * elemento = buscarFilaEnTablaCantidadDePaginas(pid);
-		elemento->cantidadDePaginas += cantidadDePaginas;
+		elemento->paginaMaxima += cantidadDePaginas;
+		elemento->cantidadDePaginasReales += cantidadDePaginas;
 	}
 	sem_post(&mutex_TablaDeCantidadDePaginas);
 	return 1;
@@ -343,7 +347,7 @@ void *rutinaConsolaMemoria(void* x){
 						if(strcmp(comandoConsola[1],"PID:")== 0){
 							comandoConsola = string_split(comandoConsola[2], "\n");
 							int pidPedido = atoi(comandoConsola[0]);
-							printf("El proceso %d tiene %d\n",pidPedido,((filaTablaCantidadDePaginas*)buscarFilaEnTablaCantidadDePaginas(pidPedido))->cantidadDePaginas);
+							printf("El proceso %d tiene %d\n",pidPedido,((filaTablaCantidadDePaginas*)buscarFilaEnTablaCantidadDePaginas(pidPedido))->cantidadDePaginasReales);
 						}
 				}
 				liberarArray(comandoConsola);
@@ -443,10 +447,11 @@ void recibirMensajesMemoria(void* arg){
 					t_asignarPaginas* estructura = stream;
 					int x;
 					if(asignarPaginasAUnProceso(estructura->pid,estructura->cantPags)==-1){
-							x=0;
-					}else{
-						x=buscarCantidadDePaginas(estructura->pid);
-					}
+					  							x=0;
+					 }
+					  					else{
+					 						x=buscarCantidadDePaginas(estructura->pid);
+					 }
 					enviarMensaje(socket,RespuestaBooleanaDeMemoria,&x,sizeof(int));
 
 					break;

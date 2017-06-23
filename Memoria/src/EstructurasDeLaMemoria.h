@@ -30,7 +30,8 @@ sem_t sem_isKernelConectado;
 
 typedef struct{
 	int pid;
-	int cantidadDePaginas;
+	int paginaMaxima;
+	int cantidadDePaginasReales;
 }filaTablaCantidadDePaginas;
 typedef struct{
 	int pid;
