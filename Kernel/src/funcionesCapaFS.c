@@ -8,15 +8,6 @@
 #include "funcionesCapaFS.h"
 
 
-bool archivoExiste(char* path){
-
-	bool sonDeIgualPath(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS * elementos){
-								return  elementos->path == path;
-	}
-	ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* auxiliar;
-	auxiliar = list_find(tablaGlobalDeArchivos,(void *)sonDeIgualPath);
-			return auxiliar !=NULL;
-}
 
 ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO * encontrarElDeIgualPid(int pid){
 			ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux;
@@ -36,6 +27,11 @@ bool sonDeIgualPath(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS * elementos){
 		return auxiliar;
 }
 
+bool archivoExiste(char* path){
+	ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS * auxiliar;
+	auxiliar = encontrarElDeIgualPath(path);
+	return auxiliar !=NULL;
+}
 int posicionEnTablaGlobalDeArchivos(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* auxiliar){
 	int i = 0;
 	bool buscarPosicion(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS * elementos){
@@ -46,11 +42,32 @@ int posicionEnTablaGlobalDeArchivos(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* auxilia
 			return i;
 }
 
+int posicionEnTablaGlobalArchivosDeProceso(ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* auxiliar){
+	int i = 0;
+	bool buscarPosicion(ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* elemento){
+					i++;
+					return  elemento->pid== auxiliar->pid;
+			}
+			auxiliar = list_find(tablaGlobalDeArchivosDeProcesos,(void *)buscarPosicion);
+			return i;
+}
+
+/*int posicionEnUnaLista(t_list* lista, void* nodo,void(*condicion)(void*)){
+	int i = 0;
+	void * auxiliar;
+	bool buscarPosicion(void * nodo){
+			i++;
+			return   condicion(nodo) == condicion(auxiliar);
+				}
+	auxiliar = list_find(lista,(void *)buscarPosicion);
+	return i;
+}*/
+
 void agregarATablaDeProceso(int fd, char* flags, t_list* tablaProceso){
-ENTRADA_DE_TABLA_DE_PROCESO * nuevaEntradaProceso = malloc(sizeof(ENTRADA_DE_TABLA_DE_PROCESO));
-nuevaEntradaProceso->globalFD = fd;
-nuevaEntradaProceso->flags = string_duplicate(flags);
-list_add(tablaProceso, nuevaEntradaProceso);
+	ENTRADA_DE_TABLA_DE_PROCESO * nuevaEntradaProceso = malloc(sizeof(ENTRADA_DE_TABLA_DE_PROCESO));
+	nuevaEntradaProceso->globalFD = fd;
+	nuevaEntradaProceso->flags = string_duplicate(flags);
+	list_add(tablaProceso, nuevaEntradaProceso);
 }
 
 void agregarATablaGlobalDeArchivos(char* path,int aperturas){
@@ -115,4 +132,25 @@ void liberarEntradaTablaGlobalDeArchivos(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* en
 	free(entrada);
 }
 
+void liberarEntradaTablaGlobalDeArchivosDeProceso(ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO*entrada){
+	list_clean_and_destroy_elements(entrada->tablaProceso,liberarEntradaDeTablaProceso);
+	free(entrada->pid);
+	free(entrada);
+}
+
+
+void liberarRecursosArchivo(PCB_DATA* pcb){
+	ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* entrada_a_eliminar = encontrarElDeIgualPid(pcb->pid);
+	int i;
+	int tamanoTabla=list_size(entrada_a_eliminar->tablaProceso);
+	for(i=3;i<tamanoTabla;i++){
+		ENTRADA_DE_TABLA_DE_PROCESO *entrada_de_tabla_proceso= list_get(entrada_a_eliminar->tablaProceso,i);
+		ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_de_archivo= list_get(tablaGlobalDeArchivos,entrada_de_tabla_proceso->globalFD);
+		entrada_de_archivo->cantidad_aperturas--;
+		if(entrada_de_archivo->cantidad_aperturas==0){
+			list_remove_and_destroy_element(tablaGlobalDeArchivos,entrada_de_tabla_proceso->globalFD,liberarEntradaTablaGlobalDeArchivos);
+		}
+	}
+	list_remove_and_destroy_element(tablaGlobalDeArchivosDeProcesos,posicionEnTablaGlobalArchivosDeProceso(entrada_a_eliminar),liberarEntradaTablaGlobalDeArchivosDeProceso);
+}
 

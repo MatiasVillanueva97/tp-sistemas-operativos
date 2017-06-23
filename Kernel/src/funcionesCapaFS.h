@@ -46,7 +46,7 @@ void liberarEntradaTablaGlobalDeArchivos(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* en
 
 void liberarEntradaTablaDeArchivosDeProceso(ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO * entrada);
 
-
+void liberarRecursosArchivo(PCB_DATA* pcb);
 
 
 
