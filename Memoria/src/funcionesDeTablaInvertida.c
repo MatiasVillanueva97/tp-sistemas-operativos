@@ -23,7 +23,7 @@ void iniciarTablaDePaginacionInvertida(){
 	for(i=0;i<cantidad;i++){
 		tablaDePaginacionInvertida[i].frame = i;
 		tablaDePaginacionInvertida[i].pid = 0;
-		tablaDePaginacionInvertida[i].pagina = i+1;
+		tablaDePaginacionInvertida[i].pagina = i;
 	}
 	filaTablaCantidadDePaginas* nuevaFila= malloc(sizeof(filaTablaCantidadDePaginas));
 	nuevaFila->pid = 0;

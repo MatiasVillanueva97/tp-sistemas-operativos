@@ -105,13 +105,13 @@ void imprimirContenidoMemoria(){
 		filaTablaCantidadDePaginas fila = *(filaTablaCantidadDePaginas*)list_get(tablaConCantidadDePaginas,i);
 		fprintf(archivo, "El pid %d tiene %d paginas. \n\n", fila.pid ,fila.paginaMaxima);
 		printf("El pid %d tiene %d paginas. \n\n", fila.pid ,fila.paginaMaxima);
-		for(w=1;w<=fila.paginaMaxima;w++){
+		for(w=0;w<fila.paginaMaxima;w++){
 			char* contenido =leerMemoriaPosta(fila.pid,w);
 			if(contenido != 0){
 				fprintf(archivo, "\nContenido de la pagina numero %s: \n",  string_itoa(w));
 				fwrite(contenido,sizeOfPaginas,1,archivo);
 				printf( "\n Contenido de la pagina numero %s: \n ",  string_itoa(w));
-				puts(contenido);
+				puts((char*)contenido);
 			}
 		}
 	}
@@ -223,7 +223,7 @@ int asignarPaginasAUnProceso(int pid, int cantidadDePaginas){
 	int paginaMaxima = buscarCantidadDePaginas(pid);
 
 	sem_wait(&mutex_TablaDePaginasInvertida);
-	for(i= 1 ;i <= cantidadDePaginas; i++){
+	for(i= 0 ;i < cantidadDePaginas; i++){
 		if(reservarFrame(pid,paginaMaxima+i) == 0){
 			finalizarUnPrograma(pid);
 			return 0;
@@ -266,7 +266,7 @@ int finalizarUnPrograma(int pid){
 	}
 	int i;
 	sem_wait(&mutex_TablaDePaginasInvertida);
-	for(i = 1; i<= paginas;i++){
+	for(i = 0; i< paginas;i++){
 		liberarPagina(pid,i);
 	}
 	sem_post(&mutex_TablaDePaginasInvertida);
@@ -393,7 +393,7 @@ void recibirMensajesMemoria(void* arg){
 					      char* contenidoDeLaPaginaPosta= malloc(sizeOfPaginas);
 					      int rta_escribir_Memoria;
 					      sem_wait(&mutex_Memoria);
-					      for(t=1;t<=estructura->cantPags ;t++)
+					      for(t=0;t<estructura->cantPags ;t++)
 					      {
 					    	  recibirMensaje(socket,&contenidoPag);
 					    	  memcpy(contenidoDeLaPaginaPosta,contenidoPag,sizeOfPaginas);

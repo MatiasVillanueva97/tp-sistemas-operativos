@@ -654,7 +654,7 @@ t_direccion calcularDireccion(t_puntero puntero){
 	t_direccion direccion;
 
 	if(datosIniciales->size_pag > puntero){
-		direccion.page = 1;
+		direccion.page = 0;
 		direccion.offset = puntero;
 	}else{
 		direccion.page = puntero/datosIniciales->size_pag;
@@ -754,7 +754,7 @@ void asignarDireccionRespectoA(int contexto, t_direccion* direccion){
 
 //Devuelve la pagina donde comienza en el stack
 int paginaInicio(){
-	return pcb->contPags_pcb - datosIniciales->size_stack + 1;
+	return pcb->contPags_pcb - datosIniciales->size_stack;
 }
 
 char* generarStringFlags(t_banderas flags){
