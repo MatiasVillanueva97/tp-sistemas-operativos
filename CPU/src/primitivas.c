@@ -27,6 +27,8 @@ void* serializarMensajeAEscribir(t_mensajeDeProceso mensaje, int tamanio);
 
 char* generarStringFlags(t_banderas flags);
 
+void* serializarArchivo(t_crearArchivo archivo);
+
 
 
 
@@ -415,9 +417,8 @@ t_descriptor_archivo AnSISOP_abrir(t_direccion_archivo direccion,t_banderas flag
 		return 0;
 	}
 
-	//serializar el puto archivo todo
 
-	void* archivoSerializado;// = serializarArchivo(archivo);
+	void* archivoSerializado = serializarArchivo(archivo);
 
 	enviarMensaje(socketKernel,abrirArchivo,archivoSerializado,strlen(direccion)+1 + strlen(archivo.flags)+1 + sizeof(int)*3);
 
@@ -425,7 +426,23 @@ t_descriptor_archivo AnSISOP_abrir(t_direccion_archivo direccion,t_banderas flag
 
 	void* stream;
 
-	recibirMensaje(socketKernel,&stream);
+	switch(recibirMensaje(socketKernel,&stream)){
+	  case envioDelFileDescriptor:{
+	   t_descriptor_archivo FD = leerInt(stream);
+	   printf("El FD del archivo pedido es: %d \n",FD);
+	   return FD;
+	  }break;
+	  case respuestaBooleanaKernel:{
+	   free(stream);
+	   puts("Algo salio mal con el archivo, se termina el programa");
+	   bloqueado = true;
+	  }break;
+	  default:{
+	   puts("error en la accion maquinola");
+	   bloqueado = true;
+	   pcb->exitCode = -42;
+	  }
+	 }
 
 	//inserte manejo de errores aqui
 
@@ -823,7 +840,25 @@ void* serializarMensajeAEscribir(t_mensajeDeProceso mensaje, int tamanio){
 	return stream;
 }
 
+void* serializarArchivo(t_crearArchivo archivo){
+ void* stream = malloc(sizeof(int)*3 + strlen(archivo.flags) + 1 + strlen(archivo.path) + 1);
 
+ memcpy(stream,&archivo.pid,sizeof(int));
+
+ int aux1 = strlen(archivo.flags) + 1;
+
+ memcpy(stream + sizeof(int),&aux1,sizeof(int));
+
+ memcpy(stream + sizeof(int) * 2,archivo.flags,aux1);
+
+ int aux2 = strlen(archivo.path) + 1;
+
+ memcpy(stream + sizeof(int) * 2 + aux1,&aux2,sizeof(int));
+
+ memcpy(stream + sizeof(int) * 3 + aux1,archivo.path,aux2);
+
+ return stream;
+}
 
 
 

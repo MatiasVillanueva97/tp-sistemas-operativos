@@ -236,32 +236,36 @@ void *rutinaCPU(void * arg)
 		case abrirArchivo: {// No se que tan bien funcionan los deserializar y serializa
 			//Hay que sincronizar...Ayudanos Maiori!
 					t_crearArchivo estructura = deserializarCrearArchivo(stream);
-					enviarMensaje(socketFS,validacionDerArchivo,estructura.path,sizeof(int));
-					void * stream2;
-					recibirMensaje(socketFS,stream2);
-					int existeArchivo = leerInt(stream2);
-					 if(existeArchivo){
+					//enviarMensaje(socketFS,validacionDerArchivo,estructura.path,sizeof(int));
+					PCB_DATA* pcbaux;
+					pcbaux = buscarPCB(estructura.pid);
+					int rtaCPU = 0;
+					//void * stream2;
+					//recibirMensaje(socketFS,stream2);
+					//int existeArchivo = leerInt(stream2);
+					 if(1==0){
 						ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(estructura.pid);
 						ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* archivo= encontrarElDeIgualPath(estructura.path);
 						archivo->cantidad_aperturas++;
 						agregarATablaDeProceso(posicionEnTablaGlobalDeArchivos(archivo),estructura.flags,aux->tablaProceso);
-						enviarMensaje(socketCPU,envioDelFileDescriptor,list_size(aux->tablaProceso),sizeof(int));
+						int fileDescriptor= list_size(aux->tablaProceso)+2;
+						enviarMensaje(socketCPU,envioDelFileDescriptor,&fileDescriptor,sizeof(int));
 						}else if (string_contains(estructura.flags,"c")){
-								enviarMensaje(socketFS,creacionDeArchivo,estructura.path,strlen(estructura.path)+1);
-								void* stream3;
-								recibirMensaje(socketFS,stream3);
-								int rta = leerInt(rta);
-								if (rta){
+								//enviarMensaje(socketFS,creacionDeArchivo,estructura.path,strlen(estructura.path)+1);
+								//void* stream3;
+								//recibirMensaje(socketFS,stream3);
+								//int rta = leerInt(rta);
+								if (0==0){
 									agregarATablaGlobalDeArchivos(estructura.path,1);
 									ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(estructura.pid);
 									agregarATablaDeProceso(list_size(tablaGlobalDeArchivos),estructura.flags,aux->tablaProceso);
-									enviarMensaje(socketCPU,envioDelFileDescriptor,list_size(aux->tablaProceso)+3,sizeof(int));
+									int fileDescriptor= list_size(aux->tablaProceso)+2;
+									enviarMensaje(socketCPU,envioDelFileDescriptor,&fileDescriptor,sizeof(int));
 											}
 									 }
 							else{
-								PCB_DATA* pcbaux;
-								pcbaux = buscarPCB(estructura.pid);
 							finalizarPid(pcbaux,-2);
+							enviarMensaje(socketCPU,respuestaBooleanaKernel,&rtaCPU,sizeof(int));
 						}
 			 }
 			break;

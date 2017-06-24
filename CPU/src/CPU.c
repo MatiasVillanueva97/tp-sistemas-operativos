@@ -253,8 +253,8 @@ char* pedirInstruccion(){
 	char* instruccion = malloc(total + 1);
 
 	if(pedido.direccion.offset + pedido.direccion.size >= datosIniciales->size_pag){
-		pedido.direccion.size = datosIniciales->size_pag - pedido.direccion.offset;
 		segundo = pedido.direccion.offset + pedido.direccion.size - datosIniciales->size_pag;
+		pedido.direccion.size = datosIniciales->size_pag - pedido.direccion.offset;
 	}
 
 	enviarMensaje(socketMemoria,solicitarBytes,(void *)&pedido, sizeof(pedido));

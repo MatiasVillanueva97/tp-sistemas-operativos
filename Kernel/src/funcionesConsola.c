@@ -132,9 +132,10 @@ void *rutinaConsola(void * arg)
 				//**Le doy una tabla para sus archivos abiertos
 
 
-				ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO * nuevaEntrada = malloc(sizeof(ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO));
+				ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO * nuevaEntrada = malloc(sizeof(int)+4);
 				nuevaEntrada->pid = nuevoPrograma->pid;
 				nuevaEntrada->tablaProceso = list_create();
+				list_add(tablaGlobalDeArchivosDeProcesos,nuevaEntrada);
 
 				//***Lo Agrego a la Cola de New
 				sem_wait(&mutex_cola_New);

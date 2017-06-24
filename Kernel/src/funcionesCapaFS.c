@@ -9,7 +9,7 @@
 
 
 
-ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO * encontrarElDeIgualPid(int pid){
+ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* encontrarElDeIgualPid(int pid){
 			ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux;
 			bool sonDeIgualPid(ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO * elementos){
 				return  elementos->pid == pid;
@@ -64,7 +64,7 @@ int posicionEnTablaGlobalArchivosDeProceso(ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* a
 }*/
 
 void agregarATablaDeProceso(int fd, char* flags, t_list* tablaProceso){
-	ENTRADA_DE_TABLA_DE_PROCESO * nuevaEntradaProceso = malloc(sizeof(ENTRADA_DE_TABLA_DE_PROCESO));
+	ENTRADA_DE_TABLA_DE_PROCESO * nuevaEntradaProceso = malloc(sizeof(int)+sizeof(char)*4);
 	nuevaEntradaProceso->globalFD = fd;
 	nuevaEntradaProceso->flags = string_duplicate(flags);
 	list_add(tablaProceso, nuevaEntradaProceso);
@@ -97,12 +97,13 @@ t_crearArchivo deserializarCrearArchivo(void* stream){
 		memcpy(contenidoAuxiliar,stream + sizeof(int) * 2, tamanoContenido);
 		mensaje.flags = contenidoAuxiliar;
 		int tamanoContenido2;
-		memcpy(&tamanoContenido2,stream + sizeof(int)*3 + tamanoContenido, sizeof(int));
+		memcpy(&tamanoContenido2,stream + sizeof(int)*2 + tamanoContenido, sizeof(int));
 		char* contenidoAuxiliar2 = malloc(tamanoContenido2);
-		memcpy(contenidoAuxiliar2,stream + sizeof(int) * 4 +tamanoContenido, tamanoContenido2);
+		memcpy(contenidoAuxiliar2,stream + sizeof(int)*3 +tamanoContenido, tamanoContenido2);
 		mensaje.path = contenidoAuxiliar2;
 		return mensaje;
 }
+
 
 void* serializarEscribirMemoria(int size, int offset,char* path, char* buffer){
 	void *contenido = malloc(4+strlen(path)+size+sizeof(int)*2);
