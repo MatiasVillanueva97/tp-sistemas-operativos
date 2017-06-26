@@ -6,12 +6,19 @@
  */
 #include "funcionesHeap.h"
 
-typedef struct{
-	int pid;
-	t_direccion direccion;
-	void* buffer;
-}t_almacenarBytes;
 
+
+
+
+void* serializarAlmacenarBytes(t_escrituraMemoria almacenar){
+	void* cosa = malloc(sizeof(int)*4+almacenar.direccion.size);
+	memcpy(cosa,&almacenar.id,sizeof(int));
+	memcpy(cosa+sizeof(int),&almacenar.direccion.page,sizeof(int));
+	memcpy(cosa+sizeof(int)*2,&almacenar.direccion.offset,sizeof(int));
+	memcpy(cosa+sizeof(int)*3,&almacenar.direccion.size,sizeof(int));
+	memcpy(cosa+sizeof(int)*4,almacenar.valor,almacenar.direccion.size);
+	return cosa;
+}
 
 int pedirPagina(int pid,int tamano){
 	t_asignarPaginas asignar;
@@ -24,7 +31,7 @@ int pedirPagina(int pid,int tamano){
 			if(!pagina){
 				return false;
 			}
-			t_almacenarBytes w;
+			t_escrituraMemoria *w = malloc(sizeof(t_escrituraMemoria));
 			void* cosaAMandar = malloc(tamano + sizeof(HeapMetadata)*2);
 			HeapMetadata* heap1 = malloc(sizeof(HeapMetadata));
 			heap1->isFree = false;
@@ -34,22 +41,26 @@ int pedirPagina(int pid,int tamano){
 			heap2->isFree = true;
 			heap2->size = size_pagina-sizeof(HeapMetadata)*2 - tamano;
 
-			memcpy(cosaAMandar,heap1,sizeof(HeapMetadata));
-			memcpy(cosaAMandar + sizeof(HeapMetadata) + tamano, heap2, sizeof(HeapMetadata));
+			w->valor = malloc(tamano + sizeof(HeapMetadata)*2);
+			memcpy(w->valor,heap1,sizeof(HeapMetadata));
+			heap1->isFree = true;
+			heap1->size =  size_pagina-sizeof(HeapMetadata)*2 - tamano;
 
-			w.buffer = cosaAMandar;
-			w.pid = pid;
-			w.direccion.page = pagina;
-			w.direccion.offset = 0;
-			w.direccion.size = sizeof(HeapMetadata)*2 + tamano;
 
-			enviarMensaje(socketMemoria,almacenarBytes,&w,sizeof(t_direccion)+sizeof(int)+w.direccion.size);//esta mal, necesito el deserealizador de spisso.
+			memcpy(w->valor+sizeof(HeapMetadata)+tamano,heap2,sizeof(HeapMetadata));
+			uint32_t aux= *(uint32_t*)(w->valor+ sizeof(HeapMetadata) + tamano);
+			w->id = pid;
+			w->direccion.page = pagina;
+			w->direccion.offset = 0;
+			w->direccion.size = sizeof(HeapMetadata)*2 + tamano;
+			cosaAMandar = serializarAlmacenarBytes(*w);
+			enviarMensaje(socketMemoria,almacenarBytes,cosaAMandar,sizeof(t_direccion)+sizeof(int)+w->direccion.size);//esta mal, necesito el deserealizador de spisso.
 			recibirMensaje(socketMemoria,&stream);
 			if(leerInt(stream)){
 				filaTablaDeHeapMemoria* elemento = malloc(sizeof(filaTablaDeHeapMemoria));
 				elemento->pagina = pagina;
 				elemento->pid = pid;
-				elemento->tamanoDisponible = size_pagina -5;
+				elemento->tamanoDisponible = size_pagina -sizeof(HeapMetadata)*2-tamano;
 				list_add(tablaDeHeapMemoria,elemento);
 				return tamanoHeader + pagina*size_pagina;
 			}
@@ -79,12 +90,12 @@ int manejarLiberacionDeHeap(int pid,int offset){
 		if(loQueTengoQueEscribir == NULL){
 			return 0;
 		}
-		t_almacenarBytes almacenamiento;
-		almacenamiento.buffer = &loQueTengoQueEscribir->header;//Dudoso
+		t_escrituraMemoria almacenamiento;
+		almacenamiento.valor = &loQueTengoQueEscribir->header;//Dudoso
 		almacenamiento.direccion.offset = loQueTengoQueEscribir->offset;
 		almacenamiento.direccion.page = fila->pagina;
 		almacenamiento.direccion.size = sizeof(HeapMetadata);
-		almacenamiento.pid = fila->pid;
+		almacenamiento.id = fila->pid;
 		enviarMensaje(socketMemoria,almacenarBytes,&almacenamiento,sizeof(int)*4+sizeof(HeapMetadata));
 		free(stream);
 		recibirMensaje(socketMemoria,&stream);
@@ -96,7 +107,7 @@ int manejarLiberacionDeHeap(int pid,int offset){
 				{
 					return fila2->pagina == fila->pagina &&fila2->pid == fila->pid;
 				}
-			list_remove_and_destroy_by_condition(tablaDeHeapMemoria,busqueda2,free);
+			list_remove_and_destroy_by_condition(tablaDeHeapMemoria,busqueda2,free);// falta un destroyer
 		}
 		return leerInt(stream);
 	}
@@ -135,13 +146,13 @@ int manejarPedidoDeMemoria(int pid,int tamano){
 					recibirMensaje(socketMemoria,&stream);
 					offsetYBuffer x = escribirMemoria(tamano,stream);
 					if(x.offset >=0){
-						t_almacenarBytes w;
-						w.buffer = x.buffer;
-						w.pid = pid;
+						t_escrituraMemoria w;
+						w.valor = x.buffer;
+						w.id = pid;
 						w.direccion.page = fila->pagina;
 						w.direccion.offset = x.offset;
 						w.direccion.size = tamano;
-						enviarMensaje(socketMemoria,almacenarBytes,&w,sizeof(t_almacenarBytes)); // esto esta mal, el size es otro
+						enviarMensaje(socketMemoria,almacenarBytes,&w,sizeof(t_escrituraMemoria)); // esto esta mal, el size es otro
 						void* stream2;
 						recibirMensaje(socketMemoria,&stream2);
 						fila->tamanoDisponible -= tamano-tamanoHeader;
@@ -237,8 +248,9 @@ offsetTamanoYHeader* liberarMemoriaHeap(int offset,void* pagina){
 			headerSiguiente = ((HeapMetadata*) (pagina+recorrido+headerActual->size));
 			if(headerSiguiente->isFree){
 				headerActual->size += headerSiguiente->size + tamanoHeader;
-				offsetQueTengoQueDevolver = recorrido;
+				offsetQueTengoQueDevolver = recorridoDesdeDondeTengoQueCopiar;
 				x->tamanoLibre	+= 5;
+				headerAEscribir = *headerActual;
 			}
 			if(headerAnterior->isFree){
 				headerAnterior->size += headerActual->size + tamanoHeader;

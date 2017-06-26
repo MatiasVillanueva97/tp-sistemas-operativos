@@ -49,6 +49,20 @@ int funcionHash (int pid, int pagina){
 	return 0; //Falta hacer una funcion de hash
 }
 
+
+t_escrituraMemoria deserializarAlmacenarBytes(void* almacenar){
+	t_escrituraMemoria x;
+	memcpy(&x.id,almacenar,sizeof(int));
+	memcpy(&x.direccion.page,almacenar+sizeof(int),sizeof(int));
+	memcpy(&x.direccion.offset,almacenar+sizeof(int)*2,sizeof(int));
+	memcpy(&x.direccion.size,almacenar+sizeof(int)*3,sizeof(int));
+	x.valor = malloc(x.direccion.size);
+	memcpy(x.valor,almacenar+sizeof(int)*4,x.direccion.size);
+	return x;
+}
+
+
+
 //Funciones De Memoria
 void* leerMemoriaPosta (int pid, int pagina ){
 	int frame = buscarFrameCorrespondiente(pid,pagina); //checkear que no haya errores en buscarFrame.
@@ -141,9 +155,11 @@ bool hayEspacio(int pid,int pagina){
 */
 //Funciones Principales
 
-int almacenarBytesEnPagina(int pid, int pagina, int desplazamiento, int tamano,void* buffer){
+int* almacenarBytesEnPagina(int pid, int pagina, int desplazamiento, int tamano,void* buffer){
+	int* prueba=malloc(sizeof(int));
+	*prueba= 0;
 	if(desplazamiento + tamano > sizeOfPaginas){
-		return 0;
+		return prueba;
 	}
 	void *contenidoDeLaPagina;
 
@@ -151,7 +167,7 @@ int almacenarBytesEnPagina(int pid, int pagina, int desplazamiento, int tamano,v
 	int frame = buscarFrameCorrespondiente(pid,pagina);
 	sem_post(&mutex_TablaDePaginasInvertida);
 	if(frame ==-1){
-		return 0;
+		return prueba;
 	}
 	sem_wait(&mutex_Memoria);
 	contenidoDeLaPagina = memoriaTotal+frame*getConfigInt("MARCO_SIZE");
@@ -163,7 +179,8 @@ int almacenarBytesEnPagina(int pid, int pagina, int desplazamiento, int tamano,v
 	sem_post(&mutex_cache);
 
 	sem_post(&mutex_Memoria);
-	return 1;
+	*prueba = 1;
+	return prueba;
 }
 void* solicitarBytesDeUnaPagina(int pid, int pagina, int desplazamiento, int tamano){
 	void* contenidoDeLaPagina;
@@ -416,7 +433,7 @@ void recibirMensajesMemoria(void* arg){
 
 					void* contenidoDeLaPagina= solicitarBytesDeUnaPagina(estructura->id,estructura->direccion.page,estructura->direccion.offset,estructura->direccion.size);
 
-					if(!(int)contenidoDeLaPagina){
+					if(!contenidoDeLaPagina){
 						respuesta =0;
 						enviarMensaje(socket,RespuestaBooleanaDeMemoria,&respuesta,sizeof(int));
 					}
@@ -434,9 +451,9 @@ void recibirMensajesMemoria(void* arg){
 
 				case almacenarBytes://almacenarBytes en una pagina
 				{
-					t_almacenarBytes* estructura = stream;
+					t_escrituraMemoria estructura = deserializarAlmacenarBytes(stream);
 					int x=1;
-					if(almacenarBytesEnPagina(estructura->pid,estructura->direccion.page,estructura->direccion.offset,estructura->direccion.size,&(estructura->buffer))==0){
+					if(almacenarBytesEnPagina(estructura.id,estructura.direccion.page,estructura.direccion.offset,estructura.direccion.size,estructura.valor)==0){
 						x=0;
 					}
 					enviarMensaje(socket,RespuestaBooleanaDeMemoria,&x,sizeof(int));

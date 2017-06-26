@@ -43,7 +43,7 @@ t_puntero AnSISOP_definirVariable(t_nombre_variable identificador_variable){
 	variable->ID = identificador_variable;
 	variable->direccion = direccion;
 
-	if(direccion.page > pcb->contPags_pcb){
+	if(direccion.page >= pcb->contPags_pcb){
 		printf("STACK OVERFLOW page: %d , offset: %d , size: %d \n",direccion.page,direccion.offset,direccion.size);
 		terminoPrograma = true;
 		pcb->exitCode = -5;
@@ -604,17 +604,13 @@ t_valor_variable pedirValorAMemoria(t_direccion direccion){
 void escribirValorEnMemoria(t_direccion direccion, t_valor_variable valor){
 
 	//Se crea el void* que contiene el pid, la direccion y el valor a escribir, que son los datos necesarios para que la memoria escriba el valor
-	void* auxiliar = malloc(sizeof(t_escrituraMemoria));
-	memcpy(auxiliar,&pcb->pid,sizeof(int));
-	memcpy(auxiliar + sizeof(int),&direccion,sizeof(t_direccion));
-	memcpy(auxiliar + sizeof(int) * 4,&valor,sizeof(t_valor_variable));
-
+	int escrituraA[] = {pcb->pid,direccion.page,direccion.offset,direccion.size,valor};
 	//se pide a memoria que escriba el valor enviado en la posicion de memoria tambien enviada
-	enviarMensaje(socketMemoria,almacenarBytes,auxiliar,sizeof(t_escrituraMemoria));
+	enviarMensaje(socketMemoria,almacenarBytes,escrituraA,sizeof(int)*4+direccion.size);
 
 	printf("Se escribio el valor %d en la direccion de memoria: %d %d %d \n",valor,direccion.page,direccion.offset,direccion.size);
 
-	free(auxiliar);
+//	free(auxiliar);
 
 
 	//Devuelve un OK o mata con un Stack Overflow
