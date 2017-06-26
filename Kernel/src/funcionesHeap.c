@@ -96,10 +96,11 @@ int manejarLiberacionDeHeap(int pid,int offset){
 		almacenamiento.direccion.page = fila->pagina;
 		almacenamiento.direccion.size = sizeof(HeapMetadata);
 		almacenamiento.id = fila->pid;
-		enviarMensaje(socketMemoria,almacenarBytes,&almacenamiento,sizeof(int)*4+sizeof(HeapMetadata));
+		serializarAlmacenarBytes(almacenamiento);
+		enviarMensaje(socketMemoria,almacenarBytes,serializarAlmacenarBytes(almacenamiento),sizeof(int)*4+sizeof(HeapMetadata));
 		free(stream);
 		recibirMensaje(socketMemoria,&stream);
-		if(fila->tamanoDisponible +loQueTengoQueEscribir->tamanoLibre > size_pagina){
+		if(fila->tamanoDisponible +loQueTengoQueEscribir->tamanoLibre < size_pagina){
 			fila->tamanoDisponible+= loQueTengoQueEscribir->tamanoLibre;
 		}
 		else{
@@ -150,9 +151,9 @@ int manejarPedidoDeMemoria(int pid,int tamano){
 						w.valor = x.buffer;
 						w.id = pid;
 						w.direccion.page = fila->pagina;
-						w.direccion.offset = x.offset;
+						w.direccion.offset = x.offset-sizeof(HeapMetadata);
 						w.direccion.size = tamano;
-						enviarMensaje(socketMemoria,almacenarBytes,&w,sizeof(t_escrituraMemoria)); // esto esta mal, el size es otro
+						enviarMensaje(socketMemoria,almacenarBytes,serializarAlmacenarBytes(w),sizeof(int)*4+w.direccion.size); // esto esta mal, el size es otro
 						void* stream2;
 						recibirMensaje(socketMemoria,&stream2);
 						fila->tamanoDisponible -= tamano-tamanoHeader;
