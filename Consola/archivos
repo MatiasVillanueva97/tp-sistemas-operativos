@@ -1,4 +1,5 @@
 begin
 variables a
 abrir a LC /utn/so/archivo
+cerrar a
 end

@@ -127,8 +127,23 @@ void transformarFechaAInts(char * fecha, int arrayFecha[4]){
 	for (i=0;i<4;i++){
 		arrayFecha[i] = atoi(arrayCalendario[i]);
 	}
-
 }
+char* transformarArrayAFecha(int arrayInt[4]){
+		int i;
+		char* fecha[4];
+		char * aux;
+		for(i=0;i<4;i++){
+			fecha[i] = string_itoa(arrayInt[i]);
+
+		}
+		aux=fecha[0];
+		string_append_with_format(&aux,":%s",fecha[1]);
+		string_append_with_format(&aux,":%s",fecha[2]);
+		string_append_with_format(&aux,":%s",fecha[3]);
+		//aux = strcat(strcat(strcat(fecha[0], fecha[1]),fecha[2]), fecha[3]);
+
+		return aux;
+	}
 char* diferencia(char* fechaInicio,char* fechaFin){
 	int resultadoInt[4];
 	int arrayInicio[4];
@@ -136,7 +151,6 @@ char* diferencia(char* fechaInicio,char* fechaFin){
 	int arrayFin[4];
 	transformarFechaAInts(fechaFin,arrayFin);
 	int i;
-	char* resultadoChar[4];
 	for(i=0;i<4;i++){
 		resultadoInt[i] = arrayFin[i]-arrayInicio[i];
 		if(resultadoInt[i] < 0){
@@ -147,10 +161,8 @@ char* diferencia(char* fechaInicio,char* fechaFin){
 				resultadoInt[i] = 1000 + resultadoInt[i];
 			};
 		}
-		resultadoChar[i] = string_itoa(resultadoInt[i]);
-		strcat(resultadoChar[i], ":");
 	}
-	char* diferencia = strcat(strcat(strcat(resultadoChar[0], resultadoChar[1]),resultadoChar[2]), resultadoChar[3]);
+	char* diferencia = transformarArrayAFecha(resultadoInt);
 
 	return diferencia;
 }
@@ -324,7 +336,7 @@ int main(void)
 void* rutinaPrograma(void* parametro){
 	int* pid= malloc(4);
 	char* tiempoInicio = temporal_get_string_time();
-
+	int cantImpresiones = 0;
 	pid = parametro;
 
 	t_Estado * programaEstado ;
@@ -335,8 +347,8 @@ void* rutinaPrograma(void* parametro){
 		while(1){
 
 		if(programaEstado->hayParaImprimir){
-
-			printf("Mensaja del pid %d: %s\n", *pid, programaEstado->mensajeAImprimir);
+			cantImpresiones++;
+			printf("Mensaje del pid %d: %s\n", *pid, programaEstado->mensajeAImprimir);
 			programaEstado->hayParaImprimir = false;
 
 		}
@@ -345,10 +357,12 @@ void* rutinaPrograma(void* parametro){
 			}
 		}
 	char* tiempoFin = temporal_get_string_time();
-	printf("Acaba de finalizar el pid: %d\n", *pid);
-	printf("Tiempo de inicio :%s\n",tiempoInicio);
+
+	printf("\nAcaba de finalizar el pid: %d\n", *pid);
+	printf("Tiempo de inicio: %s\n",tiempoInicio);
 	printf("Tiempo de Finalización: %s\n",tiempoFin);
 	printf("Tiempo de Ejecución: %s\n",diferencia(tiempoInicio,tiempoFin));
+	printf("Cantidad de impresiones del programa ansisop: %d\n",cantImpresiones);
 
 	free(pid);
 }
