@@ -25,14 +25,24 @@ int pedirPagina(int pid,int tamano){
 				return false;
 			}
 			t_almacenarBytes w;
-			HeapMetadata* heap = malloc(sizeof(HeapMetadata));
-			heap->isFree = true;
-			heap->size = size_pagina-sizeof(HeapMetadata);
-			w.buffer = heap;
+			void* cosaAMandar = malloc(tamano + sizeof(HeapMetadata)*2);
+			HeapMetadata* heap1 = malloc(sizeof(HeapMetadata));
+			heap1->isFree = false;
+			heap1->size = tamano;
+
+			HeapMetadata* heap2 = malloc(sizeof(HeapMetadata));
+			heap2->isFree = true;
+			heap2->size = size_pagina-sizeof(HeapMetadata)*2 - tamano;
+
+			memcpy(cosaAMandar,heap1,sizeof(HeapMetadata));
+			memcpy(cosaAMandar + sizeof(HeapMetadata) + tamano, heap2, sizeof(HeapMetadata));
+
+			w.buffer = cosaAMandar;
 			w.pid = pid;
 			w.direccion.page = pagina;
 			w.direccion.offset = 0;
-			w.direccion.size = sizeof(HeapMetadata);
+			w.direccion.size = sizeof(HeapMetadata)*2 + tamano;
+
 			enviarMensaje(socketMemoria,almacenarBytes,&w,sizeof(t_direccion)+sizeof(int)+w.direccion.size);//esta mal, necesito el deserealizador de spisso.
 			recibirMensaje(socketMemoria,&stream);
 			if(leerInt(stream)){
