@@ -100,14 +100,18 @@ int manejarLiberacionDeHeap(int pid,int offset){
 		enviarMensaje(socketMemoria,almacenarBytes,serializarAlmacenarBytes(almacenamiento),sizeof(int)*4+sizeof(HeapMetadata));
 		free(stream);
 		recibirMensaje(socketMemoria,&stream);
-		if(fila->tamanoDisponible +loQueTengoQueEscribir->tamanoLibre < size_pagina){
+		if(fila->tamanoDisponible +loQueTengoQueEscribir->tamanoLibre < size_pagina-sizeof(HeapMetadata)){
 			fila->tamanoDisponible+= loQueTengoQueEscribir->tamanoLibre;
 		}
 		else{
 			bool busqueda2(filaTablaDeHeapMemoria* fila2)
 				{
-					return fila2->pagina == fila->pagina &&fila2->pid == fila->pid;
+					if( fila2->pagina == fila->pagina &&fila2->pid == fila->pid){
+						int x[2]={fila->pid,fila->pagina}; // Para ustedes que les gusta mas
+						enviarMensaje(socketMemoria,liberarUnaPagina,x,sizeof(int)*2);
+					}
 				}
+
 			list_remove_and_destroy_by_condition(tablaDeHeapMemoria,busqueda2,free);// falta un destroyer
 		}
 		return leerInt(stream);
