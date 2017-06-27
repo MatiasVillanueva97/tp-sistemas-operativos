@@ -12,6 +12,7 @@
 #include <dirent.h>
 #include <signal.h>
 #include <string.h>
+#include <math.h>
 #include "commons/config.h"
 #include "commons/string.h"
 #include "commons/bitarray.h"
@@ -308,7 +309,29 @@ void* configurarTodo(){
 	}
 	bloqueSize = config_get_int_value(configuracion,"TAMANIO_BLOQUES");
 	cantidadDeBloques = config_get_int_value(configuracion,"CANTIDAD_BLOQUES");
+	char* rutaDeDirectorioBloques = string_duplicate(getConfigString("PUNTO_MONTAJE"));
+	string_append(&rutaDeDirectorioBloques,"/Bloques");
+	if(opendir(rutaDeDirectorioBloques)==NULL){
+		mkdir(rutaDeDirectorioBloques,0700);
+	}
+	free(rutaDeDirectorioBloques);
+	char* rutaDeDirectorioArchivos = string_duplicate(getConfigString("PUNTO_MONTAJE"));
+	string_append(&rutaDeDirectorioBloques,"/Archivos");
+	if(opendir(rutaDeDirectorioBloques)==NULL){
+		mkdir(rutaDeDirectorioBloques,0700);
+	}
 
+	int i;
+	for(i = 0;i< cantidadDeBloques;i++){
+		char* nombre = string_new();
+		string_append(&nombre,string_itoa(i));
+		string_append(&nombre,".bin");
+		FILE* Bloque = fopen(obtenerRutaTotal(nombre,"Bloques"),"r+");
+		if(Bloque == NULL){
+			Bloque = fopen(obtenerRutaTotal(nombre,"Bloques"),"w+");
+		}
+		fclose(Bloque);
+	}
 /*	if(!strcmp(config_get_string_value(configuracion,"MAGIC_NUMBER"),"SADICA")){
 		perror("Ingreso mal el punto de montaje");
 		exit(-2);
@@ -317,9 +340,9 @@ void* configurarTodo(){
 	FILE* archivoDeBitmap = fopen(obtenerRutaTotal("Bitmap.bin","Metadata"),"r+");
 	if(archivoDeBitmap == NULL){
 		archivoDeBitmap =fopen(obtenerRutaTotal("Bitmap.bin","Metadata"),"w+");
-		char* cosa = string_repeat('\0',cantidadDeBloques/8);
-		fwrite(cosa,
-				1,cantidadDeBloques/8,archivoDeBitmap);
+		int cantidad = ceil(((double)cantidadDeBloques)/8.0);
+		char* cosa = string_repeat('\0',cantidad);
+		fwrite(cosa,1,cantidadDeBloques,archivoDeBitmap);
 		fclose(archivoDeBitmap);
 		fd = open(obtenerRutaTotal("Bitmap.bin","Metadata"),O_RDWR);
 	}
@@ -345,7 +368,7 @@ void tramitarPeticionesDelKernel(int socketKernel){
 	void* stream;
 	int operacion=1;//Esto es para que si lee 0, se termine el while.
 	while (operacion){
-			operacion = recibirMensaje(socket,&stream);
+			operacion = recibirMensaje(socketKernel,&stream);
 
 			switch(operacion)
 			{
@@ -403,10 +426,7 @@ void tramitarPeticionesDelKernel(int socketKernel){
 		}
 }
 int main(void) {
-	int x = 24141;
-	void* w =
-			serializarPedidoFs(123,321,"hola.bin");
-	deseralizarPedidoFs(w);
+
 	printf("Inicializando FileSystem.....\n\n");
 	// ******* Declaración de la mayoria de las variables a utilizar
 	listaDeArchivosAbiertos = list_create();
@@ -425,6 +445,7 @@ int main(void) {
 			perror("Conectaste cualquier cosa menos un kernel pa");
 	}
 	tramitarPeticionesDelKernel(socketKernel);
+	close(socketKernel);
 	close(fd);
 	//t_config* configuracionFileSystem = config_create(getConfigString("PUNTO_MONTAJE"));
 	//cantidadDeBloques = config_get_int_value(configuracionFileSystem,"CANTIDAD_BLOQUES");
