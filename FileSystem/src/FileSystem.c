@@ -98,7 +98,7 @@ bool validarArchivo(char* path){
 int devolverTamano(char* path){
 	char* pathTotal = obtenerRutaTotal(path,"Archivos");
 	t_config* configuracion =config_create(pathTotal);
-	int w =config_get_int_value(configuracion,"TAMANIO");
+	int w =config_get_int_value(configuracion,"TAMANO");
 	config_destroy(configuracion);
 	free(pathTotal);
 	return w;
@@ -108,14 +108,14 @@ int buscarPosicionLibre(){
 	int i;
 	for(i=0;i<cantidadDeBloques;i++){
 		if(!bitarray_test_bit(bitMap,i)){
-			return i;
+			return i+1;
 		}
 	}
 	return -1;
 
 }
 
-void crearElArchivo(char* path){
+bool crearElArchivo(char* path){
 	 DIR *dirp;
 	char* rutaTotal=obtenerRutaTotal("","Archivos");
 	//strcpy(rutaTotal,getConfigString("PUNTO_MONTAJE"));
@@ -132,12 +132,15 @@ void crearElArchivo(char* path){
 	string_append(&rutaTotal,*(directorios+i));
 	FILE* archivo = fopen(rutaTotal,"w");
 	int posicionDelBitMap = buscarPosicionLibre();
-	bitarray_set_bit(bitMap,posicionDelBitMap);
+	if(posicionDelBitMap == -1){
+		return false;
+	}
+	bitarray_set_bit(bitMap,posicionDelBitMap-1);
 
-	fprintf(archivo,"TAMANIO=123\nBLOQUES=[%d]\n",posicionDelBitMap);
+	fprintf(archivo,"TAMANO=0\nBLOQUES=[%d]\n",posicionDelBitMap);
 
 	fclose(archivo);
-
+	return true;
 	//falta la parte de escribir el archivo con el tamano de archivo(Seria 0) y asignarle el bloque en el archivo
 }
 int borrarUnArchivo(char* path){
@@ -164,7 +167,9 @@ void* leerBloque(FILE* archivo,int offset, int size){
 int* obtenerBloques (char* path){
 
 	t_config *configuracion = config_create(obtenerRutaTotal(path,"Archivos"));
-
+	if(configuracion == NULL){
+		return 0;
+	}
 	char** bloquesEnString = config_get_array_value(configuracion,"BLOQUES");
 	int i;
 	int* bloques= malloc(4);
@@ -221,13 +226,13 @@ void* obtenerDatos(char* path,int offset, int size){
 		bloqueInicial++;
 	}
 	free(bloques);
-	return contenido;
+return contenido;
 }
 void escribirBloque(int bloque,int offset,int size, void* buffer ){
 	char* x =string_itoa(bloque);
 	char* ruta =obtenerRutaTotal(x,"Bloques");
 	string_append(&ruta,".bin");
-	FILE* archivo = fopen(ruta,"w");
+	FILE* archivo = fopen(ruta,"r+");
 	fseek(archivo,offset,SEEK_SET);
 	fwrite(buffer,size,1,archivo);	fclose(archivo);
 }
@@ -243,6 +248,9 @@ char* crearStringBloques(int* bloques,int cantidad){
 }
 bool guardarDatos(char* path,int offset, int size,void* buffer){
 	int *bloques = obtenerBloques(path);
+	if(bloques == NULL){
+		return false;
+	}
 	int cantidadDeBloques = cantidadDeElementosDeUnArray(bloques);
 	int bloqueInicialDondeQuiereEscribir = offset/bloqueSize;
 	int bloqueQueQuiereEscribir = (size+offset) / bloqueSize;
@@ -252,18 +260,23 @@ bool guardarDatos(char* path,int offset, int size,void* buffer){
 	if(tamano < offset+size){
 		tamano = offset+size;
 	}
-//	if(cantidadDeBloques >bloqueQueQuiereEscribir&&size+offset<=bloqueSize){
-//		escribirBloque(*(bloques+bloqueQueQuiereEscribir),offset,size,buffer);
-//	}
-//	else{
 		for(i=0;i<=bloqueQueQuiereEscribir&&sizeLeido!=size;i++){
 			if(i>=cantidadDeBloques){
 				int posicionLibre =buscarPosicionLibre();//Falta chequear errores aca
 				if(posicionLibre == -1){
 					return false;
 				}
-				bitarray_set_bit(bitMap,posicionLibre);
-				*(bloques+i) = posicionLibre+1;//posibleRealloc
+				bitarray_set_bit(bitMap,posicionLibre-1);
+				int* tmp = realloc(bloques,cantidadDeBloques*sizeof(int)+4);
+				if(tmp == NULL){
+					return false;
+				}
+				else{
+					bloques= tmp;
+				}
+
+				*(bloques+i) = posicionLibre;//posibleRealloc
+				cantidadDeBloques+=1;
 			}
 			if(i>=bloqueInicialDondeQuiereEscribir){
 				if(bloqueSize-offset > size-sizeLeido){
@@ -295,7 +308,7 @@ bool guardarDatos(char* path,int offset, int size,void* buffer){
 
 	char* rutaDelArchivo = obtenerRutaTotal(path,"Archivos");
 	FILE* archivoDondeEscriboLosNuevosDatos =fopen(rutaDelArchivo,"w");
-	fprintf(archivoDondeEscriboLosNuevosDatos,"TAMANO= %d\nBLOQUES= [%s ]",tamano,crearStringBloques(bloques,cantidadDeBloques));
+	fprintf(archivoDondeEscriboLosNuevosDatos,"TAMANO=%d\nBLOQUES=[%s]",tamano,crearStringBloques(bloques,cantidadDeBloques));
 	fclose(archivoDondeEscriboLosNuevosDatos);
 	return true;
 }
@@ -322,7 +335,7 @@ void* configurarTodo(){
 	}
 
 	int i;
-	for(i = 0;i< cantidadDeBloques;i++){
+	for(i = 1;i<= cantidadDeBloques;i++){
 		char* nombre = string_new();
 		string_append(&nombre,string_itoa(i));
 		string_append(&nombre,".bin");
@@ -445,20 +458,18 @@ int main(void) {
 			perror("Conectaste cualquier cosa menos un kernel pa");
 	}
 	tramitarPeticionesDelKernel(socketKernel);
+	liberarConfiguracion();
 	close(socketKernel);
 	close(fd);
-	//t_config* configuracionFileSystem = config_create(getConfigString("PUNTO_MONTAJE"));
-	//cantidadDeBloques = config_get_int_value(configuracionFileSystem,"CANTIDAD_BLOQUES");
+
+
 
 	//crearElArchivo("passwords/hola.bin");
-	//char* x = "hola como andashola como andashola como andashola como andashola como andas hola como andashola como andashola como andashola como andashola como andas";
-	//char* rutaDelArchivo = obtenerRutaTotal("passwords/hola2.bin","Archivos");
-	//FILE* archivoDondeEscriboLosNuevosDatos = conseguirFileAbierto(rutaDelArchivo);
-
-	//int x = 1235;
-	//guardarDatos("passwords/hola.bin",48,strlen(x),x);
-	//guardarDatos("passwords/hola.bin",64,strlen(x),x);
-	//guardarDatos("passwords/hola.bin",128,strlen(x),x);
+	//char* x = "Hola";
+	//guardarDatos("passwords/hola.bin",48,strlen(x)+1,x);
+	//guardarDatos("passwords/hola.bin",64,strlen(x)+1,x);
+	//guardarDatos("passwords/hola.bin",128,strlen(x)+1,x);
+	//puts(obtenerDatos("passwords/hola.bin",128,strlen(x)+1));
 // bitarray_set_bit(bitMap,2);
 //	bitarray_set_bit(bitMap,1);
 //	obtenerRutaTotal("hola.bin","Archivos");
