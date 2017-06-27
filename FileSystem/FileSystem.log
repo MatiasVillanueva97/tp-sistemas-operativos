@@ -1,0 +1,158 @@
+[INFO] 19:49:03:733 FileSystem/(10968:10968): Inicializando FileSystem.....
+
+
+[INFO] 19:49:58:284 FileSystem/(11077:11077): Inicializando FileSystem.....
+
+
+[INFO] 20:48:31:703 FileSystem/(12972:12972): Inicializando FileSystem.....
+
+
+[INFO] 20:48:32:24 FileSystem/(12972:12972): Configuracion Inicial: 
+
+[INFO] 20:48:32:941 FileSystem/(12972:12972): Se cargo el archivo Metadata.bin
+[INFO] 20:48:32:941 FileSystem/(12972:12972): Tamaño de bloque: 64
+[INFO] 20:48:32:941 FileSystem/(12972:12972): Cantidad de bloques: 5192
+[INFO] 20:48:33:19 FileSystem/(12972:12972): Se cargo el bitmap al FileSystem
+[INFO] 20:48:33:20 FileSystem/(12972:12972): Se creo correctamente el bitmap
+[INFO] 20:48:34:907 FileSystem/(12972:12972): Se abrio el archivo [4].bin
+[INFO] 20:48:34:907 FileSystem/(12972:12972): El tamaño del archivo es de: passwords/hola.bin
+[INFO] 20:48:34:907 FileSystem/(12972:12972): Llegue al bloque 0.bin para escribir
+[INFO] 20:48:34:907 FileSystem/(12972:12972): Es el ultimo bloque. Voy a escribir 5 bytes
+[INFO] 20:48:34:907 FileSystem/(12972:12972): Se escribio en el archivo: Hola
+[INFO] 20:48:34:907 FileSystem/(12972:12972): El conjunto de bloques nuevos es: [4]
+[INFO] 20:48:34:907 FileSystem/(12972:12972): Se escribio el archivo. Su tamaño es: 53,y tiene los siguientes BLOQUES: [4]
+[INFO] 20:48:35:226 FileSystem/(12972:12972): Se abrio el archivo [4].bin
+[INFO] 20:48:35:226 FileSystem/(12972:12972): El tamaño del archivo es de: passwords/hola.bin
+[INFO] 20:48:35:226 FileSystem/(12972:12972): Se tuvo que pedir otro bloque
+[INFO] 20:48:35:226 FileSystem/(12972:12972): Se asigna el bloque 5.bin
+[INFO] 20:48:35:226 FileSystem/(12972:12972): Ahora el archivo tiene 2 cantidad de bloques.
+[INFO] 20:48:35:226 FileSystem/(12972:12972): Llegue al bloque 1.bin para escribir
+[INFO] 20:48:35:226 FileSystem/(12972:12972): Es el ultimo bloque. Voy a escribir 5 bytes
+[INFO] 20:48:35:226 FileSystem/(12972:12972): Se escribio en el archivo: Hola
+[INFO] 20:48:35:227 FileSystem/(12972:12972): El conjunto de bloques nuevos es: [4,5]
+[INFO] 20:48:35:227 FileSystem/(12972:12972): Se escribio el archivo. Su tamaño es: 69,y tiene los siguientes BLOQUES: [4,5]
+[INFO] 20:48:35:558 FileSystem/(12972:12972): Se abrio el archivo [4,5].bin
+[INFO] 20:48:35:558 FileSystem/(12972:12972): El tamaño del archivo es de: passwords/hola.bin
+[INFO] 20:48:35:559 FileSystem/(12972:12972): Se tuvo que pedir otro bloque
+[INFO] 20:48:35:559 FileSystem/(12972:12972): Se asigna el bloque 6.bin
+[INFO] 20:48:35:559 FileSystem/(12972:12972): Ahora el archivo tiene 3 cantidad de bloques.
+[INFO] 20:48:35:559 FileSystem/(12972:12972): Llegue al bloque 2.bin para escribir
+[INFO] 20:48:35:559 FileSystem/(12972:12972): Es el ultimo bloque. Voy a escribir 5 bytes
+[INFO] 20:48:35:559 FileSystem/(12972:12972): Se escribio en el archivo: Hola
+[INFO] 20:48:35:560 FileSystem/(12972:12972): El conjunto de bloques nuevos es: [4,5,6]
+[INFO] 20:48:35:560 FileSystem/(12972:12972): Se escribio el archivo. Su tamaño es: 133,y tiene los siguientes BLOQUES: [4,5,6]
+[INFO] 20:49:02:180 FileSystem/(13035:13035): Inicializando FileSystem.....
+
+
+[INFO] 20:49:02:182 FileSystem/(13035:13035): Configuracion Inicial: 
+
+[INFO] 20:49:02:183 FileSystem/(13035:13035): Se cargo el archivo Metadata.bin
+[INFO] 20:49:02:183 FileSystem/(13035:13035): Tamaño de bloque: 64
+[INFO] 20:49:02:183 FileSystem/(13035:13035): Cantidad de bloques: 5192
+[INFO] 20:49:02:361 FileSystem/(13035:13035): Se cargo el bitmap al FileSystem
+[INFO] 20:49:02:363 FileSystem/(13035:13035): Se creo correctamente el bitmap
+[INFO] 20:49:02:365 FileSystem/(13035:13035): Se abrio el archivo [7].bin
+[INFO] 20:49:02:365 FileSystem/(13035:13035): El tamaño del archivo es de: passwords/hola.bin
+[INFO] 20:49:02:365 FileSystem/(13035:13035): Llegue al bloque 0.bin para escribir
+[INFO] 20:49:02:365 FileSystem/(13035:13035): Es el ultimo bloque. Voy a escribir 5 bytes
+[INFO] 20:49:02:365 FileSystem/(13035:13035): Se escribio en el archivo: Hola
+[INFO] 20:49:02:368 FileSystem/(13035:13035): El conjunto de bloques nuevos es: [7]
+[INFO] 20:49:02:368 FileSystem/(13035:13035): Se escribio el archivo. Su tamaño es: 53,y tiene los siguientes BLOQUES: [7]
+[INFO] 20:49:02:369 FileSystem/(13035:13035): Se abrio el archivo [7].bin
+[INFO] 20:49:02:369 FileSystem/(13035:13035): El tamaño del archivo es de: passwords/hola.bin
+[INFO] 20:49:02:369 FileSystem/(13035:13035): Se tuvo que pedir otro bloque
+[INFO] 20:49:02:371 FileSystem/(13035:13035): Se asigna el bloque 8.bin
+[INFO] 20:49:02:371 FileSystem/(13035:13035): Ahora el archivo tiene 2 cantidad de bloques.
+[INFO] 20:49:02:371 FileSystem/(13035:13035): Llegue al bloque 1.bin para escribir
+[INFO] 20:49:02:371 FileSystem/(13035:13035): Es el ultimo bloque. Voy a escribir 5 bytes
+[INFO] 20:49:02:372 FileSystem/(13035:13035): Se escribio en el archivo: Hola
+[INFO] 20:49:02:372 FileSystem/(13035:13035): El conjunto de bloques nuevos es: [7,8]
+[INFO] 20:49:02:372 FileSystem/(13035:13035): Se escribio el archivo. Su tamaño es: 69,y tiene los siguientes BLOQUES: [7,8]
+[INFO] 20:49:02:373 FileSystem/(13035:13035): Se abrio el archivo [7,8].bin
+[INFO] 20:49:02:373 FileSystem/(13035:13035): El tamaño del archivo es de: passwords/hola.bin
+[INFO] 20:49:02:373 FileSystem/(13035:13035): Se tuvo que pedir otro bloque
+[INFO] 20:49:02:373 FileSystem/(13035:13035): Se asigna el bloque 9.bin
+[INFO] 20:49:02:373 FileSystem/(13035:13035): Ahora el archivo tiene 3 cantidad de bloques.
+[INFO] 20:49:02:373 FileSystem/(13035:13035): Llegue al bloque 2.bin para escribir
+[INFO] 20:49:02:373 FileSystem/(13035:13035): Es el ultimo bloque. Voy a escribir 5 bytes
+[INFO] 20:49:02:373 FileSystem/(13035:13035): Se escribio en el archivo: Hola
+[INFO] 20:49:02:374 FileSystem/(13035:13035): El conjunto de bloques nuevos es: [7,8,9]
+[INFO] 20:49:02:378 FileSystem/(13035:13035): Se escribio el archivo. Su tamaño es: 133,y tiene los siguientes BLOQUES: [7,8,9]
+[INFO] 20:49:02:378 FileSystem/(13035:13035): Se abrio el archivo [7,8,9].bin
+[INFO] 20:49:02:378 FileSystem/(13035:13035): Se abrio el archivo 9.bin
+[INFO] 20:49:02:378 FileSystem/(13035:13035): Se obtuvo el buffer: Hola
+[INFO] 20:49:08:820 FileSystem/(13067:13067): Inicializando FileSystem.....
+
+
+[INFO] 20:49:09:85 FileSystem/(13067:13067): Configuracion Inicial: 
+
+[INFO] 20:49:10:273 FileSystem/(13067:13067): Se cargo el archivo Metadata.bin
+[INFO] 20:49:10:273 FileSystem/(13067:13067): Tamaño de bloque: 64
+[INFO] 20:49:10:273 FileSystem/(13067:13067): Cantidad de bloques: 5192
+[INFO] 20:49:10:347 FileSystem/(13067:13067): Se cargo el bitmap al FileSystem
+[INFO] 20:49:10:348 FileSystem/(13067:13067): Se creo correctamente el bitmap
+[INFO] 20:49:25:654 FileSystem/(13067:13067): Se abrio el archivo [10].bin
+[INFO] 20:49:25:654 FileSystem/(13067:13067): El tamaño del archivo es de: passwords/hola.bin
+[INFO] 20:49:25:654 FileSystem/(13067:13067): Llegue al bloque 0.bin para escribir
+[INFO] 20:49:25:654 FileSystem/(13067:13067): Es el ultimo bloque. Voy a escribir 5 bytes
+[INFO] 20:49:25:654 FileSystem/(13067:13067): Se escribio en el archivo: Hola
+[INFO] 20:49:25:655 FileSystem/(13067:13067): El conjunto de bloques nuevos es: [10]
+[INFO] 20:49:25:655 FileSystem/(13067:13067): Se escribio el archivo. Su tamaño es: 53,y tiene los siguientes BLOQUES: [10]
+[INFO] 20:49:35:832 FileSystem/(13067:13067): Se abrio el archivo [10].bin
+[INFO] 20:49:35:832 FileSystem/(13067:13067): El tamaño del archivo es de: passwords/hola.bin
+[INFO] 20:49:35:832 FileSystem/(13067:13067): Se tuvo que pedir otro bloque
+[INFO] 20:49:35:832 FileSystem/(13067:13067): Se asigna el bloque 11.bin
+[INFO] 20:49:35:832 FileSystem/(13067:13067): Ahora el archivo tiene 2 cantidad de bloques.
+[INFO] 20:49:35:832 FileSystem/(13067:13067): Llegue al bloque 1.bin para escribir
+[INFO] 20:49:35:832 FileSystem/(13067:13067): Es el ultimo bloque. Voy a escribir 5 bytes
+[INFO] 20:49:35:832 FileSystem/(13067:13067): Se escribio en el archivo: Hola
+[INFO] 20:49:35:833 FileSystem/(13067:13067): El conjunto de bloques nuevos es: [10,11]
+[INFO] 20:49:35:833 FileSystem/(13067:13067): Se escribio el archivo. Su tamaño es: 69,y tiene los siguientes BLOQUES: [10,11]
+[INFO] 20:49:37:396 FileSystem/(13067:13067): Se abrio el archivo [10,11].bin
+[INFO] 20:49:37:396 FileSystem/(13067:13067): El tamaño del archivo es de: passwords/hola.bin
+[INFO] 20:49:37:396 FileSystem/(13067:13067): Se tuvo que pedir otro bloque
+[INFO] 20:49:37:396 FileSystem/(13067:13067): Se asigna el bloque 12.bin
+[INFO] 20:49:37:396 FileSystem/(13067:13067): Ahora el archivo tiene 3 cantidad de bloques.
+[INFO] 20:49:37:396 FileSystem/(13067:13067): Llegue al bloque 2.bin para escribir
+[INFO] 20:49:37:396 FileSystem/(13067:13067): Es el ultimo bloque. Voy a escribir 5 bytes
+[INFO] 20:49:37:396 FileSystem/(13067:13067): Se escribio en el archivo: Hola
+[INFO] 20:49:37:397 FileSystem/(13067:13067): El conjunto de bloques nuevos es: [10,11,12]
+[INFO] 20:49:37:397 FileSystem/(13067:13067): Se escribio el archivo. Su tamaño es: 133,y tiene los siguientes BLOQUES: [10,11,12]
+[INFO] 20:49:41:870 FileSystem/(13067:13067): Se abrio el archivo [10,11,12].bin
+[INFO] 20:49:49:833 FileSystem/(13127:13127): Inicializando FileSystem.....
+
+
+[INFO] 20:49:50:14 FileSystem/(13127:13127): Configuracion Inicial: 
+
+[INFO] 20:49:50:596 FileSystem/(13127:13127): Se cargo el archivo Metadata.bin
+[INFO] 20:49:50:596 FileSystem/(13127:13127): Tamaño de bloque: 64
+[INFO] 20:49:50:596 FileSystem/(13127:13127): Cantidad de bloques: 5192
+[INFO] 20:49:50:685 FileSystem/(13127:13127): Se cargo el bitmap al FileSystem
+[INFO] 20:49:50:686 FileSystem/(13127:13127): Se creo correctamente el bitmap
+[INFO] 20:49:51:596 FileSystem/(13127:13127): Se abrio el archivo [13].bin
+[INFO] 20:49:51:596 FileSystem/(13127:13127): El tamaño del archivo es de: passwords/hola.bin
+[INFO] 20:49:51:596 FileSystem/(13127:13127): Llegue al bloque 0.bin para escribir
+[INFO] 20:49:51:596 FileSystem/(13127:13127): Es el ultimo bloque. Voy a escribir 5 bytes
+[INFO] 20:49:51:597 FileSystem/(13127:13127): Se escribio en el archivo: Hola
+[INFO] 20:49:51:597 FileSystem/(13127:13127): El conjunto de bloques nuevos es: [13]
+[INFO] 20:49:51:598 FileSystem/(13127:13127): Se escribio el archivo. Su tamaño es: 53,y tiene los siguientes BLOQUES: [13]
+[INFO] 20:49:51:849 FileSystem/(13127:13127): Se abrio el archivo [13].bin
+[INFO] 20:49:51:849 FileSystem/(13127:13127): El tamaño del archivo es de: passwords/hola.bin
+[INFO] 20:49:51:849 FileSystem/(13127:13127): Se tuvo que pedir otro bloque
+[INFO] 20:49:51:849 FileSystem/(13127:13127): Se asigna el bloque 14.bin
+[INFO] 20:49:51:849 FileSystem/(13127:13127): Ahora el archivo tiene 2 cantidad de bloques.
+[INFO] 20:49:51:849 FileSystem/(13127:13127): Llegue al bloque 1.bin para escribir
+[INFO] 20:49:51:849 FileSystem/(13127:13127): Es el ultimo bloque. Voy a escribir 5 bytes
+[INFO] 20:49:51:849 FileSystem/(13127:13127): Se escribio en el archivo: Hola
+[INFO] 20:49:51:850 FileSystem/(13127:13127): El conjunto de bloques nuevos es: [13,14]
+[INFO] 20:49:51:850 FileSystem/(13127:13127): Se escribio el archivo. Su tamaño es: 69,y tiene los siguientes BLOQUES: [13,14]
+[INFO] 20:49:52:61 FileSystem/(13127:13127): Se abrio el archivo [13,14].bin
+[INFO] 20:49:52:61 FileSystem/(13127:13127): El tamaño del archivo es de: passwords/hola.bin
+[INFO] 20:49:52:61 FileSystem/(13127:13127): Se tuvo que pedir otro bloque
+[INFO] 20:49:52:61 FileSystem/(13127:13127): Se asigna el bloque 15.bin
+[INFO] 20:49:52:61 FileSystem/(13127:13127): Ahora el archivo tiene 3 cantidad de bloques.
+[INFO] 20:49:52:61 FileSystem/(13127:13127): Llegue al bloque 2.bin para escribir
+[INFO] 20:49:52:61 FileSystem/(13127:13127): Es el ultimo bloque. Voy a escribir 5 bytes
+[INFO] 20:49:52:62 FileSystem/(13127:13127): Se escribio en el archivo: Hola
+[INFO] 20:49:52:62 FileSystem/(13127:13127): El conjunto de bloques nuevos es: [13,14,15]
+[INFO] 20:49:52:62 FileSystem/(13127:13127): Se escribio el archivo. Su tamaño es: 133,y tiene los siguientes BLOQUES: [13,14,15]
