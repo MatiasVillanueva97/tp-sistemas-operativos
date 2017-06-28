@@ -20,6 +20,11 @@ void* serializarAlmacenarBytes2(t_escrituraMemoria almacenar){//No se que idiote
 }
 
 int pedirPagina(int pid,int tamano){
+	if(size_pagina <tamano){
+		log_error(logKernel,"Se pidio un tamano invalido");
+		return 0;
+
+	}
 	t_asignarPaginas asignar;
 			asignar.cantPags = 1;
 			asignar.pid = pid;
@@ -31,7 +36,7 @@ int pedirPagina(int pid,int tamano){
 			int pagina = leerInt(stream);
 			if(!pagina){
 				log_error(logKernel,"No se pudo reservar la pagina");
-				return false;
+				return 0;
 			}
 			log_info(logKernel,"Se recibe %d como respuesta,(Cantidad de paginas)",pagina );
 			t_escrituraMemoria *w = malloc(sizeof(t_escrituraMemoria));
@@ -217,19 +222,26 @@ offsetYBuffer escribirMemoria(int tamano,void* memoria){
 	void* buffer = malloc(tamano+sizeof(HeapMetadata)*2);
 	int recorrido=0;
 		recorrido = recorrido +tamanoHeader;//El recorrido se posiciona en donde termina el header.
+	log_info(logKernel,"Empiezo a recorrer la pagina");
 	while(size_pagina > recorrido){
 		if(headerAnterior.isFree &&headerAnterior.size>tamano+tamanoHeader){
+
 				HeapMetadata header;
 				header.isFree= false;
 				header.size= tamano;
+				log_info(logKernel,"Se escribe el heapMetadata con tamano %d, y no esta libre",tamano);
+
 				int y = recorrido-tamanoHeader;
 				int offset = recorrido;
 				memcpy(memoria+y,&header,tamanoHeader);
 				recorrido += tamano; //El recorrido se posiciona donde va el siguiente header
 				header.isFree= true;
 				header.size= headerAnterior.size-tamano-tamanoHeader; //Calculo el puntero donde esta, es decir, el tamaño ocupado, y se lo resto a lo que queda.
+				log_info(logKernel,"Se escribe el heapMetadata con tamano %d, y  esta libre",header.size);
+
 				memcpy(memoria+recorrido,&header,tamanoHeader);
 				memcpy(buffer,memoria+offset-sizeof(HeapMetadata),tamano+sizeof(HeapMetadata)*2);
+				log_info(logKernel,"Se copia el contenido para enviarselo a memoria");
 				if(offset == 5){
 					offset = 0;
 				}
@@ -237,17 +249,19 @@ offsetYBuffer escribirMemoria(int tamano,void* memoria){
 				x.buffer = buffer;
 				x.offset = offset;
 				log_info(logKernel,"Se devuelve el offset %d y los siguientes heapMetadata:",x.offset);
-				log_info(logKernel,"El primer heapMetadata tiene %d bytes y %b como booleano:",*((int*)x.buffer),*(((bool*)x.buffer)+4));
-				log_info(logKernel,"El segundo heapMetadata tiene %d bytes y %b como booleano:",*(((int*)x.buffer)+5+tamano),*(((bool*)x.buffer)+4+5+tamano));
 
 				//escribir en la memoria
 				return x;
 		}
 		else{
+			log_info(logKernel,"El heap leido no alcanza para el tamano pedido o estaba reservado, tenia %d como tamaño y %b como boleano",headerAnterior.size,headerAnterior.isFree);
 			recorrido+=headerAnterior.size;//el header se posiciona para leer el siguiente header.
+			log_info(logKernel,"El recorrido ahora es %d", recorrido);
 		}
 		headerAnterior = *((HeapMetadata*) (memoria+recorrido));
+		log_info(logKernel,"El heapMetadata tiene  %d como tamaño y %b como boleano",headerAnterior.size,headerAnterior.isFree);
 		recorrido+=tamanoHeader;
+		log_info(logKernel,"El recorrido ahora es %d", recorrido);
 	}
 	offsetYBuffer x;
 	x.offset = -1;
@@ -260,13 +274,15 @@ offsetYBuffer escribirMemoria(int tamano,void* memoria){
 
 offsetTamanoYHeader* liberarMemoriaHeap(int offset,void* pagina){
 	if (offset<0){
-			perror("ingreso una posicion de la pagina negativa.");
-			return NULL;
+		log_warning(logKernel,"Se ingreso un offset %d, el cual es negativo. Se procede a denegar la liberacion de heap.",offset);
+		return NULL;
 
 	}
 	int i;
 	int recorrido = 0;
 	HeapMetadata *headerActual = ((HeapMetadata*) (pagina+recorrido));
+	log_info(logKernel,"El offset es: %d y el HeapMetadata es: %d tamano y esta %b como booleano ",offset,headerActual->size,headerActual->isFree);
+
 	HeapMetadata *headerAnterior = malloc(tamanoHeader);
 
 	int offsetQueTengoQueDevolver = 0;
@@ -274,15 +290,19 @@ offsetTamanoYHeader* liberarMemoriaHeap(int offset,void* pagina){
 	headerAnterior->isFree = false;
 	int recorridoDesdeDondeTengoQueCopiar=recorrido;
 	recorrido+= tamanoHeader;
+	log_info(logKernel,"Se empieza a recorrer la pagina para buscar el heapMetadata donde se pueda guardar");
 	while(recorrido<size_pagina&&recorrido+sizeof(HeapMetadata)<offset){
 		recorridoDesdeDondeTengoQueCopiar = recorrido-5;
 		headerAnterior = headerActual;
+		log_info(logKernel,"El HeapMetadata Anterior es: %d tamano y esta %b como booleano ",offset,headerAnterior->size,headerAnterior->isFree);
 		recorrido+=headerActual->size;
 		headerActual = ((HeapMetadata*) (pagina+recorrido));
+		log_info(logKernel,"El HeapMetadata Actual es: %d tamano y esta %b como booleano ",offset,headerActual->size,headerActual->isFree);
+
 		recorrido+= tamanoHeader;
 	}
 	if(recorrido>=size_pagina){
-			log_error(logKernel,"pidio una posicion invalida, es decir, que es mayor al numero de posiciones dentro de la pagina"); // esto significa posicion invalida
+			log_error(logKernel,"No se pudo guardar en esta pagina");
 			return NULL;
 	}
 	else{
@@ -291,19 +311,23 @@ offsetTamanoYHeader* liberarMemoriaHeap(int offset,void* pagina){
 			headerActual->isFree= true;
 			HeapMetadata* headerSiguiente;
 			HeapMetadata  headerAEscribir = *headerActual;
-			log_info(logKernel,"");
+			log_info(logKernel,"El HeapMetadata a escribir es: %d tamano y esta %b como booleano ",offset,headerAEscribir.size,headerAEscribir.isFree);
 			headerSiguiente = ((HeapMetadata*) (pagina+recorrido+headerActual->size));
+			log_info(logKernel,"El HeapMetadata Siguiente es: %d tamano y esta %b como booleano ",offset,headerActual->size,headerActual->isFree);
 			if(headerSiguiente->isFree){
+				log_info(logKernel,"El siguiente heapMetadata estaba libre, por lo que se ajusta para evitar la fragmentacion");
 				headerActual->size += headerSiguiente->size + tamanoHeader;
 				offsetQueTengoQueDevolver = recorridoDesdeDondeTengoQueCopiar;
 				x->tamanoLibre	+= 5;
 				headerAEscribir = *headerActual;
-				log_info(logKernel,"");
+				log_info(logKernel,"El HeapMetadata a escribir es: %d tamano y esta %b como booleano ",offset,headerAEscribir.size,headerAEscribir.isFree);
 			}
 			if(headerAnterior->isFree){
+				log_info(logKernel,"El  heapMetadata anterior estaba libre, por lo que se ajusta para evitar la fragmentacion");
 				headerAnterior->size += headerActual->size + tamanoHeader;
 				offsetQueTengoQueDevolver = recorridoDesdeDondeTengoQueCopiar;
 				headerAEscribir = *headerAnterior;
+				log_info(logKernel,"El HeapMetadata a escribir es: %d tamano y esta %b como booleano ",offset,headerAEscribir.size,headerAEscribir.isFree);
 				x->tamanoLibre	+= 5;
 				log_info(logKernel,"");
 			}

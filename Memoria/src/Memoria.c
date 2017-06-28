@@ -269,7 +269,7 @@ int asignarPaginasAUnProceso(int pid, int cantidadDePaginas){
 				liberarPagina(pid,paginaMaxima+w);
 			}
 			sem_post(&mutex_TablaDePaginasInvertida);
-			return 0;
+			return -1;
 		}
 	}
 	sem_post(&mutex_TablaDePaginasInvertida);
