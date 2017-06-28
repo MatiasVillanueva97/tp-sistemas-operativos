@@ -21,6 +21,7 @@
 #include "commons/collections/list.h"
 #include "commons/collections/queue.h"
 #include "commons/collections/dictionary.h"
+#include "commons/log.h"
 
 #include "../../Nuestras/src/laGranBiblioteca/ProcessControlBlock.h"
 
@@ -33,7 +34,7 @@ int historico_pid;
 int size_pagina;
 int quantumRR;
 bool finPorConsolaDelKernel;
-
+t_log* logKernel;
 
 ///------ESTRUCTURAS AUXILIARES ADMNISTRATIVAS------///
 
@@ -159,6 +160,9 @@ pthread_mutex_t mutex_cola_Finished;
 
 pthread_mutex_t mutex_semaforos_ANSISOP;
 pthread_mutex_t mutex_variables_compartidas;
+pthread_mutex_t mutex_tablaDeHeap;
+
+
 
 sem_t sem_ConsolaKernelLenvantada;
 

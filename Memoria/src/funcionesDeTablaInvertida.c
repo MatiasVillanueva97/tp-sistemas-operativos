@@ -18,6 +18,7 @@ void iniciarTablaDePaginacionInvertida(){
 	tablaDePaginacionInvertida = memoriaTotal;
 
 	int cantidad = ceil(((double)((getConfigInt("MARCOS")*sizeof(filaDeTablaPaginaInvertida)))/((double) sizeOfPaginas)));
+	log_info(logMemoria,"La tabla de paginacion invertida ocupa %d paginas para administracion",cantidad );
 	int i;
 
 	for(i=0;i<cantidad;i++){
@@ -29,6 +30,8 @@ void iniciarTablaDePaginacionInvertida(){
 	nuevaFila->pid = 0;
 	nuevaFila->cantidadDePaginasReales = cantidad;
 	nuevaFila->paginaMaxima = cantidad;
+	log_info(logMemoria,"Se agrego las paginas administrativas a la tabla de cantidad de paginas");
+
 	list_add(tablaConCantidadDePaginas,nuevaFila);
 
 	for(i = cantidad;getConfigInt("MARCOS")> i;i++){
@@ -36,6 +39,7 @@ void iniciarTablaDePaginacionInvertida(){
 		tablaDePaginacionInvertida[i].pid = -1;
 		tablaDePaginacionInvertida[i].pagina = -1;
 	}
+	log_info(logMemoria,"Se le dio formato a la tabla de paginacion invertida");
 
 	/*	filaDeTablaPaginaInvertida* auxiliarParaGuardar = malloc(sizeOfPaginas);
 	int paginasNecesarias = cantidadDeMarcos*sizeof(filaDeTablaPaginaInvertida) / sizeOfPaginas;
@@ -74,15 +78,19 @@ int buscarFrameCorrespondiente(int pidRecibido,int pagina)
 	for (i=0;i < getConfigInt("MARCOS");i++){
 		filaActual =tablaDePaginacionInvertida[i];
 		if (filaActual.pid == pidRecibido && filaActual.pagina == pagina ){
+
+			log_info(logMemoria,"Se devolvio el frame %d de la busqueda en la tabla",filaActual.frame);
 			return filaActual.frame;
 		}
 	}
 	for (i=0;posicionDadaPorElHash >0;i++){
 		filaActual =tablaDePaginacionInvertida[i];
 		if (filaActual.pid == pidRecibido && filaActual.pagina == pagina ){
+			log_info(logMemoria,"Se devolvio el frame %d de la busqueda en la tabla",filaActual.frame);
 			return filaActual.frame;
 		}
 	}
+	log_error(logMemoria,"La pagina no estaba en la tabla de paginacion invertida.");
 	return -1;
 }
 int reservarFrame(int pid, int pagina){
@@ -93,6 +101,8 @@ int reservarFrame(int pid, int pagina){
 		if(filaActual.pagina == -1 && filaActual.pid == -1){
 			tablaDePaginacionInvertida[i].pagina = pagina;
 			tablaDePaginacionInvertida[i].pid = pid;
+			log_info(logMemoria,"Se reservo el frame %d para la pagina %d del pid %d",tablaDePaginacionInvertida[i].frame,pid,pagina);
+
 			return 1;
 		}
 	}
@@ -103,9 +113,12 @@ int reservarFrame(int pid, int pagina){
 				list_add(tablaConCantidadDePaginas,fila);
 				tablaDePaginacionInvertida[i].pagina = pagina;
 				tablaDePaginacionInvertida[i].pid = pid;
+				log_info(logMemoria,"Se reservo el frame %d para la pagina %d del pid %d",tablaDePaginacionInvertida[i].frame,pid,pagina);
 				return 1;
 		}
 	}
+	log_error(logMemoria,"No se pudo reservar ningun frame, no habia ninguno disponible");
+
 	return 0;
 }
 /*
@@ -126,6 +139,8 @@ int memoriaFramesLibres(){
 	sem_wait(&mutex_TablaDeCantidadDePaginas);
 	int prueba = sum(tablaConCantidadDePaginas,getCantidadDePaginas);
 	sem_post(&mutex_TablaDeCantidadDePaginas);
+	log_info(logMemoria,"Hay %d frames disponibles en memoria",prueba);
+
 	return prueba;
 	/*for(i;getConfigInt("MARCOS") > i;i++){
 			filaDeTablaPaginaInvertida filaActual = tablaDePaginacionInvertida[i];
@@ -156,13 +171,16 @@ int cantidadDePaginasDeUnProcesoDeUnProceso(int pid){
 int liberarPagina(int pid, int pagina){ //Esta sincronizado en finalizarPrograma.
 	int i;
 	int posicionEnLaTabla =funcionHash(pid,pagina);
-
-
+	log_info(logMemoria,"La funcion de hash aproxima a la posicion %d de la tabla de paginacion invetida", posicionEnLaTabla);
 	sem_wait(&mutex_TablaDeCantidadDePaginas);
 	bool buscarPid(filaTablaCantidadDePaginas* fila){
 			return (fila->pid== pid);
 	}
 	filaTablaCantidadDePaginas* fila =list_find(tablaConCantidadDePaginas,buscarPid);
+	if(fila == NULL){
+		log_error(logMemoria,"No existe la entrada en la tabla de cantidad de paginas.Por lo tanto, se ingreso un pid invalido");
+		return 0;
+	}
 	fila->cantidadDePaginasReales-=1;
 	sem_post(&mutex_TablaDeCantidadDePaginas);
 	sem_wait(&mutex_TablaDePaginasInvertida);
@@ -172,6 +190,7 @@ int liberarPagina(int pid, int pagina){ //Esta sincronizado en finalizarPrograma
 			tablaDePaginacionInvertida[i].pagina = -1;
 			tablaDePaginacionInvertida[i].pid = -1;
 			sem_post(&mutex_TablaDePaginasInvertida);
+			log_info(logMemoria,"Se asigno el frame %d para la pagina %d del pid %d",tablaDePaginacionInvertida[i].frame,pagina,pid);
 			return 1;
 		}
 	}
@@ -181,9 +200,12 @@ int liberarPagina(int pid, int pagina){ //Esta sincronizado en finalizarPrograma
 			tablaDePaginacionInvertida[i].pagina = -1;
 			tablaDePaginacionInvertida[i].pid = -1;
 			sem_post(&mutex_TablaDePaginasInvertida);
+			log_info(logMemoria,"Se asigno el frame %d para la pagina %d del pid %d",tablaDePaginacionInvertida[i].frame,pagina,pid);
 			return 1;
 		}
 	}
 	sem_post(&mutex_TablaDePaginasInvertida);
+	log_error(logMemoria,"No se encontro la pagina %d del pid %d en la tabla de paginacion invertida",pagina,pid);
+
 	return 0;
 }

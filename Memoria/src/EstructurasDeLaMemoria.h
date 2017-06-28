@@ -8,6 +8,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include "commons/collections/list.h"
+#include "commons/log.h"
 #include <pthread.h>
 #include <semaphore.h>
 
@@ -27,7 +28,7 @@ sem_t mutex_retardo;
 sem_t mutex_cache;
 
 sem_t sem_isKernelConectado;
-
+t_log* logMemoria;
 typedef struct{
 	int pid;
 	int paginaMaxima;

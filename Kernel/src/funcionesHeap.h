@@ -40,6 +40,7 @@ typedef struct {
 
 #ifndef FUNCIONESHEAP_H_
 #define FUNCIONESHEAP_H_
+void* serializarAlmacenarBytes2(t_escrituraMemoria almacenar);
 int manejarPedidoDeMemoria(int pid,int tamano);
 offsetYBuffer escribirMemoria(int tamano,void* memoria);
 offsetTamanoYHeader* liberarMemoriaHeap(int offset,void* pagina);

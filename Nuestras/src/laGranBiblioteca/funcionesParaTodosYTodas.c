@@ -56,14 +56,3 @@ t_mensajeDeProceso deserializarMensajeAEscribir(void* stream){
 
 
 
-void* serializarAlmacenarBytes(t_escrituraMemoria almacenar){
-	void* cosa = malloc(sizeof(int)*4+almacenar.direccion.size);
-	memcpy(cosa,almacenar.id,sizeof(int));
-	memcpy(cosa+sizeof(int),almacenar.direccion.page,sizeof(int));
-	memcpy(cosa+sizeof(int)*2,almacenar.direccion.offset,sizeof(int));
-	memcpy(cosa+sizeof(int)*3,almacenar.direccion.size,sizeof(int));
-	memcpy(cosa+sizeof(int)*4,almacenar.valor,almacenar.direccion.size);
-	return cosa;
-}
-
-

@@ -695,10 +695,9 @@ void * aceptarConexiones_Cpu_o_Consola( void *arg ){
 }
 
 int main(void) {
-
 	printf("Inicializando Kernel.....\n\n");
 
-
+	logKernel= log_create("Kernel.log","Kernel",0,0);
 	///------INICIALIZO TO.DO-------------///
 		historico_pid=1;
 		finPorConsolaDelKernel=false;
@@ -789,6 +788,7 @@ int main(void) {
 	pthread_join(hilo_estadoFINISHED,NULL);
 	pthread_join(hilo_consolaKernel, NULL);
 
+	log_destroy(logKernel);
 	while(1)
 	{
 		printf("Hola hago tiempo!\n");
@@ -816,6 +816,7 @@ void inicializarSemaforo(){
 	sem_init(&mutex_cola_Wait,0,1);
 	sem_init(&mutex_cola_Exec,0,1);
 	sem_init(&mutex_cola_Finished,0,1);
+	sem_init(&mutex_tablaDeHeap,0,1);
 
 	sem_init(&mutex_semaforos_ANSISOP,0,1);
 	sem_init(&mutex_variables_compartidas,0,1);

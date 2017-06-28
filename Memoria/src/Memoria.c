@@ -37,8 +37,6 @@
 #include "funcionesDeTablaInvertida.h"
 #include "funcionesDeCache.h"
 
-#include "parser/metadata_program.h"
-#include "parser/parser.h"
 //Variables
  // meparece que es otro tipo de semaforo, no mutex
 
@@ -71,6 +69,8 @@ void* leerMemoriaPosta (int pid, int pagina ){
 	}
 	void * contenido = malloc(getConfigInt("MARCO_SIZE"));
 	memcpy(contenido,memoriaTotal+frame*getConfigInt("MARCO_SIZE"),getConfigInt("MARCO_SIZE"));
+	log_info(logMemoria,"Se lee toda la pagina %d del pid &d.",pagina,pid);
+
 	return contenido;
 }
 int escribirMemoriaPosta(int pid,int pagina,void* contenido){
@@ -88,11 +88,14 @@ int escribirMemoriaPosta(int pid,int pagina,void* contenido){
 	}
 	int posicion = frame*getConfigInt("MARCO_SIZE");
 	memcpy(memoriaTotal+posicion,contenido,getConfigInt("MARCO_SIZE"));
+	log_info(logMemoria,"Se escribe el contenido en memoria: %s", (char*) contenido);
 	return 1;
 }
 void imprimirContenidoCache(){
+	//Los mutex esta antes ( Donde se llama la funcion).
 	FILE* archivo =  fopen ("contenidoCache.txt", "w+");
 	int i;
+	log_info(logMemoria,"Se imprime el contenido de la cache.");
 	if(list_is_empty(tablaDeEntradasDeCache))
 	{
 		printf("La cache esta vacía!" );
@@ -113,6 +116,8 @@ void imprimirContenidoCache(){
 void imprimirContenidoMemoria(){
 	FILE* archivo =  fopen ("file.txt", "w+");
 	int i;
+	log_info(logMemoria,"Se imprime el contenido de la memoria.");
+
 	sem_wait(&mutex_Memoria);
 	int w;
 	for(i= 0; i < list_size(tablaConCantidadDePaginas);i++){
@@ -159,6 +164,7 @@ int* almacenarBytesEnPagina(int pid, int pagina, int desplazamiento, int tamano,
 	int* prueba=malloc(sizeof(int));
 	*prueba= 0;
 	if(desplazamiento + tamano > sizeOfPaginas){
+		log_error(logMemoria,"Almacenamiento invalido!");
 		return prueba;
 	}
 	void *contenidoDeLaPagina;
@@ -169,39 +175,53 @@ int* almacenarBytesEnPagina(int pid, int pagina, int desplazamiento, int tamano,
 	if(frame ==-1){
 		return prueba;
 	}
+	log_info(logMemoria,"La pagina %d del pid %d se corresponde con el frame %d",pagina,pid,frame);
+
 	sem_wait(&mutex_Memoria);
 	contenidoDeLaPagina = memoriaTotal+frame*getConfigInt("MARCO_SIZE");
 	memcpy(contenidoDeLaPagina+desplazamiento, buffer,tamano);
 	sem_wait(&mutex_cache);
 	if(buscarEnLaCache(pid,pagina) !=NULL){
+		log_info(logMemoria,"Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache");
 		actualizarPaginaDeLaCache(pid,pagina,tamano,desplazamiento,buffer);
 	}
 	sem_post(&mutex_cache);
-
 	sem_post(&mutex_Memoria);
 	*prueba = 1;
+	log_info(logMemoria,"Se devuelve %d ya que se almaceno correctamente",*prueba);
+
 	return prueba;
 }
 void* solicitarBytesDeUnaPagina(int pid, int pagina, int desplazamiento, int tamano){
 	void* contenidoDeLaPagina;
 	sem_wait(&mutex_cache);
 	if((contenidoDeLaPagina= buscarEnLaCache(pid,pagina))!=NULL){
+		log_info(logMemoria,"La pagina %d del proceso %d esta en la cache, se procede a un cache hit",pid,pagina);
+
 		cacheHit(pid,pagina);
 		sem_post(&mutex_cache);
 	}
 	else{
+		log_info(logMemoria,"La pagina %d del proceso %d no esta en la cache",pid,pagina);
+
 		sem_post(&mutex_cache);
+
 		sem_wait(&mutex_retardo);
 		int retardoLocal = retardo;
 		sem_post(&mutex_retardo);
+		log_info(logMemoria,"Se procede a ejecutar el retardo por no estar en cache %d", retardoLocal);
 		sleep(retardoLocal);
 		sem_wait(&mutex_Memoria); //No se si son 2 mutex distintos
 		contenidoDeLaPagina = leerMemoriaPosta(pid,pagina);
 		if ((int)contenidoDeLaPagina == 0){
+			log_error(logMemoria,"La solicutd de la pagina %d del pid %d es invalida!",pagina,pid);
 			free(contenidoDeLaPagina);
 			return 0;
 		}
+		log_info(logMemoria,"Se encontro el contenido y se procede a ejecutar un cache miss");
+		sem_wait(&mutex_cache);
 		cacheMiss(pid,pagina,contenidoDeLaPagina);
+		sem_post(&mutex_cache);
 		sem_post(&mutex_Memoria);
 	}
 	void* contenidoADevolver = malloc(tamano);
@@ -238,17 +258,25 @@ int asignarPaginasAUnProceso(int pid, int cantidadDePaginas){
 
 
 	int paginaMaxima = buscarCantidadDePaginas(pid);
+	log_info(logMemoria,"El proceso %d tiene %d paginas en memoria y pidio %d paginas nuevas",pid,paginaMaxima,cantidadDePaginas);
 
 	sem_wait(&mutex_TablaDePaginasInvertida);
 	for(i= 0 ;i < cantidadDePaginas; i++){
 		if(reservarFrame(pid,paginaMaxima+i) == 0){
-			finalizarUnPrograma(pid);
+			log_error(logMemoria,"No se pudo asignar paginas al proceso");
+			int w ;
+			for(w = 0;w<i;w++){
+				liberarPagina(pid,paginaMaxima+w);
+			}
+			sem_post(&mutex_TablaDePaginasInvertida);
 			return 0;
 		}
 	}
 	sem_post(&mutex_TablaDePaginasInvertida);
 	sem_wait(&mutex_TablaDeCantidadDePaginas);
 	if(paginaMaxima == 0){
+		log_warning(logMemoria,"Hay que crear una nueva entrada a la tabla cantidad de paginas");
+
 		filaTablaCantidadDePaginas * x = malloc(sizeof(filaTablaCantidadDePaginas));
 		x->paginaMaxima= cantidadDePaginas;
 		x->cantidadDePaginasReales = cantidadDePaginas;
@@ -256,6 +284,8 @@ int asignarPaginasAUnProceso(int pid, int cantidadDePaginas){
 		list_add(tablaConCantidadDePaginas,x);
 	}
 	else{
+		log_info(logMemoria,"Se encontro una página. Se procede a modificar el elemento de la lista de cantidad de paginas.");
+
 		filaTablaCantidadDePaginas * elemento = buscarFilaEnTablaCantidadDePaginas(pid);
 		elemento->paginaMaxima += cantidadDePaginas;
 		elemento->cantidadDePaginasReales += cantidadDePaginas;
@@ -263,13 +293,7 @@ int asignarPaginasAUnProceso(int pid, int cantidadDePaginas){
 	sem_post(&mutex_TablaDeCantidadDePaginas);
 	return 1;
 }
-void borraDeLaCache(int pid){
-	bool buscarPid(lineaCache* fila){
-				return (fila->pid== pid);
-	}
-	list_remove_and_destroy_by_condition(tablaDeEntradasDeCache,buscarPid,free);//faltaria un destroyer decente
 
-}
 int finalizarUnPrograma(int pid){
 	sem_wait(&mutex_TablaDeCantidadDePaginas);
 	int paginas = buscarCantidadDePaginas(pid);
@@ -279,6 +303,7 @@ int finalizarUnPrograma(int pid){
 	list_remove_and_destroy_by_condition(tablaConCantidadDePaginas,buscarPid,free);//faltaria un destroyer decente
 	sem_post(&mutex_TablaDeCantidadDePaginas);
 	if(paginas == 0){
+		log_warning(logMemoria,"No se encontraba ninguna pagina del proceso en memoria.");
 		return 0;
 	}
 	int i;
@@ -288,6 +313,7 @@ int finalizarUnPrograma(int pid){
 	}
 	sem_post(&mutex_TablaDePaginasInvertida);
 	sem_wait(&mutex_cache);
+	log_info(logMemoria,"Se borra de la cache las paginas del proceso.");
 	borraDeLaCache(pid);
 	sem_post(&mutex_cache);
 	return 1;
@@ -302,10 +328,11 @@ void *rutinaKernel(void *arg){
 		int id_clienteConectado;
 		id_clienteConectado = aceptarConexiones(listener, &socketKernel, Memoria, &aceptados,1);
 		if(id_clienteConectado == -1){
+			log_error(logMemoria,"Se conecto otra cosa que no es un kernel");
 			close(socketKernel);
 		}
 		else{
-			printf("[Rutina Kernel] - Kernel conectado exitosamente\n");
+			log_info(logMemoria,"[Rutina Kernel] - Kernel conectado exitosamente\n");
 			enviarMensaje(socketKernel,enviarTamanoPaginas,&sizeOfPaginas,sizeof(int));
 			sem_post(&sem_isKernelConectado);//Semaforo que indica si solo hay un kernel conectado
 			recibirMensajesMemoria(socketKernel);
@@ -324,6 +351,7 @@ void *rutinaConsolaMemoria(void* x){
 				char** comandoConsola = NULL;
 				comandoConsola = string_split(mensaje," ");
 				if(strcmp(comandoConsola[0],"retardo") == 0){
+					log_info(logMemoria,"Entramos en retardo");
 					comandoConsola = string_split(comandoConsola[1], "\n");
 					retardo = atoi(comandoConsola[0]); // el que hizo esto es un forro c:
 					puts(comandoConsola[0]);
@@ -331,17 +359,22 @@ void *rutinaConsolaMemoria(void* x){
 				}
 				if(strcmp(comandoConsola[0],"dump") == 0){
 					if(strcmp(comandoConsola[1],"memoria\n")== 0){
+						log_info(logMemoria,"Entramos en dump memoria");
 						imprimirContenidoMemoria();
 						continue;
 
 					}
 					if(strcmp(comandoConsola[1],"estructuras\n")== 0){
+						log_info(logMemoria,"Entramos en dump estructuras administrativas");
 						imprimirTablaDePaginasInvertida();
 						continue;
 
 					}
 					if(strcmp(comandoConsola[1],"cache\n")== 0){
+						log_info(logMemoria,"Entramos en dump cache");
+						sem_wait(&mutex_cache);
 						imprimirContenidoCache();
+						sem_post(&mutex_cache);
 						continue;
 
 					}
@@ -349,21 +382,30 @@ void *rutinaConsolaMemoria(void* x){
 				}
 
 				if(strcmp(comandoConsola[0],"flush\n") == 0){
+					log_info(logMemoria,"Entramos en cache flush");
 					cacheFlush();
 					continue;
 				}
 
 				if(strcmp(comandoConsola[0],"size") == 0){
 						if(strcmp(comandoConsola[1],"memoria\n")== 0){
+							log_info(logMemoria,"Entramos en size memoria");
+							log_info(logMemoria,"Su tamaño en frames: %d\n",cantidadDeMarcos);
 							printf("Su tamaño en frames: %d\n",cantidadDeMarcos);
+
 							int cantidadDeMarcosLibres = memoriaFramesLibres();
+							log_info(logMemoria,"Marcos ocupados: %d\n", cantidadDeMarcosLibres);
+
 							printf("Marcos ocupados: %d\n", cantidadDeMarcosLibres);
+							log_info(logMemoria,"Marcos libres: %d\n", cantidadDeMarcos -cantidadDeMarcosLibres);
 							printf("Marcos libres: %d\n", cantidadDeMarcos -cantidadDeMarcosLibres);
 
 						}
 						if(strcmp(comandoConsola[1],"PID:")== 0){
+							log_info(logMemoria,"Entramos en size PID:");
 							comandoConsola = string_split(comandoConsola[2], "\n");
 							int pidPedido = atoi(comandoConsola[0]);
+							log_info(logMemoria,"El proceso %d tiene %d\n",pidPedido,((filaTablaCantidadDePaginas*)buscarFilaEnTablaCantidadDePaginas(pidPedido))->cantidadDePaginasReales);
 							printf("El proceso %d tiene %d\n",pidPedido,((filaTablaCantidadDePaginas*)buscarFilaEnTablaCantidadDePaginas(pidPedido))->cantidadDePaginasReales);
 						}
 				}
@@ -394,17 +436,19 @@ void recibirMensajesMemoria(void* arg){
 	while (operacion){
 
 		operacion = recibirMensaje(socket,&stream);
-
+		log_info(logMemoria,"Llego la operacion %d", operacion);
 		switch(operacion)
 		{
 				case inicializarPrograma:{ //inicializarPrograma
 					t_inicializarPrograma* estructura = stream;
+					log_info(logMemoria,"El kernel quiere iniciar el pid %d con %d paginas iniciales", estructura->pid,estructura->cantPags);
 					int x=1;
 					if(asignarPaginasAUnProceso(estructura->pid,estructura->cantPags)==0){
 						x=0;
 					}
 					enviarMensaje(socket,RespuestaBooleanaDeMemoria,&x,sizeof(int));
 					if(x){
+						log_info(logMemoria,"Se acepto asignar las paginas, por lo que se procede a iniciar el proceso", estructura->pid,estructura->cantPags);
 					      int t;
 					      char* contenidoPag ;
 					      char* contenidoDeLaPaginaPosta= malloc(sizeOfPaginas);
@@ -413,11 +457,12 @@ void recibirMensajesMemoria(void* arg){
 					      for(t=0;t<estructura->cantPags ;t++)
 					      {
 					    	  recibirMensaje(socket,&contenidoPag);
+					    	  log_info(logMemoria,"Se recibio el contenido de  la pagina numero %d y se depositara el contenido: %s",t,(char*) contenidoPag);
 					    	  memcpy(contenidoDeLaPaginaPosta,contenidoPag,sizeOfPaginas);
 					    	  free(contenidoPag);
 					    	  //rta_escribir_Memoria=escribirMemoriaPosta(estructura->pid,t,contenidoPag);
-
 					    	  rta_escribir_Memoria=escribirMemoriaPosta(estructura->pid,t,contenidoDeLaPaginaPosta);
+					    	  log_info(logMemoria,"Se envio %b a kernel como respuesta",rta_escribir_Memoria);
 					    	  enviarMensaje(socket,RespuestaBooleanaDeMemoria,&rta_escribir_Memoria,sizeof(int));
 					      }
 					      free(contenidoDeLaPaginaPosta);
@@ -436,16 +481,16 @@ void recibirMensajesMemoria(void* arg){
 					if(!contenidoDeLaPagina){
 						respuesta =0;
 						enviarMensaje(socket,RespuestaBooleanaDeMemoria,&respuesta,sizeof(int));
+						 log_info(logMemoria,"Se envio %b a kernel como respuesta",respuesta);
 					}
 					else{
 
-						enviarMensaje(socket,RespuestaBooleanaDeMemoria,&respuesta,sizeof(int));
-						enviarMensaje(socket,lineaDeCodigo,contenidoDeLaPagina,estructura->direccion.size);
-
+							enviarMensaje(socket,RespuestaBooleanaDeMemoria,&respuesta,sizeof(int));
+						 log_info(logMemoria,"Se envio %b a kernel como respuesta",respuesta);
+						 enviarMensaje(socket,lineaDeCodigo,contenidoDeLaPagina,estructura->direccion.size);
+						 log_info(logMemoria,"Se envio el siguiente contenido a kernel: %s",(char*)contenidoDeLaPagina);
 					}
 					free(contenidoDeLaPagina);
-					//cambiar por linea de codigo (enum)
-					//Controla errores forro.
 					break;
 				}
 
@@ -457,6 +502,7 @@ void recibirMensajesMemoria(void* arg){
 						x=0;
 					}
 					enviarMensaje(socket,RespuestaBooleanaDeMemoria,&x,sizeof(int));
+					log_info(logMemoria,"Se envio %b a kernel como respuesta",x);
 
 					break;
 				}
@@ -465,33 +511,35 @@ void recibirMensajesMemoria(void* arg){
 					int x;
 					if(asignarPaginasAUnProceso(estructura->pid,estructura->cantPags)==-1){
 					  							x=0;
-					 }
-					  					else{
+					}
+					else{
 					 						x=buscarCantidadDePaginas(estructura->pid) -1;
-					 }
+					}
 					enviarMensaje(socket,RespuestaBooleanaDeMemoria,&x,sizeof(int));
-
+					log_info(logMemoria,"Se envio %d a kernel como respuesta",x);
 					break;
 				}
 				case finalizarPrograma:{//FinalzarPrograma
 
 					int* pid = stream;
 					int x=1;
-					printf("Entramos a Finalizar Programa. Pid: %d \n", *pid);
+					log_info(logMemoria,"Entramos a Finalizar Programa. Pid: %d \n", *pid);
 					if(finalizarUnPrograma(*pid)){
 							x=0;
 					}
 					enviarMensaje(socket,RespuestaBooleanaDeMemoria,&x,sizeof(int));
-
+					log_info(logMemoria,"Se envio %d a kernel como respuesta",x);
 					break;
 				}
 				case liberarUnaPagina:{
 				     int* pid = stream;
 				     int* pagina = stream+sizeof(int);
+				     log_info(logMemoria,"Entramos a liberar pagina.Pid:%d Pagina: %d\n", *pid,*pagina);
 				     liberarPagina(*pid,*pagina);
 				     break;
 				}
 				case 0:{
+					log_info(logMemoria,"Se cerro el kernel");
 					close(socket);
 					break;
 				}
@@ -513,7 +561,7 @@ void *aceptarConexionesCpu( void *arg ){ // aca le sacamos el asterisco, porque 
 	escuchar(listener); // poner a escuchar ese socket
 	pthread_t hilo_nuevaCPU;
 
-	printf("[AceptarConexionesCPU] - Ya se ha establecido Conexion con un Kernel, ahora si se pueden conectar CPUs: \n");
+	log_info(logMemoria,"[AceptarConexionesCPU] - Ya se ha establecido Conexion con un Kernel, ahora si se pueden conectar CPUs: \n");
 
 	while (1)
 	{
@@ -521,10 +569,11 @@ void *aceptarConexionesCpu( void *arg ){ // aca le sacamos el asterisco, porque 
 		int id_clienteConectado;
 		id_clienteConectado = aceptarConexiones(listener, &nuevoSocketCpu, Memoria, &aceptados,1);
 		if(id_clienteConectado == -1){
+			log_error(logMemoria,"Se rechazo una conexion invalida.");
 				close(nuevoSocketCpu);
 		}
 		else{
-			printf("[AceptarConexionesCPU] - Nueva CPU Conectada! Socket CPU: %d\n", nuevoSocketCpu);
+			log_info(logMemoria,"[AceptarConexionesCPU] - Nueva CPU Conectada! Socket CPU: %d\n", nuevoSocketCpu);
 			pthread_create(&hilo_nuevaCPU, NULL, recibirMensajesMemoria,  nuevoSocketCpu);
 		}
 
@@ -550,6 +599,7 @@ int main(void) {
 	liberarMemoriaHeap(46,pagina);
 
 */
+	logMemoria = log_create("Memoria.log","Memoria",0,0);
 	printf("Inicializando Memoria.....\n\n");
 	sem_init(&mutex_Memoria,0,1);
 	sem_init(&mutex_TablaDeCantidadDePaginas,0,1);
@@ -574,10 +624,12 @@ int main(void) {
 	for(i=0;i<cantidadDeMarcos;i++){//Chequearlo despues
 		memcpy(memoriaTotal+i*sizeOfPaginas,joaco,sizeOfPaginas);
 	}
-//	free(hijodemama); //No me toma el free por algun motivo __	 O	___
-													//		  \__|__/
+	log_info(logMemoria,"Se inicializo la memoria");
+	free(joaco); //No me toma el free por algun motivo __	 O	___
+												//		  \__|__/
 
 	iniciarTablaDePaginacionInvertida();
+	log_info(logMemoria,"Se inicializo la tabla de paginacion invertida");
 /*
 	cacheMiss(1,2,joaco);
 	cacheMiss(1,3,joaco);
@@ -660,6 +712,7 @@ int main(void) {
 
 	pthread_t hilo_consolaMemoria;
 	pthread_create(&hilo_consolaMemoria, NULL, rutinaConsolaMemoria,  NULL);
+	log_info(logMemoria,"Se inicio el hilo consola de la memoria");
 
 //	pthread_join(hilo_consolaMemoria, NULL);
 	int listener;
@@ -669,20 +722,22 @@ int main(void) {
 	// ******* Conexiones obligatorias y necesarias
 
 	listener = crearSocketYBindeo(getConfigString("PUERTO")); // asignar el socket principal
-
+	log_info(logMemoria,"Se bindeo el listener");
 	pthread_t hilo_AceptarConexionesCPU, hilo_Kernel;
-
 	sem_init(&sem_isKernelConectado,0,0);
 
 	pthread_create(&hilo_Kernel, NULL, rutinaKernel,  listener);
+	log_info(logMemoria,"Se inicio el hilo que atiende al kernel");
 	pthread_create(&hilo_AceptarConexionesCPU, NULL, aceptarConexionesCpu, listener);
+	log_info(logMemoria,"Se inicio el hilo aceptar conexiones cpu");
 
 	printf("\nMensaje desde la ram principal del programa!\n");
 	pthread_join(hilo_Kernel, NULL);
-	pthread_join(hilo_AceptarConexionesCPU , NULL);
 	close(listener);
 	liberarConfiguracion();
+
 	free(memoriaTotal);
+	log_info(logMemoria,"Se finalizo el modulo Memoria.");
 
 	return EXIT_SUCCESS;
 

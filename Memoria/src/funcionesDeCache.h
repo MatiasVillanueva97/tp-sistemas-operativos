@@ -11,7 +11,7 @@
 
 bool tieneMenosDeNProcesos(int pid);
 void cacheFlush();
+void borraDeLaCache(int pid);
 void* cacheMiss(int pid, int pagina,void* contenido);
 void cacheHit(int pid, int pagina);
-
 #endif /* FUNCIONESDECACHE_H_ */

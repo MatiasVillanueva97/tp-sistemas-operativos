@@ -415,14 +415,17 @@ void *rutinaCPU(void * arg)
 			case reservarVariable:{
 				int tamano = *(int*) stream;
 				int pid =  *(int*) (stream+4);
+				sem_wait(&mutex_tablaDeHeap);
 				int offset = manejarPedidoDeMemoria(pid,tamano);
+				sem_post(&mutex_tablaDeHeap);
 				enviarMensaje(socketCPU,enviarOffsetDeVariableReservada,&offset,sizeof(offset)); // Negro tene cuidado. Si te tiro un 0, es que rompio. Nunca te puedo dar el 0, porque va el metadata.
 			}break;
 			case liberarVariable:{
 				int offset = *(int*) stream;
 				int pid = *(int*) (stream+4);
-
+				sem_wait(&mutex_tablaDeHeap);
 				int x = manejarLiberacionDeHeap(pid,offset);
+				sem_post(&mutex_tablaDeHeap);
 				enviarMensaje(socketCPU,enviarSiSePudoLiberar,&x,sizeof(int));
 				}break;
 
