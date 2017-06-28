@@ -515,7 +515,7 @@ int main(void) {
 	configuracionInicial("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/FileSystem/fileSystem.config");
 	imprimirConfiguracion();
 	configurarTodo();
-/*
+
 	int listener = crearSocketYBindeo(getConfigString("PUERTO"));
 	escuchar(listener);
 	int aceptados[] = {Kernel};
@@ -528,8 +528,7 @@ int main(void) {
 	close(socketKernel);
 	close(fd);
 
-*/
-
+/*
 	crearElArchivo("passwords/hola.bin");
 	char* x = "Hola";
 	guardarDatos("passwords/hola.bin",48,strlen(x)+1,x);
