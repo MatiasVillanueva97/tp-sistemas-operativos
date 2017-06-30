@@ -1,0 +1,6 @@
+begin
+variables a
+:holi
+alocar a 200
+goto holi
+end

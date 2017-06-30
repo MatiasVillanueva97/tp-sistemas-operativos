@@ -158,10 +158,6 @@ void *rutinaCPU(void * arg)
 				// aca como que deberiamos validar que no haya sido finalizado ya este procesito
 				if(!proceso_EstaFinalizado(pcb->pid)){
 
-					if(pcb->exitCode != -5)
-					{
-						pcb->exitCode=0;
-					}
 					pcb->estadoDeProceso = finalizado;
 				    modificarPCB(pcb);
 				}

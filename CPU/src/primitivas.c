@@ -261,6 +261,7 @@ void AnSISOP_finalizar(void){
 		//Esto se da en el caso que se termine el programa
 		puts("Se finalizo la ultima instruccion del main");
 		terminoPrograma = true;
+
 		pcb->exitCode = 0;
 
 		//Se libera la memoria de esa entrada
@@ -364,17 +365,29 @@ t_puntero AnSISOP_reservar(t_valor_variable espacio){
 	enviarMensaje(socketKernel,reservarVariable,(void*)dosEnteros,sizeof(int)*2);
 
 	void* stream;
+	int offset = 0;
 
-	if(recibirMensaje(socketKernel,&stream) != enviarOffsetDeVariableReservada) puts("error en la accion maquinola");
-	int offset = *(int*) stream;
-	free(stream);
-	if(offset == 0){
-		puts("algo salio muy mal");
-		bloqueado = true;
-		pcb->exitCode = -42;
+	switch(recibirMensaje(socketKernel,&stream)){
+		case enviarOffsetDeVariableReservada: {
+			offset = *(int*) stream;
+			free(stream);
+			if(offset == 0){
+				puts("No se pudo asignar otra pagina al proceso");
+				terminoPrograma = true;
+				pcb->exitCode = -9;
+			}else{
+				calcularDireccion(offset);
+			}
+		}break;
+		case 10:{ // en caso de que se pida alocar mas que el tamanio de una pagina
+			puts("Se intentó reservar más memoria que el tamaño de una página");
+			terminoPrograma = true;
+			pcb->exitCode = -8;
+		}break;
+		default:
+			puts("error en la accion maquinola");
 	}
 
-	calcularDireccion(offset);
 
 	return offset;
 }
