@@ -135,6 +135,11 @@ void *rutinaConsola(void * arg)
 				ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO * nuevaEntrada = malloc(sizeof(int)+4);
 				nuevaEntrada->pid = nuevoPrograma->pid;
 				nuevaEntrada->tablaProceso = list_create();
+
+				agregarATablaDeProceso(0," ",nuevaEntrada->tablaProceso);
+				agregarATablaDeProceso(0," ",nuevaEntrada->tablaProceso);
+				agregarATablaDeProceso(0," ",nuevaEntrada->tablaProceso);
+
 				list_add(tablaGlobalDeArchivosDeProcesos,nuevaEntrada);
 
 				//***Lo Agrego a la Cola de New

@@ -30,9 +30,11 @@ ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO * encontrarElDeIgualPid(int pid);
 
 ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* encontrarElDeIgualPath(char* path);
 
-void agregarATablaDeProceso(int df, char* flags, t_list* tablaProceso, int posicion);
+void agregarATablaDeProceso(int df, char* flags, t_list* tablaProceso);
 
 void agregarATablaGlobalDeArchivos(char* path,int aperturas);
+
+void agregarATablaGlobalDeArchivosDeProcesos(int pid ,t_list * tablaProceso);
 
 void* serializarEscribirMemoria(int size, int offset,char* path, char* buffer);
 

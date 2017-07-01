@@ -244,7 +244,7 @@ void *rutinaCPU(void * arg)
 						ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* archivo= encontrarElDeIgualPath(estructura.path);
 						archivo->cantidad_aperturas++;
 						int fileDescriptor= list_size(aux->tablaProceso);
-						agregarATablaDeProceso(posicionEnTablaGlobalDeArchivos(archivo),estructura.flags,aux->tablaProceso,fileDescriptor);
+						agregarATablaDeProceso(posicionEnTablaGlobalDeArchivos(archivo),estructura.flags,aux->tablaProceso);
 						enviarMensaje(socketCPU,envioDelFileDescriptor,&fileDescriptor,sizeof(int));
 						}else if (string_contains(estructura.flags,"c")){
 								//enviarMensaje(socketFS,creacionDeArchivo,estructura.path,strlen(estructura.path)+1);
@@ -255,7 +255,7 @@ void *rutinaCPU(void * arg)
 									agregarATablaGlobalDeArchivos(estructura.path,1);
 									ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(estructura.pid);
 									int fileDescriptor= list_size(aux->tablaProceso);
-									agregarATablaDeProceso(list_size(tablaGlobalDeArchivos)-1,estructura.flags,aux->tablaProceso, fileDescriptor);
+									agregarATablaDeProceso(list_size(tablaGlobalDeArchivos)-1,estructura.flags,aux->tablaProceso);
 									enviarMensaje(socketCPU,envioDelFileDescriptor,&fileDescriptor,sizeof(int));
 											}
 									 }
@@ -287,7 +287,10 @@ void *rutinaCPU(void * arg)
 					
 					list_remove_and_destroy_element(tablaGlobalDeArchivos,entrada_de_tabla_proceso->globalFD,liberarEntradaTablaGlobalDeArchivos);
 				}
-				list_remove_and_destroy_element(tablaGlobalDeArchivosDeProcesos,estructura.fileDescriptor,liberarEntradaDeTablaProceso);
+				bool sonDeIgualPid(ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO * elementos){
+								return  elementos->pid == estructura.pid;
+								}
+				list_remove_and_destroy_by_condition(tablaGlobalDeArchivosDeProcesos,(void*) sonDeIgualPid,liberarEntradaDeTablaProceso);
 
 				rtaCPU = 1;
 			}else{

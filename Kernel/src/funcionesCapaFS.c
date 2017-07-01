@@ -63,7 +63,7 @@ int posicionEnTablaGlobalArchivosDeProceso(ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* a
 	return i;
 }*/
 
-void agregarATablaDeProceso(int globalFD, char* flags, t_list* tablaProceso, int posicion){
+void agregarATablaDeProceso(int globalFD, char* flags, t_list* tablaProceso){
 	ENTRADA_DE_TABLA_DE_PROCESO* nuevaEntradaProceso = malloc(sizeof(ENTRADA_DE_TABLA_DE_PROCESO));
 	nuevaEntradaProceso->globalFD = globalFD;
 	nuevaEntradaProceso->flags = string_duplicate(flags);
@@ -76,6 +76,12 @@ void agregarATablaGlobalDeArchivos(char* path,int aperturas){
 	nuevaEntrada->path = string_duplicate(path);
 	nuevaEntrada->cantidad_aperturas = aperturas;
 	list_add(tablaGlobalDeArchivos,nuevaEntrada);
+}
+void agregarATablaGlobalDeArchivosDeProcesos(int pid, t_list* tablaProceso){
+	ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO * nuevaEntrada = malloc(sizeof(int)+4);
+	nuevaEntrada->pid = pid;
+	nuevaEntrada->tablaProceso = tablaProceso;
+	list_add(tablaGlobalDeArchivosDeProcesos,nuevaEntrada);
 }
 
 void* serializarPedidoFs(int size, int offset,char* path){
@@ -123,7 +129,6 @@ void finalizarPid(PCB_DATA* pcb,int exitCode){
 	pcb->estadoDeProceso = finalizado;
 }
 void liberarEntradaDeTablaProceso(ENTRADA_DE_TABLA_DE_PROCESO* entrada){
-
 	free(entrada);
 }
 

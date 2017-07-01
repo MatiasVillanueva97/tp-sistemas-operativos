@@ -15,6 +15,7 @@
 #include "commons/collections/queue.h"
 
 #include "datosGlobales.h"
+#include "funcionesCapaFS.h"
 
 #include "../../Nuestras/src/laGranBiblioteca/datosGobalesGenerales.h"
 
