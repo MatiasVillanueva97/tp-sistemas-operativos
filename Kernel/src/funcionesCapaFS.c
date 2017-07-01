@@ -63,16 +63,17 @@ int posicionEnTablaGlobalArchivosDeProceso(ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* a
 	return i;
 }*/
 
-void agregarATablaDeProceso(int fd, char* flags, t_list* tablaProceso){
-	ENTRADA_DE_TABLA_DE_PROCESO * nuevaEntradaProceso = malloc(sizeof(int)+sizeof(char)*4);
-	nuevaEntradaProceso->globalFD = fd;
+void agregarATablaDeProceso(int globalFD, char* flags, t_list* tablaProceso, int posicion){
+	ENTRADA_DE_TABLA_DE_PROCESO* nuevaEntradaProceso = malloc(sizeof(ENTRADA_DE_TABLA_DE_PROCESO));
+	nuevaEntradaProceso->globalFD = globalFD;
 	nuevaEntradaProceso->flags = string_duplicate(flags);
-	list_add(tablaProceso, nuevaEntradaProceso);
+	nuevaEntradaProceso->offset = 0;
+	list_add(tablaProceso,nuevaEntradaProceso);
 }
 
 void agregarATablaGlobalDeArchivos(char* path,int aperturas){
 	ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS * nuevaEntrada = malloc(sizeof(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS));
-	nuevaEntrada->path = path;
+	nuevaEntrada->path = string_duplicate(path);
 	nuevaEntrada->cantidad_aperturas = aperturas;
 	list_add(tablaGlobalDeArchivos,nuevaEntrada);
 }
@@ -122,8 +123,7 @@ void finalizarPid(PCB_DATA* pcb,int exitCode){
 	pcb->estadoDeProceso = finalizado;
 }
 void liberarEntradaDeTablaProceso(ENTRADA_DE_TABLA_DE_PROCESO* entrada){
-	free(entrada->flags);
-	free(entrada->globalFD);
+
 	free(entrada);
 }
 

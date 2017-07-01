@@ -104,6 +104,7 @@ typedef struct{
 typedef struct {
 	int globalFD;// seria algo asi como la posicion del archivo en la tabla global de archivo pero no se me ocurrio un nombre
 	char* flags;
+	int offset;
 }ENTRADA_DE_TABLA_DE_PROCESO;
 
 typedef struct{

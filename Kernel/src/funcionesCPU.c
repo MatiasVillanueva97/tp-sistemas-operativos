@@ -239,12 +239,12 @@ void *rutinaCPU(void * arg)
 					//void * stream2;
 					//recibirMensaje(socketFS,stream2);
 					//int existeArchivo = leerInt(stream2);
-					 if(1==0){
+					 if(0==1){
 						ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(estructura.pid);
 						ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* archivo= encontrarElDeIgualPath(estructura.path);
 						archivo->cantidad_aperturas++;
-						agregarATablaDeProceso(posicionEnTablaGlobalDeArchivos(archivo),estructura.flags,aux->tablaProceso);
-						int fileDescriptor= list_size(aux->tablaProceso)+2;
+						int fileDescriptor= list_size(aux->tablaProceso);
+						agregarATablaDeProceso(posicionEnTablaGlobalDeArchivos(archivo),estructura.flags,aux->tablaProceso,fileDescriptor);
 						enviarMensaje(socketCPU,envioDelFileDescriptor,&fileDescriptor,sizeof(int));
 						}else if (string_contains(estructura.flags,"c")){
 								//enviarMensaje(socketFS,creacionDeArchivo,estructura.path,strlen(estructura.path)+1);
@@ -254,8 +254,8 @@ void *rutinaCPU(void * arg)
 								if (0==0){
 									agregarATablaGlobalDeArchivos(estructura.path,1);
 									ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(estructura.pid);
-									agregarATablaDeProceso(list_size(tablaGlobalDeArchivos),estructura.flags,aux->tablaProceso);
-									int fileDescriptor= list_size(aux->tablaProceso)+2;
+									int fileDescriptor= list_size(aux->tablaProceso);
+									agregarATablaDeProceso(list_size(tablaGlobalDeArchivos)-1,estructura.flags,aux->tablaProceso, fileDescriptor);
 									enviarMensaje(socketCPU,envioDelFileDescriptor,&fileDescriptor,sizeof(int));
 											}
 									 }
@@ -265,12 +265,14 @@ void *rutinaCPU(void * arg)
 						}
 			 }
 			break;
+
 		case cerrarArchivo:{
 
 			t_archivo estructura;
 			estructura = *((t_archivo*)stream);
 			PCB_DATA* pcbaux;
 			pcbaux = buscarPCB(estructura.pid);
+			int rtaCPU = 0;
 
 			ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(estructura.pid);
 
@@ -285,10 +287,14 @@ void *rutinaCPU(void * arg)
 					
 					list_remove_and_destroy_element(tablaGlobalDeArchivos,entrada_de_tabla_proceso->globalFD,liberarEntradaTablaGlobalDeArchivos);
 				}
-				list_remove_and_destroy_element(tablaGlobalDeArchivosDeProcesos,estructura.fileDescriptor, liberarEntradaDeTablaProceso);
+				list_remove_and_destroy_element(tablaGlobalDeArchivosDeProcesos,estructura.fileDescriptor,liberarEntradaDeTablaProceso);
+
+				rtaCPU = 1;
 			}else{
 				finalizarPid(pcbaux,-2);
 			}
+			enviarMensaje(socketCPU,respuestaBooleanaKernel,&rtaCPU,sizeof(int));
+
 		}break;
 
 			case leerArchivo:{ // leer PD : NO PROBAR TODAVIA PORQUE NO ANDA, OK?
