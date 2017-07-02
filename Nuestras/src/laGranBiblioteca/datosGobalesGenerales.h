@@ -140,6 +140,7 @@ enum tipos_de_Acciones{
 		asignarPaginas = 206, /// asigna paginas a un proceso, esto es mas que nada para el heap
 		finalizarPrograma = 207,
 		liberarUnaPagina = 208,
+		pedidoRechazadoPorPedirMas = 209,
 
 
 

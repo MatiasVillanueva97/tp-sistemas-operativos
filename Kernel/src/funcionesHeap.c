@@ -22,7 +22,7 @@ void* serializarAlmacenarBytes2(t_escrituraMemoria almacenar){//No se que idiote
 int pedirPagina(int pid,int tamano){
 	if(size_pagina <tamano){
 		log_error(logKernel,"Se pidio un tamano invalido");
-		return 0;
+		return -1;
 
 	}
 	t_asignarPaginas asignar;

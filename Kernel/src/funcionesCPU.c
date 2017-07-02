@@ -431,7 +431,14 @@ void *rutinaCPU(void * arg)
 				sem_wait(&mutex_tablaDeHeap);
 				int x = manejarLiberacionDeHeap(pid,offset);
 				sem_post(&mutex_tablaDeHeap);
-				enviarMensaje(socketCPU,enviarSiSePudoLiberar,&x,sizeof(int));
+				if(x == -1){
+					x= 0;
+					enviarMensaje(socketCPU,pedidoRechazadoPorPedirMas,&x,sizeof(int));
+				}
+				else{
+					enviarMensaje(socketCPU,enviarSiSePudoLiberar,&x,sizeof(int));
+				}
+
 				}break;
 
 			//QUE PASA SI SE DESCONECTA LA CPU

@@ -379,7 +379,7 @@ t_puntero AnSISOP_reservar(t_valor_variable espacio){
 				calcularDireccion(offset);
 			}
 		}break;
-		case 10:{ // en caso de que se pida alocar mas que el tamanio de una pagina
+		case pedidoRechazadoPorPedirMas:{ // en caso de que se pida alocar mas que el tamanio de una pagina
 			puts("Se intentó reservar más memoria que el tamaño de una página");
 			terminoPrograma = true;
 			pcb->exitCode = -8;
