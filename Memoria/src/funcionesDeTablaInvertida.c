@@ -9,10 +9,7 @@
 
 
 //Funciones Tabla De Paginación Invertida
-int buscarPidEnTablaInversa(int pidRecibido) //DEJO ESTA PORQUE SINO SE ROMPE TODO MIENTRAS SE VA IMPLEMENTANDO LO OTRO.
-{
-	return 0;
-}
+
 void iniciarTablaDePaginacionInvertida(){
 	//tablaDePaginacionInvertida = malloc (sizeof(filaDeTablaPaginaInvertida)*getConfigInt("MARCOS"));//falta calcular la cantidadDe filas que tiene la tabla.
 	tablaDePaginacionInvertida = memoriaTotal;

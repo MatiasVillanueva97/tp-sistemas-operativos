@@ -553,8 +553,6 @@ void * estadoFINISHED()
 		///***Reviso si algun proceso que esta en finalizado aun no le aviso a su consola que ya finalizo
 		proceso_avisarAConsola();
 
-
-
 	}
 	return NULL;
 }

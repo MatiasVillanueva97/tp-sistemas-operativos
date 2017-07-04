@@ -44,7 +44,13 @@
 
 //Función de Hash
 int funcionHash (int pid, int pagina){
-	return 0; //Falta hacer una funcion de hash
+	char str1[20];
+	char str2[20];
+	sprintf(str1, "%d", pid);
+	sprintf(str2, "%d", pagina);
+	strcat(str1, str2);
+	unsigned int indice = atoi(str1) % cantidadDeMarcos;
+	return indice;
 }
 
 
