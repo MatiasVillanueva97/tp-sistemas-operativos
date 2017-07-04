@@ -341,17 +341,25 @@ offsetTamanoYHeader* liberarMemoriaHeap(int offset,void* pagina){
 	return NULL;
 }
 
-void liberarRecursosHeap(int pid){
+int liberarRecursosHeap(int pid){
 
 	bool busqueda(filaTablaDeHeapMemoria* fila)
 	{
 			return fila->pid == pid;
 	}
 	int i;
+	sem_wait(&mutex_tablaDeHeap);
 	int cantidad = list_count_satisfying(tablaDeHeapMemoria,busqueda);
-	for(i=0;i<cantidad;i++){
-
-		list_remove_and_destroy_by_condition(tablaDeHeapMemoria,busqueda,free);
+	if(cantidad == 0){
+		sem_post(&mutex_tablaDeHeap);
+		return 1;
 	}
+	for(i=0;i<cantidad;i++){
+		filaTablaDeHeapMemoria* fila =list_remove_by_condition(tablaDeHeapMemoria,busqueda);
+		int estructuras[] = {fila->pid,fila->pagina};
+		enviarMensaje(socketMemoria,liberarUnaPagina,estructuras,sizeof(int)*2);
+	}
+	sem_post(&mutex_tablaDeHeap);
 	log_info(logKernel,"Se removieron todos las paginas");
+	return 0;
 }

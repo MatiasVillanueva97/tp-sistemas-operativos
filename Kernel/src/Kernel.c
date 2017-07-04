@@ -517,6 +517,7 @@ void proceso_avisarAConsola(){
 
 	if(procesoFinalizado != NULL)
 	{
+		proceso_liberarRecursos(procesoFinalizado->pcb);
 		enviarMensaje(procesoFinalizado->socketConsola, pidFinalizado, &procesoFinalizado->pid, sizeof(int));
 
 		printf("Se acaba de mandar a la consola n°: %d, que el proceso %d acaba de finalizar con exit code: %d\n", procesoFinalizado->socketConsola, procesoFinalizado->pid, procesoFinalizado->pcb->exitCode);
@@ -527,84 +528,18 @@ void proceso_avisarAConsola(){
 
 }
 
-void proceso_liberarRecursos(){
-/*
- 	 int indicadorNumerico=0;
- 	 bool flag=false;
+void proceso_liberarRecursos(PCB_DATA* pcb){
 
-	bool busquedaRercursoOprimido(PROCESOS * process){
-		if(!process->semaforoTomado == NULL)
-		{
-			indicadorNumerico+=1;
-			flag=true;
-		}
-		if(!process no libero su heap)
-		{
-			indicadorNumerico+=2;
-			flag=true;
-		}
-		if(!process no libero sus archivos abiertos)
-		{
-			indicadorNumerico+=4;
-			flag=true;
-		}
-
-		return flag;
+	if(liberarRecursosHeap(pcb->pid)== 0){
+		printf("No se liberaron los recursos del heap correctamenete del pid %d", pcb->pid);
 	}
-
-	sem_wait(&mutex_listaProcesos);
-
-	PROCESOS* procesoOpresor = list_find(avisos, busquedaRercursoOprimido);
-
-	sem_post(&mutex_listaProcesos);
-
-	if(procesoOpresor == NULL)
-	{
-	return null;
+	else{
+		printf("Se liberaron correctamente los recursos del heap del pid %d",pcb->pid);
 	}
+	enviarMensaje(socketMemoria,finalizarPrograma,&pcb->pid,sizeof(int));
+	void* respuesta;
+	recibirMensaje(socketMemoria,&respuesta);
 
-	//// **** la cuestionn es que segun que indicador numerico devuelve al final llamamos a la funcion correspondiente
-
-	switch(indicadorNumerico)
-	{
-	case 1:
-	{
-	// si entro aca es porque tiene que liberar un semaforo
-	}break;
-	case 2:
-	{
-	// si entro aca es porque tiene que liberar algo en heap
-	}break;
-	case 4:
-	{
-	// si entro aca es porque tiene que liberar archivos
-	}break;
-
-	case 3:
-	{
-	// si entro aca es porque tiene que liberar un semaforo y algo en heap
-	}break;
-	case 5:
-	{
-	// si entro aca es porque tiene que liberar un semaforo y algun archivo
-	}break;
-	case 7:
-	{
-	// si entro aca es porque tiene que liberar un semaforo , algo en heap y algun archivo
-	}break;
-
-	case 6:
-	{
-	// si entro aca es porque tiene que liberar un algo en heap y algun archivo
-	}break;
-	}
-
-	default:
-	{
-	/// aca tirar error, no deberia entrar nunna aca
-	}break;
-	}
-	*/
 }
 
 ///avisa a al consola que un proceso termino
@@ -618,8 +553,7 @@ void * estadoFINISHED()
 		///***Reviso si algun proceso que esta en finalizado aun no le aviso a su consola que ya finalizo
 		proceso_avisarAConsola();
 
-		///***Reviso si algun proceso finalizado no devolvió todos los recursos que tomo. De ser asi, los libero
-		//proceso_liberarRecursos();
+
 
 	}
 	return NULL;

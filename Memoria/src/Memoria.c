@@ -295,23 +295,22 @@ int asignarPaginasAUnProceso(int pid, int cantidadDePaginas){
 }
 
 int finalizarUnPrograma(int pid){
-	sem_wait(&mutex_TablaDeCantidadDePaginas);
 	int paginas = buscarCantidadDePaginas(pid);
-	bool buscarPid(filaTablaCantidadDePaginas* fila){
-			return (fila->pid== pid);
-	}
-	list_remove_and_destroy_by_condition(tablaConCantidadDePaginas,buscarPid,free);//faltaria un destroyer decente
-	sem_post(&mutex_TablaDeCantidadDePaginas);
 	if(paginas == 0){
 		log_warning(logMemoria,"No se encontraba ninguna pagina del proceso en memoria.");
 		return 0;
 	}
 	int i;
-	sem_wait(&mutex_TablaDePaginasInvertida);
+
 	for(i = 0; i< paginas;i++){
 		liberarPagina(pid,i);
 	}
-	sem_post(&mutex_TablaDePaginasInvertida);
+	sem_wait(&mutex_TablaDeCantidadDePaginas);
+	bool buscarPid(filaTablaCantidadDePaginas* fila){
+			return (fila->pid== pid);
+	}
+	list_remove_and_destroy_by_condition(tablaConCantidadDePaginas,buscarPid,free);//faltaria un destroyer decente
+	sem_post(&mutex_TablaDeCantidadDePaginas);
 	sem_wait(&mutex_cache);
 	log_info(logMemoria,"Se borra de la cache las paginas del proceso.");
 	borraDeLaCache(pid);
@@ -522,10 +521,10 @@ void recibirMensajesMemoria(void* arg){
 				case finalizarPrograma:{//FinalzarPrograma
 
 					int* pid = stream;
-					int x=1;
+					int x=0;
 					log_info(logMemoria,"Entramos a Finalizar Programa. Pid: %d \n", *pid);
 					if(finalizarUnPrograma(*pid)){
-							x=0;
+							x=1;
 					}
 					enviarMensaje(socket,RespuestaBooleanaDeMemoria,&x,sizeof(int));
 					log_info(logMemoria,"Se envio %d a kernel como respuesta",x);

@@ -1,0 +1,350 @@
+[INFO] 18:34:42:808 Memoria/(2921:2921): Se inicializo la memoria
+[INFO] 18:34:42:809 Memoria/(2921:2921): La tabla de paginacion invertida ocupa 24 paginas para administracion
+[INFO] 18:34:42:809 Memoria/(2921:2921): Se agrego las paginas administrativas a la tabla de cantidad de paginas
+[INFO] 18:34:42:809 Memoria/(2921:2921): Se le dio formato a la tabla de paginacion invertida
+[INFO] 18:34:42:809 Memoria/(2921:2921): Se inicializo la tabla de paginacion invertida
+[INFO] 18:34:42:839 Memoria/(2921:2921): Se inicio el hilo consola de la memoria
+[INFO] 18:34:42:840 Memoria/(2921:2921): Se bindeo el listener
+[INFO] 18:34:42:860 Memoria/(2921:2921): Se inicio el hilo que atiende al kernel
+[INFO] 18:34:42:890 Memoria/(2921:2921): Se inicio el hilo aceptar conexiones cpu
+[INFO] 18:34:44:573 Memoria/(2921:2931): [Rutina Kernel] - Kernel conectado exitosamente
+
+[INFO] 18:34:44:574 Memoria/(2921:2932): [AceptarConexionesCPU] - Ya se ha establecido Conexion con un Kernel, ahora si se pueden conectar CPUs: 
+
+[INFO] 18:34:51:633 Memoria/(2921:2931): Llego la operacion 203
+[INFO] 18:34:51:633 Memoria/(2921:2931): El kernel quiere iniciar el pid 1 con 3 paginas iniciales
+[INFO] 18:34:51:633 Memoria/(2921:2931): El proceso 1 tiene 0 paginas en memoria y pidio 3 paginas nuevas
+[INFO] 18:34:51:633 Memoria/(2921:2931): Se reservo el frame 24 para la pagina 1 del pid 0
+[INFO] 18:34:51:634 Memoria/(2921:2931): Se reservo el frame 25 para la pagina 1 del pid 1
+[INFO] 18:34:51:634 Memoria/(2921:2931): Se reservo el frame 26 para la pagina 1 del pid 2
+[WARNING] 18:34:51:634 Memoria/(2921:2931): Hay que crear una nueva entrada a la tabla cantidad de paginas
+[INFO] 18:34:51:634 Memoria/(2921:2931): Se acepto asignar las paginas, por lo que se procede a iniciar el proceso
+[INFO] 18:34:51:635 Memoria/(2921:2931): Se recibio el contenido de  la pagina numero 0 y se depositara el contenido: #!/usr/bin/ansisop
+begin
+variables a, b
+a = 3
+b = 5
+a = b + 12
+end
+                                                                                                                                                                                             
+[INFO] 18:34:51:635 Memoria/(2921:2931): Se devolvio el frame 24 de la busqueda en la tabla
+[INFO] 18:34:51:635 Memoria/(2921:2931): Se escribe el contenido en memoria: #!/usr/bin/ansisop
+begin
+variables a, b
+a = 3
+b = 5
+a = b + 12
+end
+                                                                                                                                                                                             inic5
+[INFO] 18:34:51:635 Memoria/(2921:2931): Se envio %b a kernel como respuesta
+[INFO] 18:34:51:638 Memoria/(2921:2931): Se recibio el contenido de  la pagina numero 1 y se depositara el contenido:                                                                                                                                                                                                                                                                     e
+[INFO] 18:34:51:638 Memoria/(2921:2931): Se devolvio el frame 25 de la busqueda en la tabla
+[INFO] 18:34:51:638 Memoria/(2921:2931): Se escribe el contenido en memoria:                                                                                                                                                                                                                                                                 inic5
+[INFO] 18:34:51:638 Memoria/(2921:2931): Se envio %b a kernel como respuesta
+[INFO] 18:34:51:649 Memoria/(2921:2931): Se recibio el contenido de  la pagina numero 2 y se depositara el contenido:                                                                                                                                                                                                                                                                     e
+[INFO] 18:34:51:649 Memoria/(2921:2931): Se devolvio el frame 26 de la busqueda en la tabla
+[INFO] 18:34:51:649 Memoria/(2921:2931): Se escribe el contenido en memoria:                                                                                                                                                                                                                                                                 inic5
+[INFO] 18:34:51:649 Memoria/(2921:2931): Se envio %b a kernel como respuesta
+[INFO] 18:34:54:906 Memoria/(2921:2931): Llego la operacion 203
+[INFO] 18:34:54:906 Memoria/(2921:2931): El kernel quiere iniciar el pid 2 con 3 paginas iniciales
+[INFO] 18:34:54:906 Memoria/(2921:2931): El proceso 2 tiene 0 paginas en memoria y pidio 3 paginas nuevas
+[INFO] 18:34:54:907 Memoria/(2921:2931): Se reservo el frame 27 para la pagina 2 del pid 0
+[INFO] 18:34:54:907 Memoria/(2921:2931): Se reservo el frame 28 para la pagina 2 del pid 1
+[INFO] 18:34:54:907 Memoria/(2921:2931): Se reservo el frame 29 para la pagina 2 del pid 2
+[WARNING] 18:34:54:907 Memoria/(2921:2931): Hay que crear una nueva entrada a la tabla cantidad de paginas
+[INFO] 18:34:54:907 Memoria/(2921:2931): Se acepto asignar las paginas, por lo que se procede a iniciar el proceso
+[INFO] 18:34:54:935 Memoria/(2921:2931): Se recibio el contenido de  la pagina numero 0 y se depositara el contenido: #!/usr/bin/ansisop
+begin
+variables a, b
+a = 3
+b = 5
+a = b + 12
+end
+                                                                                                                                                                                                 e
+[INFO] 18:34:54:935 Memoria/(2921:2931): Se devolvio el frame 27 de la busqueda en la tabla
+[INFO] 18:34:54:935 Memoria/(2921:2931): Se escribe el contenido en memoria: #!/usr/bin/ansisop
+begin
+variables a, b
+a = 3
+b = 5
+a = b + 12
+end
+                                                                                                                                                                                             inic5
+[INFO] 18:34:54:935 Memoria/(2921:2931): Se envio %b a kernel como respuesta
+[INFO] 18:34:54:959 Memoria/(2921:2931): Se recibio el contenido de  la pagina numero 1 y se depositara el contenido:                                                                                                                                                                                                                                                                 mo re
+[INFO] 18:34:54:959 Memoria/(2921:2931): Se devolvio el frame 28 de la busqueda en la tabla
+[INFO] 18:34:54:959 Memoria/(2921:2931): Se escribe el contenido en memoria:                                                                                                                                                                                                                                                                 inic5
+[INFO] 18:34:54:959 Memoria/(2921:2931): Se envio %b a kernel como respuesta
+[INFO] 18:34:54:967 Memoria/(2921:2931): Se recibio el contenido de  la pagina numero 2 y se depositara el contenido:                                                                                                                                                                                                                                                                 mo re
+[INFO] 18:34:54:968 Memoria/(2921:2931): Se devolvio el frame 29 de la busqueda en la tabla
+[INFO] 18:34:54:968 Memoria/(2921:2931): Se escribe el contenido en memoria:                                                                                                                                                                                                                                                                 inic5
+[INFO] 18:34:54:968 Memoria/(2921:2931): Se envio %b a kernel como respuesta
+[INFO] 18:35:09:944 Memoria/(2921:2931): Llego la operacion 207
+[INFO] 18:35:09:944 Memoria/(2921:2931): Entramos a Finalizar Programa. Pid: 1 
+
+[INFO] 18:42:17:893 Memoria/(3408:3408): Se inicializo la memoria
+[INFO] 18:42:17:893 Memoria/(3408:3408): La tabla de paginacion invertida ocupa 24 paginas para administracion
+[INFO] 18:42:17:893 Memoria/(3408:3408): Se agrego las paginas administrativas a la tabla de cantidad de paginas
+[INFO] 18:42:17:893 Memoria/(3408:3408): Se le dio formato a la tabla de paginacion invertida
+[INFO] 18:42:17:893 Memoria/(3408:3408): Se inicializo la tabla de paginacion invertida
+[INFO] 18:42:17:933 Memoria/(3408:3408): Se inicio el hilo consola de la memoria
+[INFO] 18:42:17:933 Memoria/(3408:3408): Se bindeo el listener
+[INFO] 18:42:17:952 Memoria/(3408:3408): Se inicio el hilo que atiende al kernel
+[INFO] 18:42:17:975 Memoria/(3408:3408): Se inicio el hilo aceptar conexiones cpu
+[INFO] 18:42:22:574 Memoria/(3408:3414): [Rutina Kernel] - Kernel conectado exitosamente
+
+[INFO] 18:42:22:575 Memoria/(3408:3415): [AceptarConexionesCPU] - Ya se ha establecido Conexion con un Kernel, ahora si se pueden conectar CPUs: 
+
+[INFO] 18:42:28:208 Memoria/(3408:3414): Llego la operacion 203
+[INFO] 18:42:28:208 Memoria/(3408:3414): El kernel quiere iniciar el pid 1 con 3 paginas iniciales
+[INFO] 18:42:28:208 Memoria/(3408:3414): El proceso 1 tiene 0 paginas en memoria y pidio 3 paginas nuevas
+[INFO] 18:42:28:208 Memoria/(3408:3414): Se reservo el frame 24 para la pagina 1 del pid 0
+[INFO] 18:42:28:208 Memoria/(3408:3414): Se reservo el frame 25 para la pagina 1 del pid 1
+[INFO] 18:42:28:209 Memoria/(3408:3414): Se reservo el frame 26 para la pagina 1 del pid 2
+[WARNING] 18:42:28:209 Memoria/(3408:3414): Hay que crear una nueva entrada a la tabla cantidad de paginas
+[INFO] 18:42:28:210 Memoria/(3408:3414): Se acepto asignar las paginas, por lo que se procede a iniciar el proceso
+[INFO] 18:42:28:212 Memoria/(3408:3414): Se recibio el contenido de  la pagina numero 0 y se depositara el contenido: #!/usr/bin/ansisop
+begin
+variables a, b
+a = 3
+b = 5
+a = b + 12
+end
+                                                                                                                                                                                             
+[INFO] 18:42:28:212 Memoria/(3408:3414): Se devolvio el frame 24 de la busqueda en la tabla
+[INFO] 18:42:28:212 Memoria/(3408:3414): Se escribe el contenido en memoria: #!/usr/bin/ansisop
+begin
+variables a, b
+a = 3
+b = 5
+a = b + 12
+end
+                                                                                                                                                                                             inic5
+[INFO] 18:42:28:212 Memoria/(3408:3414): Se envio %b a kernel como respuesta
+[INFO] 18:42:28:228 Memoria/(3408:3414): Se recibio el contenido de  la pagina numero 1 y se depositara el contenido:                                                                                                                                                                                                                                                                     e
+[INFO] 18:42:28:229 Memoria/(3408:3414): Se devolvio el frame 25 de la busqueda en la tabla
+[INFO] 18:42:28:229 Memoria/(3408:3414): Se escribe el contenido en memoria:                                                                                                                                                                                                                                                                 inic5
+[INFO] 18:42:28:229 Memoria/(3408:3414): Se envio %b a kernel como respuesta
+[INFO] 18:42:28:292 Memoria/(3408:3414): Se recibio el contenido de  la pagina numero 2 y se depositara el contenido:                                                                                                                                                                                                                                                                     e
+[INFO] 18:42:28:292 Memoria/(3408:3414): Se devolvio el frame 26 de la busqueda en la tabla
+[INFO] 18:42:28:292 Memoria/(3408:3414): Se escribe el contenido en memoria:                                                                                                                                                                                                                                                                 inic5
+[INFO] 18:42:28:293 Memoria/(3408:3414): Se envio %b a kernel como respuesta
+[INFO] 18:42:31:57 Memoria/(3408:3414): Llego la operacion 203
+[INFO] 18:42:31:57 Memoria/(3408:3414): El kernel quiere iniciar el pid 2 con 3 paginas iniciales
+[INFO] 18:42:31:57 Memoria/(3408:3414): El proceso 2 tiene 0 paginas en memoria y pidio 3 paginas nuevas
+[INFO] 18:42:31:58 Memoria/(3408:3414): Se reservo el frame 27 para la pagina 2 del pid 0
+[INFO] 18:42:31:58 Memoria/(3408:3414): Se reservo el frame 28 para la pagina 2 del pid 1
+[INFO] 18:42:31:58 Memoria/(3408:3414): Se reservo el frame 29 para la pagina 2 del pid 2
+[WARNING] 18:42:31:58 Memoria/(3408:3414): Hay que crear una nueva entrada a la tabla cantidad de paginas
+[INFO] 18:42:31:58 Memoria/(3408:3414): Se acepto asignar las paginas, por lo que se procede a iniciar el proceso
+[INFO] 18:42:31:59 Memoria/(3408:3414): Se recibio el contenido de  la pagina numero 0 y se depositara el contenido: #!/usr/bin/ansisop
+begin
+variables a, b
+a = 3
+b = 5
+a = b + 12
+end
+                                                                                                                                                                                                 e
+[INFO] 18:42:31:59 Memoria/(3408:3414): Se devolvio el frame 27 de la busqueda en la tabla
+[INFO] 18:42:31:59 Memoria/(3408:3414): Se escribe el contenido en memoria: #!/usr/bin/ansisop
+begin
+variables a, b
+a = 3
+b = 5
+a = b + 12
+end
+                                                                                                                                                                                             nici5
+[INFO] 18:42:31:59 Memoria/(3408:3414): Se envio %b a kernel como respuesta
+[INFO] 18:42:31:62 Memoria/(3408:3414): Se recibio el contenido de  la pagina numero 1 y se depositara el contenido:                                                                                                                                                                                                                                                                 o ree
+[INFO] 18:42:31:63 Memoria/(3408:3414): Se devolvio el frame 28 de la busqueda en la tabla
+[INFO] 18:42:31:63 Memoria/(3408:3414): Se escribe el contenido en memoria:                                                                                                                                                                                                                                                                 nici5
+[INFO] 18:42:31:63 Memoria/(3408:3414): Se envio %b a kernel como respuesta
+[INFO] 18:42:31:63 Memoria/(3408:3414): Se recibio el contenido de  la pagina numero 2 y se depositara el contenido:                                                                                                                                                                                                                                                                 o ree
+[INFO] 18:42:31:63 Memoria/(3408:3414): Se devolvio el frame 29 de la busqueda en la tabla
+[INFO] 18:42:31:63 Memoria/(3408:3414): Se escribe el contenido en memoria:                                                                                                                                                                                                                                                                 nici5
+[INFO] 18:42:31:63 Memoria/(3408:3414): Se envio %b a kernel como respuesta
+[INFO] 18:42:34:254 Memoria/(3408:3414): Llego la operacion 207
+[INFO] 18:42:34:255 Memoria/(3408:3414): Entramos a Finalizar Programa. Pid: 1 
+
+[INFO] 18:44:10:36 Memoria/(3408:3414): La funcion de hash aproxima a la posicion 0 de la tabla de paginacion invetida
+[ERROR] 18:44:10:37 Memoria/(3408:3414): No existe la entrada en la tabla de cantidad de paginas.Por lo tanto, se ingreso un pid invalido
+[INFO] 18:44:13:242 Memoria/(3408:3414): La funcion de hash aproxima a la posicion 0 de la tabla de paginacion invetida
+[INFO] 18:45:35:682 Memoria/(3588:3588): Se inicializo la memoria
+[INFO] 18:45:35:683 Memoria/(3588:3588): La tabla de paginacion invertida ocupa 24 paginas para administracion
+[INFO] 18:45:35:683 Memoria/(3588:3588): Se agrego las paginas administrativas a la tabla de cantidad de paginas
+[INFO] 18:45:35:683 Memoria/(3588:3588): Se le dio formato a la tabla de paginacion invertida
+[INFO] 18:45:35:683 Memoria/(3588:3588): Se inicializo la tabla de paginacion invertida
+[INFO] 18:45:35:749 Memoria/(3588:3588): Se inicio el hilo consola de la memoria
+[INFO] 18:45:35:751 Memoria/(3588:3588): Se bindeo el listener
+[INFO] 18:45:35:773 Memoria/(3588:3588): Se inicio el hilo que atiende al kernel
+[INFO] 18:45:35:803 Memoria/(3588:3588): Se inicio el hilo aceptar conexiones cpu
+[INFO] 18:45:39:491 Memoria/(3588:3594): [Rutina Kernel] - Kernel conectado exitosamente
+
+[INFO] 18:45:39:492 Memoria/(3588:3595): [AceptarConexionesCPU] - Ya se ha establecido Conexion con un Kernel, ahora si se pueden conectar CPUs: 
+
+[INFO] 18:45:47:341 Memoria/(3588:3594): Llego la operacion 203
+[INFO] 18:45:47:341 Memoria/(3588:3594): El kernel quiere iniciar el pid 1 con 3 paginas iniciales
+[INFO] 18:45:47:341 Memoria/(3588:3594): El proceso 1 tiene 0 paginas en memoria y pidio 3 paginas nuevas
+[INFO] 18:45:47:341 Memoria/(3588:3594): Se reservo el frame 24 para la pagina 1 del pid 0
+[INFO] 18:45:47:341 Memoria/(3588:3594): Se reservo el frame 25 para la pagina 1 del pid 1
+[INFO] 18:45:47:341 Memoria/(3588:3594): Se reservo el frame 26 para la pagina 1 del pid 2
+[WARNING] 18:45:47:341 Memoria/(3588:3594): Hay que crear una nueva entrada a la tabla cantidad de paginas
+[INFO] 18:45:47:341 Memoria/(3588:3594): Se acepto asignar las paginas, por lo que se procede a iniciar el proceso
+[INFO] 18:45:47:379 Memoria/(3588:3594): Se recibio el contenido de  la pagina numero 0 y se depositara el contenido: #!/usr/bin/ansisop
+begin
+variables a, b
+a = 3
+b = 5
+a = b + 12
+end
+                                                                                                                                                                                             
+[INFO] 18:45:47:380 Memoria/(3588:3594): Se devolvio el frame 24 de la busqueda en la tabla
+[INFO] 18:45:47:380 Memoria/(3588:3594): Se escribe el contenido en memoria: #!/usr/bin/ansisop
+begin
+variables a, b
+a = 3
+b = 5
+a = b + 12
+end
+                                                                                                                                                                                             inic5
+[INFO] 18:45:47:380 Memoria/(3588:3594): Se envio %b a kernel como respuesta
+[INFO] 18:45:47:399 Memoria/(3588:3594): Se recibio el contenido de  la pagina numero 1 y se depositara el contenido:                                                                                                                                                                                                                                                                     e
+[INFO] 18:45:47:399 Memoria/(3588:3594): Se devolvio el frame 25 de la busqueda en la tabla
+[INFO] 18:45:47:399 Memoria/(3588:3594): Se escribe el contenido en memoria:                                                                                                                                                                                                                                                                 inic5
+[INFO] 18:45:47:399 Memoria/(3588:3594): Se envio %b a kernel como respuesta
+[INFO] 18:45:47:404 Memoria/(3588:3594): Se recibio el contenido de  la pagina numero 2 y se depositara el contenido:                                                                                                                                                                                                                                                                     e
+[INFO] 18:45:47:404 Memoria/(3588:3594): Se devolvio el frame 26 de la busqueda en la tabla
+[INFO] 18:45:47:404 Memoria/(3588:3594): Se escribe el contenido en memoria:                                                                                                                                                                                                                                                                 inic5
+[INFO] 18:45:47:404 Memoria/(3588:3594): Se envio %b a kernel como respuesta
+[INFO] 18:45:52:798 Memoria/(3588:3594): Llego la operacion 203
+[INFO] 18:45:52:798 Memoria/(3588:3594): El kernel quiere iniciar el pid 2 con 3 paginas iniciales
+[INFO] 18:45:52:798 Memoria/(3588:3594): El proceso 2 tiene 0 paginas en memoria y pidio 3 paginas nuevas
+[INFO] 18:45:52:798 Memoria/(3588:3594): Se reservo el frame 27 para la pagina 2 del pid 0
+[INFO] 18:45:52:798 Memoria/(3588:3594): Se reservo el frame 28 para la pagina 2 del pid 1
+[INFO] 18:45:52:799 Memoria/(3588:3594): Se reservo el frame 29 para la pagina 2 del pid 2
+[WARNING] 18:45:52:799 Memoria/(3588:3594): Hay que crear una nueva entrada a la tabla cantidad de paginas
+[INFO] 18:45:52:799 Memoria/(3588:3594): Se acepto asignar las paginas, por lo que se procede a iniciar el proceso
+[INFO] 18:45:52:837 Memoria/(3588:3594): Se recibio el contenido de  la pagina numero 0 y se depositara el contenido: #!/usr/bin/ansisop
+begin
+variables a, b
+a = 3
+b = 5
+a = b + 12
+end
+                                                                                                                                                                                                 e
+[INFO] 18:45:52:837 Memoria/(3588:3594): Se devolvio el frame 27 de la busqueda en la tabla
+[INFO] 18:45:52:837 Memoria/(3588:3594): Se escribe el contenido en memoria: #!/usr/bin/ansisop
+begin
+variables a, b
+a = 3
+b = 5
+a = b + 12
+end
+                                                                                                                                                                                             inic5
+[INFO] 18:45:52:837 Memoria/(3588:3594): Se envio %b a kernel como respuesta
+[INFO] 18:45:52:842 Memoria/(3588:3594): Se recibio el contenido de  la pagina numero 1 y se depositara el contenido:                                                                                                                                                                                                                                                                 mo re
+[INFO] 18:45:52:842 Memoria/(3588:3594): Se devolvio el frame 28 de la busqueda en la tabla
+[INFO] 18:45:52:842 Memoria/(3588:3594): Se escribe el contenido en memoria:                                                                                                                                                                                                                                                                 inic5
+[INFO] 18:45:52:842 Memoria/(3588:3594): Se envio %b a kernel como respuesta
+[INFO] 18:45:52:854 Memoria/(3588:3594): Se recibio el contenido de  la pagina numero 2 y se depositara el contenido:                                                                                                                                                                                                                                                                 mo re
+[INFO] 18:45:52:854 Memoria/(3588:3594): Se devolvio el frame 29 de la busqueda en la tabla
+[INFO] 18:45:52:854 Memoria/(3588:3594): Se escribe el contenido en memoria:                                                                                                                                                                                                                                                                 inic5
+[INFO] 18:45:52:854 Memoria/(3588:3594): Se envio %b a kernel como respuesta
+[INFO] 18:45:56:585 Memoria/(3588:3594): Llego la operacion 207
+[INFO] 18:45:56:585 Memoria/(3588:3594): Entramos a Finalizar Programa. Pid: 1 
+
+[INFO] 18:46:12:496 Memoria/(3588:3594): La funcion de hash aproxima a la posicion 0 de la tabla de paginacion invetida
+[ERROR] 18:46:40:473 Memoria/(3588:3594): No existe la entrada en la tabla de cantidad de paginas.Por lo tanto, se ingreso un pid invalido
+[INFO] 18:48:34:316 Memoria/(3828:3828): Se inicializo la memoria
+[INFO] 18:48:34:317 Memoria/(3828:3828): La tabla de paginacion invertida ocupa 24 paginas para administracion
+[INFO] 18:48:34:317 Memoria/(3828:3828): Se agrego las paginas administrativas a la tabla de cantidad de paginas
+[INFO] 18:48:34:317 Memoria/(3828:3828): Se le dio formato a la tabla de paginacion invertida
+[INFO] 18:48:34:317 Memoria/(3828:3828): Se inicializo la tabla de paginacion invertida
+[INFO] 18:48:34:348 Memoria/(3828:3828): Se inicio el hilo consola de la memoria
+[INFO] 18:48:34:349 Memoria/(3828:3828): Se bindeo el listener
+[INFO] 18:48:34:372 Memoria/(3828:3828): Se inicio el hilo que atiende al kernel
+[INFO] 18:48:34:395 Memoria/(3828:3828): Se inicio el hilo aceptar conexiones cpu
+[INFO] 18:48:36:729 Memoria/(3828:3834): [Rutina Kernel] - Kernel conectado exitosamente
+
+[INFO] 18:48:36:730 Memoria/(3828:3835): [AceptarConexionesCPU] - Ya se ha establecido Conexion con un Kernel, ahora si se pueden conectar CPUs: 
+
+[INFO] 18:48:44:188 Memoria/(3828:3834): Llego la operacion 203
+[INFO] 18:48:44:189 Memoria/(3828:3834): El kernel quiere iniciar el pid 1 con 3 paginas iniciales
+[INFO] 18:48:44:189 Memoria/(3828:3834): El proceso 1 tiene 0 paginas en memoria y pidio 3 paginas nuevas
+[INFO] 18:48:44:189 Memoria/(3828:3834): Se reservo el frame 24 para la pagina 1 del pid 0
+[INFO] 18:48:44:189 Memoria/(3828:3834): Se reservo el frame 25 para la pagina 1 del pid 1
+[INFO] 18:48:44:189 Memoria/(3828:3834): Se reservo el frame 26 para la pagina 1 del pid 2
+[WARNING] 18:48:44:189 Memoria/(3828:3834): Hay que crear una nueva entrada a la tabla cantidad de paginas
+[INFO] 18:48:44:189 Memoria/(3828:3834): Se acepto asignar las paginas, por lo que se procede a iniciar el proceso
+[INFO] 18:48:44:190 Memoria/(3828:3834): Se recibio el contenido de  la pagina numero 0 y se depositara el contenido: #!/usr/bin/ansisop
+begin
+variables a, b
+a = 3
+b = 5
+a = b + 12
+end
+                                                                                                                                                                                             
+[INFO] 18:48:44:190 Memoria/(3828:3834): Se devolvio el frame 24 de la busqueda en la tabla
+[INFO] 18:48:44:190 Memoria/(3828:3834): Se escribe el contenido en memoria: #!/usr/bin/ansisop
+begin
+variables a, b
+a = 3
+b = 5
+a = b + 12
+end
+                                                                                                                                                                                             inic5
+[INFO] 18:48:44:191 Memoria/(3828:3834): Se envio %b a kernel como respuesta
+[INFO] 18:48:44:225 Memoria/(3828:3834): Se recibio el contenido de  la pagina numero 1 y se depositara el contenido:                                                                                                                                                                                                                                                                     e
+[INFO] 18:48:44:225 Memoria/(3828:3834): Se devolvio el frame 25 de la busqueda en la tabla
+[INFO] 18:48:44:226 Memoria/(3828:3834): Se escribe el contenido en memoria:                                                                                                                                                                                                                                                                 inic5
+[INFO] 18:48:44:226 Memoria/(3828:3834): Se envio %b a kernel como respuesta
+[INFO] 18:48:44:237 Memoria/(3828:3834): Se recibio el contenido de  la pagina numero 2 y se depositara el contenido:                                                                                                                                                                                                                                                                     e
+[INFO] 18:48:44:237 Memoria/(3828:3834): Se devolvio el frame 26 de la busqueda en la tabla
+[INFO] 18:48:44:237 Memoria/(3828:3834): Se escribe el contenido en memoria:                                                                                                                                                                                                                                                                 inic5
+[INFO] 18:48:44:237 Memoria/(3828:3834): Se envio %b a kernel como respuesta
+[INFO] 18:48:47:773 Memoria/(3828:3834): Llego la operacion 203
+[INFO] 18:48:47:773 Memoria/(3828:3834): El kernel quiere iniciar el pid 2 con 3 paginas iniciales
+[INFO] 18:48:47:773 Memoria/(3828:3834): El proceso 2 tiene 0 paginas en memoria y pidio 3 paginas nuevas
+[INFO] 18:48:47:773 Memoria/(3828:3834): Se reservo el frame 27 para la pagina 2 del pid 0
+[INFO] 18:48:47:773 Memoria/(3828:3834): Se reservo el frame 28 para la pagina 2 del pid 1
+[INFO] 18:48:47:773 Memoria/(3828:3834): Se reservo el frame 29 para la pagina 2 del pid 2
+[WARNING] 18:48:47:773 Memoria/(3828:3834): Hay que crear una nueva entrada a la tabla cantidad de paginas
+[INFO] 18:48:47:774 Memoria/(3828:3834): Se acepto asignar las paginas, por lo que se procede a iniciar el proceso
+[INFO] 18:48:47:774 Memoria/(3828:3834): Se recibio el contenido de  la pagina numero 0 y se depositara el contenido: #!/usr/bin/ansisop
+begin
+variables a, b
+a = 3
+b = 5
+a = b + 12
+end
+                                                                                                                                                                                                 e
+[INFO] 18:48:47:774 Memoria/(3828:3834): Se devolvio el frame 27 de la busqueda en la tabla
+[INFO] 18:48:47:774 Memoria/(3828:3834): Se escribe el contenido en memoria: #!/usr/bin/ansisop
+begin
+variables a, b
+a = 3
+b = 5
+a = b + 12
+end
+                                                                                                                                                                                             inic5
+[INFO] 18:48:47:774 Memoria/(3828:3834): Se envio %b a kernel como respuesta
+[INFO] 18:48:47:805 Memoria/(3828:3834): Se recibio el contenido de  la pagina numero 1 y se depositara el contenido:                                                                                                                                                                                                                                                                 mo re
+[INFO] 18:48:47:805 Memoria/(3828:3834): Se devolvio el frame 28 de la busqueda en la tabla
+[INFO] 18:48:47:805 Memoria/(3828:3834): Se escribe el contenido en memoria:                                                                                                                                                                                                                                                                 inic5
+[INFO] 18:48:47:805 Memoria/(3828:3834): Se envio %b a kernel como respuesta
+[INFO] 18:48:47:806 Memoria/(3828:3834): Se recibio el contenido de  la pagina numero 2 y se depositara el contenido:                                                                                                                                                                                                                                                                 mo re
+[INFO] 18:48:47:806 Memoria/(3828:3834): Se devolvio el frame 29 de la busqueda en la tabla
+[INFO] 18:48:47:806 Memoria/(3828:3834): Se escribe el contenido en memoria:                                                                                                                                                                                                                                                                 inic5
+[INFO] 18:48:47:806 Memoria/(3828:3834): Se envio %b a kernel como respuesta
+[INFO] 18:48:52:501 Memoria/(3828:3834): Llego la operacion 207
+[INFO] 18:48:52:501 Memoria/(3828:3834): Entramos a Finalizar Programa. Pid: 1 
+
+[INFO] 18:48:57:706 Memoria/(3828:3834): La funcion de hash aproxima a la posicion 0 de la tabla de paginacion invetida
+[INFO] 18:48:57:707 Memoria/(3828:3834): Se asigno el frame 24 para la pagina 0 del pid 1
+[INFO] 18:48:58:888 Memoria/(3828:3834): La funcion de hash aproxima a la posicion 0 de la tabla de paginacion invetida
+[INFO] 18:48:58:888 Memoria/(3828:3834): Se asigno el frame 25 para la pagina 1 del pid 1
+[INFO] 18:49:02:760 Memoria/(3828:3834): La funcion de hash aproxima a la posicion 0 de la tabla de paginacion invetida
+[INFO] 18:49:02:761 Memoria/(3828:3834): Se asigno el frame 26 para la pagina 2 del pid 1
+[INFO] 18:49:23:479 Memoria/(3828:3834): Se borra de la cache las paginas del proceso.
+[INFO] 18:49:24:143 Memoria/(3828:3834): Se procede a borrar todos las paginas cacheadas del pid 1 ya que fue finalizado.
+[INFO] 18:50:01:194 Memoria/(3828:3834): Se envio 0 a kernel como respuesta

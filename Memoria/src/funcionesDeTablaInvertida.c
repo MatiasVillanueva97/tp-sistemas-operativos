@@ -179,6 +179,7 @@ int liberarPagina(int pid, int pagina){ //Esta sincronizado en finalizarPrograma
 	filaTablaCantidadDePaginas* fila =list_find(tablaConCantidadDePaginas,buscarPid);
 	if(fila == NULL){
 		log_error(logMemoria,"No existe la entrada en la tabla de cantidad de paginas.Por lo tanto, se ingreso un pid invalido");
+		sem_post(&mutex_TablaDeCantidadDePaginas);
 		return 0;
 	}
 	fila->cantidadDePaginasReales-=1;
