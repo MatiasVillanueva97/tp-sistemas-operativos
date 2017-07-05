@@ -33,6 +33,7 @@ int socketFS;
 int historico_pid;
 int size_pagina;
 int quantumRR;
+int quantumSleep;
 bool finPorConsolaDelKernel;
 t_log* logKernel;
 
@@ -162,7 +163,7 @@ pthread_mutex_t mutex_cola_Finished;
 pthread_mutex_t mutex_semaforos_ANSISOP;
 pthread_mutex_t mutex_variables_compartidas;
 pthread_mutex_t mutex_tablaDeHeap;
-
+pthread_mutex_t mutex_Quantum_Sleep;
 
 
 sem_t sem_ConsolaKernelLenvantada;

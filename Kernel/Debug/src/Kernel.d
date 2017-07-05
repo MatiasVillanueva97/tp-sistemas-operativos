@@ -1,4 +1,4 @@
-src/Kernel.d: ../src/Kernel.c \
+src/Kernel.d: ../src/Kernel.c ../src/iNotify.h \
  ../src/../../Nuestras/src/laGranBiblioteca/sockets.c \
  ../src/../../Nuestras/src/laGranBiblioteca/sockets.h \
  ../src/../../Nuestras/src/laGranBiblioteca/datosGobalesGenerales.h \
@@ -13,6 +13,8 @@ src/Kernel.d: ../src/Kernel.c \
  ../src/funcionesPCB.h ../src/funcionesMemoria.h \
  ../src/funcionesConsolaKernel.h ../src/funcionesSemaforosYCompartidas.h \
  ../src/funcionesCapaFS.h ../src/funcionesCPU.h
+
+../src/iNotify.h:
 
 ../src/../../Nuestras/src/laGranBiblioteca/sockets.c:
 

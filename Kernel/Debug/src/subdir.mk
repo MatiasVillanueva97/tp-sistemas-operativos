@@ -12,7 +12,8 @@ C_SRCS += \
 ../src/funcionesHeap.c \
 ../src/funcionesMemoria.c \
 ../src/funcionesPCB.c \
-../src/funcionesSemaforosYCompartidas.c 
+../src/funcionesSemaforosYCompartidas.c \
+../src/iNotify.c 
 
 OBJS += \
 ./src/Kernel.o \
@@ -23,7 +24,8 @@ OBJS += \
 ./src/funcionesHeap.o \
 ./src/funcionesMemoria.o \
 ./src/funcionesPCB.o \
-./src/funcionesSemaforosYCompartidas.o 
+./src/funcionesSemaforosYCompartidas.o \
+./src/iNotify.o 
 
 C_DEPS += \
 ./src/Kernel.d \
@@ -34,7 +36,8 @@ C_DEPS += \
 ./src/funcionesHeap.d \
 ./src/funcionesMemoria.d \
 ./src/funcionesPCB.d \
-./src/funcionesSemaforosYCompartidas.d 
+./src/funcionesSemaforosYCompartidas.d \
+./src/iNotify.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

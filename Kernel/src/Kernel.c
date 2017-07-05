@@ -20,7 +20,7 @@
 #include "commons/collections/queue.h"
 #include "commons/collections/dictionary.h"
 #include <semaphore.h>
-
+#include "iNotify.h"
 #include <parser/parser.h>
 #include <parser/metadata_program.h>
 
@@ -706,7 +706,8 @@ int main(void) {
 	pthread_t hilo_estadoFINISHED;
 	pthread_create(&hilo_estadoFINISHED, NULL, estadoFINISHED, NULL);
 
-
+	pthread_t hilo_Inotify;
+	pthread_create(&hilo_Inotify, NULL,INotify, NULL);
 	//----ME PONGO A ESCUCHAR CONEXIONES---//
 	pthread_t hilo_aceptarConexiones_Cpu_o_Consola;
 	pthread_create(&hilo_aceptarConexiones_Cpu_o_Consola, NULL, aceptarConexiones_Cpu_o_Consola, (void*)listener);
@@ -752,6 +753,7 @@ void inicializarSemaforo(){
 
 	sem_init(&mutex_semaforos_ANSISOP,0,1);
 	sem_init(&mutex_variables_compartidas,0,1);
+	sem_init(&mutex_Quantum_Sleep,0,1);
 
 
 	sem_init(&sem_ConsolaKernelLenvantada,0,0);
