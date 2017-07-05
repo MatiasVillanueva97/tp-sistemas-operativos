@@ -102,6 +102,7 @@ enum tipos_de_Acciones{
 		respuestaBooleanaKernel=12,
 		noExisteVarCompartida = 13,
 		envioValorCompartida = 14,
+		respuestaLectura = 15,
 
 
 		liberarVariable = 70,
