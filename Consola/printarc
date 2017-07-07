@@ -1,0 +1,8 @@
+begin
+ variables a, b
+ abrir b LC /unt/so
+ alocar a 200
+ leer b a 10
+ prints s b
+ #Sin cerrarlo
+end

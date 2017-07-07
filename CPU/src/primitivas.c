@@ -1,9 +1,8 @@
 #include "primitivas.h"
 
-
 t_valor_variable pedirValorAMemoria(t_direccion);
 
-void escribirValorEnMemoria(t_direccion , t_valor_variable );
+void escribirValorEnMemoria(t_direccion, t_valor_variable);
 
 t_puntero calcularPuntero(t_direccion);
 
@@ -15,7 +14,7 @@ t_direccion ultimaDireccionArg(int);
 
 t_direccion ultimaDireccionVar(int);
 
-bool mayor(t_direccion,t_direccion);
+bool mayor(t_direccion, t_direccion);
 
 void asignarDireccionRespectoA(int, t_direccion*);
 
@@ -29,68 +28,66 @@ char* generarStringFlags(t_banderas flags);
 
 void* serializarArchivo(t_crearArchivo archivo);
 
-
-
-
-t_puntero AnSISOP_definirVariable(t_nombre_variable identificador_variable){
+t_puntero AnSISOP_definirVariable(t_nombre_variable identificador_variable) {
 	puts("AnSISOP_definirVariable");
 	t_direccion direccion;
 	t_variable* variable = malloc(sizeof(t_variable));
-
 
 	direccion = calcularNuevaDireccion();
 
 	variable->ID = identificador_variable;
 	variable->direccion = direccion;
 
-	if(direccion.page >= pcb->contPags_pcb){
-		printf("STACK OVERFLOW page: %d , offset: %d , size: %d \n",direccion.page,direccion.offset,direccion.size);
+	if (direccion.page >= pcb->contPags_pcb) {
+		printf("STACK OVERFLOW page: %d , offset: %d , size: %d \n",direccion.page, direccion.offset, direccion.size);
 		terminoPrograma = true;
 		pcb->exitCode = -5;
 		return -1;
 	}
 
 	//Si es un digito es un argumento debido a la sintaxis del lenguaje, entonces se debe almacenar en argumentos
-	if(isdigit(identificador_variable)){
-		list_add(pcb->indiceStack[pcb->contextoActual].argumentos,variable);
+	if (isdigit(identificador_variable)) {
+		list_add(pcb->indiceStack[pcb->contextoActual].argumentos, variable);
 	}
 
 	//Si es una letra es una variable debido a la sintaxis del lenguaje, entonces se debe almacenar en variables
-	if(isalpha(identificador_variable)){
-		list_add(pcb->indiceStack[pcb->contextoActual].variables,variable);
+	if (isalpha(identificador_variable)) {
+		list_add(pcb->indiceStack[pcb->contextoActual].variables, variable);
 	}
 
-	printf("Defini %c le asigne la direccion: %d %d %d \n",identificador_variable,direccion.page,direccion.offset,direccion.size);
+	printf("Defini %c le asigne la direccion: %d %d %d \n",
+			identificador_variable, direccion.page, direccion.offset,direccion.size);
 
 	return calcularPuntero(direccion);
 }
 
-t_puntero AnSISOP_obtenerPosicionVariable(t_nombre_variable identificador_variable){
+t_puntero AnSISOP_obtenerPosicionVariable(
+		t_nombre_variable identificador_variable) {
 	puts("AnSISOP_obtenerPosicionVariable");
 
 	t_variable *variable;
 	t_puntero aRetornar;
 
 	//Si es un digito es un argumento debido a la sintaxis del lenguaje, entonces se debe buscar en argumentos
-	if(identificador_variable >= '0' && identificador_variable <= '9'){
+	if (identificador_variable >= '0' && identificador_variable <= '9') {
 		//Es menos 48 porque '0' es 48 es ASCII y es para obtener el valor sin hacer mucho quilombo
 		variable = list_get(pcb->indiceStack[pcb->contextoActual].argumentos,identificador_variable - 48);
 
 		aRetornar = calcularPuntero(variable->direccion);
 
-		printf("Obtuve la posicion de %c esta es: %d \n",identificador_variable,aRetornar);
+		printf("Obtuve la posicion de %c esta es: %d \n",identificador_variable, aRetornar);
 
 		return aRetornar;
-	}else{
+	} else {
 		//Si es una letra es una variable debido a la sintaxis del lenguaje, entonces se debe buscar en variables
 		int j;
-		for(j = 0; j < list_size(pcb->indiceStack[pcb->contextoActual].variables); j++){
+		for (j = 0;j < list_size(pcb->indiceStack[pcb->contextoActual].variables);j++) {
 			variable = list_get(pcb->indiceStack[pcb->contextoActual].variables,j);
-			if(variable->ID == identificador_variable){
+			if (variable->ID == identificador_variable) {
 
 				aRetornar = calcularPuntero(variable->direccion);
 
-				printf("Obtuve la posicion de %c esta es: %d \n",identificador_variable,aRetornar);
+				printf("Obtuve la posicion de %c esta es: %d \n",identificador_variable, aRetornar);
 
 				return aRetornar;
 			}
@@ -99,7 +96,7 @@ t_puntero AnSISOP_obtenerPosicionVariable(t_nombre_variable identificador_variab
 	return -1;
 }
 
-t_valor_variable AnSISOP_dereferenciar(t_puntero direccion_variable){
+t_valor_variable AnSISOP_dereferenciar(t_puntero direccion_variable) {
 	puts("AnSISOP_dereferenciar");
 
 	//Se busca la direccion
@@ -108,76 +105,75 @@ t_valor_variable AnSISOP_dereferenciar(t_puntero direccion_variable){
 	//Se pide el valor a memoria
 	t_valor_variable valorVariable = pedirValorAMemoria(direccion);
 
-	printf("Desreferencie la direccion %d %d %d y el valor es %d \n",direccion.page,direccion.offset,direccion.size,valorVariable);
+	printf("Desreferencie la direccion %d %d %d y el valor es %d \n",direccion.page, direccion.offset, direccion.size, valorVariable);
 
 	return valorVariable;
 }
 
-void AnSISOP_asignar(t_puntero direccion_variable, t_valor_variable valor){
+void AnSISOP_asignar(t_puntero direccion_variable, t_valor_variable valor) {
 	puts("AnSISOP_asignar");
 
 	//Calculo la direccion en memoria de la variable
 	t_direccion direccion = calcularDireccion(direccion_variable);
 
 	//Se escribe en Memoria sabiendo la posicion de memoria y el valor a escribir
-	escribirValorEnMemoria(direccion,valor);
+	escribirValorEnMemoria(direccion, valor);
 
-	printf("Asigne a la direccion %d %d %d el valor es %d \n",direccion.page,direccion.offset,direccion.size,valor);
+	printf("Asigne a la direccion %d %d %d el valor es %d \n", direccion.page,direccion.offset, direccion.size, valor);
 }
 
-t_valor_variable AnSISOP_obtenerValorCompartida(t_nombre_compartida variable){
+t_valor_variable AnSISOP_obtenerValorCompartida(t_nombre_compartida variable) {
 	puts("AnSISOP_obtenerValorCompartida");
 
 	t_valor_variable valor = -42;
 
 	printf("Le pido al Kernel que me de el valor de la variable compartida: %s\n",variable);
 
-	enviarMensaje(socketKernel,pedirValorCompartida,variable,strlen(variable) + 1);
+	enviarMensaje(socketKernel, pedirValorCompartida, variable,strlen(variable) + 1);
 
 	void* stream;
 
-	switch(recibirMensaje(socketKernel,&stream)){
-		case noExisteVarCompartida:{
-			terminoPrograma = true;
-			pcb->exitCode = -12;
-			free(stream);
-		}break;
-		case envioValorCompartida:{
-			valor = leerInt(stream);
-		}break;
-		default:{
-			puts("Error en la accion del mensaje maquinola");
-			free(stream);
-		}
+	switch (recibirMensaje(socketKernel, &stream)) {
+	case noExisteVarCompartida: {
+		terminoPrograma = true;
+		pcb->exitCode = -12;
+		free(stream);
+	}
+		break;
+	case envioValorCompartida: {
+		valor = leerInt(stream);
+	}
+		break;
+	default: {
+		puts("Error en la accion del mensaje maquinola");
+		free(stream);
+	}
 	}
 
 	return valor;
 }
 
-t_valor_variable AnSISOP_asignarValorCompartida(t_nombre_compartida variable,t_valor_variable valor){
+t_valor_variable AnSISOP_asignarValorCompartida(t_nombre_compartida variable,t_valor_variable valor) {
 	puts("AnSISOP_asignarValorCompartida");
 
-	t_asignarValor mensaje = {
-			.valor = valor,
-			.variable = variable
-	};
+	t_asignarValor mensaje = { .valor = valor, .variable = variable };
 
-	printf("Le pido al Kernel que asigne el valor: %d a la variable compartida: %s\n",valor,variable);
-	enviarMensaje(socketKernel,asignarValorCompartida,mensaje.variable,strlen(mensaje.variable)+1);
+	printf("Le pido al Kernel que asigne el valor: %d a la variable compartida: %s\n",valor, variable);
+	enviarMensaje(socketKernel, asignarValorCompartida, mensaje.variable,strlen(mensaje.variable) + 1);
 
 	void* stream;
 
-	switch(recibirMensaje(socketKernel,&stream)){
-		case noExisteVarCompartida:{
+	switch (recibirMensaje(socketKernel, &stream)) {
+		case noExisteVarCompartida: {
 			terminoPrograma = true;
 			pcb->exitCode = -12;
 			free(stream);
 		}break;
-		case envioValorCompartida:{
+		case envioValorCompartida: {
 			valor = leerInt(stream);
-			enviarMensaje(socketKernel,asignarValorCompartida,&(mensaje.valor),sizeof(int));
+			enviarMensaje(socketKernel, asignarValorCompartida, &(mensaje.valor),sizeof(int));
 		}break;
-		default:{
+		default: {
 			puts("Error en la accion del mensaje maquinola");
 			free(stream);
 		}
@@ -186,7 +182,7 @@ t_valor_variable AnSISOP_asignarValorCompartida(t_nombre_compartida variable,t_v
 	return valor;
 }
 
-void AnSISOP_irAlLabel(t_nombre_etiqueta nombre_etiqueta){
+void AnSISOP_irAlLabel(t_nombre_etiqueta nombre_etiqueta) {
 	puts("AnSISOP_irAlLabel");
 
 	t_puntero_instruccion puntero;
@@ -194,25 +190,24 @@ void AnSISOP_irAlLabel(t_nombre_etiqueta nombre_etiqueta){
 	//Una etiqueta es como un identificador para las funciones del programa ANSISOP
 	//El numero de instruccion al que esta asociada la etiqueta es el numero de la primera instruccion ejecutable de dicha funcion
 	//La funcion devuelve el numero de instruccion al que esta asociada la etiqueta
-	puntero = metadata_buscar_etiqueta(nombre_etiqueta,pcb->indiceEtiquetas,pcb->sizeEtiquetas);
+	puntero = metadata_buscar_etiqueta(nombre_etiqueta, pcb->indiceEtiquetas,pcb->sizeEtiquetas);
 
 	//Como es el numero de la siguiente instruccion a ejecutar se le asigna al ProgramCounter para que el programa siga a partir de ahi
 
-	pcb->programCounter = puntero-1;
+	pcb->programCounter = puntero - 1;
 
 }
 
-void AnSISOP_llamarSinRetorno(t_nombre_etiqueta etiqueta){
+void AnSISOP_llamarSinRetorno(t_nombre_etiqueta etiqueta) {
 	puts("AnSISOP_llamarSinRetorno");
 
 	//Se incrementa el contexto actual para que cada vez que se pida un valor se vaya a buscar el valor en la entrada correspondiente
 	pcb->contextoActual++;
 
 	//Se reserva espacio para una entrada mas de stack y se inicializa ambas listas de argumentos y variables para su posterior utilizacion
-	pcb->indiceStack = realloc(pcb->indiceStack, sizeof(t_entrada) * (pcb->contextoActual + 1));
+	pcb->indiceStack = realloc(pcb->indiceStack,sizeof(t_entrada) * (pcb->contextoActual + 1));
 	pcb->indiceStack[pcb->contextoActual].argumentos = list_create();
 	pcb->indiceStack[pcb->contextoActual].variables = list_create();
-
 
 	//Se guarda en el contexto actual cual es la posicion de la instruccion siguiente que debe ejecutar al volver de la funcion
 	pcb->indiceStack[pcb->contextoActual].retPos = pcb->programCounter;
@@ -225,14 +220,15 @@ void AnSISOP_llamarSinRetorno(t_nombre_etiqueta etiqueta){
 
 }
 
-void AnSISOP_llamarConRetorno(t_nombre_etiqueta etiqueta,t_puntero donde_retornar){
+void AnSISOP_llamarConRetorno(t_nombre_etiqueta etiqueta,
+		t_puntero donde_retornar) {
 	puts("AnSISOP_llamarConRetorno");
 
 	//Se incrementa el contexto actual para que cada vez que se pida un valor se vaya a buscar el valor en la entrada correspondiente
 	pcb->contextoActual++;
 
 	//Se reserva espacio para una entrada mas de stack y se inicializa ambas listas de argumentos y variables para su posterior utilizacion
-	pcb->indiceStack = realloc(pcb->indiceStack, sizeof(t_entrada) * (pcb->contextoActual + 1));
+	pcb->indiceStack = realloc(pcb->indiceStack,sizeof(t_entrada) * (pcb->contextoActual + 1));
 	pcb->indiceStack[pcb->contextoActual].argumentos = list_create();
 	pcb->indiceStack[pcb->contextoActual].variables = list_create();
 
@@ -248,16 +244,15 @@ void AnSISOP_llamarConRetorno(t_nombre_etiqueta etiqueta,t_puntero donde_retorna
 	//Para que luego siga la ejecucion en la funcion
 	AnSISOP_irAlLabel(etiqueta);
 
-
 }
 
-void AnSISOP_finalizar(void){
+void AnSISOP_finalizar(void) {
 	puts("AnSISOP_finalizar");
 
 	//En ambos casos deberia de liberar la memoria de alguna manera magico-fantastica
 	//Si es que hay que liberarla lo que ahora comienzo a dudar, se vera con respecto al ultimatum con el pcb
 
-	if(pcb->contextoActual == 0){
+	if (pcb->contextoActual == 0) {
 		//Esto se da en el caso que se termine el programa
 		puts("Se finalizo la ultima instruccion del main");
 		terminoPrograma = true;
@@ -265,11 +260,10 @@ void AnSISOP_finalizar(void){
 		pcb->exitCode = 0;
 
 		//Se libera la memoria de esa entrada
-		list_destroy_and_destroy_elements(pcb->indiceStack[pcb->contextoActual].argumentos,free);
-		list_destroy_and_destroy_elements(pcb->indiceStack[pcb->contextoActual].variables,free);
+		list_destroy_and_destroy_elements(pcb->indiceStack[pcb->contextoActual].argumentos, free);
+		list_destroy_and_destroy_elements(pcb->indiceStack[pcb->contextoActual].variables, free);
 
-
-	}else{
+	} else {
 		//En otro caso se vuelve al contexto anterior
 		puts("Se finalizo la ultima instruccion de una funcion");
 
@@ -277,13 +271,12 @@ void AnSISOP_finalizar(void){
 		pcb->programCounter = pcb->indiceStack[pcb->contextoActual].retPos;
 
 		//Se libera la memoria de esa entrada y se vuelve a ajustar el tamanio del indice del stack para tener siempre el tamanio exacto
-		list_destroy_and_destroy_elements(pcb->indiceStack[pcb->contextoActual].argumentos,free);
-		list_destroy_and_destroy_elements(pcb->indiceStack[pcb->contextoActual].variables,free);
+		list_destroy_and_destroy_elements(pcb->indiceStack[pcb->contextoActual].argumentos, free);
+		list_destroy_and_destroy_elements(pcb->indiceStack[pcb->contextoActual].variables, free);
 		pcb->indiceStack = realloc(pcb->indiceStack,sizeof(t_entrada) * (pcb->contextoActual));
 
 		//Se actualiza cual es el Contexto Actual de Ejecucion
 		pcb->contextoActual--;
-
 
 	}
 
@@ -291,18 +284,18 @@ void AnSISOP_finalizar(void){
 	pcb->cantidadDeEntradas--;
 }
 
-void AnSISOP_retornar(t_valor_variable retorno){
+void AnSISOP_retornar(t_valor_variable retorno) {
 	puts("AnSISOP_retornar");
 
 	//Se escribe el valor devuelto por la funcion en la direccion de retorno
-	escribirValorEnMemoria(pcb->indiceStack[pcb->contextoActual].retVar , retorno );
+	escribirValorEnMemoria(pcb->indiceStack[pcb->contextoActual].retVar,retorno);
 
 	//Se cambia el ProgramCounter para que siga la ejecucion a partir de la siguiente instruccion de la funcion anterior
 	pcb->programCounter = pcb->indiceStack[pcb->contextoActual].retPos;
 
 	//Se libera la memoria de esa entrada y se vuelve a ajustar el tamanio del indice del stack para tener siempre el tamanio exacto
-	list_destroy_and_destroy_elements(pcb->indiceStack[pcb->contextoActual].argumentos,free);
-	list_destroy_and_destroy_elements(pcb->indiceStack[pcb->contextoActual].variables,free);
+	list_destroy_and_destroy_elements(pcb->indiceStack[pcb->contextoActual].argumentos, free);
+	list_destroy_and_destroy_elements(pcb->indiceStack[pcb->contextoActual].variables, free);
 	pcb->indiceStack = realloc(pcb->indiceStack,sizeof(t_entrada) * (pcb->contextoActual));
 
 	//Se actualiza cual es el Contexto Actual de Ejecucion
@@ -314,99 +307,98 @@ void AnSISOP_retornar(t_valor_variable retorno){
 }
 
 //Operaciones de Kernel
-void AnSISOP_wait(t_nombre_semaforo identificador_semaforo){
+void AnSISOP_wait(t_nombre_semaforo identificador_semaforo) {
 	puts("AnSISOP_wait");
 
 	printf("Le pido al Kernel que haga wait del semaforo: %s\n",identificador_semaforo);
 	pcb->programCounter++;
 	void * stream = serializarPCBYSemaforo(pcb, identificador_semaforo);
-	enviarMensaje(socketKernel,waitSemaforo,stream, tamanoPCB(pcb) + sizeof(int) + strlen(identificador_semaforo) + 1);
+	enviarMensaje(socketKernel, waitSemaforo, stream,tamanoPCB(pcb) + sizeof(int) + strlen(identificador_semaforo) + 1);
 
 	free(stream);
 	pcb->programCounter--;
 	bool respuestaDeKernel;
-	if(recibirMensaje(socketKernel, &stream) == respuestaBooleanaKernel)
-		respuestaDeKernel = *((bool*)stream);
-	else{
+	if (recibirMensaje(socketKernel, &stream) == respuestaBooleanaKernel)
+		respuestaDeKernel = *((bool*) stream);
+	else {
 		terminoPrograma = true;
 		perror("Error en el mensaje maquinola j3j3");
 	}
-	if(!respuestaDeKernel)
+	if (!respuestaDeKernel)
 		bloqueado = true;
 
 }
 
-void AnSISOP_signal(t_nombre_semaforo identificador_semaforo){
+void AnSISOP_signal(t_nombre_semaforo identificador_semaforo) {
 	puts("AnSISOP_signal");
 
 	printf("Le pido al Kernel que haga signal del semaforo: %s\n",identificador_semaforo);
 	pcb->programCounter++;
 	void * stream = serializarPCBYSemaforo(pcb, identificador_semaforo);
-	enviarMensaje(socketKernel,signalSemaforo,stream, tamanoPCB(pcb) + sizeof(int) + strlen(identificador_semaforo) + 1);
+	enviarMensaje(socketKernel, signalSemaforo, stream,tamanoPCB(pcb) + sizeof(int) + strlen(identificador_semaforo) + 1);
 	free(stream);
 	pcb->programCounter--;
 	bool respuestaDeKernel;
-	if(recibirMensaje(socketKernel, &stream) == respuestaBooleanaKernel)
-		respuestaDeKernel = *((bool*)stream);
-	else{
+	if (recibirMensaje(socketKernel, &stream) == respuestaBooleanaKernel)
+		respuestaDeKernel = *((bool*) stream);
+	else {
 		terminoPrograma = true;
 		perror("Error en el mensaje maquinola j3j3");
 	}
 	//Esto solo pasa en caso de que noexista el semaforo
-	if(!respuestaDeKernel)
+	if (!respuestaDeKernel)
 		bloqueado = true;
 }
 
-t_puntero AnSISOP_reservar(t_valor_variable espacio){
+t_puntero AnSISOP_reservar(t_valor_variable espacio) {
 	puts("AnSISOP_reservar");
 
-	int dosEnteros[2] = {espacio,pcb->pid};
+	int dosEnteros[2] = { espacio, pcb->pid };
 
-	enviarMensaje(socketKernel,reservarVariable,(void*)dosEnteros,sizeof(int)*2);
+	enviarMensaje(socketKernel, reservarVariable, (void*) dosEnteros,sizeof(int) * 2);
 
 	void* stream;
 	int offset = 0;
 
-	switch(recibirMensaje(socketKernel,&stream)){
-		case enviarOffsetDeVariableReservada: {
-			offset = *(int*) stream;
-			free(stream);
-			if(offset == 0){
-				puts("No se pudo asignar otra pagina al proceso");
-				terminoPrograma = true;
-				pcb->exitCode = -9;
-			}else{
-				calcularDireccion(offset);
-			}
-		}break;
-		case pedidoRechazadoPorPedirMas:{ // en caso de que se pida alocar mas que el tamanio de una pagina
-			puts("Se intentó reservar más memoria que el tamaño de una página");
+	switch (recibirMensaje(socketKernel, &stream)) {
+	case enviarOffsetDeVariableReservada: {
+		offset = *(int*) stream;
+		free(stream);
+		if (offset == 0) {
+			puts("No se pudo asignar otra pagina al proceso");
 			terminoPrograma = true;
-			pcb->exitCode = -8;
-		}break;
-		default:
-			puts("error en la accion maquinola");
+			pcb->exitCode = -9;
+		} else {
+			calcularDireccion(offset);
+		}
+	}break;
+	case pedidoRechazadoPorPedirMas: { // en caso de que se pida alocar mas que el tamanio de una pagina
+		puts("Se intentó reservar más memoria que el tamaño de una página");
+		terminoPrograma = true;
+		pcb->exitCode = -8;
+	}break;
+	default:
+		puts("error en la accion maquinola");
 	}
-
 
 	return offset;
 }
 
-void AnSISOP_liberar(t_puntero puntero){
+void AnSISOP_liberar(t_puntero puntero) {
 	puts("AnSISOP_liberar");
 
-	int dosEnteros[2] = {puntero,pcb->pid};
+	int dosEnteros[2] = { puntero, pcb->pid };
 
-	enviarMensaje(socketKernel,liberarVariable,dosEnteros,sizeof(int) * 2);
+	enviarMensaje(socketKernel, liberarVariable, dosEnteros, sizeof(int) * 2);
 
 	void* stream;
 
-	if (recibirMensaje(socketKernel,&stream) != enviarSiSePudoLiberar){
+	if (recibirMensaje(socketKernel, &stream) != enviarSiSePudoLiberar) {
 		free(stream);
 		puts("error en la accion maquinola");
-	}else{
+	} else {
 		int entero = leerInt(stream);
-		if(entero == 0){
+		if (entero == 0) {
 			puts("algo salio muy mal");
 			bloqueado = true;
 			pcb->exitCode = -42;
@@ -416,7 +408,7 @@ void AnSISOP_liberar(t_puntero puntero){
 
 }
 
-t_descriptor_archivo AnSISOP_abrir(t_direccion_archivo direccion,t_banderas flags){
+t_descriptor_archivo AnSISOP_abrir(t_direccion_archivo direccion,t_banderas flags) {
 	puts("AnSISOP_abrir");
 
 	t_crearArchivo archivo;
@@ -424,291 +416,258 @@ t_descriptor_archivo AnSISOP_abrir(t_direccion_archivo direccion,t_banderas flag
 	archivo.path = direccion;
 	archivo.flags = generarStringFlags(flags);
 
-	if(strcmp(archivo.flags,"") == 0){
+	if (strcmp(archivo.flags, "") == 0) {
 		printf("Quiere abrir un archivo sin permisos \n");
 		//inserte error aqui
 		return 0;
 	}
 
-
 	void* archivoSerializado = serializarArchivo(archivo);
 
-	enviarMensaje(socketKernel,abrirArchivo,archivoSerializado,strlen(direccion)+1 + strlen(archivo.flags)+1 + sizeof(int)*3);
+	enviarMensaje(socketKernel, abrirArchivo, archivoSerializado,strlen(direccion) + 1 + strlen(archivo.flags) + 1+ sizeof(int) * 3);
 
 	free(archivoSerializado);
 
 	void* stream;
 
-	switch(recibirMensaje(socketKernel,&stream)){
-	  case envioDelFileDescriptor:{
-	   t_descriptor_archivo FD = leerInt(stream);
-	   printf("El FD del archivo pedido es: %d \n",FD);
-	   return FD;
-	  }break;
-	  case respuestaBooleanaKernel:{
-	   free(stream);
-	   puts("Algo salio mal con el archivo, se termina el programa");
-	   bloqueado = true;
-	  }break;
-	  default:{
-	   puts("error en la accion maquinola");
-	   bloqueado = true;
-	   pcb->exitCode = -42;
-	  }
-	 }
-
-	//inserte manejo de errores aqui
+	switch (recibirMensaje(socketKernel, &stream)) {
+		case envioDelFileDescriptor: {
+			t_descriptor_archivo FD = leerInt(stream);
+			printf("El FD del archivo pedido es: %d \n", FD);
+			return FD;
+		}break;
+		case respuestaBooleanaKernel: {
+			free(stream);
+			puts("Algo salio mal con el archivo, se termina el programa");
+			bloqueado = true;
+		}break;
+		default: {
+			puts("error en la accion maquinola");
+			bloqueado = true;
+			pcb->exitCode = -42;
+		}
+	}
 
 	return 0;
 }
 
-void AnSISOP_borrar(t_descriptor_archivo direccion){
+void AnSISOP_borrar(t_descriptor_archivo direccion) {
 	puts("AnSISOP_borrar");
 
 	t_archivo archivo;
 	archivo.pid = pcb->pid;
 	archivo.fileDescriptor = direccion;
 
-	enviarMensaje(socketKernel,borrarArchivoCPU,(void*)&archivo,sizeof(int)*2);
+	enviarMensaje(socketKernel, borrarArchivoCPU, (void*) &archivo,sizeof(int) * 2);
 
 	void* stream;
 
-	recibirMensaje(socketKernel,&stream);
+	recibirMensaje(socketKernel, &stream);
 
 	//Aca manejar algun error
 
 }
 
+void AnSISOP_cerrar(t_descriptor_archivo descriptor_archivo) {
+	puts("AnSISOP_cerrar");
 
-void AnSISOP_cerrar(t_descriptor_archivo descriptor_archivo){
- puts("AnSISOP_cerrar");
+	t_archivo archivo;
+	archivo.pid = pcb->pid;
+	archivo.fileDescriptor = descriptor_archivo;
 
- t_archivo archivo;
- archivo.pid = pcb->pid;
- archivo.fileDescriptor = descriptor_archivo;
+	enviarMensaje(socketKernel, cerrarArchivo, (void*) &archivo,sizeof(int) * 2);
 
- enviarMensaje(socketKernel,cerrarArchivo,(void*)&archivo,sizeof(int)*2);
+	void* stream;
 
- void* stream;
-
- if(recibirMensaje(socketKernel,&stream) == respuestaBooleanaKernel){
-  int rtaKernel = *(int*)stream;
-  free(stream);
-  if(rtaKernel == 0){
-   puts("Quiere cerrar un archivo que nunca abrio");
-   terminoPrograma = true;
-   pcb->exitCode = -13;
-  }else{
-   puts("Archivo cerrado con exito");
-  }
- }else{
-  puts("error en la accion maquinola");
-  free(stream);
-  terminoPrograma = true;
-  pcb->exitCode = -42;
- }
-
-
+	if (recibirMensaje(socketKernel, &stream) == respuestaBooleanaKernel) {
+		int rtaKernel = *(int*) stream;
+		free(stream);
+		if (rtaKernel == 0) {
+			puts("Quiere cerrar un archivo que nunca abrio");
+			terminoPrograma = true;
+			pcb->exitCode = -13;
+		} else {
+			puts("Archivo cerrado con exito");
+		}
+	} else {
+		puts("error en la accion maquinola");
+		free(stream);
+		terminoPrograma = true;
+		pcb->exitCode = -42;
+	}
 
 }
 
-void AnSISOP_moverCursor(t_descriptor_archivo descriptor_archivo,t_valor_variable posicion){
+void AnSISOP_moverCursor(t_descriptor_archivo descriptor_archivo,t_valor_variable posicion) {
 	puts("AnSISOP_moverCursor");
-
 
 	t_moverCursor archivo;
 	archivo.pid = pcb->pid;
 	archivo.fileDescriptor = descriptor_archivo;
 	archivo.posicion = posicion;
 
-	enviarMensaje(socketKernel,moverCursorArchivo,(void*)&archivo,sizeof(int)*3);
+	enviarMensaje(socketKernel, moverCursorArchivo, (void*) &archivo,
+			sizeof(int) * 3);
 
 	void* stream;
 
-
-	if(recibirMensaje(socketKernel,&stream) == respuestaBooleanaKernel){
-	   int rtaKernel = *(int*)stream;
-	   free(stream);
-	   if(rtaKernel == 0){
-	    puts("Quiere mover el cursor de un archivo que nunca abrio");
-	    terminoPrograma = true;
-	    pcb->exitCode = -13;
-	   }else{
-	    puts("Cursor movido con exito");
-	   }
-	  }else{
-	   puts("error en la accion maquinola");
-	   free(stream);
-	   terminoPrograma = true;
-	   pcb->exitCode = -42;
-	  }
+	if (recibirMensaje(socketKernel, &stream) == respuestaBooleanaKernel) {
+		int rtaKernel = *(int*) stream;
+		free(stream);
+		if (rtaKernel == 0) {
+			puts("Quiere mover el cursor de un archivo que nunca abrio");
+			terminoPrograma = true;
+			pcb->exitCode = -13;
+		} else {
+			puts("Cursor movido con exito");
+		}
+	} else {
+		puts("error en la accion maquinola");
+		free(stream);
+		terminoPrograma = true;
+		pcb->exitCode = -42;
+	}
 }
 
-void AnSISOP_escribir(t_descriptor_archivo descriptor_archivo, void* informacion, t_valor_variable tamanio){
- puts("AnSISOP_escribir");
- t_mensajeDeProceso mensajeDeProceso = {
-   .pid = pcb->pid,
-   .descriptorArchivo = descriptor_archivo,
-   .mensaje = (char*)informacion
- };
- printf("%s \n",mensajeDeProceso.mensaje);
+void AnSISOP_escribir(t_descriptor_archivo descriptor_archivo,void* informacion, t_valor_variable tamanio) {
+	puts("AnSISOP_escribir");
+	t_mensajeDeProceso mensajeDeProceso = {
+			.pid = pcb->pid,
+			.descriptorArchivo = descriptor_archivo,
+			.mensaje =(char*) informacion
+	};
+	printf("%s \n", mensajeDeProceso.mensaje);
 
- void* mensajeSerializado = serializarMensajeAEscribir(mensajeDeProceso,tamanio);
+	void* mensajeSerializado = serializarMensajeAEscribir(mensajeDeProceso,tamanio);
 
- enviarMensaje(socketKernel,mensajeParaEscribir,mensajeSerializado,tamanoMensajeAEscribir(tamanio));
+	enviarMensaje(socketKernel, mensajeParaEscribir, mensajeSerializado,tamanoMensajeAEscribir(tamanio));
 
- free(mensajeSerializado);
+	free(mensajeSerializado);
 
- void* stream;
+	void* stream;
 
- switch(recibirMensaje(socketKernel,&stream)){
-  case 1:{
-   /*si nunca habia abierto el archivo*/
-   puts("Quiere escribir un archivo que nunca abrio");
-   terminoPrograma = true;
-   pcb->exitCode = -13;
-  }break;
-  case 2:{
-   /*otro error a definir*/
-   puts("Inserte error aqui");
-   terminoPrograma = true;
-   pcb->exitCode = -14;
-  }break;
-  case 3:{
-   /*Si salio todo bien*/
-   puts("Se escribio con exito el archivo");
-
-  }break;
-  default:{
-   puts("error en la accion maquinola");
-   terminoPrograma = true;
-   pcb->exitCode = -42;
-  }
- }
- free(stream);
+	if(recibirMensaje(socketKernel, &stream) == respuestaBooleanaKernel) {
+		int rtaKernel = *(int*)stream;
+		if(rtaKernel == 0){
+			puts("Quiere escribir un archivo que nunca abrio");
+			terminoPrograma = true;
+			pcb->exitCode = -13;
+		}else{
+			puts("La escritura salio todo bien");
+		}
+	}else{
+		puts("error en la accion maquinola");
+		terminoPrograma = true;
+		pcb->exitCode = -42;
+	}
+	free(stream);
 
 }
 
-void AnSISOP_leer(t_descriptor_archivo descriptor_archivo,t_puntero informacion, t_valor_variable tamanio){
+void AnSISOP_leer(t_descriptor_archivo descriptor_archivo,
+		t_puntero informacion, t_valor_variable tamanio) {
 	puts("AnSISOP_leer");
 
-	int tresEnteros[] = {pcb->pid,descriptor_archivo,tamanio};
+	int tresEnteros[] = { pcb->pid, descriptor_archivo, tamanio };
 
-	enviarMensaje(socketKernel,leerArchivo,tresEnteros,sizeof(int)*3);
+	enviarMensaje(socketKernel, leerArchivo, tresEnteros, sizeof(int) * 3);
 
 	void* stream;
-	switch(recibirMensaje(socketKernel,&stream)){
-	  case 1:{
-	   /*si nunca habia abierto el archivo*/
-	   puts("Quiere leer un archivo que nunca abrio");
-	   terminoPrograma = true;
-	   pcb->exitCode = -13;
-	  }break;
-	  case 2:{
-	   /*otro error a definir*/
-	   puts("Inserte error aqui");
-	   terminoPrograma = true;
-	   pcb->exitCode = -14;
-	  }break;
-	  case 3:{
-	   /*Si salio todo bien*/
-	   puts("Se leyo con exito el archivo");
+	switch (recibirMensaje(socketKernel, &stream)) {
+		case respuestaBooleanaKernel: {
+			/*si nunca habia abierto el archivo*/
+			puts("Se produjo un error al intentar leer el archivo");
+			terminoPrograma = true;
+		}break;
+		case respuestaLectura: {
+			/*Si salio todo bien*/
+			puts("Se leyo con exito el archivo");
 
-	  }break;
-	  default:{
-	   puts("error en la accion maquinola");
-	   terminoPrograma = true;
-	   pcb->exitCode = -42;
-	  }
-	 }
-	 free(stream);
+		}break;
+		default: {
+			puts("error en la accion maquinola");
+			terminoPrograma = true;
+			pcb->exitCode = -42;
+		}
+	}
+	free(stream);
 }
-
-
-
 
 /**************************************************************************FUNCIONES PRIVADAS**********************************************************************************************/
 
-
-
-t_valor_variable pedirValorAMemoria(t_direccion direccion){
+t_valor_variable pedirValorAMemoria(t_direccion direccion) {
 
 	t_valor_variable valorVariable;
-	t_pedidoMemoria pedido = {
-			.id = pcb->pid,
-			.direccion = direccion
-	};
-
+	t_pedidoMemoria pedido = { .id = pcb->pid, .direccion = direccion };
 
 	//Se pide a Memoria el contenido de esa posicion que es el valor de la variable
-	enviarMensaje(socketMemoria,solicitarBytes,(void *)&pedido, sizeof(pedido));
+	enviarMensaje(socketMemoria, solicitarBytes, (void *) &pedido,sizeof(pedido));
 
-	printf("Se pide el valor de la variable en la direccion de memoria: %d %d %d \n",direccion.page,direccion.offset,direccion.size);
+	printf("Se pide el valor de la variable en la direccion de memoria: %d %d %d \n",direccion.page, direccion.offset, direccion.size);
 
 	//se recibe el valor de la variable
 	void* stream;
 	int* valor;
 	int* booleano;
 
-	int accion = recibirMensaje(socketMemoria,&stream);
+	int accion = recibirMensaje(socketMemoria, &stream);
 
-		switch(accion){
-				case RespuestaBooleanaDeMemoria:{
-					booleano = stream;
-				}break;
-				default:{
-					perror("Error en la accion maquinola");
-				}break;
-			}
-		if(*booleano){
-			free(stream);
-			accion = recibirMensaje(socketMemoria,&stream);
-				switch(accion){
-					case lineaDeCodigo:{
-						valor = stream;
-						valorVariable = *valor;
-					}break;
-					default:{
-						perror("Error en la accion maquinola");
-					}break;
-				}
-		}else{
-			terminoPrograma = true;
-			pcb->exitCode = -5;		//Excepcion de Memoria STACK OVERFLOW
+	switch (accion) {
+		case RespuestaBooleanaDeMemoria: {
+			booleano = stream;
+		}break;
+		default: {
+			perror("Error en la accion maquinola");
+		}break;
+	}
+	if (*booleano) {
+		free(stream);
+		accion = recibirMensaje(socketMemoria, &stream);
+		switch (accion) {
+			case lineaDeCodigo: {
+				valor = stream;
+				valorVariable = *valor;
+			}break;
+			default: {
+				perror("Error en la accion maquinola");
+			}break;
 		}
+	} else {
+		terminoPrograma = true;
+		pcb->exitCode = -5;		//Excepcion de Memoria STACK OVERFLOW
+	}
 
 	free(stream);
 
 	return valorVariable;
 }
 
-void escribirValorEnMemoria(t_direccion direccion, t_valor_variable valor){
+void escribirValorEnMemoria(t_direccion direccion, t_valor_variable valor) {
 
 	//Se crea el void* que contiene el pid, la direccion y el valor a escribir, que son los datos necesarios para que la memoria escriba el valor
-	int escrituraA[] = {pcb->pid,direccion.page,direccion.offset,direccion.size,valor};
+	int escrituraA[] = { pcb->pid, direccion.page, direccion.offset,direccion.size, valor };
 	//se pide a memoria que escriba el valor enviado en la posicion de memoria tambien enviada
-	enviarMensaje(socketMemoria,almacenarBytes,escrituraA,sizeof(int)*4+direccion.size);
+	enviarMensaje(socketMemoria, almacenarBytes, escrituraA,sizeof(int) * 4 + direccion.size);
 
-	printf("Se escribio el valor %d en la direccion de memoria: %d %d %d \n",valor,direccion.page,direccion.offset,direccion.size);
+	printf("Se escribio el valor %d en la direccion de memoria: %d %d %d \n",valor, direccion.page, direccion.offset, direccion.size);
 
 //	free(auxiliar);
-
 
 	//Devuelve un OK o mata con un Stack Overflow
 	void* stream;
 	int* respuesta;
-	int accion = recibirMensaje(socketMemoria,&stream);
-	switch(accion){
-		case RespuestaBooleanaDeMemoria:{
+	int accion = recibirMensaje(socketMemoria, &stream);
+	switch (accion) {
+		case RespuestaBooleanaDeMemoria: {
 			respuesta = stream;
 			break;
 		}
-		default:{
+		default: {
 			perror("Error en la accion maquinola");
 		}
 	}
 
-	if(*respuesta != 1){
+	if (*respuesta != 1) {
 		terminoPrograma = true;
 		pcb->exitCode = -5;
 	}
@@ -716,89 +675,83 @@ void escribirValorEnMemoria(t_direccion direccion, t_valor_variable valor){
 	free(stream);
 }
 
-
-
-
-
-
-t_direccion calcularNuevaDireccion(){
+t_direccion calcularNuevaDireccion() {
 	t_direccion direccion;
 	t_list* argumentos = pcb->indiceStack[pcb->contextoActual].argumentos;
 	t_list* variables = pcb->indiceStack[pcb->contextoActual].variables;
 
 	//Si es la primera vez que se pide una direccion para este contexto
-	if(list_size(argumentos)==0 && list_size(variables)==0){
+	if (list_size(argumentos) == 0 && list_size(variables) == 0) {
 
 		//Si es la primera vez que se pide una direccion para este proceso se le asigna la primera posicion de su stack
-		if(pcb->contextoActual == 0){
+		if (pcb->contextoActual == 0) {
 			direccion.page = paginaInicio();
 			direccion.offset = 0;
-		}else{
+		} else {
 
-		//Si es la primera vez que se pide una direccion para este contexto se debe revisar cual fue la ultima posicion asignada en el contexto anterior para comenzar desde ahi
-			asignarDireccionRespectoA(pcb->contextoActual-1, &direccion);
+			//Si es la primera vez que se pide una direccion para este contexto se debe revisar cual fue la ultima posicion asignada en el contexto anterior para comenzar desde ahi
+			asignarDireccionRespectoA(pcb->contextoActual - 1, &direccion);
 		}
-	}else{
+	} else {
 		asignarDireccionRespectoA(pcb->contextoActual, &direccion);
 	}
 
 	direccion.size = 4;
 
-	if(direccion.offset + direccion.size > datosIniciales->size_pag){
+	if (direccion.offset + direccion.size > datosIniciales->size_pag) {
 		direccion.page++;
 		direccion.offset = 0;
 	}
 
-
-	printf("Calcule una nueva direccion jaja saludos, esta es: %d %d %d \n",direccion.page,direccion.offset,direccion.size);
+	printf("Calcule una nueva direccion jaja saludos, esta es: %d %d %d \n",direccion.page, direccion.offset, direccion.size);
 
 	return direccion;
 }
 
-t_puntero calcularPuntero(t_direccion direccion){
-	t_puntero puntero = direccion.page * datosIniciales->size_pag + direccion.offset;
-	printf("En base a la direccion %d %d %d calculo la posicion %d \n",direccion.page,direccion.offset,direccion.size,puntero);
+t_puntero calcularPuntero(t_direccion direccion) {
+	t_puntero puntero = direccion.page * datosIniciales->size_pag+ direccion.offset;
+	printf("En base a la direccion %d %d %d calculo la posicion %d \n",direccion.page, direccion.offset, direccion.size, puntero);
 	return puntero;
 }
 
-t_direccion calcularDireccion(t_puntero puntero){
+t_direccion calcularDireccion(t_puntero puntero) {
 	t_direccion direccion;
 
-	if(datosIniciales->size_pag > puntero){
+	if (datosIniciales->size_pag > puntero) {
 		direccion.page = 0;
 		direccion.offset = puntero;
-	}else{
-		direccion.page = puntero/datosIniciales->size_pag;
+	} else {
+		direccion.page = puntero / datosIniciales->size_pag;
 		direccion.offset = puntero % datosIniciales->size_pag;
 	}
 	direccion.size = 4;
 
-	printf("En base a la posicion %d calculo la direccion %d %d %d \n",puntero,direccion.page,direccion.offset,direccion.size);
+	printf("En base a la posicion %d calculo la direccion %d %d %d \n", puntero,direccion.page, direccion.offset, direccion.size);
 
 	return direccion;
 }
 
-void asignarDireccion(t_direccion* direccion,void* stream){
+void asignarDireccion(t_direccion* direccion, void* stream) {
 	direccion = stream;
 }
 
-t_direccion ultimaDireccionArg(int contexto){
+t_direccion ultimaDireccionArg(int contexto) {
 
 	t_direccion direccion;
 	t_variable* variable;
 
 	//Si no hay argumentos declarados en ningun contexto se devuelve una direccion erronea
-	if(contexto == -1){
+	if (contexto == -1) {
 		direccion.page = -1;
 		direccion.offset = -1;
 		direccion.size = -1;
-	}else{
+	} else {
 		//Si no hay elementos en la lista se busca en el contexto anterior
-		if(list_is_empty(pcb->indiceStack[contexto].argumentos)){
+		if (list_is_empty(pcb->indiceStack[contexto].argumentos)) {
 			direccion = ultimaDireccionArg(contexto - 1);
-		}else{
+		} else {
 			//Devuelve el ultimo elemento de la lista de argumentos
-			variable = list_get(pcb->indiceStack[contexto].argumentos,list_size(pcb->indiceStack[contexto].argumentos)-1);
+			variable = list_get(pcb->indiceStack[contexto].argumentos,list_size(pcb->indiceStack[contexto].argumentos) - 1);
 			direccion = variable->direccion;
 		}
 	}
@@ -806,23 +759,23 @@ t_direccion ultimaDireccionArg(int contexto){
 	return direccion;
 }
 
-t_direccion ultimaDireccionVar(int contexto){
+t_direccion ultimaDireccionVar(int contexto) {
 
 	t_direccion direccion;
 	t_variable* variable;
 
 	//Si no hay variables declaradas en ningun contexto se devuelve una direccion erronea
-	if(contexto == -1){
+	if (contexto == -1) {
 		direccion.page = -1;
 		direccion.offset = -1;
 		direccion.size = -1;
-	}else{
+	} else {
 		//Si no hay elementos en la lista se busca en el contexto anterior
-		if(list_is_empty(pcb->indiceStack[contexto].variables)){
-			direccion = ultimaDireccionVar(contexto-1);
-		}else{
+		if (list_is_empty(pcb->indiceStack[contexto].variables)) {
+			direccion = ultimaDireccionVar(contexto - 1);
+		} else {
 			//Devuelve el ultimo elemento de la lista de variables
-			variable = list_get(pcb->indiceStack[contexto].variables,list_size(pcb->indiceStack[contexto].variables)-1);
+			variable = list_get(pcb->indiceStack[contexto].variables,list_size(pcb->indiceStack[contexto].variables) - 1);
 			direccion = variable->direccion;
 		}
 	}
@@ -830,114 +783,94 @@ t_direccion ultimaDireccionVar(int contexto){
 }
 
 //Devuelve si la primer direccion es mayor a la segunda
-bool mayor(t_direccion unaDireccion,t_direccion otraDireccion){
+bool mayor(t_direccion unaDireccion, t_direccion otraDireccion) {
 
-	if(unaDireccion.page == otraDireccion.page){
+	if (unaDireccion.page == otraDireccion.page) {
 		return unaDireccion.offset > otraDireccion.offset;
-	}else{
+	} else {
 		return unaDireccion.page > otraDireccion.page;
 	}
 
 }
 
-bool direccionInvalida(t_direccion direccion){
+bool direccionInvalida(t_direccion direccion) {
 	return (direccion.page == -1 && direccion.offset == -1 && direccion.size == -1);
 }
 
 //Esto es para no repetir codigo, era muy asqueroso sino
-void asignarDireccionRespectoA(int contexto, t_direccion* direccion){
+void asignarDireccionRespectoA(int contexto, t_direccion* direccion) {
 
 	t_direccion variable = ultimaDireccionVar(contexto);
 	t_direccion argumento = ultimaDireccionArg(contexto);
 
-	if(mayor(variable,argumento)){
+	if (mayor(variable, argumento)) {
 		direccion->page = variable.page;
 		direccion->offset = variable.offset + 4;
-	}else{
+	} else {
 		direccion->page = argumento.page;
 		direccion->offset = argumento.offset + 4;
 	}
-	if(direccionInvalida(variable) && direccionInvalida(argumento)){
+	if (direccionInvalida(variable) && direccionInvalida(argumento)) {
 		direccion->page = paginaInicio();
 		direccion->offset = 0;
 	}
 }
 
 //Devuelve la pagina donde comienza en el stack
-int paginaInicio(){
+int paginaInicio() {
 	return pcb->contPags_pcb - datosIniciales->size_stack;
 }
 
-char* generarStringFlags(t_banderas flags){
+char* generarStringFlags(t_banderas flags) {
 	char* ret = string_new();
 
-	if(flags.lectura) strcat(ret,"r");
-	if(flags.escritura) strcat(ret,"w");
-	if(flags.creacion) strcat(ret,"c");
+	if (flags.lectura)
+		strcat(ret, "r");
+	if (flags.escritura)
+		strcat(ret, "w");
+	if (flags.creacion)
+		strcat(ret, "c");
 
 	return ret;
 
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-int tamanoMensajeAEscribir(int tamanioContenido){
-	return sizeof(int)*3 + tamanioContenido;
+int tamanoMensajeAEscribir(int tamanioContenido) {
+	return sizeof(int) * 3 + tamanioContenido;
 }
 
-void* serializarMensajeAEscribir(t_mensajeDeProceso mensaje, int tamanio){
+void* serializarMensajeAEscribir(t_mensajeDeProceso mensaje, int tamanio) {
 	void* stream = malloc(tamanoMensajeAEscribir(tamanio));
 
-	memcpy(stream,&mensaje.pid,sizeof(int));
+	memcpy(stream, &mensaje.pid, sizeof(int));
 
-	memcpy(stream + sizeof(int),&mensaje.descriptorArchivo,sizeof(int));
+	memcpy(stream + sizeof(int), &mensaje.descriptorArchivo, sizeof(int));
 
-	memcpy(stream + sizeof(int) * 2,&tamanio,sizeof(int));
+	memcpy(stream + sizeof(int) * 2, &tamanio, sizeof(int));
 
-	memcpy(stream + sizeof(int) * 3,mensaje.mensaje,tamanio);
+	memcpy(stream + sizeof(int) * 3, mensaje.mensaje, tamanio);
 
 	return stream;
 }
 
-void* serializarArchivo(t_crearArchivo archivo){
- void* stream = malloc(sizeof(int)*3 + strlen(archivo.flags) + 1 + strlen(archivo.path) + 1);
+void* serializarArchivo(t_crearArchivo archivo) {
+	void* stream = malloc(
+			sizeof(int) * 3 + strlen(archivo.flags) + 1 + strlen(archivo.path) + 1);
 
- memcpy(stream,&archivo.pid,sizeof(int));
+	memcpy(stream, &archivo.pid, sizeof(int));
 
- int aux1 = strlen(archivo.flags) + 1;
+	int aux1 = strlen(archivo.flags) + 1;
 
- memcpy(stream + sizeof(int),&aux1,sizeof(int));
+	memcpy(stream + sizeof(int), &aux1, sizeof(int));
 
- memcpy(stream + sizeof(int) * 2,archivo.flags,aux1);
+	memcpy(stream + sizeof(int) * 2, archivo.flags, aux1);
 
- int aux2 = strlen(archivo.path) + 1;
+	int aux2 = strlen(archivo.path) + 1;
 
- memcpy(stream + sizeof(int) * 2 + aux1,&aux2,sizeof(int));
+	memcpy(stream + sizeof(int) * 2 + aux1, &aux2, sizeof(int));
 
- memcpy(stream + sizeof(int) * 3 + aux1,archivo.path,aux2);
+	memcpy(stream + sizeof(int) * 3 + aux1, archivo.path, aux2);
 
- return stream;
+	return stream;
 }
-
-
-
-
 
