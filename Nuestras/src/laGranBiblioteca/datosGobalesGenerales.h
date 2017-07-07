@@ -82,7 +82,7 @@ typedef struct {
 typedef struct{
 	int pid;
 	int fileDescriptor;
-	int offset;
+	int size;
 }__attribute__((packed)) t_lectura;
 
 typedef struct {

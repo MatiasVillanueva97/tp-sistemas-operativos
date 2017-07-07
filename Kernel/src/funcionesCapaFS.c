@@ -85,12 +85,12 @@ void agregarATablaGlobalDeArchivosDeProcesos(int pid, t_list* tablaProceso){
 }
 
 void* serializarPedidoFs(int size, int offset,char* path){
-	void *contenido = malloc(4+strlen(path)+sizeof(int)*2);
+	void *contenido = malloc(4+strlen(path)+sizeof(int)*2+1);
 	memcpy(contenido,&size,sizeof(int));
 	memcpy(contenido+sizeof(int),&offset,sizeof(int));
-	int tamanoRuta = strlen(path);
+	int tamanoRuta = strlen(path)+1;
 	memcpy(contenido+sizeof(int)*2,&tamanoRuta,sizeof(int));
-	memcpy(contenido+sizeof(int)*3,path,strlen(path));
+	memcpy(contenido+sizeof(int)*3,path,tamanoRuta);
 	return contenido;
 }
 

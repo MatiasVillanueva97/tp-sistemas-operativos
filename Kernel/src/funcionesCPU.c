@@ -324,16 +324,16 @@ void *rutinaCPU(void * arg)
 					if(entrada_de_archivo!=NULL){
 						if (string_contains(entrada_a_evaluar->flags,"r")){
 
-							int tamanioDelPedido = strlen(entrada_de_archivo->path)+1 ;
-							void* pedidoDeLectura = serializarPedidoFs(tamanioDelPedido,estructura.offset,entrada_de_archivo->path);//Patos, basicamente
+							int tamanioDelPedido = estructura.size ;
+							void* pedidoDeLectura = serializarPedidoFs(tamanioDelPedido,entrada_a_evaluar->offset,entrada_de_archivo->path);//Patos, basicamente
 							enviarMensaje(socketFS,obtenerDatosDeArchivo,(void *) pedidoDeLectura,tamanioDelPedido);
 							void* contenido;
 							if(recibirMensaje(socketFS,&contenido) == respuestaConContenidoDeFs){
 								enviarMensaje(socketCPU,respuestaLectura, contenido,tamanioDelPedido);
-								entrada_a_evaluar->offset += estructura.offset;
+								entrada_a_evaluar->offset += estructura.size;
 								}
 							else{
-								finalizarPid(pcbaux,-1);
+								finalizarPid(pcbaux,-1);//Respuesta Mala de FS
 								enviarMensaje(socketCPU,respuestaBooleanaKernel,&rtaCPU,sizeof(int));
 								}
 						}else{
