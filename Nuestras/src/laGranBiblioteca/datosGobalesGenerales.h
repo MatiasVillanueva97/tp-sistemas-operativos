@@ -79,6 +79,12 @@ typedef struct {
 	int fileDescriptor;
 }__attribute__((packed)) t_archivo;
 
+typedef struct{
+	int pid;
+	int fileDescriptor;
+	int offset;
+}__attribute__((packed)) t_lectura;
+
 typedef struct {
 	int pid;
 	int fileDescriptor;

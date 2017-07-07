@@ -479,20 +479,36 @@ void AnSISOP_borrar(t_descriptor_archivo direccion){
 
 }
 
+
 void AnSISOP_cerrar(t_descriptor_archivo descriptor_archivo){
-	puts("AnSISOP_cerrar");
+ puts("AnSISOP_cerrar");
 
-	t_archivo archivo;
-	archivo.pid = pcb->pid;
-	archivo.fileDescriptor = descriptor_archivo;
+ t_archivo archivo;
+ archivo.pid = pcb->pid;
+ archivo.fileDescriptor = descriptor_archivo;
 
-	enviarMensaje(socketKernel,cerrarArchivo,(void*)&archivo,sizeof(int)*2);
+ enviarMensaje(socketKernel,cerrarArchivo,(void*)&archivo,sizeof(int)*2);
 
-	void* stream;
+ void* stream;
 
-	recibirMensaje(socketKernel,&stream);
+ if(recibirMensaje(socketKernel,&stream) == respuestaBooleanaKernel){
+  int rtaKernel = *(int*)stream;
+  free(stream);
+  if(rtaKernel == 0){
+   puts("Quiere cerrar un archivo que nunca abrio");
+   terminoPrograma = true;
+   pcb->exitCode = -13;
+  }else{
+   puts("Archivo cerrado con exito");
+  }
+ }else{
+  puts("error en la accion maquinola");
+  free(stream);
+  terminoPrograma = true;
+  pcb->exitCode = -42;
+ }
 
-	//Aca manejar algun error
+
 
 }
 
@@ -509,51 +525,103 @@ void AnSISOP_moverCursor(t_descriptor_archivo descriptor_archivo,t_valor_variabl
 
 	void* stream;
 
-	recibirMensaje(socketKernel,&stream);
 
-	//Aca manejar algun error
-
+	if(recibirMensaje(socketKernel,&stream) == respuestaBooleanaKernel){
+	   int rtaKernel = *(int*)stream;
+	   free(stream);
+	   if(rtaKernel == 0){
+	    puts("Quiere mover el cursor de un archivo que nunca abrio");
+	    terminoPrograma = true;
+	    pcb->exitCode = -13;
+	   }else{
+	    puts("Cursor movido con exito");
+	   }
+	  }else{
+	   puts("error en la accion maquinola");
+	   free(stream);
+	   terminoPrograma = true;
+	   pcb->exitCode = -42;
+	  }
 }
 
 void AnSISOP_escribir(t_descriptor_archivo descriptor_archivo, void* informacion, t_valor_variable tamanio){
-	puts("AnSISOP_escribir");
-	t_mensajeDeProceso mensajeDeProceso = {
-			.pid = pcb->pid,
-			.descriptorArchivo = descriptor_archivo,
-			.mensaje = (char*)informacion
-	};
-	printf("%s \n",mensajeDeProceso.mensaje);
+ puts("AnSISOP_escribir");
+ t_mensajeDeProceso mensajeDeProceso = {
+   .pid = pcb->pid,
+   .descriptorArchivo = descriptor_archivo,
+   .mensaje = (char*)informacion
+ };
+ printf("%s \n",mensajeDeProceso.mensaje);
 
-	void* mensajeSerializado = serializarMensajeAEscribir(mensajeDeProceso,tamanio);
+ void* mensajeSerializado = serializarMensajeAEscribir(mensajeDeProceso,tamanio);
 
-	enviarMensaje(socketKernel,mensajeParaEscribir,mensajeSerializado,tamanoMensajeAEscribir(tamanio));
+ enviarMensaje(socketKernel,mensajeParaEscribir,mensajeSerializado,tamanoMensajeAEscribir(tamanio));
 
-	free(mensajeSerializado);
+ free(mensajeSerializado);
 
-	//Este free anda si imprime un literal y rompe si es una variable
-	//free(informacion);
+ void* stream;
 
-	void* stream;
+ switch(recibirMensaje(socketKernel,&stream)){
+  case 1:{
+   /*si nunca habia abierto el archivo*/
+   puts("Quiere escribir un archivo que nunca abrio");
+   terminoPrograma = true;
+   pcb->exitCode = -13;
+  }break;
+  case 2:{
+   /*otro error a definir*/
+   puts("Inserte error aqui");
+   terminoPrograma = true;
+   pcb->exitCode = -14;
+  }break;
+  case 3:{
+   /*Si salio todo bien*/
+   puts("Se escribio con exito el archivo");
 
-	//recibirMensaje(socketKernel,&stream);
-
-	//RECIBIR UN MENSAJE DICIENDO SI ESE ARCHIVO EXISTIA REALMENTE
-
-	//RECIBIR UN MENSAJE DICIENDO SI  PODIA ACCEDER A ESE ARCHIVO REALMENTE
+  }break;
+  default:{
+   puts("error en la accion maquinola");
+   terminoPrograma = true;
+   pcb->exitCode = -42;
+  }
+ }
+ free(stream);
 
 }
 
 void AnSISOP_leer(t_descriptor_archivo descriptor_archivo,t_puntero informacion, t_valor_variable tamanio){
 	puts("AnSISOP_leer");
 
-	//insertar una estructura bastante suculenta
+	int tresEnteros[] = {pcb->pid,descriptor_archivo,tamanio};
+
+	enviarMensaje(socketKernel,leerArchivo,tresEnteros,sizeof(int)*3);
 
 	void* stream;
+	switch(recibirMensaje(socketKernel,&stream)){
+	  case 1:{
+	   /*si nunca habia abierto el archivo*/
+	   puts("Quiere leer un archivo que nunca abrio");
+	   terminoPrograma = true;
+	   pcb->exitCode = -13;
+	  }break;
+	  case 2:{
+	   /*otro error a definir*/
+	   puts("Inserte error aqui");
+	   terminoPrograma = true;
+	   pcb->exitCode = -14;
+	  }break;
+	  case 3:{
+	   /*Si salio todo bien*/
+	   puts("Se leyo con exito el archivo");
 
-	recibirMensaje(socketKernel,&stream);
-
-	//Inserte manejo de errores aqui
-
+	  }break;
+	  default:{
+	   puts("error en la accion maquinola");
+	   terminoPrograma = true;
+	   pcb->exitCode = -42;
+	  }
+	 }
+	 free(stream);
 }
 
 

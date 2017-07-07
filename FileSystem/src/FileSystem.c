@@ -132,8 +132,8 @@ bool crearElArchivo(char* path){
 		 mkdir(rutaTotal,0700);
 			log_info(logFS,"Se creo el directorio *(directorios+i)");
 	}
-	}
 	string_append(&rutaTotal,"/");
+	}
 	string_append(&rutaTotal,*(directorios+i));
 	FILE* archivo = fopen(rutaTotal,"w");
 	int posicionDelBitMap = buscarPosicionLibre();
@@ -443,7 +443,7 @@ void tramitarPeticionesDelKernel(int socketKernel){
 						char* path = stream;
 						bool respuesta = validarArchivo(path);
 						enviarMensaje(socketKernel,respuestaBooleanaDeFs,&respuesta,sizeof(respuesta));
-						log_info(logFS,"La respuesta enviada al kernel es: %b ", respuesta);
+						log_info(logFS,"La respuesta enviada al kernel es: %d ", respuesta);
 						break;
 					}
 					case creacionDeArchivo:{
@@ -464,7 +464,7 @@ void tramitarPeticionesDelKernel(int socketKernel){
 						break;
 					}
 					case obtenerDatosDeArchivo:{
-						t_pedidoFS pedido =*(t_pedidoFS*) stream;
+						t_pedidoFS pedido = deseralizarPedidoFs(stream);
 						log_info(logFS,"El kernel quiere obtener %d bytes desde %d, de la path: %s",pedido.size,pedido.offset,pedido.path);
 						void *contenido= obtenerDatos(pedido.path,pedido.offset,pedido.size);
 						if(contenido != NULL){

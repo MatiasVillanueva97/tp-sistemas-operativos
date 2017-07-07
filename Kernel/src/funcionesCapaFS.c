@@ -20,10 +20,10 @@ ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* encontrarElDeIgualPid(int pid){
 
 ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* encontrarElDeIgualPath(char* path){
 	ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS * auxiliar;
-bool sonDeIgualPath(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS * elementos){
-				return  elementos->path == path;
+bool sonDeIgualPath(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS * elemento){
+				return  !strcmp(elemento->path,path);
 		}
-		auxiliar = list_find(tablaGlobalDeArchivos,(void *)sonDeIgualPath);
+		auxiliar = list_find(tablaGlobalDeArchivos,sonDeIgualPath);
 		return auxiliar;
 }
 
@@ -34,9 +34,9 @@ bool archivoExiste(char* path){
 }
 int posicionEnTablaGlobalDeArchivos(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* auxiliar){
 	int i = 0;
-	bool buscarPosicion(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS * elementos){
+	bool buscarPosicion(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS * elemento){
 					i++;
-					return  elementos->path == auxiliar->path;
+					return  !strcmp(elemento->path,auxiliar->path);
 			}
 			auxiliar = list_find(tablaGlobalDeArchivos,(void *)buscarPosicion);
 			return i;

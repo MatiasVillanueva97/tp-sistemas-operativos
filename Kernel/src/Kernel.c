@@ -671,7 +671,7 @@ int main(void) {
 	//---CONECTANDO CON FILESYSTEM Y MEMORIA
 	printf("\n\n\nEsperando conexiones:\n-FileSystem\n-Memoria\n");
 	conectarConMemoria();
-//	conectarConFS();
+	conectarConFS();
 	///----------------------///
 
 	///---CREO EL LISTENER Y LO PONGO A ESCUCHAR POR PRIMERA VEZ-----///

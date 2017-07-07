@@ -156,3 +156,120 @@
 [INFO] 20:49:52:62 FileSystem/(13127:13127): Se escribio en el archivo: Hola
 [INFO] 20:49:52:62 FileSystem/(13127:13127): El conjunto de bloques nuevos es: [13,14,15]
 [INFO] 20:49:52:62 FileSystem/(13127:13127): Se escribio el archivo. Su tamaño es: 133,y tiene los siguientes BLOQUES: [13,14,15]
+[INFO] 21:12:08:202 FileSystem/(2637:2637): Inicializando FileSystem.....
+
+
+[INFO] 21:12:08:202 FileSystem/(2637:2637): Configuracion Inicial: 
+
+[INFO] 21:12:08:230 FileSystem/(2637:2637): Se cargo el archivo Metadata.bin
+[INFO] 21:12:08:230 FileSystem/(2637:2637): Tamaño de bloque: 64
+[INFO] 21:12:08:230 FileSystem/(2637:2637): Cantidad de bloques: 5192
+[INFO] 21:12:08:427 FileSystem/(2637:2637): Se cargo el bitmap al FileSystem
+[INFO] 21:12:08:431 FileSystem/(2637:2637): Se creo correctamente el bitmap
+[INFO] 21:12:39:773 FileSystem/(2637:2637): Llego un mensaje del kernel
+[INFO] 21:12:52:795 FileSystem/(2637:2637): El kernel quiere validar un archivo
+[INFO] 00:19:14:334 FileSystem/(7499:7499): Inicializando FileSystem.....
+
+
+[INFO] 00:19:14:334 FileSystem/(7499:7499): Configuracion Inicial: 
+
+[INFO] 00:19:14:334 FileSystem/(7499:7499): Se cargo el archivo Metadata.bin
+[INFO] 00:19:14:334 FileSystem/(7499:7499): Tamaño de bloque: 64
+[INFO] 00:19:14:334 FileSystem/(7499:7499): Cantidad de bloques: 5192
+[INFO] 00:19:14:568 FileSystem/(7499:7499): Se cargo el bitmap al FileSystem
+[INFO] 00:19:14:568 FileSystem/(7499:7499): Se creo correctamente el bitmap
+[INFO] 00:19:36:485 FileSystem/(7499:7499): Llego un mensaje del kernel
+[INFO] 00:19:36:485 FileSystem/(7499:7499): El kernel quiere validar un archivo
+[INFO] 00:19:36:485 FileSystem/(7499:7499): La respuesta enviada al kernel es: 0 
+[INFO] 00:19:36:485 FileSystem/(7499:7499): Llego un mensaje del kernel
+[INFO] 00:19:36:485 FileSystem/(7499:7499): El kernel quiere crear un archivo con el siguiente path: 
+[INFO] 00:19:36:485 FileSystem/(7499:7499): Se creo el directorio *(directorios+i)
+[INFO] 00:19:36:485 FileSystem/(7499:7499): Se encontro la posicion 9 en el bitmap libre.
+[INFO] 00:19:36:485 FileSystem/(7499:7499): Se creo el archivo con TAMANO=0
+BLOQUES=[10]
+
+[INFO] 00:19:36:485 FileSystem/(7499:7499): La respuesta enviada al kernel es: %b 
+[INFO] 00:19:41:612 FileSystem/(7499:7499): Llego un mensaje del kernel
+[INFO] 00:25:18:386 FileSystem/(7645:7645): Inicializando FileSystem.....
+
+
+[INFO] 00:25:18:386 FileSystem/(7645:7645): Configuracion Inicial: 
+
+[INFO] 00:25:18:386 FileSystem/(7645:7645): Se cargo el archivo Metadata.bin
+[INFO] 00:25:18:386 FileSystem/(7645:7645): Tamaño de bloque: 64
+[INFO] 00:25:18:386 FileSystem/(7645:7645): Cantidad de bloques: 5192
+[INFO] 00:25:18:751 FileSystem/(7645:7645): Se cargo el bitmap al FileSystem
+[INFO] 00:25:18:751 FileSystem/(7645:7645): Se creo correctamente el bitmap
+[INFO] 00:25:49:63 FileSystem/(7645:7645): Llego un mensaje del kernel
+[INFO] 00:25:49:63 FileSystem/(7645:7645): Se cerro el kernel y se procede a cerrar el socket
+[INFO] 00:26:06:999 FileSystem/(7698:7698): Inicializando FileSystem.....
+
+
+[INFO] 00:26:06:3 FileSystem/(7698:7698): Configuracion Inicial: 
+
+[INFO] 00:26:06:3 FileSystem/(7698:7698): Se cargo el archivo Metadata.bin
+[INFO] 00:26:06:3 FileSystem/(7698:7698): Tamaño de bloque: 64
+[INFO] 00:26:06:3 FileSystem/(7698:7698): Cantidad de bloques: 5192
+[INFO] 00:26:07:190 FileSystem/(7698:7698): Se cargo el bitmap al FileSystem
+[INFO] 00:26:07:190 FileSystem/(7698:7698): Se creo correctamente el bitmap
+[INFO] 00:26:28:533 FileSystem/(7698:7698): Llego un mensaje del kernel
+[INFO] 00:26:28:533 FileSystem/(7698:7698): El kernel quiere validar un archivo
+[INFO] 00:26:28:533 FileSystem/(7698:7698): La respuesta enviada al kernel es: 1 
+[INFO] 00:27:00:461 FileSystem/(7698:7698): Llego un mensaje del kernel
+[INFO] 00:27:00:461 FileSystem/(7698:7698): Se cerro el kernel y se procede a cerrar el socket
+[INFO] 00:27:16:936 FileSystem/(7755:7755): Inicializando FileSystem.....
+
+
+[INFO] 00:27:16:936 FileSystem/(7755:7755): Configuracion Inicial: 
+
+[INFO] 00:27:16:936 FileSystem/(7755:7755): Se cargo el archivo Metadata.bin
+[INFO] 00:27:16:936 FileSystem/(7755:7755): Tamaño de bloque: 64
+[INFO] 00:27:16:936 FileSystem/(7755:7755): Cantidad de bloques: 5192
+[INFO] 00:27:17:100 FileSystem/(7755:7755): Se cargo el bitmap al FileSystem
+[INFO] 00:27:17:100 FileSystem/(7755:7755): Se creo correctamente el bitmap
+[INFO] 00:27:47:310 FileSystem/(7755:7755): Llego un mensaje del kernel
+[INFO] 00:27:47:310 FileSystem/(7755:7755): El kernel quiere validar un archivo
+[INFO] 00:27:47:310 FileSystem/(7755:7755): La respuesta enviada al kernel es: 1 
+[INFO] 00:28:17:576 FileSystem/(7755:7755): Llego un mensaje del kernel
+[INFO] 00:28:17:576 FileSystem/(7755:7755): Se cerro el kernel y se procede a cerrar el socket
+[INFO] 00:31:09:255 FileSystem/(7932:7932): Inicializando FileSystem.....
+
+
+[INFO] 00:31:09:255 FileSystem/(7932:7932): Configuracion Inicial: 
+
+[INFO] 00:31:09:255 FileSystem/(7932:7932): Se cargo el archivo Metadata.bin
+[INFO] 00:31:09:255 FileSystem/(7932:7932): Tamaño de bloque: 64
+[INFO] 00:31:09:255 FileSystem/(7932:7932): Cantidad de bloques: 5192
+[INFO] 00:31:09:435 FileSystem/(7932:7932): Se cargo el bitmap al FileSystem
+[INFO] 00:31:09:435 FileSystem/(7932:7932): Se creo correctamente el bitmap
+[INFO] 00:31:49:156 FileSystem/(7932:7932): Llego un mensaje del kernel
+[INFO] 00:31:49:156 FileSystem/(7932:7932): El kernel quiere validar un archivo
+[INFO] 00:31:49:156 FileSystem/(7932:7932): La respuesta enviada al kernel es: 1 
+[INFO] 00:38:21:436 FileSystem/(8201:8201): Inicializando FileSystem.....
+
+
+[INFO] 00:38:21:694 FileSystem/(8201:8201): Configuracion Inicial: 
+
+[INFO] 00:38:22:942 FileSystem/(8201:8201): Se cargo el archivo Metadata.bin
+[INFO] 00:38:22:942 FileSystem/(8201:8201): Tamaño de bloque: 64
+[INFO] 00:38:22:942 FileSystem/(8201:8201): Cantidad de bloques: 5192
+[INFO] 00:38:23:45 FileSystem/(8201:8201): Se cargo el bitmap al FileSystem
+[INFO] 00:38:23:45 FileSystem/(8201:8201): Se creo correctamente el bitmap
+[INFO] 00:39:17:912 FileSystem/(8201:8201): Llego un mensaje del kernel
+[INFO] 00:39:17:912 FileSystem/(8201:8201): El kernel quiere validar un archivo
+[INFO] 00:39:17:912 FileSystem/(8201:8201): La respuesta enviada al kernel es: 1 
+[INFO] 00:40:31:14 FileSystem/(8275:8275): Inicializando FileSystem.....
+
+
+[INFO] 00:40:31:14 FileSystem/(8275:8275): Configuracion Inicial: 
+
+[INFO] 00:40:31:14 FileSystem/(8275:8275): Se cargo el archivo Metadata.bin
+[INFO] 00:40:31:14 FileSystem/(8275:8275): Tamaño de bloque: 64
+[INFO] 00:40:31:14 FileSystem/(8275:8275): Cantidad de bloques: 5192
+[INFO] 00:40:31:195 FileSystem/(8275:8275): Se cargo el bitmap al FileSystem
+[INFO] 00:40:31:195 FileSystem/(8275:8275): Se creo correctamente el bitmap
+[INFO] 00:41:01:568 FileSystem/(8275:8275): Llego un mensaje del kernel
+[INFO] 00:41:01:568 FileSystem/(8275:8275): El kernel quiere validar un archivo
+[INFO] 00:41:01:568 FileSystem/(8275:8275): La respuesta enviada al kernel es: 1 
+[INFO] 00:41:48:986 FileSystem/(8275:8275): Llego un mensaje del kernel
+[INFO] 00:41:48:986 FileSystem/(8275:8275): Se cerro el kernel y se procede a cerrar el socket
