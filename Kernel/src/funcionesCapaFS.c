@@ -33,7 +33,7 @@ bool archivoExiste(char* path){
 	return auxiliar !=NULL;
 }
 int posicionEnTablaGlobalDeArchivos(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* auxiliar){
-	int i = 0;
+	int i = -1;
 	bool buscarPosicion(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS * elemento){
 					i++;
 					return  !strcmp(elemento->path,auxiliar->path);
@@ -43,7 +43,7 @@ int posicionEnTablaGlobalDeArchivos(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* auxilia
 }
 
 int posicionEnTablaGlobalArchivosDeProceso(ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* auxiliar){
-	int i = 0;
+	int i = -1;
 	bool buscarPosicion(ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* elemento){
 					i++;
 					return  elemento->pid== auxiliar->pid;
@@ -160,3 +160,33 @@ void liberarRecursosArchivo(PCB_DATA* pcb){
 	list_remove_and_destroy_element(tablaGlobalDeArchivosDeProcesos,posicionEnTablaGlobalArchivosDeProceso(entrada_a_eliminar),liberarEntradaTablaGlobalDeArchivosDeProceso);
 }
 
+int crearArchivo(char* path, int pid, char* flags){
+	enviarMensaje(socketFS,creacionDeArchivo,path,strlen(path)+1);
+	void* stream;
+	recibirMensaje(socketFS,&stream);
+	bool seCreoArchivo = *(bool*)stream;
+	if (seCreoArchivo){
+		agregarATablaGlobalDeArchivos(path,1);
+		ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(pid);
+		int fileDescriptor= list_size(aux->tablaProceso);
+		agregarATablaDeProceso(list_size(tablaGlobalDeArchivos)-1,flags,aux->tablaProceso);
+		return fileDescriptor;
+		}
+	else{
+		return 0;
+	}
+}
+
+int agregarNuevaAperturaDeArchivo(char* path, int pid, char* flags){
+	ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(pid);
+	ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* archivo= encontrarElDeIgualPath(path);
+	if (archivo==NULL){
+		agregarATablaGlobalDeArchivos(path,1);
+		archivo = encontrarElDeIgualPath(path);
+	}else{
+		archivo->cantidad_aperturas++;
+	}
+	int fileDescriptor= list_size(aux->tablaProceso);
+	agregarATablaDeProceso(posicionEnTablaGlobalDeArchivos(archivo),flags,aux->tablaProceso);
+	return fileDescriptor;
+}

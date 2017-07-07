@@ -248,7 +248,6 @@ void *rutinaCPU(void * arg)
 			}break;
 
 		case abrirArchivo: {// No se que tan bien funcionan los deserializar y serializa
-			//Hay que sincronizar...Ayudanos Maiori!
 					t_crearArchivo estructura = deserializarCrearArchivo(stream);
 					enviarMensaje(socketFS,validacionDerArchivo,estructura.path,strlen(estructura.path)+1);
 					PCB_DATA* pcbaux;
@@ -258,61 +257,40 @@ void *rutinaCPU(void * arg)
 					recibirMensaje(socketFS,&stream2);
 					bool existeArchivo = *(bool*) stream2;
 					 if(existeArchivo){
-						ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(estructura.pid);
-						ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* archivo= encontrarElDeIgualPath(estructura.path);
-						if (archivo==NULL){
-							agregarATablaGlobalDeArchivos(estructura.path,1);
-							archivo = encontrarElDeIgualPath(estructura.path);
-						}else{
-							archivo->cantidad_aperturas++;
-						}
-						int fileDescriptor= list_size(aux->tablaProceso);
-						agregarATablaDeProceso(posicionEnTablaGlobalDeArchivos(archivo),estructura.flags,aux->tablaProceso);
+						int fileDescriptor = agregarNuevaAperturaDeArchivo(estructura.path,estructura.pid,estructura.flags);
 						enviarMensaje(socketCPU,envioDelFileDescriptor,&fileDescriptor,sizeof(int));
 						}else if (string_contains(estructura.flags,"c")){
-								enviarMensaje(socketFS,creacionDeArchivo,estructura.path,strlen(estructura.path)+1);
-								void* stream3;
-								recibirMensaje(socketFS,&stream3);
-								bool seCreoArchivo = *(bool*)stream3;
-								if (seCreoArchivo){
-									agregarATablaGlobalDeArchivos(estructura.path,1);
-									ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(estructura.pid);
-									int fileDescriptor= list_size(aux->tablaProceso);
-									agregarATablaDeProceso(list_size(tablaGlobalDeArchivos)-1,estructura.flags,aux->tablaProceso);
-									enviarMensaje(socketCPU,envioDelFileDescriptor,&fileDescriptor,sizeof(int));
-											}
-								else{
-									finalizarPid(pcbaux,-2);
-									enviarMensaje(socketCPU,respuestaBooleanaKernel,&rtaCPU,sizeof(int));
-								}
-									 }
-							else{
-							finalizarPid(pcbaux,-2);
-							enviarMensaje(socketCPU,respuestaBooleanaKernel,&rtaCPU,sizeof(int));
-						}
+							int fileDescriptor = crearArchivo(estructura.path,estructura.pid,estructura.flags);
+							if (fileDescriptor){
+								enviarMensaje(socketCPU,envioDelFileDescriptor,&fileDescriptor,sizeof(int));
+							}else{
+								finalizarPid(pcbaux,-2);
+								enviarMensaje(socketCPU,respuestaBooleanaKernel,&rtaCPU,sizeof(int));
+							}
+						}else{
+						finalizarPid(pcbaux,-2);
+						enviarMensaje(socketCPU,respuestaBooleanaKernel,&rtaCPU,sizeof(int));
+					}
 			 }
 			break;
 
-		case cerrarArchivo:{
+			break;
 
+		case cerrarArchivo:{
 			t_archivo estructura;
 			estructura = *((t_archivo*)stream);
 			PCB_DATA* pcbaux;
 			pcbaux = buscarPCB(estructura.pid);
 			int rtaCPU = 0;
-
 			ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(estructura.pid);
-
 			ENTRADA_DE_TABLA_DE_PROCESO* entrada_de_tabla_proceso= list_get(aux->tablaProceso,estructura.fileDescriptor);
 
 			if (entrada_de_tabla_proceso != NULL){
 				ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_de_archivo= list_get(tablaGlobalDeArchivos,entrada_de_tabla_proceso->globalFD);
 				if (entrada_de_archivo !=NULL ){
-				entrada_de_archivo->cantidad_aperturas--;
-				
-				if(entrada_de_archivo->cantidad_aperturas==0){
-					
-					list_remove_and_destroy_element(tablaGlobalDeArchivos,entrada_de_tabla_proceso->globalFD,liberarEntradaTablaGlobalDeArchivos);
+					entrada_de_archivo->cantidad_aperturas--;
+					if(entrada_de_archivo->cantidad_aperturas==0){
+						list_remove_and_destroy_element(tablaGlobalDeArchivos,entrada_de_tabla_proceso->globalFD,liberarEntradaTablaGlobalDeArchivos);
 				}
 				bool sonDeIgualPid(ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO * elementos){
 								return  elementos->pid == estructura.pid;
@@ -346,12 +324,10 @@ void *rutinaCPU(void * arg)
 					if(entrada_de_archivo!=NULL){
 						if (string_contains(entrada_a_evaluar->flags,"r")){
 
-							int tamanioDelPedido =strlen(entrada_de_archivo->path)+1 ;
-
+							int tamanioDelPedido = strlen(entrada_de_archivo->path)+1 ;
 							void* pedidoDeLectura = serializarPedidoFs(tamanioDelPedido,estructura.offset,entrada_de_archivo->path);//Patos, basicamente
 							enviarMensaje(socketFS,obtenerDatosDeArchivo,(void *) pedidoDeLectura,tamanioDelPedido);
 							void* contenido;
-
 							if(recibirMensaje(socketFS,&contenido) == respuestaConContenidoDeFs){
 								enviarMensaje(socketCPU,respuestaLectura, contenido,tamanioDelPedido);
 								entrada_a_evaluar->offset += estructura.offset;
@@ -389,9 +365,8 @@ void *rutinaCPU(void * arg)
 				if(entrada_de_tabla_proceso != NULL){
 					ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_de_archivo= list_get(tablaGlobalDeArchivos,entrada_de_tabla_proceso->globalFD);
 					if (entrada_de_archivo != NULL){
-
-					entrada_de_tabla_proceso->offset += estructura.posicion;
-					rtaCPU = 1;
+						entrada_de_tabla_proceso->offset += estructura.posicion;
+						rtaCPU = 1;
 
 					}else{
 					finalizarPid(pcbaux,-2);

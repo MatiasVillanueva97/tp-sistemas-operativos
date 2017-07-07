@@ -51,7 +51,9 @@ void liberarEntradaTablaDeArchivosDeProceso(ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO *
 void liberarRecursosArchivo(PCB_DATA* pcb);
 
 
+int crearArchivo(char* path, int pid, char* flags);
 
+int agregarNuevaAperturaDeArchivo(char* path, int pid, char* flags);
 
 
 

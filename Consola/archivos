@@ -1,5 +1,5 @@
 begin
 variables a
+abrir a LC /p/so
 cerrar a
-alocar a 100
 end
