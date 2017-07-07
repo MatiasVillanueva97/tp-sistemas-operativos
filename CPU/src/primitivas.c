@@ -453,8 +453,6 @@ t_descriptor_archivo AnSISOP_abrir(t_direccion_archivo direccion,t_banderas flag
 			puts("Error en el protocolo de comunicacion");
 			terminoPrograma = true;
 			pcb->exitCode = -42;
-			bloqueado = true;
-			pcb->exitCode = -42;
 		}
 	}
 
@@ -500,10 +498,8 @@ void AnSISOP_cerrar(t_descriptor_archivo descriptor_archivo) {
 			puts("Archivo cerrado con exito");
 		}
 	} else {
-		puts("Error en el protocolo de comunicacion");
-			terminoPrograma = true;
-			pcb->exitCode = -42;
 		free(stream);
+		puts("Error en el protocolo de comunicacion");
 		terminoPrograma = true;
 		pcb->exitCode = -42;
 	}
@@ -534,10 +530,8 @@ void AnSISOP_moverCursor(t_descriptor_archivo descriptor_archivo,t_valor_variabl
 			puts("Cursor movido con exito");
 		}
 	} else {
-		puts("Error en el protocolo de comunicacion");
-			terminoPrograma = true;
-			pcb->exitCode = -42;
 		free(stream);
+		puts("Error en el protocolo de comunicacion");
 		terminoPrograma = true;
 		pcb->exitCode = -42;
 	}
@@ -573,8 +567,6 @@ void AnSISOP_escribir(t_descriptor_archivo descriptor_archivo,void* informacion,
 		}
 	}else{
 		puts("Error en el protocolo de comunicacion");
-			terminoPrograma = true;
-			pcb->exitCode = -42;
 		terminoPrograma = true;
 		pcb->exitCode = -42;
 	}
@@ -582,8 +574,7 @@ void AnSISOP_escribir(t_descriptor_archivo descriptor_archivo,void* informacion,
 
 }
 
-void AnSISOP_leer(t_descriptor_archivo descriptor_archivo,
-		t_puntero informacion, t_valor_variable tamanio) {
+void AnSISOP_leer(t_descriptor_archivo descriptor_archivo,t_puntero informacion, t_valor_variable tamanio) {
 	puts("AnSISOP_leer");
 
 	int tresEnteros[] = { pcb->pid, descriptor_archivo, tamanio };
@@ -600,12 +591,12 @@ void AnSISOP_leer(t_descriptor_archivo descriptor_archivo,
 		case respuestaLectura: {
 			/*Si salio todo bien*/
 			puts("Se leyo con exito el archivo");
+			//Aca hacer algo, pero sinceramente nose que espera el parser que haga por el
+
 
 		}break;
 		default: {
 			puts("Error en el protocolo de comunicacion");
-			terminoPrograma = true;
-			pcb->exitCode = -42;
 			terminoPrograma = true;
 			pcb->exitCode = -42;
 		}
