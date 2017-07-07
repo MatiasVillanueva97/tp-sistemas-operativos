@@ -378,7 +378,9 @@ t_puntero AnSISOP_reservar(t_valor_variable espacio) {
 		pcb->exitCode = -8;
 	}break;
 	default:
-		puts("error en la accion maquinola");
+		puts("Error en el protocolo de comunicacion");
+			terminoPrograma = true;
+			pcb->exitCode = -42;
 	}
 
 	return offset;
@@ -395,16 +397,22 @@ void AnSISOP_liberar(t_puntero puntero) {
 
 	if (recibirMensaje(socketKernel, &stream) != enviarSiSePudoLiberar) {
 		free(stream);
-		puts("error en la accion maquinola");
+		puts("Error en el protocolo de comunicacion");
+			terminoPrograma = true;
+			pcb->exitCode = -42;
 	} else {
 		int entero = leerInt(stream);
 		if (entero == 0) {
 			puts("algo salio muy mal");
 			bloqueado = true;
 			pcb->exitCode = -42;
+		}else{
+			puts("Se libero correctamente la variable alocada");
 		}
 
 	}
+
+
 
 }
 
@@ -442,7 +450,9 @@ t_descriptor_archivo AnSISOP_abrir(t_direccion_archivo direccion,t_banderas flag
 			bloqueado = true;
 		}break;
 		default: {
-			puts("error en la accion maquinola");
+			puts("Error en el protocolo de comunicacion");
+			terminoPrograma = true;
+			pcb->exitCode = -42;
 			bloqueado = true;
 			pcb->exitCode = -42;
 		}
@@ -490,7 +500,9 @@ void AnSISOP_cerrar(t_descriptor_archivo descriptor_archivo) {
 			puts("Archivo cerrado con exito");
 		}
 	} else {
-		puts("error en la accion maquinola");
+		puts("Error en el protocolo de comunicacion");
+			terminoPrograma = true;
+			pcb->exitCode = -42;
 		free(stream);
 		terminoPrograma = true;
 		pcb->exitCode = -42;
@@ -522,7 +534,9 @@ void AnSISOP_moverCursor(t_descriptor_archivo descriptor_archivo,t_valor_variabl
 			puts("Cursor movido con exito");
 		}
 	} else {
-		puts("error en la accion maquinola");
+		puts("Error en el protocolo de comunicacion");
+			terminoPrograma = true;
+			pcb->exitCode = -42;
 		free(stream);
 		terminoPrograma = true;
 		pcb->exitCode = -42;
@@ -536,7 +550,7 @@ void AnSISOP_escribir(t_descriptor_archivo descriptor_archivo,void* informacion,
 			.descriptorArchivo = descriptor_archivo,
 			.mensaje =(char*) informacion
 	};
-	printf("%s \n", mensajeDeProceso.mensaje);
+	printf("Se escribira lo siguinte: %s \n", mensajeDeProceso.mensaje);
 
 	void* mensajeSerializado = serializarMensajeAEscribir(mensajeDeProceso,tamanio);
 
@@ -544,19 +558,23 @@ void AnSISOP_escribir(t_descriptor_archivo descriptor_archivo,void* informacion,
 
 	free(mensajeSerializado);
 
+	free(informacion);
+
 	void* stream;
 
 	if(recibirMensaje(socketKernel, &stream) == respuestaBooleanaKernel) {
-		int rtaKernel = *(int*)stream;
-		if(rtaKernel == 0){
+		bool rtaKernel = *(bool*)stream;
+		if(rtaKernel){
+			puts("La escritura fue exitosa");
+		}else{
 			puts("Quiere escribir un archivo que nunca abrio");
 			terminoPrograma = true;
 			pcb->exitCode = -13;
-		}else{
-			puts("La escritura salio todo bien");
 		}
 	}else{
-		puts("error en la accion maquinola");
+		puts("Error en el protocolo de comunicacion");
+			terminoPrograma = true;
+			pcb->exitCode = -42;
 		terminoPrograma = true;
 		pcb->exitCode = -42;
 	}
@@ -585,7 +603,9 @@ void AnSISOP_leer(t_descriptor_archivo descriptor_archivo,
 
 		}break;
 		default: {
-			puts("error en la accion maquinola");
+			puts("Error en el protocolo de comunicacion");
+			terminoPrograma = true;
+			pcb->exitCode = -42;
 			terminoPrograma = true;
 			pcb->exitCode = -42;
 		}
@@ -617,7 +637,9 @@ t_valor_variable pedirValorAMemoria(t_direccion direccion) {
 			booleano = stream;
 		}break;
 		default: {
-			perror("Error en la accion maquinola");
+			puts("Error en el protocolo de comunicacion");
+			terminoPrograma = true;
+			pcb->exitCode = -42;
 		}break;
 	}
 	if (*booleano) {
@@ -629,7 +651,9 @@ t_valor_variable pedirValorAMemoria(t_direccion direccion) {
 				valorVariable = *valor;
 			}break;
 			default: {
-				perror("Error en la accion maquinola");
+				puts("Error en el protocolo de comunicacion");
+			terminoPrograma = true;
+			pcb->exitCode = -42;
 			}break;
 		}
 	} else {
@@ -663,7 +687,9 @@ void escribirValorEnMemoria(t_direccion direccion, t_valor_variable valor) {
 			break;
 		}
 		default: {
-			perror("Error en la accion maquinola");
+			puts("Error en el protocolo de comunicacion");
+			terminoPrograma = true;
+			pcb->exitCode = -42;
 		}
 	}
 
@@ -703,14 +729,14 @@ t_direccion calcularNuevaDireccion() {
 		direccion.offset = 0;
 	}
 
-	printf("Calcule una nueva direccion jaja saludos, esta es: %d %d %d \n",direccion.page, direccion.offset, direccion.size);
+	//printf("Calcule una nueva direccion jaja saludos, esta es: %d %d %d \n",direccion.page, direccion.offset, direccion.size);
 
 	return direccion;
 }
 
 t_puntero calcularPuntero(t_direccion direccion) {
 	t_puntero puntero = direccion.page * datosIniciales->size_pag+ direccion.offset;
-	printf("En base a la direccion %d %d %d calculo la posicion %d \n",direccion.page, direccion.offset, direccion.size, puntero);
+	//printf("En base a la direccion %d %d %d calculo la posicion %d \n",direccion.page, direccion.offset, direccion.size, puntero);
 	return puntero;
 }
 
@@ -726,7 +752,7 @@ t_direccion calcularDireccion(t_puntero puntero) {
 	}
 	direccion.size = 4;
 
-	printf("En base a la posicion %d calculo la direccion %d %d %d \n", puntero,direccion.page, direccion.offset, direccion.size);
+	//printf("En base a la posicion %d calculo la direccion %d %d %d \n", puntero,direccion.page, direccion.offset, direccion.size);
 
 	return direccion;
 }

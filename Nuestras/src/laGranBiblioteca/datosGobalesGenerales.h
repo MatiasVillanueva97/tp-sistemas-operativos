@@ -136,6 +136,8 @@ enum tipos_de_Acciones{
 		liberarMemoria = 117,
 		enviarPCBaBloqueado = 118,
 
+		dameQuantumSleep = 119,
+
 
 	//***Todas las acciones del Memoria
 		enviarTamanoPaginas = 200,

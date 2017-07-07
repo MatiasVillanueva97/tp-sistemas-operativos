@@ -25,4 +25,5 @@ bool terminoPrograma;
 bool bloqueado;
 bool signal_SIGUSR1;
 t_datosIniciales* datosIniciales;
+int quantumSleep;
 #endif //ESTACOSA

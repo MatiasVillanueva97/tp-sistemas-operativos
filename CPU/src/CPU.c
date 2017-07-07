@@ -34,6 +34,7 @@ void sigusr1_handler(int signal);
 void pedidoValido(int*,void*,int);
 char* pedirInstruccion();
 void pedidoPCB();
+void confirmarQuantumSleep();
 
 
 int main(void)
@@ -69,6 +70,7 @@ int main(void)
 	signal_SIGUSR1 = false;
 
 	signal(SIGUSR1, sigusr1_handler);
+	signal(SIGINT, sigusr1_handler);
 
 	printf("Inicializando CPU.....\n\n");
 
@@ -104,13 +106,15 @@ int main(void)
 
  		pedidoPCB();
 
+ 		confirmarQuantumSleep();
+
 		while(!terminoPrograma && quantumRestante != 0 && !bloqueado){
 
 			char* instruccion = pedirInstruccion();
 
 			//Si se recibio una linea de codigo se analiza
 			if(instruccion != NULL){
-				printf("\n%s\n\n",instruccion);
+				printf("\nInstruccion leida: %s\n\n",instruccion);
 
 				//Magia del Parser para llamar a las primitivas
 				analizadorLinea(instruccion,&AnSISOP_funciones,&AnSISOP_funciones_kernel);
@@ -119,11 +123,12 @@ int main(void)
 
 			free(instruccion);
 			quantumRestante--;
+			usleep(quantumSleep * 1000);
 		}
 
 		//ACA AVISARLE A KERNEL QUE TERMINE QUE CON ESTE PROCESO
 		if(terminoPrograma){
-			printf("Envie el PCB al Kernel porque termine toda su ejecucion\n");
+			printf("Envie el PCB al Kernel\n");
 			void* pcbSerializado = serializarPCB(pcb);
 			enviarMensaje(socketKernel,enviarPCBaTerminado,pcbSerializado,tamanoPCB(pcb));
 			free(pcbSerializado);
@@ -194,14 +199,21 @@ void pedidoValido(int* booleano,void* stream, int accion){
 			memcpy(booleano,stream,sizeof(int));
 		}break;
 		default:{
-			perror("Error en la accion maquinola");
+			puts("Error en el protocolo de comunicacion");
 		}break;
 	}
 }
 
 void sigusr1_handler(int signal) {
 	signal_SIGUSR1 = true;
-	puts("Se recibio una SIGUSR1, la CPU se desconectara luego de terminada la ejecucion");
+
+	printf("Se recibio una ");
+	if(signal == SIGUSR1 ){
+		printf("SIGUSR1");
+	}else{
+		printf("SIGINT");
+	}
+	printf(", la CPU se desconectara luego de terminada la rafaga\n");
 	return;
 }
 
@@ -209,9 +221,10 @@ void pedidoPCB(){
 	enviarMensaje(socketKernel,pedirPCB,&(datosIniciales->quantum),sizeof(int));
 	void* pcbSerializado;
 	puts("esperando pcb\n");
-	if(recibirMensaje(socketKernel,&pcbSerializado) != envioPCB) perror("Error en la accion maquinola");
+	if(recibirMensaje(socketKernel,&pcbSerializado) != envioPCB) puts("Error en el protocolo de comunicacion");
 	pcb=deserializarPCB(pcbSerializado);
 	free(pcbSerializado);
+	puts("PCB recibido");
 	//En el caso que esta sea la primera vez que el proceso entra en una CPU su indice de stack estara NULL porque no habia entradas anteriores, entonces se inicializa la primera entrada
 	if(pcb->indiceStack == NULL){
 		pcb->indiceStack = realloc(pcb->indiceStack,sizeof(t_entrada));
@@ -219,6 +232,21 @@ void pedidoPCB(){
 		pcb->indiceStack->variables = list_create();
 		pcb->cantidadDeEntradas++;
 	}
+}
+
+void confirmarQuantumSleep(){
+	enviarMensaje(socketKernel,dameQuantumSleep,&(quantumSleep),sizeof(int));
+
+	void* stream;
+
+	if(recibirMensaje(socketKernel,&stream) == respuestaBooleanaKernel){
+		quantumSleep = *(int*)stream;
+		free(stream);
+	}else{
+		puts("Error en el protocolo de comunicacion");
+		//algo mas?
+	}
+
 }
 
 void recepcionCodigo(t_pedidoMemoria pedido,char* instruccion,int tamano){

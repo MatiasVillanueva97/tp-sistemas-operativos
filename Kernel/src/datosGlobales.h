@@ -134,6 +134,7 @@ typedef struct{
 	int size_pag;
 	int quantum;
 	int size_stack;
+	int quantum_sleep;
 }__attribute__((packed)) DATOS_PARA_CPU;
 
 

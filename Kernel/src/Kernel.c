@@ -663,6 +663,7 @@ int main(void) {
 		cargarVariablesGlobalesDesdeConfig();
 
 		quantumRR = (strcmp("FIFO",getConfigString("ALGORITMO")) == 0)? -1 : getConfigInt("QUANTUM");
+		quantumSleep = getConfigInt("QUANTUM_SLEEP");
 
 	///-----------------------------////
 

@@ -149,6 +149,12 @@ void *rutinaCPU(void * arg)
 
 			}break;
 
+			case dameQuantumSleep:{
+				sem_wait(&mutex_Quantum_Sleep);
+					enviarMensaje(socketCPU,respuestaBooleanaKernel,&quantumSleep,sizeof(int));
+				sem_post(&mutex_Quantum_Sleep);
+			}break;
+
 			//TE MANDO UN PCB QUE YA TERMINE DE EJECUTAR POR COMPLETO, ARREGLATE LAS COSAS DE MOVER DE UNA COLA A LA OTRA Y ESO
 			case enviarPCBaTerminado:{
 				printf("[Rutina rutinaCPU] - Entramos al Caso de que CPU termino la ejecucion de un proceso: accion- %d!\n", enviarPCBaTerminado);
@@ -202,6 +208,11 @@ void *rutinaCPU(void * arg)
 					int socketConsola = consola_buscarSocketConsola(msj.pid);
 
 					enviarMensaje(socketConsola,imprimirPorPantalla,stream2,tamanoDelBuffer);
+
+					respuestaACPU = true;
+
+					enviarMensaje(socketCPU,respuestaBooleanaKernel,&respuestaACPU,sizeof(bool));
+
 				}
 				else{
 					ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(msj.pid);
@@ -221,17 +232,18 @@ void *rutinaCPU(void * arg)
 								bool respuestaFS = *(bool*) contenido;
 								respuestaACPU = respuestaFS;
 								if(!respuestaFS){
-									finalizarPid(pcbaux,-1);}
+									finalizarPid(pcbaux,-1);
+								}
 							}else{
 								finalizarPid(pcbaux,-3);
-						}
+							}
 						}else{
 							finalizarPid(pcbaux,-2);
 						}
 					}else{
 						finalizarPid(pcbaux,-2);
-			}
-			enviarMensaje(socketCPU,respuestaBooleanaKernel,respuestaACPU,sizeof(bool));
+					}
+					enviarMensaje(socketCPU,respuestaBooleanaKernel,&respuestaACPU,sizeof(bool));
 				}
 			}break;
 
