@@ -464,11 +464,12 @@ void tramitarPeticionesDelKernel(int socketKernel){
 						break;
 					}
 					case obtenerDatosDeArchivo:{
+
 						t_pedidoFS pedido = deseralizarPedidoFs(stream);
 						log_info(logFS,"El kernel quiere obtener %d bytes desde %d, de la path: %s",pedido.size,pedido.offset,pedido.path);
 						void *contenido= obtenerDatos(pedido.path,pedido.offset,pedido.size);
 						if(contenido != NULL){
-							enviarMensaje(socketKernel,respuestaConContenidoDeFs,&contenido,pedido.size);
+							enviarMensaje(socketKernel,respuestaConContenidoDeFs,contenido,pedido.size);
 							log_info(logFS,"Se encontraron los datos y se envia al kernel: %s",(char*) contenido);
 						}
 						else{

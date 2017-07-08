@@ -28,6 +28,8 @@ char* generarStringFlags(t_banderas flags);
 
 void* serializarArchivo(t_crearArchivo archivo);
 
+void escribirEnLaVariable(t_puntero informacion, void* stream, int tamanio);
+
 t_puntero AnSISOP_definirVariable(t_nombre_variable identificador_variable) {
 	puts("AnSISOP_definirVariable");
 	t_direccion direccion;
@@ -544,15 +546,13 @@ void AnSISOP_escribir(t_descriptor_archivo descriptor_archivo,void* informacion,
 			.descriptorArchivo = descriptor_archivo,
 			.mensaje =(char*) informacion
 	};
-	printf("Se escribira lo siguinte: %s \n", mensajeDeProceso.mensaje);
+
 
 	void* mensajeSerializado = serializarMensajeAEscribir(mensajeDeProceso,tamanio);
 
 	enviarMensaje(socketKernel, mensajeParaEscribir, mensajeSerializado,tamanoMensajeAEscribir(tamanio));
 
 	free(mensajeSerializado);
-
-	free(informacion);
 
 	void* stream;
 
@@ -589,8 +589,9 @@ void AnSISOP_leer(t_descriptor_archivo descriptor_archivo,t_puntero informacion,
 			terminoPrograma = true;
 		}break;
 		case respuestaLectura: {
-			/*Si salio todo bien*/
+
 			puts("Se leyo con exito el archivo");
+			escribirEnLaVariable(informacion,stream,tamanio);
 			//Aca hacer algo, pero sinceramente nose que espera el parser que haga por el
 
 
@@ -890,4 +891,47 @@ void* serializarArchivo(t_crearArchivo archivo) {
 
 	return stream;
 }
+
+void escribirEnLaVariable(t_puntero puntero,void* cosaDelFS, int tamanio){
+
+ t_direccion direccion = calcularDireccion(puntero);
+ direccion.size = tamanio;
+ //Se crea el void* que contiene el pid, la direccion y el valor a escribir, que son los datos necesarios para que la memoria escriba el valor
+ void* aEnviar = malloc(sizeof(int)*4 + direccion.size);
+
+ memcpy(aEnviar,&(pcb->pid),sizeof(int));
+ memcpy(aEnviar + sizeof(int),&(direccion.page),sizeof(int));
+ memcpy(aEnviar + sizeof(int)*2,&(direccion.offset),sizeof(int));
+ memcpy(aEnviar + sizeof(int)*3,&(direccion.size),sizeof(int));
+ memcpy(aEnviar + sizeof(int)*4,cosaDelFS,direccion.size);
+
+ //se pide a memoria que escriba el valor enviado en la posicion de memoria tambien enviada
+ enviarMensaje(socketMemoria, almacenarBytes, aEnviar,sizeof(int) * 4 + direccion.size);
+
+ free(aEnviar);
+
+ //Devuelve un OK o mata con un Stack Overflow
+ void* stream;
+ int* respuesta;
+ int accion = recibirMensaje(socketMemoria, &stream);
+ switch (accion) {
+  case RespuestaBooleanaDeMemoria: {
+   respuesta = stream;
+   break;
+  }
+  default: {
+   puts("Error en el protocolo de comunicacion");
+   terminoPrograma = true;
+   pcb->exitCode = -42;
+  }
+ }
+
+ if (*respuesta != 1) {
+  terminoPrograma = true;
+  pcb->exitCode = -5;
+ }
+
+ free(stream);
+}
+
 

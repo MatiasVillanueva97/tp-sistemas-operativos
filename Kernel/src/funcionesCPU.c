@@ -225,7 +225,7 @@ void *rutinaCPU(void * arg)
 							if (string_contains(entrada_de_tabla_proceso->flags,"w")){
 								int offset = entrada_de_tabla_proceso->offset;//DEBE CAMBIAR.QUE ES UN CURSOR?
 								void* pedidoEscritura = serializarEscribirMemoria(tamanoDelBuffer,offset,entrada_de_archivo->path, msj.mensaje);
-								enviarMensaje(socketFS,guardarDatosDeArchivo, pedidoEscritura,tamanoDelBuffer);
+								enviarMensaje(socketFS,guardarDatosDeArchivo, pedidoEscritura,4+strlen(entrada_de_archivo->path)+tamanoDelBuffer+sizeof(int)*2);
 								//enviarPaquete(socketFS,2,2,offset,tamanoDelBuffer,entrada_de_archivo->path,msj.mensaje);
 								void* contenido;
 								recibirMensaje(socketFS,&contenido);
@@ -326,7 +326,7 @@ void *rutinaCPU(void * arg)
 
 							int tamanioDelPedido = estructura.size ;
 							void* pedidoDeLectura = serializarPedidoFs(tamanioDelPedido,entrada_a_evaluar->offset,entrada_de_archivo->path);//Patos, basicamente
-							enviarMensaje(socketFS,obtenerDatosDeArchivo,(void *) pedidoDeLectura,tamanioDelPedido);
+							enviarMensaje(socketFS,obtenerDatosDeArchivo,pedidoDeLectura,4+strlen(entrada_de_archivo->path)+sizeof(int)*2+1);
 							void* contenido;
 							if(recibirMensaje(socketFS,&contenido) == respuestaConContenidoDeFs){
 								enviarMensaje(socketCPU,respuestaLectura, contenido,tamanioDelPedido);

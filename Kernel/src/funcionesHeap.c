@@ -38,7 +38,7 @@ int pedirPagina(int pid,int tamano){
 				log_error(logKernel,"No se pudo reservar la pagina");
 				return 0;
 			}
-			log_info(logKernel,"Se recibe %d como respuesta,(Cantidad de paginas)",pagina );
+			//log_info(logKernel,"Se recibe %d como respuesta,(Cantidad de paginas)",pagina );
 			t_escrituraMemoria *w = malloc(sizeof(t_escrituraMemoria));
 			void* cosaAMandar = malloc(tamano + sizeof(HeapMetadata)*2);
 			HeapMetadata* heap1 = malloc(sizeof(HeapMetadata));

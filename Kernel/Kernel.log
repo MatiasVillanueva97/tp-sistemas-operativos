@@ -4258,3 +4258,63 @@
 [INFO] 21:58:42:538 Kernel/(3300:3321): Se recorrio todas las paginas de heap del proceso y no se pudo guardar. Por lo tanto, se pide una pagina nueva.
 [INFO] 21:58:42:539 Kernel/(3300:3321): Se pide a memoria que se reserve 1 paginas para el pid 1
 [ERROR] 21:58:42:539 Kernel/(3300:3321): No se pudo reservar la pagina
+[INFO] 18:55:26:621 Kernel/(5378:5396): No tiene paginas de heap. Se procede a pedir una pagina.
+[INFO] 18:55:26:652 Kernel/(5378:5396): Se pide a memoria que se reserve 1 paginas para el pid 1
+[INFO] 18:55:26:652 Kernel/(5378:5396): Se recibe 3 como respuesta,(Cantidad de paginas)
+[INFO] 18:55:26:652 Kernel/(5378:5396): Se reservan 200 bytes  en la pagina pedida.
+[INFO] 18:55:26:652 Kernel/(5378:5396): Se escribe el heapMetadata que informa cuanto tamaño queda (el ultimo)
+[INFO] 18:55:26:652 Kernel/(5378:5396): Se envia a memoria el siguiente pedido de escritura: Pagina-> 3, Pid->1, tamano->210,->offset->0
+[INFO] 18:55:26:652 Kernel/(5378:5396): Se almaceno correctamente los bytes en memoria.
+[INFO] 18:55:26:652 Kernel/(5378:5396): Se añade la pagina a la tabla de heap, y se retorna el offset de la variable pedida.
+[INFO] 18:59:46:403 Kernel/(5378:5391): Se removieron todos las paginas
+[INFO] 22:42:46:172 Kernel/(2639:2662): No tiene paginas de heap. Se procede a pedir una pagina.
+[INFO] 22:42:46:220 Kernel/(2639:2662): Se pide a memoria que se reserve 1 paginas para el pid 1
+[INFO] 22:42:46:220 Kernel/(2639:2662): Se recibe 3 como respuesta,(Cantidad de paginas)
+[INFO] 22:42:46:220 Kernel/(2639:2662): Se reservan 200 bytes  en la pagina pedida.
+[INFO] 22:42:46:220 Kernel/(2639:2662): Se escribe el heapMetadata que informa cuanto tamaño queda (el ultimo)
+[INFO] 22:42:46:220 Kernel/(2639:2662): Se envia a memoria el siguiente pedido de escritura: Pagina-> 3, Pid->1, tamano->210,->offset->0
+[INFO] 22:42:46:220 Kernel/(2639:2662): Se almaceno correctamente los bytes en memoria.
+[INFO] 22:42:46:220 Kernel/(2639:2662): Se añade la pagina a la tabla de heap, y se retorna el offset de la variable pedida.
+[INFO] 22:44:00:389 Kernel/(2703:2724): No tiene paginas de heap. Se procede a pedir una pagina.
+[INFO] 22:44:00:390 Kernel/(2703:2724): Se pide a memoria que se reserve 1 paginas para el pid 1
+[INFO] 22:44:00:390 Kernel/(2703:2724): Se recibe 3 como respuesta,(Cantidad de paginas)
+[INFO] 22:44:00:390 Kernel/(2703:2724): Se reservan 200 bytes  en la pagina pedida.
+[INFO] 22:44:00:390 Kernel/(2703:2724): Se escribe el heapMetadata que informa cuanto tamaño queda (el ultimo)
+[INFO] 22:44:00:390 Kernel/(2703:2724): Se envia a memoria el siguiente pedido de escritura: Pagina-> 3, Pid->1, tamano->210,->offset->0
+[INFO] 22:44:00:391 Kernel/(2703:2724): Se almaceno correctamente los bytes en memoria.
+[INFO] 22:44:00:391 Kernel/(2703:2724): Se añade la pagina a la tabla de heap, y se retorna el offset de la variable pedida.
+[INFO] 22:48:54:599 Kernel/(2703:2714): Se removieron todos las paginas
+[INFO] 22:49:56:904 Kernel/(2905:2930): No tiene paginas de heap. Se procede a pedir una pagina.
+[INFO] 22:49:56:910 Kernel/(2905:2930): Se pide a memoria que se reserve 1 paginas para el pid 1
+[INFO] 22:49:56:924 Kernel/(2905:2930): Se recibe 3 como respuesta,(Cantidad de paginas)
+[INFO] 22:49:56:935 Kernel/(2905:2930): Se reservan 200 bytes  en la pagina pedida.
+[INFO] 22:49:56:935 Kernel/(2905:2930): Se escribe el heapMetadata que informa cuanto tamaño queda (el ultimo)
+[INFO] 22:49:56:935 Kernel/(2905:2930): Se envia a memoria el siguiente pedido de escritura: Pagina-> 3, Pid->1, tamano->210,->offset->0
+[INFO] 22:49:56:936 Kernel/(2905:2930): Se almaceno correctamente los bytes en memoria.
+[INFO] 22:49:56:936 Kernel/(2905:2930): Se añade la pagina a la tabla de heap, y se retorna el offset de la variable pedida.
+[INFO] 22:54:55:233 Kernel/(2905:2921): Se removieron todos las paginas
+[INFO] 22:55:25:797 Kernel/(2905:2930): No tiene paginas de heap. Se procede a pedir una pagina.
+[INFO] 22:55:25:797 Kernel/(2905:2930): Se pide a memoria que se reserve 1 paginas para el pid 2
+[INFO] 22:55:25:797 Kernel/(2905:2930): Se recibe 3 como respuesta,(Cantidad de paginas)
+[INFO] 22:55:25:797 Kernel/(2905:2930): Se reservan 200 bytes  en la pagina pedida.
+[INFO] 22:55:25:797 Kernel/(2905:2930): Se escribe el heapMetadata que informa cuanto tamaño queda (el ultimo)
+[INFO] 22:55:25:797 Kernel/(2905:2930): Se envia a memoria el siguiente pedido de escritura: Pagina-> 3, Pid->2, tamano->210,->offset->0
+[INFO] 22:55:25:799 Kernel/(2905:2930): Se almaceno correctamente los bytes en memoria.
+[INFO] 22:55:25:799 Kernel/(2905:2930): Se añade la pagina a la tabla de heap, y se retorna el offset de la variable pedida.
+[INFO] 22:57:18:711 Kernel/(2905:2921): Se removieron todos las paginas
+[INFO] 22:57:44:189 Kernel/(2905:2930): No tiene paginas de heap. Se procede a pedir una pagina.
+[INFO] 22:57:44:199 Kernel/(2905:2930): Se pide a memoria que se reserve 1 paginas para el pid 3
+[INFO] 22:57:44:199 Kernel/(2905:2930): Se recibe 3 como respuesta,(Cantidad de paginas)
+[INFO] 22:57:44:199 Kernel/(2905:2930): Se reservan 200 bytes  en la pagina pedida.
+[INFO] 22:57:44:199 Kernel/(2905:2930): Se escribe el heapMetadata que informa cuanto tamaño queda (el ultimo)
+[INFO] 22:57:44:199 Kernel/(2905:2930): Se envia a memoria el siguiente pedido de escritura: Pagina-> 3, Pid->3, tamano->210,->offset->0
+[INFO] 22:57:44:220 Kernel/(2905:2930): Se almaceno correctamente los bytes en memoria.
+[INFO] 22:57:44:220 Kernel/(2905:2930): Se añade la pagina a la tabla de heap, y se retorna el offset de la variable pedida.
+[INFO] 23:01:15:32 Kernel/(3158:3184): No tiene paginas de heap. Se procede a pedir una pagina.
+[INFO] 23:01:15:33 Kernel/(3158:3184): Se pide a memoria que se reserve 1 paginas para el pid 1
+[INFO] 23:01:15:33 Kernel/(3158:3184): Se recibe 3 como respuesta,(Cantidad de paginas)
+[INFO] 23:01:15:33 Kernel/(3158:3184): Se reservan 200 bytes  en la pagina pedida.
+[INFO] 23:01:15:33 Kernel/(3158:3184): Se escribe el heapMetadata que informa cuanto tamaño queda (el ultimo)
+[INFO] 23:01:15:33 Kernel/(3158:3184): Se envia a memoria el siguiente pedido de escritura: Pagina-> 3, Pid->1, tamano->210,->offset->0
+[INFO] 23:01:15:33 Kernel/(3158:3184): Se almaceno correctamente los bytes en memoria.
+[INFO] 23:01:15:33 Kernel/(3158:3184): Se añade la pagina a la tabla de heap, y se retorna el offset de la variable pedida.

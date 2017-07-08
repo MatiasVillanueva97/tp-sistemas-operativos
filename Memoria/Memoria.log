@@ -348,3 +348,154 @@ end
 [INFO] 18:49:23:479 Memoria/(3828:3834): Se borra de la cache las paginas del proceso.
 [INFO] 18:49:24:143 Memoria/(3828:3834): Se procede a borrar todos las paginas cacheadas del pid 1 ya que fue finalizado.
 [INFO] 18:50:01:194 Memoria/(3828:3834): Se envio 0 a kernel como respuesta
+[INFO] 00:33:29:309 Memoria/(4839:4839): Se inicializo la memoria
+[INFO] 00:33:29:352 Memoria/(4839:4839): La tabla de paginacion invertida ocupa 24 paginas para administracion
+[INFO] 00:33:29:352 Memoria/(4839:4839): Se agrego las paginas administrativas a la tabla de cantidad de paginas
+[INFO] 00:33:29:352 Memoria/(4839:4839): Se le dio formato a la tabla de paginacion invertida
+[INFO] 00:33:29:352 Memoria/(4839:4839): Se inicializo la tabla de paginacion invertida
+[INFO] 00:33:29:403 Memoria/(4839:4839): Se inicio el hilo consola de la memoria
+[INFO] 00:33:29:404 Memoria/(4839:4839): Se bindeo el listener
+[INFO] 00:33:29:418 Memoria/(4839:4839): Se inicio el hilo que atiende al kernel
+[INFO] 00:33:29:428 Memoria/(4839:4839): Se inicio el hilo aceptar conexiones cpu
+[INFO] 00:33:41:61 Memoria/(4839:4848): [Rutina Kernel] - Kernel conectado exitosamente
+
+[INFO] 00:33:41:61 Memoria/(4839:4849): [AceptarConexionesCPU] - Ya se ha establecido Conexion con un Kernel, ahora si se pueden conectar CPUs: 
+
+[INFO] 00:33:45:880 Memoria/(4839:4849): [AceptarConexionesCPU] - Nueva CPU Conectada! Socket CPU: 6
+
+[INFO] 00:34:02:332 Memoria/(4839:4848): Llego la operacion 203
+[INFO] 00:34:02:332 Memoria/(4839:4848): El kernel quiere iniciar el pid 1 con 4 paginas iniciales
+[INFO] 00:34:02:332 Memoria/(4839:4848): El proceso 1 tiene 0 paginas en memoria y pidio 4 paginas nuevas
+[INFO] 00:34:02:332 Memoria/(4839:4848): Se reservo el frame 24 para la pagina 1 del pid 0
+[INFO] 00:34:02:332 Memoria/(4839:4848): Se reservo el frame 25 para la pagina 1 del pid 1
+[INFO] 00:34:02:332 Memoria/(4839:4848): Se reservo el frame 26 para la pagina 1 del pid 2
+[INFO] 00:34:02:332 Memoria/(4839:4848): Se reservo el frame 27 para la pagina 1 del pid 3
+[WARNING] 00:34:02:332 Memoria/(4839:4848): Hay que crear una nueva entrada a la tabla cantidad de paginas
+[INFO] 00:34:02:332 Memoria/(4839:4848): Se acepto asignar las paginas, por lo que se procede a iniciar el proceso
+[INFO] 00:34:02:332 Memoria/(4839:4848): Se recibio el contenido de  la pagina numero 0 y se depositara el contenido: begin
+    variables a, b
+    alocar a 50
+        #a va a tener el valor de la posicion de moemoria en el heap
+    *a = 5
+    wait c
+        # pondría al principio de ese cachito de stack el numero 5 en los primeros 4 bytes
+    prints n *a
+        #deberia
+[INFO] 00:34:02:332 Memoria/(4839:4848): Se devolvio el frame 24 de la busqueda en la tabla
+[INFO] 00:34:02:332 Memoria/(4839:4848): Se escribe el contenido en memoria: begin
+    variables a, b
+    alocar a 50
+        #a va a tener el valor de la posicion de moemoria en el heap
+    *a = 5
+    wait c
+        # pondría al principio de ese cachito de stack el numero 5 en los primeros 4 bytes
+    prints n *a
+        #deberiainic5
+[INFO] 00:34:02:332 Memoria/(4839:4848): Se envio %b a kernel como respuesta
+[INFO] 00:34:02:332 Memoria/(4839:4848): Se recibio el contenido de  la pagina numero 1 y se depositara el contenido:  imprimir 20
+    b = 3 + a
+    *b = 10
+        #pondria el 10 en los sigueintes 3 bytes. Esto pisaria algunos bits del primer 5
+    prints n *b
+        #deberia imprimir cosas horribles!
+    liberar a
+end                                                    tes
+e
+[INFO] 00:34:02:332 Memoria/(4839:4848): Se devolvio el frame 25 de la busqueda en la tabla
+[INFO] 00:34:02:332 Memoria/(4839:4848): Se escribe el contenido en memoria:  imprimir 20
+    b = 3 + a
+    *b = 10
+        #pondria el 10 en los sigueintes 3 bytes. Esto pisaria algunos bits del primer 5
+    prints n *b
+        #deberia imprimir cosas horribles!
+    liberar a
+end                                                    inic5
+[INFO] 00:34:02:332 Memoria/(4839:4848): Se envio %b a kernel como respuesta
+[INFO] 00:34:02:332 Memoria/(4839:4848): Se recibio el contenido de  la pagina numero 2 y se depositara el contenido:                                                                                                                                                                                                                                                                     e
+[INFO] 00:34:02:332 Memoria/(4839:4848): Se devolvio el frame 26 de la busqueda en la tabla
+[INFO] 00:34:02:332 Memoria/(4839:4848): Se escribe el contenido en memoria:                                                                                                                                                                                                                                                                 inic5
+[INFO] 00:34:02:332 Memoria/(4839:4848): Se envio %b a kernel como respuesta
+[INFO] 00:34:02:333 Memoria/(4839:4848): Se recibio el contenido de  la pagina numero 3 y se depositara el contenido:                                                                                                                                                                                                                                                                     e
+[INFO] 00:34:02:333 Memoria/(4839:4848): Se devolvio el frame 27 de la busqueda en la tabla
+[INFO] 00:34:02:333 Memoria/(4839:4848): Se escribe el contenido en memoria:                                                                                                                                                                                                                                                                 inic5
+[INFO] 00:34:02:333 Memoria/(4839:4848): Se envio %b a kernel como respuesta
+[INFO] 00:34:02:444 Memoria/(4839:4884): Llego la operacion 204
+[INFO] 00:34:02:444 Memoria/(4839:4884): La busqueda en la cache dio como resultado %b
+[WARNING] 00:34:02:444 Memoria/(4839:4884): La pagina 0 del pid 1 no esta en la cache.
+[INFO] 00:34:02:444 Memoria/(4839:4884): La pagina 1 del proceso 0 no esta en la cache
+[INFO] 00:34:02:444 Memoria/(4839:4884): Se procede a ejecutar el retardo por no estar en cache 5
+[INFO] 00:34:07:445 Memoria/(4839:4884): Se devolvio el frame 24 de la busqueda en la tabla
+[INFO] 00:34:07:445 Memoria/(4839:4884): Se lee toda la pagina 0 del pid &d.
+[INFO] 00:34:07:445 Memoria/(4839:4884): Se encontro el contenido y se procede a ejecutar un cache miss
+[INFO] 00:34:07:445 Memoria/(4839:4884): El proceso 1 tiene 0 paginas en cache
+[INFO] 00:34:07:445 Memoria/(4839:4884): El pid 1 tiene menos de 3 paginas.
+[INFO] 00:34:07:445 Memoria/(4839:4884): Se agrega esa fila a la cache.
+[INFO] 00:34:07:445 Memoria/(4839:4884): Se envio %b a kernel como respuesta
+[INFO] 00:34:07:445 Memoria/(4839:4884): Se envio el siguiente contenido a kernel:     variables a, b
+a	
+[INFO] 00:34:07:951 Memoria/(4839:4884): Llego la operacion 204
+[INFO] 00:34:07:951 Memoria/(4839:4884): La busqueda en la cache dio como resultado %b
+[INFO] 00:34:07:951 Memoria/(4839:4884): La pagina 0 del pid 1 esta en al cache
+[INFO] 00:34:07:951 Memoria/(4839:4884): La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 00:34:07:951 Memoria/(4839:4884): Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 00:34:07:951 Memoria/(4839:4884): Se envio %b a kernel como respuesta
+[INFO] 00:34:07:951 Memoria/(4839:4884): Se envio el siguiente contenido a kernel:     alocar a 50
+@
+[INFO] 00:34:07:952 Memoria/(4839:4848): Llego la operacion 206
+[INFO] 00:34:07:952 Memoria/(4839:4848): El proceso 1 tiene 4 paginas en memoria y pidio 1 paginas nuevas
+[INFO] 00:34:07:952 Memoria/(4839:4848): Se reservo el frame 28 para la pagina 1 del pid 4
+[INFO] 00:34:07:952 Memoria/(4839:4848): Se encontro una página. Se procede a modificar el elemento de la lista de cantidad de paginas.
+[INFO] 00:34:07:952 Memoria/(4839:4848): Se envio 4 a kernel como respuesta
+[INFO] 00:34:07:953 Memoria/(4839:4848): Llego la operacion 205
+[INFO] 00:34:07:953 Memoria/(4839:4848): Se devolvio el frame 28 de la busqueda en la tabla
+[INFO] 00:34:07:953 Memoria/(4839:4848): La pagina 4 del pid 1 se corresponde con el frame 28
+[INFO] 00:34:07:953 Memoria/(4839:4848): La busqueda en la cache dio como resultado %b
+[WARNING] 00:34:07:953 Memoria/(4839:4848): La pagina 4 del pid 1 no esta en la cache.
+[INFO] 00:34:07:953 Memoria/(4839:4848): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 00:34:07:953 Memoria/(4839:4848): Se envio %b a kernel como respuesta
+[INFO] 00:34:07:953 Memoria/(4839:4884): Llego la operacion 205
+[INFO] 00:34:07:953 Memoria/(4839:4884): Se devolvio el frame 26 de la busqueda en la tabla
+[INFO] 00:34:07:953 Memoria/(4839:4884): La pagina 2 del pid 1 se corresponde con el frame 26
+[INFO] 00:34:07:953 Memoria/(4839:4884): La busqueda en la cache dio como resultado %b
+[WARNING] 00:34:07:953 Memoria/(4839:4884): La pagina 2 del pid 1 no esta en la cache.
+[INFO] 00:34:07:953 Memoria/(4839:4884): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 00:34:07:953 Memoria/(4839:4884): Se envio %b a kernel como respuesta
+[INFO] 00:34:08:455 Memoria/(4839:4884): Llego la operacion 204
+[INFO] 00:34:08:455 Memoria/(4839:4884): La busqueda en la cache dio como resultado %b
+[INFO] 00:34:08:455 Memoria/(4839:4884): La pagina 0 del pid 1 esta en al cache
+[INFO] 00:34:08:455 Memoria/(4839:4884): La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 00:34:08:455 Memoria/(4839:4884): Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 00:34:08:455 Memoria/(4839:4884): Se envio %b a kernel como respuesta
+[INFO] 00:34:08:455 Memoria/(4839:4884): Se envio el siguiente contenido a kernel:     *a = 5
+
+[INFO] 00:34:08:456 Memoria/(4839:4884): Llego la operacion 204
+[INFO] 00:34:08:456 Memoria/(4839:4884): La busqueda en la cache dio como resultado %b
+[WARNING] 00:34:08:456 Memoria/(4839:4884): La pagina 2 del pid 1 no esta en la cache.
+[INFO] 00:34:08:456 Memoria/(4839:4884): La pagina 1 del proceso 2 no esta en la cache
+[INFO] 00:34:08:456 Memoria/(4839:4884): Se procede a ejecutar el retardo por no estar en cache 5
+[INFO] 00:34:13:458 Memoria/(4839:4884): Se devolvio el frame 26 de la busqueda en la tabla
+[INFO] 00:34:13:458 Memoria/(4839:4884): Se lee toda la pagina 2 del pid &d.
+[INFO] 00:34:13:458 Memoria/(4839:4884): Se encontro el contenido y se procede a ejecutar un cache miss
+[INFO] 00:34:13:458 Memoria/(4839:4884): El proceso 1 tiene 1 paginas en cache
+[INFO] 00:34:13:458 Memoria/(4839:4884): El pid 1 tiene menos de 3 paginas.
+[INFO] 00:34:13:458 Memoria/(4839:4884): Se agrega esa fila a la cache.
+[INFO] 00:34:13:458 Memoria/(4839:4884): Se envio %b a kernel como respuesta
+[INFO] 00:34:13:458 Memoria/(4839:4884): Se envio el siguiente contenido a kernel: 
+[INFO] 00:34:13:495 Memoria/(4839:4884): Llego la operacion 205
+[INFO] 00:34:13:495 Memoria/(4839:4884): Se devolvio el frame 28 de la busqueda en la tabla
+[INFO] 00:34:13:495 Memoria/(4839:4884): La pagina 4 del pid 1 se corresponde con el frame 28
+[INFO] 00:34:13:495 Memoria/(4839:4884): La busqueda en la cache dio como resultado %b
+[WARNING] 00:34:13:495 Memoria/(4839:4884): La pagina 4 del pid 1 no esta en la cache.
+[INFO] 00:34:13:495 Memoria/(4839:4884): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 00:34:13:495 Memoria/(4839:4884): Se envio %b a kernel como respuesta
+[INFO] 00:34:13:997 Memoria/(4839:4884): Llego la operacion 204
+[INFO] 00:34:13:997 Memoria/(4839:4884): La busqueda en la cache dio como resultado %b
+[INFO] 00:34:13:997 Memoria/(4839:4884): La pagina 0 del pid 1 esta en al cache
+[INFO] 00:34:13:997 Memoria/(4839:4884): La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 00:34:13:997 Memoria/(4839:4884): Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 00:34:13:997 Memoria/(4839:4884): Se envio %b a kernel como respuesta
+[INFO] 00:34:13:997 Memoria/(4839:4884): Se envio el siguiente contenido a kernel:     wait c
+
+[INFO] 00:35:06:172 Memoria/(4839:4847): Entramos en dump memoria
+[INFO] 00:39:56:3 Memoria/(4839:4848): Llego la operacion 0
+[INFO] 00:39:56:3 Memoria/(4839:4848): Se cerro el kernel

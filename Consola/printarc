@@ -3,6 +3,7 @@ begin
  abrir b LC /unt/so
  alocar a 200
  leer b a 10
- prints s b
+ prints s a
+
  #Sin cerrarlo
 end
