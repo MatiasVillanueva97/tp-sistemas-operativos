@@ -197,14 +197,14 @@ void *rutinaCPU(void * arg)
 
 				t_mensajeDeProceso msj = deserializarMensajeAEscribir(stream);
 
-					int tamanoDelBuffer =  tamanoMensajeAEscribir(strlen(msj.mensaje)+1);
+					int tamanoDelBuffer =  tamanoMensajeAEscribir(strlen(msj.mensaje));
 					PCB_DATA* pcbaux;
 					pcbaux = buscarPCB(msj.pid);
 					bool respuestaACPU = false;
 
 				//***Si el fileDescriptro es 1, se imprime por consola
 				if(msj.descriptorArchivo == 1){
-					void * stream2 = serializarMensajeAEscribir(msj,strlen(msj.mensaje)+1);
+					void * stream2 = serializarMensajeAEscribir(msj,strlen(msj.mensaje));
 					int socketConsola = consola_buscarSocketConsola(msj.pid);
 
 					enviarMensaje(socketConsola,imprimirPorPantalla,stream2,tamanoDelBuffer);

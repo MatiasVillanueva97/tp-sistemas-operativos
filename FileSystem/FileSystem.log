@@ -369,3 +369,27 @@ BLOQUES=[10]
 [INFO] 23:06:07:665 FileSystem/(3231:3231): Se abrio el archivo 10.bin
 [INFO] 23:07:33:213 FileSystem/(3231:3231): Se leyo el bloque y se obtuvo: HOLA SOY U 
 [INFO] 23:08:30:838 FileSystem/(3231:3231): Se obtuvo el buffer: HOLA SOY U
+[INFO] 02:27:57:220 FileSystem/(6714:6714): Inicializando FileSystem.....
+
+
+[INFO] 02:27:57:220 FileSystem/(6714:6714): Configuracion Inicial: 
+
+[INFO] 02:27:57:222 FileSystem/(6714:6714): Se cargo el archivo Metadata.bin
+[INFO] 02:27:57:222 FileSystem/(6714:6714): Tamaño de bloque: 64
+[INFO] 02:27:57:222 FileSystem/(6714:6714): Cantidad de bloques: 5192
+[INFO] 02:27:57:386 FileSystem/(6714:6714): Se cargo el bitmap al FileSystem
+[INFO] 02:27:57:386 FileSystem/(6714:6714): Se creo correctamente el bitmap
+[INFO] 02:28:21:31 FileSystem/(6749:6749): Inicializando FileSystem.....
+
+
+[INFO] 02:28:21:31 FileSystem/(6749:6749): Configuracion Inicial: 
+
+[INFO] 02:28:21:31 FileSystem/(6749:6749): Se cargo el archivo Metadata.bin
+[INFO] 02:28:21:31 FileSystem/(6749:6749): Tamaño de bloque: 64
+[INFO] 02:28:21:31 FileSystem/(6749:6749): Cantidad de bloques: 5192
+[INFO] 02:28:21:158 FileSystem/(6749:6749): Se cargo el bitmap al FileSystem
+[INFO] 02:28:21:158 FileSystem/(6749:6749): Se creo correctamente el bitmap
+[INFO] 02:28:44:567 FileSystem/(6749:6749): Llego un mensaje del kernel
+[INFO] 02:28:44:567 FileSystem/(6749:6749): El kernel quiere validar un archivo
+[INFO] 02:28:44:567 FileSystem/(6749:6749): La respuesta enviada al kernel es: 1 
+[INFO] 02:29:00:296 FileSystem/(6749:6749): Llego un mensaje del kernel

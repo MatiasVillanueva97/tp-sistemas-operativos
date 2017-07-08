@@ -480,7 +480,7 @@ void tramitarPeticionesDelKernel(int socketKernel){
 						break;
 					}
 					case guardarDatosDeArchivo:{
-						t_escritura escritura =*(t_escritura*) stream;
+						t_escritura escritura = deserializarEscribirMemoria(stream);
 						log_info(logFS,"El kernel quiere escribir %d bytes desde %d, de la path: %s con el siguiente contenido: %s",escritura.size,escritura.offset,escritura.path,(char*)escritura.buffer);
 						bool respuesta= guardarDatos(escritura.path,escritura.offset,escritura.size,escritura.buffer);
 						log_info(logFS,"Se envia al kernel: %b", respuesta);

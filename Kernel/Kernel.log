@@ -4318,3 +4318,24 @@
 [INFO] 23:01:15:33 Kernel/(3158:3184): Se envia a memoria el siguiente pedido de escritura: Pagina-> 3, Pid->1, tamano->210,->offset->0
 [INFO] 23:01:15:33 Kernel/(3158:3184): Se almaceno correctamente los bytes en memoria.
 [INFO] 23:01:15:33 Kernel/(3158:3184): Se añade la pagina a la tabla de heap, y se retorna el offset de la variable pedida.
+[INFO] 02:01:42:406 Kernel/(6080:6104): No tiene paginas de heap. Se procede a pedir una pagina.
+[INFO] 02:01:42:406 Kernel/(6080:6104): Se pide a memoria que se reserve 1 paginas para el pid 1
+[INFO] 02:01:42:406 Kernel/(6080:6104): Se reservan 100 bytes  en la pagina pedida.
+[INFO] 02:01:42:406 Kernel/(6080:6104): Se escribe el heapMetadata que informa cuanto tamaño queda (el ultimo)
+[INFO] 02:01:42:406 Kernel/(6080:6104): Se envia a memoria el siguiente pedido de escritura: Pagina-> 3, Pid->1, tamano->110,->offset->0
+[INFO] 02:01:42:406 Kernel/(6080:6104): Se almaceno correctamente los bytes en memoria.
+[INFO] 02:01:42:406 Kernel/(6080:6104): Se añade la pagina a la tabla de heap, y se retorna el offset de la variable pedida.
+[INFO] 02:07:14:657 Kernel/(6176:6196): No tiene paginas de heap. Se procede a pedir una pagina.
+[INFO] 02:07:14:657 Kernel/(6176:6196): Se pide a memoria que se reserve 1 paginas para el pid 1
+[INFO] 02:07:14:657 Kernel/(6176:6196): Se reservan 100 bytes  en la pagina pedida.
+[INFO] 02:07:14:657 Kernel/(6176:6196): Se escribe el heapMetadata que informa cuanto tamaño queda (el ultimo)
+[INFO] 02:07:14:657 Kernel/(6176:6196): Se envia a memoria el siguiente pedido de escritura: Pagina-> 3, Pid->1, tamano->110,->offset->0
+[INFO] 02:07:14:657 Kernel/(6176:6196): Se almaceno correctamente los bytes en memoria.
+[INFO] 02:07:14:657 Kernel/(6176:6196): Se añade la pagina a la tabla de heap, y se retorna el offset de la variable pedida.
+[INFO] 02:17:11:744 Kernel/(6414:6438): No tiene paginas de heap. Se procede a pedir una pagina.
+[INFO] 02:17:11:747 Kernel/(6414:6438): Se pide a memoria que se reserve 1 paginas para el pid 1
+[INFO] 02:17:11:747 Kernel/(6414:6438): Se reservan 100 bytes  en la pagina pedida.
+[INFO] 02:17:11:747 Kernel/(6414:6438): Se escribe el heapMetadata que informa cuanto tamaño queda (el ultimo)
+[INFO] 02:17:11:747 Kernel/(6414:6438): Se envia a memoria el siguiente pedido de escritura: Pagina-> 3, Pid->1, tamano->110,->offset->0
+[INFO] 02:17:11:747 Kernel/(6414:6438): Se almaceno correctamente los bytes en memoria.
+[INFO] 02:17:11:747 Kernel/(6414:6438): Se añade la pagina a la tabla de heap, y se retorna el offset de la variable pedida.
