@@ -393,3 +393,104 @@ BLOQUES=[10]
 [INFO] 02:28:44:567 FileSystem/(6749:6749): El kernel quiere validar un archivo
 [INFO] 02:28:44:567 FileSystem/(6749:6749): La respuesta enviada al kernel es: 1 
 [INFO] 02:29:00:296 FileSystem/(6749:6749): Llego un mensaje del kernel
+[INFO] 19:18:01:556 FileSystem/(5026:5026): Inicializando FileSystem.....
+
+
+[INFO] 19:18:02:790 FileSystem/(5026:5026): Configuracion Inicial: 
+
+[INFO] 19:18:04:324 FileSystem/(5026:5026): Se cargo el archivo Metadata.bin
+[INFO] 19:18:04:324 FileSystem/(5026:5026): Tamaño de bloque: 64
+[INFO] 19:18:04:324 FileSystem/(5026:5026): Cantidad de bloques: 5192
+[INFO] 19:18:04:556 FileSystem/(5026:5026): Se cargo el bitmap al FileSystem
+[INFO] 19:18:04:556 FileSystem/(5026:5026): Se creo correctamente el bitmap
+[INFO] 19:19:13:181 FileSystem/(5026:5026): Llego un mensaje del kernel
+[INFO] 19:19:13:182 FileSystem/(5026:5026): El kernel quiere validar un archivo
+[INFO] 19:19:13:182 FileSystem/(5026:5026): La respuesta enviada al kernel es: 1 
+[INFO] 19:19:18:728 FileSystem/(5026:5026): Llego un mensaje del kernel
+[INFO] 19:19:18:728 FileSystem/(5026:5026): El kernel quiere crear un archivo con el siguiente path: /smallFile.bin
+[INFO] 19:22:26:217 FileSystem/(5148:5148): Inicializando FileSystem.....
+
+
+[INFO] 19:22:26:217 FileSystem/(5148:5148): Configuracion Inicial: 
+
+[INFO] 19:22:26:217 FileSystem/(5148:5148): Se cargo el archivo Metadata.bin
+[INFO] 19:22:26:217 FileSystem/(5148:5148): Tamaño de bloque: 64
+[INFO] 19:22:26:217 FileSystem/(5148:5148): Cantidad de bloques: 5192
+[INFO] 19:22:26:672 FileSystem/(5148:5148): Se cargo el bitmap al FileSystem
+[INFO] 19:22:26:672 FileSystem/(5148:5148): Se creo correctamente el bitmap
+[INFO] 19:22:52:740 FileSystem/(5148:5148): Llego un mensaje del kernel
+[INFO] 19:22:52:740 FileSystem/(5148:5148): El kernel quiere validar un archivo
+[INFO] 19:22:52:740 FileSystem/(5148:5148): La respuesta enviada al kernel es: 0 
+[INFO] 19:22:52:740 FileSystem/(5148:5148): Llego un mensaje del kernel
+[INFO] 19:22:52:740 FileSystem/(5148:5148): El kernel quiere crear un archivo con el siguiente path: 
+[ERROR] 19:22:52:741 FileSystem/(5148:5148): No hay bloques disponibles 
+[INFO] 19:22:52:741 FileSystem/(5148:5148): La respuesta enviada al kernel es: %b 
+[INFO] 19:24:15:29 FileSystem/(5148:5148): Llego un mensaje del kernel
+[INFO] 19:24:15:29 FileSystem/(5148:5148): El kernel quiere validar un archivo
+[INFO] 19:24:15:29 FileSystem/(5148:5148): La respuesta enviada al kernel es: 0 
+[INFO] 19:24:15:29 FileSystem/(5148:5148): Llego un mensaje del kernel
+[INFO] 19:24:15:29 FileSystem/(5148:5148): El kernel quiere crear un archivo con el siguiente path: 
+[ERROR] 19:24:15:29 FileSystem/(5148:5148): No hay bloques disponibles 
+[INFO] 19:24:15:29 FileSystem/(5148:5148): La respuesta enviada al kernel es: %b 
+[INFO] 19:25:18:246 FileSystem/(5148:5148): Llego un mensaje del kernel
+[INFO] 19:25:18:246 FileSystem/(5148:5148): El kernel quiere validar un archivo
+[INFO] 19:25:18:246 FileSystem/(5148:5148): La respuesta enviada al kernel es: 0 
+[INFO] 19:25:18:246 FileSystem/(5148:5148): Llego un mensaje del kernel
+[INFO] 19:25:18:246 FileSystem/(5148:5148): El kernel quiere crear un archivo con el siguiente path: 
+[ERROR] 19:25:18:247 FileSystem/(5148:5148): No hay bloques disponibles 
+[INFO] 19:25:18:247 FileSystem/(5148:5148): La respuesta enviada al kernel es: %b 
+[INFO] 19:26:25:877 FileSystem/(5148:5148): Llego un mensaje del kernel
+[INFO] 19:26:25:877 FileSystem/(5148:5148): El kernel quiere validar un archivo
+[INFO] 19:26:25:877 FileSystem/(5148:5148): La respuesta enviada al kernel es: 1 
+[INFO] 19:26:31:983 FileSystem/(5148:5148): Llego un mensaje del kernel
+[INFO] 19:27:05:383 FileSystem/(5148:5148): El kernel quiere obtener 10 bytes desde 0, de la path: /unt/so
+[INFO] 19:27:05:384 FileSystem/(5148:5148): El archivo tiene 1 bloques
+[INFO] 19:27:05:384 FileSystem/(5148:5148): Se obtuvo el bloque numero: 10 
+[INFO] 19:27:05:384 FileSystem/(5148:5148): Se obtuvieron los bloques del archivo /unt/so
+[INFO] 19:27:05:384 FileSystem/(5148:5148): El archivo tiene un tamaño de: 30
+[INFO] 19:27:05:384 FileSystem/(5148:5148): Se abrio el archivo 10.bin
+[INFO] 19:27:05:384 FileSystem/(5148:5148): Se leyo el bloque y se obtuvo: HOLASOYUNP 
+[INFO] 19:27:05:384 FileSystem/(5148:5148): Se obtuvo el buffer: HOLASOYUNP
+[INFO] 19:27:05:384 FileSystem/(5148:5148): Se encontraron los datos y se envia al kernel: HOLASOYUNP
+[INFO] 19:27:11:928 FileSystem/(5148:5148): Llego un mensaje del kernel
+[INFO] 19:27:11:928 FileSystem/(5148:5148): El kernel quiere crear un archivo con el siguiente path: /unt/so5
+[INFO] 19:31:06:137 FileSystem/(5300:5300): Inicializando FileSystem.....
+
+
+[INFO] 19:31:06:137 FileSystem/(5300:5300): Configuracion Inicial: 
+
+[INFO] 19:31:06:137 FileSystem/(5300:5300): Se cargo el archivo Metadata.bin
+[INFO] 19:31:06:137 FileSystem/(5300:5300): Tamaño de bloque: 64
+[INFO] 19:31:06:137 FileSystem/(5300:5300): Cantidad de bloques: 5192
+[INFO] 19:31:06:417 FileSystem/(5300:5300): Se cargo el bitmap al FileSystem
+[INFO] 19:31:06:417 FileSystem/(5300:5300): Se creo correctamente el bitmap
+[INFO] 19:31:32:144 FileSystem/(5300:5300): Llego un mensaje del kernel
+[INFO] 19:31:32:144 FileSystem/(5300:5300): El kernel quiere validar un archivo
+[INFO] 19:31:32:144 FileSystem/(5300:5300): La respuesta enviada al kernel es: 1 
+[INFO] 19:31:38:242 FileSystem/(5300:5300): Llego un mensaje del kernel
+[INFO] 19:31:49:6 FileSystem/(5300:5300): El kernel quiere obtener 10 bytes desde 0, de la path: /unt/so
+[INFO] 19:31:49:6 FileSystem/(5300:5300): El archivo tiene 1 bloques
+[INFO] 19:31:49:6 FileSystem/(5300:5300): Se obtuvo el bloque numero: 10 
+[INFO] 19:31:49:6 FileSystem/(5300:5300): Se obtuvieron los bloques del archivo /unt/so
+[INFO] 19:31:49:7 FileSystem/(5300:5300): El archivo tiene un tamaño de: 30
+[INFO] 19:31:49:7 FileSystem/(5300:5300): Se abrio el archivo 10.bin
+[INFO] 19:31:49:7 FileSystem/(5300:5300): Se leyo el bloque y se obtuvo: HOLASOYUNP 
+[INFO] 19:31:49:7 FileSystem/(5300:5300): Se obtuvo el buffer: HOLASOYUNP
+[INFO] 19:31:49:7 FileSystem/(5300:5300): Se encontraron los datos y se envia al kernel: HOLASOYUNP
+[INFO] 19:31:55:531 FileSystem/(5300:5300): Llego un mensaje del kernel
+[INFO] 19:31:55:531 FileSystem/(5300:5300): El kernel quiere crear un archivo con el siguiente path: /unt/so
+[INFO] 19:46:36:929 FileSystem/(5719:5719): Inicializando FileSystem.....
+
+
+[INFO] 19:46:36:930 FileSystem/(5719:5719): Configuracion Inicial: 
+
+[INFO] 19:46:36:930 FileSystem/(5719:5719): Se cargo el archivo Metadata.bin
+[INFO] 19:46:36:930 FileSystem/(5719:5719): Tamaño de bloque: 64
+[INFO] 19:46:36:930 FileSystem/(5719:5719): Cantidad de bloques: 5192
+[INFO] 19:46:37:89 FileSystem/(5719:5719): Se cargo el bitmap al FileSystem
+[INFO] 19:46:37:89 FileSystem/(5719:5719): Se creo correctamente el bitmap
+[INFO] 19:47:09:626 FileSystem/(5719:5719): Llego un mensaje del kernel
+[INFO] 19:47:09:626 FileSystem/(5719:5719): El kernel quiere validar un archivo
+[INFO] 19:47:09:626 FileSystem/(5719:5719): La respuesta enviada al kernel es: 1 
+[INFO] 19:47:15:216 FileSystem/(5719:5719): Llego un mensaje del kernel
+[INFO] 19:47:15:216 FileSystem/(5719:5719): El kernel quiere crear un archivo con el siguiente path: /smallFile.bin

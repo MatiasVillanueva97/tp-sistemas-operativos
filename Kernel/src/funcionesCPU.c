@@ -226,10 +226,9 @@ void *rutinaCPU(void * arg)
 								int offset = entrada_de_tabla_proceso->offset;//DEBE CAMBIAR.QUE ES UN CURSOR?
 								void* pedidoEscritura = serializarEscribirMemoria(tamanoDelBuffer,offset,entrada_de_archivo->path, msj.mensaje);
 								enviarMensaje(socketFS,guardarDatosDeArchivo, pedidoEscritura,4+strlen(entrada_de_archivo->path)+tamanoDelBuffer+sizeof(int)*2);
-								//enviarPaquete(socketFS,2,2,offset,tamanoDelBuffer,entrada_de_archivo->path,msj.mensaje);
 								void* contenido;
 								recibirMensaje(socketFS,&contenido);
-								bool respuestaFS = *(bool*) contenido;
+								int respuestaFS = leerInt(contenido);
 								respuestaACPU = respuestaFS;
 								if(!respuestaFS){
 									finalizarPid(pcbaux,-1);
@@ -307,6 +306,40 @@ void *rutinaCPU(void * arg)
 
 		}break;
 
+		case borrarArchivoCPU:{
+			t_archivo estructura;
+			estructura = *((t_archivo*)stream);
+			PCB_DATA* pcbaux;
+			pcbaux = buscarPCB(estructura.pid);
+			int rtaCPU = 0;
+			ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(estructura.pid);
+
+			ENTRADA_DE_TABLA_DE_PROCESO* entrada_a_evaluar= list_get(aux->tablaProceso,estructura.fileDescriptor);
+			if (entrada_a_evaluar != NULL){
+					ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_de_archivo= list_get(tablaGlobalDeArchivos,entrada_a_evaluar->globalFD);
+				if(entrada_de_archivo!=NULL){
+					if(entrada_de_archivo->cantidad_aperturas == 1){
+						enviarMensaje(socketFS,borrarArchivo,entrada_de_archivo->path,strlen(entrada_de_archivo->path)+1);
+						void* stream2;
+						recibirMensaje(socketFS,&stream2);
+						int rtaFS = leerInt(stream2);
+						if(rtaFS){
+						rtaCPU = 1;
+						}else{
+							finalizarPid(pcbaux,-15);//Falla de FS
+						}
+					}else{
+						finalizarPid(pcbaux,-14);//No se pudo borrar, porque otro proceso lo esta usando
+					}
+				}else{
+					finalizarPid(pcbaux,-2);
+				}
+			}else{
+				finalizarPid(pcbaux,-2);
+		}
+			enviarMensaje(socketCPU,respuestaBooleanaKernel,&rtaCPU,sizeof(int));
+	}break;
+
 			case leerArchivo:{
 
 				t_lectura estructura;
@@ -333,7 +366,7 @@ void *rutinaCPU(void * arg)
 								entrada_a_evaluar->offset += estructura.size;
 								}
 							else{
-								finalizarPid(pcbaux,-1);//Respuesta Mala de FS
+								finalizarPid(pcbaux,-15);//Respuesta Mala de FS
 								enviarMensaje(socketCPU,respuestaBooleanaKernel,&rtaCPU,sizeof(int));
 								}
 						}else{

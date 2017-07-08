@@ -149,7 +149,7 @@ bool crearElArchivo(char* path){
 	return true;
 	//falta la parte de escribir el archivo con el tamano de archivo(Seria 0) y asignarle el bloque en el archivo
 }
-bool borrarUnArchivo(char* path){
+int borrarUnArchivo(char* path){
 
 	char* ruta;
 	ruta = obtenerRutaTotal(path, "Archivos");
@@ -159,9 +159,12 @@ bool borrarUnArchivo(char* path){
 	for(i = 0;*(bloques+i)!=NULL;i++){
 		int x = atoi(*(bloques+i));
 		bitarray_clean_bit(bitMap,x-1);
-		log_info(logFS,"Se desligo el bloque numero: %s ", x);
+		log_info(logFS,"Se desligo el bloque numero: %d ", x);
 	}
-	return !remove(ruta);
+	if (remove(ruta)==0){
+		return 1;
+	}
+	return 0;
 }
 
 void* leerBloque(FILE* archivo,int offset, int size){
@@ -279,11 +282,11 @@ char* crearStringBloques(int* bloques,int cantidad){
 	log_info(logFS,"El conjunto de bloques nuevos es: [%s]",bloquesString);
 	return bloquesString;
 }
-bool guardarDatos(char* path,int offset, int size,void* buffer){
+int guardarDatos(char* path,int offset, int size,void* buffer){
 	int *bloques = obtenerBloques(path);
 	if(bloques == NULL){
 		log_error(logFS,"No existia el archivo con la path: %s",path);
-		return false;
+		return 0;
 	}
 	int cantidadDeBloques = cantidadDeElementosDeUnArray(bloques);
 	int bloqueInicialDondeQuiereEscribir = offset/bloqueSize;
@@ -301,13 +304,13 @@ bool guardarDatos(char* path,int offset, int size,void* buffer){
 				if(posicionLibre == -1){
 					log_error(logFS,"No hay bloques disponibles para seguir escribiendo.");
 
-					return false;
+					return 0;
 				}
 				log_info(logFS,"Se tuvo que pedir otro bloque");
 				int* tmp = realloc(bloques,cantidadDeBloques*sizeof(int)+4);
 				if(tmp == NULL){
 					log_error(logFS,"Error en un realloc. Falla en la memoria principal.");
-					return false;
+					return 0;
 				}
 
 				else{
@@ -359,7 +362,7 @@ bool guardarDatos(char* path,int offset, int size,void* buffer){
 	log_info(logFS,"Se escribio el archivo. Su tamaño es: %d,y tiene los siguientes BLOQUES: [%s]",tamano,bloquesAEscribir);
 	fclose(archivoDondeEscriboLosNuevosDatos);
 	free(bloquesAEscribir);
-	return true;
+	return 1;
 }
 
 
@@ -458,9 +461,9 @@ void tramitarPeticionesDelKernel(int socketKernel){
 						char* path = stream;
 						log_info(logFS,"El kernel quiere crear un archivo con el siguiente path: %s",path);
 
-						bool respuesta= borrarUnArchivo(path);
-						enviarMensaje(socketKernel,respuestaBooleanaDeFs,&respuesta,sizeof(respuesta));
-						log_info(logFS,"La respuesta enviada al kernel es: %b ", respuesta);
+						int respuesta= borrarUnArchivo(path);
+						enviarMensaje(socketKernel,respuestaBooleanaDeFs,&respuesta,sizeof(int));
+						log_info(logFS,"La respuesta enviada al kernel es: %d ", respuesta);
 						break;
 					}
 					case obtenerDatosDeArchivo:{
@@ -482,8 +485,8 @@ void tramitarPeticionesDelKernel(int socketKernel){
 					case guardarDatosDeArchivo:{
 						t_escritura escritura = deserializarEscribirMemoria(stream);
 						log_info(logFS,"El kernel quiere escribir %d bytes desde %d, de la path: %s con el siguiente contenido: %s",escritura.size,escritura.offset,escritura.path,(char*)escritura.buffer);
-						bool respuesta= guardarDatos(escritura.path,escritura.offset,escritura.size,escritura.buffer);
-						log_info(logFS,"Se envia al kernel: %b", respuesta);
+						int respuesta= guardarDatos(escritura.path,escritura.offset,escritura.size,escritura.buffer);
+						log_info(logFS,"Se envia al kernel: %d", respuesta);
 						enviarMensaje(socketKernel,respuestaBooleanaDeFs,&respuesta,sizeof(respuesta));
 						break;
 					}

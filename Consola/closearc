@@ -1,0 +1,6 @@
+begin
+ variables f
+ abrir f LC /smallFile.bin
+ borrar f
+ cerrar f
+end

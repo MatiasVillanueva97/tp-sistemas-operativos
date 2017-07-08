@@ -74,7 +74,7 @@ void string_iterate(char* strings, void (*closure)(char)) {
 }
 
 char* procesarArchivo(char* archivo, int tamano){
-	char ** lineas = string_split(archivo, "\n");
+	//char ** lineas = string_split(archivo, "\n");
 	char* archivoProcesado = string_new();
 	bool laAnteriorFueUnEnter = false;
 	void agregar(char caracter){
@@ -334,21 +334,21 @@ int main(void)
 
 
 void* rutinaPrograma(void* parametro){
-	int* pid= malloc(4);
+	int pid ;
 	char* tiempoInicio = temporal_get_string_time();
 	int cantImpresiones = 0;
-	pid = parametro;
+	pid = *((int*)parametro);
 
 	t_Estado * programaEstado ;
-	agregarAListaEstadoPrograma(*pid,false);
-	programaEstado = encontrarElDeIgualPid(*pid);
-		printf("Numero de pid del proces: %d \n",*pid);
+	agregarAListaEstadoPrograma(pid,false);
+	programaEstado = encontrarElDeIgualPid(pid);
+		printf("Numero de pid del proces: %d \n",pid);
 		sem_post(&mutex_ordenDeEscritura);
 		while(1){
 
 		if(programaEstado->hayParaImprimir){
 			cantImpresiones++;
-			printf("Mensaje del pid %d: %s\n", *pid, programaEstado->mensajeAImprimir);
+			printf("Mensaje del pid %d: %s\n", pid, programaEstado->mensajeAImprimir);
 			programaEstado->hayParaImprimir = false;
 
 		}
@@ -358,18 +358,16 @@ void* rutinaPrograma(void* parametro){
 		}
 	char* tiempoFin = temporal_get_string_time();
 
-	printf("\nAcaba de finalizar el pid: %d\n", *pid);
+	printf("\nAcaba de finalizar el pid: %d\n", pid);
 	printf("Tiempo de inicio: %s\n",tiempoInicio);
 	printf("Tiempo de Finalización: %s\n",tiempoFin);
 	printf("Tiempo de Ejecución: %s\n",diferencia(tiempoInicio,tiempoFin));
 	printf("Cantidad de impresiones del programa ansisop: %d\n",cantImpresiones);
 
-	free(pid);
+
 }
 
 void* rutinaEscucharKernel(){
-	int* pid = malloc(4);
-
 
 	while(!error){
 		int operacion;
@@ -377,8 +375,9 @@ void* rutinaEscucharKernel(){
 		operacion =recibirMensaje(socketKernel,&stream);
 		switch(operacion){
 		case(envioDelPidEnSeco):{
-			pid = (int*)stream;
-			crearHiloDetachPrograma(pid);
+			int pid;
+			pid = *((int*)stream);
+			crearHiloDetachPrograma(&pid);
 			break;
 		}
 		case(imprimirPorPantalla):{
@@ -387,20 +386,21 @@ void* rutinaEscucharKernel(){
 			programaEstado = encontrarElDeIgualPid(aux.pid);
 			programaEstado->mensajeAImprimir = string_duplicate(aux.mensaje);
 			programaEstado->hayParaImprimir = true;
-
 			break;
 		}
 		case(pidFinalizado):{
-			pid = (int*)stream;
-			matarHiloPrograma(*pid);
+			int  pid;
+			pid = (*(int*)stream);
+			matarHiloPrograma(pid);
 
 			break;
 		}case(errorFinalizacionPid):{
-			pid = (int*)stream;
+			int  pid;
+			pid = (*(int*)stream);
 
-			matarHiloPrograma(*pid);
+			matarHiloPrograma(pid);
 
-			printf("No se ha finalizado correctamente el pid: %d \n", *pid);
+			printf("No se ha finalizado correctamente el pid: %d \n", pid);
 			break;
 		}
 		case (0):{
@@ -412,9 +412,7 @@ void* rutinaEscucharKernel(){
 		default:{
 			perror("Error: no se pudo obtener mensaje \n");
 		}
-
 }
-
 }
 }
 
