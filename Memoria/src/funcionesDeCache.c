@@ -46,6 +46,10 @@ bool tieneMenosDeNProcesos(int pid){
 	return x < getConfigInt("CACHE_X_PROC");
 }
 
+void destroyerLineaCache(lineaCache* linea ){
+	free(linea->contenido);
+	free(linea);
+}
 
 //Funciones Cache
 /*void agregarAlPrincipio(lineaCache lineaCache1){
@@ -101,7 +105,7 @@ void cacheMiss(int pid, int pagina,void* contenido){
 		int cantidadDeElementos = list_size(tablaDeEntradasDeCache);
 		if(cantidadDeElementos == cantidadDeEntradas){
 			log_info(logMemoria,"[Solicitar Bytes-Cache  Miss]-La cache esta llena, por lo que se procede a borrar el ultimo de la lista");
-			list_remove_and_destroy_element(tablaDeEntradasDeCache,cantidadDeEntradas-1,free);// POSIBLEMENTE TENGA QUE HACER UN DESTROYER
+			list_remove_and_destroy_element(tablaDeEntradasDeCache,cantidadDeEntradas-1,destroyerLineaCache);// POSIBLEMENTE TENGA QUE HACER UN DESTROYER
 		}
 	}
 	else{
@@ -117,13 +121,12 @@ void cacheMiss(int pid, int pagina,void* contenido){
 		list_iterate(tablaDeEntradasDeCache,obtenerDondeEstaElLRUdeUnProceso);
 		log_info(logMemoria,"[Solicitar Bytes-Cache  Miss]-La ultima pagina cacheada del pid %d esta en al posicion %d",pid,posicionMaxima);
 
-		list_remove_and_destroy_element(tablaDeEntradasDeCache,posicionMaxima,free);
+		list_remove_and_destroy_element(tablaDeEntradasDeCache,posicionMaxima,destroyerLineaCache);
 	}
 	lineaCache* linea = malloc(sizeof(lineaCache));
 	linea->pagina = pagina;
 	linea->pid = pid;
-	void* contenido2 = malloc(sizeOfPaginas);
-	linea->contenido = contenido2;
+	linea->contenido = malloc(sizeOfPaginas);;
 	memcpy(linea->contenido,contenido,sizeOfPaginas);
 	log_info(logMemoria,"[Solicitar Bytes-Cache  Miss]-Se agrega esa fila a la cache.");
 	list_add_in_index(tablaDeEntradasDeCache,0,linea);
@@ -131,6 +134,6 @@ void cacheMiss(int pid, int pagina,void* contenido){
 
 void cacheFlush(){
 	log_info(logMemoria,"[Cache Flush]-Se limpia (Flush) la cache");
-	list_clean(tablaDeEntradasDeCache);
+	list_clean_and_destroy_elements(tablaDeEntradasDeCache,destroyerLineaCache);
 }
 

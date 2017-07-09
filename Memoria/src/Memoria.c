@@ -513,7 +513,7 @@ void recibirMensajesMemoria(void* arg){
 					}
 					enviarMensaje(socket,RespuestaBooleanaDeMemoria,&x,sizeof(int));
 					log_info(logMemoria,"[Almacenar Bytes]-Se envio % a kernel como respuesta",x);
-
+					free(estructura.valor);
 					break;
 				}
 				case asignarPaginas:{//PedirMasPaginas
@@ -749,7 +749,7 @@ int main(void) {
 
 	free(memoriaTotal);
 	log_info(logMemoria,"Se finalizo el modulo Memoria.");
-
+	cacheFlush();
 	return EXIT_SUCCESS;
 
 }
