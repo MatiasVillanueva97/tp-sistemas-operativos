@@ -96,7 +96,9 @@ int validarArchivo(char* path){
 	string_append(&pathTotal,path);
 	FILE* archivo = fopen(pathTotal,"r");
 	int w = archivo != NULL;
-	fclose(archivo);
+	if(w==1){
+		fclose(archivo);
+	}
 	free(pathTotal);
 	return w;
 }
@@ -115,7 +117,7 @@ int buscarPosicionLibre(){
 	for(i=0;i<cantidadDeBloques;i++){
 		if(!bitarray_test_bit(bitMap,i)){
 			log_info(logFS,"[Buscar frame libre]-Se encontro la posicion %d en el bitmap libre.",i);
-			return i+1;
+			return i;
 		}
 	}
 	return -1;
@@ -424,7 +426,7 @@ void* configurarTodo(){
 
 	int i;
 	char* nombre;
-	for(i = 1;i<= cantidadDeBloques;i++){
+	for(i = 0;i< cantidadDeBloques;i++){
 		nombre = string_new();
 		char* nombreBloque = string_itoa(i);
 		string_append(&nombre,nombreBloque);
