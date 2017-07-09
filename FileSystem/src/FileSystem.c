@@ -232,7 +232,7 @@ void* obtenerDatos(char* path,int offset, int size){
 	offset -= bloqueSize*bloqueInicial;
 	int sizeLeido = 0;
 	void* contenido = malloc(size);
-	while(bloques[bloqueInicial] != NULL&&size!=0){ // revisarEsto
+	while(size!=0){ // revisarEsto
 			FILE * archivo = aperturaDeArchivo(*(bloques+bloqueInicial));
 			if(archivo == NULL){
 				log_error(logFS,"[Obtener datos]-El bloque %d.bin no existe más",bloqueInicial);
