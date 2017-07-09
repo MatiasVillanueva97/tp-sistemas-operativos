@@ -87,7 +87,7 @@ char* obtenerRutaTotal(char* path, char* tipoDeArchivo){
 	return pathTotal;
 }
 
-bool validarArchivo(char* path){
+int validarArchivo(char* path){
 	char* pathTotal = string_new();
 	char* x = getConfigString("PUNTO_MONTAJE");
 	string_append(&pathTotal,x);
@@ -111,7 +111,7 @@ int buscarPosicionLibre(){
 	int i;
 	for(i=0;i<cantidadDeBloques;i++){
 		if(!bitarray_test_bit(bitMap,i)){
-			log_info(logFS,"Se encontro la posicion %d en el bitmap libre.",i);
+			log_info(logFS,"[Buscar frame libre]-Se encontro la posicion %d en el bitmap libre.",i);
 			return i+1;
 		}
 	}
@@ -130,7 +130,7 @@ int crearElArchivo(char* path){
 		dirp = opendir(rutaTotal);
 	 if (dirp == NULL){
 		 mkdir(rutaTotal,0700);
-			log_info(logFS,"Se creo el directorio *(directorios+i)");
+			log_info(logFS,"[Crear Archivo]-Se creo el directorio *(directorios+i)");
 	}
 	string_append(&rutaTotal,"/");
 	}
@@ -138,13 +138,13 @@ int crearElArchivo(char* path){
 	FILE* archivo = fopen(rutaTotal,"w");
 	int posicionDelBitMap = buscarPosicionLibre();
 	if(posicionDelBitMap == -1){
-		log_error(logFS,"No hay bloques disponibles ");
+		log_error(logFS,"[Crear Archivo]-No hay bloques disponibles ");
 		return 0;
 	}
 	bitarray_set_bit(bitMap,posicionDelBitMap-1);
 
 	fprintf(archivo,"TAMANO=0\nBLOQUES=[%d]\n",posicionDelBitMap);
-	log_info(logFS,"Se creo el archivo con TAMANO=0\nBLOQUES=[%d]\n", posicionDelBitMap);
+	log_info(logFS,"[Crear Archivo]-Se creo en la ruta: %s el archivo con TAMANO=0\nBLOQUES=[%d]\n", rutaTotal ,posicionDelBitMap);
 	fclose(archivo);
 	return 1;
 	//falta la parte de escribir el archivo con el tamano de archivo(Seria 0) y asignarle el bloque en el archivo
@@ -159,7 +159,7 @@ int borrarUnArchivo(char* path){
 	for(i = 0;*(bloques+i)!=NULL;i++){
 		int x = atoi(*(bloques+i));
 		bitarray_clean_bit(bitMap,x-1);
-		log_info(logFS,"Se desligo el bloque numero: %d ", x);
+		log_info(logFS,"[Borrar Archivo]-Se desligo el bloque numero: %d ", x);
 	}
 	if (remove(ruta)==0){
 		return 1;
@@ -172,25 +172,25 @@ void* leerBloque(FILE* archivo,int offset, int size){
 	fread(x,sizeof(char),bloqueSize,archivo);
 	void* contenido = malloc(size);
 	memcpy(contenido,x+offset,size);
-	log_info(logFS,"Se leyo el bloque y se obtuvo: %s ",(char*) contenido);
+	log_info(logFS,"[Leer Bloque]-Se leyo el bloque y se obtuvo: %s ",(char*) contenido);
 	return contenido;
 }
 int* obtenerBloques (char* path){
 
 	t_config *configuracion = config_create(obtenerRutaTotal(path,"Archivos"));
 	if(configuracion == NULL){
-		log_error(logFS,"No se pudo crear la configuración");
+		log_error(logFS,"[Obtener Bloques]-No se pudo crear la configuración");
 		return 0;
 	}
 	char** bloquesEnString = config_get_array_value(configuracion,"BLOQUES");
 	int i;
 	int* bloques= malloc(cantidadDeElementosDeUnArray(bloquesEnString));// Terriblemente turbio, pero bueno
-	log_info(logFS,"El archivo tiene %d bloques",cantidadDeElementosDeUnArray(bloquesEnString));//x2
+	log_info(logFS,"[Obtener Bloques]-El archivo tiene %d bloques",cantidadDeElementosDeUnArray(bloquesEnString));//x2
 	for(i=0;bloquesEnString[i]!=NULL;i++){
 		*(bloques+i) = atoi(bloquesEnString[i]);
-		log_info(logFS,"Se obtuvo el bloque numero: %s ", bloquesEnString[i]);
+		log_info(logFS,"[Obtener Bloques]-Se obtuvo el bloque numero: %s ", bloquesEnString[i]);
 	}
-	log_info(logFS,"Se obtuvieron los bloques del archivo %s", path);
+	log_info(logFS,"[Obtener Bloques]-Se obtuvieron los bloques del archivo %s", path);
 	config_destroy(configuracion);
 	return bloques;
 
@@ -212,7 +212,7 @@ void* obtenerDatos(char* path,int offset, int size){
 	int *bloques = obtenerBloques(path);
 	int bloqueInicial = offset / bloqueSize;
 	if(offset+size > devolverTamano(path)){
-		log_error(logFS,"Se pidio un offset mas grande que el tamano del archivo");
+		log_error(logFS,"[Obtener datos]-Se pidio un offset mas grande que el tamano del archivo");
 		return NULL;
 	}
 	offset -= bloqueSize*bloqueInicial;
@@ -221,14 +221,14 @@ void* obtenerDatos(char* path,int offset, int size){
 	while(bloques[bloqueInicial] != NULL&&size!=0){ // revisarEsto
 			FILE * archivo = aperturaDeArchivo(*(bloques+bloqueInicial));
 			if(archivo == NULL){
-				log_error(logFS,"El bloque %d.bin no existe más",bloqueInicial);
+				log_error(logFS,"[Obtener datos]-El bloque %d.bin no existe más",bloqueInicial);
 				char* pathTotal = obtenerRutaTotal(string_itoa(*(bloques+bloqueInicial)),"Bloques");
 				string_append(&pathTotal,".bin");
-				log_warning(logFS,"Se procede a crear nuevamente el bloque para escribirlo",bloqueInicial);
+				log_warning(logFS,"[Obtener datos]-Se procede a crear nuevamente el bloque para escribirlo",bloqueInicial);
 				archivo= fopen(pathTotal,"w+");
 			}
 			else{
-				log_info(logFS,"Se abrio el archivo %d.bin",*(bloques+bloqueInicial));
+				log_info(logFS,"[Obtener datos]-Se abrio el archivo %d.bin",*(bloques+bloqueInicial));
 			}
 			if(offset+size <= bloqueSize){
 				void* contenidoDelBloque= leerBloque(archivo,offset,size);
@@ -241,13 +241,13 @@ void* obtenerDatos(char* path,int offset, int size){
 				void* contenidoDelBloque=leerBloque(archivo,offset,bloqueSize-offset);
 
 				memcpy(contenido+sizeLeido,contenidoDelBloque,bloqueSize-offset);
-				log_info(logFS,"Se copiaron %d bytes del bloque %d.bin",bloqueSize-offset,*(bloques+bloqueInicial));
+				log_info(logFS,"[Obtener datos]-Se copiaron %d bytes del bloque %d.bin",bloqueSize-offset,*(bloques+bloqueInicial));
 				size -= bloqueSize-offset;
-				log_info(logFS,"Se copiaron %d bytes del bloque %d.bin",bloqueSize-offset,*(bloques+bloqueInicial));
+				log_info(logFS,"[Obtener datos]-Se copiaron %d bytes del bloque %d.bin",bloqueSize-offset,*(bloques+bloqueInicial));
 
-				log_info(logFS,"Quedan por leer %d bytes",size);
+				log_info(logFS,"[Obtener datos]-Quedan por leer %d bytes",size);
 				sizeLeido += bloqueSize-offset;
-				log_info(logFS,"Ya se leyeron %d bytes",sizeLeido);
+				log_info(logFS,"[Obtener datos]-Ya se leyeron %d bytes",sizeLeido);
 
 				offset=0;
 
@@ -258,7 +258,7 @@ void* obtenerDatos(char* path,int offset, int size){
 	}
 	free(bloques);
 
-	log_info(logFS,"Se obtuvo el buffer: %s",(char*) contenido);
+	log_info(logFS,"[Obtener datos]-Se obtuvo el buffer: %s",(char*) contenido);
 	return contenido;
 }
 void escribirBloque(int bloque,int offset,int size, void* buffer ){
@@ -268,7 +268,7 @@ void escribirBloque(int bloque,int offset,int size, void* buffer ){
 	FILE* archivo = fopen(ruta,"r+");
 	fseek(archivo,offset,SEEK_SET);
 	fwrite(buffer,size,1,archivo);
-	log_info(logFS,"Se escribio en el archivo: %s",(char*)buffer);
+	log_info(logFS,"[Escribir Bloque]-Se escribio en el archivo: %s",(char*)buffer);
 	fclose(archivo);
 }
 char* crearStringBloques(int* bloques,int cantidad){
@@ -279,13 +279,13 @@ char* crearStringBloques(int* bloques,int cantidad){
 	}
 	char* bloquesString =string_substring_from(x,1);
 	free(x);
-	log_info(logFS,"El conjunto de bloques nuevos es: [%s]",bloquesString);
+	log_info(logFS,"[Crear String Bloques]-El conjunto de bloques nuevos es: [%s]",bloquesString);
 	return bloquesString;
 }
 int guardarDatos(char* path,int offset, int size,void* buffer){
 	int *bloques = obtenerBloques(path);
 	if(bloques == NULL){
-		log_error(logFS,"No existia el archivo con la path: %s",path);
+		log_error(logFS,"[Guardar Datos]-No existia el archivo con la path: %s",path);
 		return 0;
 	}
 	int cantidadDeBloques = cantidadDeElementosDeUnArray(bloques);
@@ -293,7 +293,7 @@ int guardarDatos(char* path,int offset, int size,void* buffer){
 	int bloqueQueQuiereEscribir = (size+offset) / bloqueSize;
 	int i;
 	int tamano= devolverTamano(path);
-	log_info(logFS,"El tamaño del archivo es de: %s", path);
+	log_info(logFS,"[Guardar Datos]-El tamaño del archivo es de: %s", path);
 	int sizeLeido = 0;
 	if(tamano < offset+size){
 		tamano = offset+size;
@@ -302,14 +302,14 @@ int guardarDatos(char* path,int offset, int size,void* buffer){
 			if(i>=cantidadDeBloques){
 				int posicionLibre =buscarPosicionLibre();//Falta chequear errores aca
 				if(posicionLibre == -1){
-					log_error(logFS,"No hay bloques disponibles para seguir escribiendo.");
+					log_error(logFS,"[Guardar Datos]-No hay bloques disponibles para seguir escribiendo.");
 
 					return 0;
 				}
-				log_info(logFS,"Se tuvo que pedir otro bloque");
+				log_info(logFS,"[Guardar Datos]-Se tuvo que pedir otro bloque");
 				int* tmp = realloc(bloques,cantidadDeBloques*sizeof(int)+4);
 				if(tmp == NULL){
-					log_error(logFS,"Error en un realloc. Falla en la memoria principal.");
+					log_error(logFS,"[Guardar Datos]-Error en un realloc. Falla en la memoria principal.");
 					return 0;
 				}
 
@@ -318,16 +318,16 @@ int guardarDatos(char* path,int offset, int size,void* buffer){
 				}
 				bitarray_set_bit(bitMap,posicionLibre-1);
 				*(bloques+i) = posicionLibre;
-				log_info(logFS,"Se asigna el bloque %d.bin",posicionLibre);
+				log_info(logFS,"[Guardar Datos]-Se asigna el bloque %d.bin",posicionLibre);
 				cantidadDeBloques+=1;
-				log_info(logFS,"Ahora el archivo tiene %d cantidad de bloques.",cantidadDeBloques);
+				log_info(logFS,"[Guardar Datos]-Ahora el archivo tiene %d cantidad de bloques.",cantidadDeBloques);
 
 			}
 			if(i>=bloqueInicialDondeQuiereEscribir){
-				log_info(logFS,"Llegue al bloque %d.bin para escribir", i);
+				log_info(logFS,"[Guardar Datos]-Llegue al bloque %d.bin para escribir", i);
 				if(bloqueSize-offset > size-sizeLeido){
 
-					log_info(logFS,"Es el ultimo bloque. Voy a escribir %d bytes",size-sizeLeido);
+					log_info(logFS,"[Guardar Datos]-Es el ultimo bloque. Voy a escribir %d bytes",size-sizeLeido);
 					void* contenido = malloc((size-sizeLeido));
 					memcpy(contenido,buffer+sizeLeido,(size-sizeLeido));
 					escribirBloque(*(bloques+i),offset,size-sizeLeido,contenido);
@@ -335,7 +335,7 @@ int guardarDatos(char* path,int offset, int size,void* buffer){
 					free(contenido);
 				}
 				else{
-					log_info(logFS,"Todavia me faltan bloques para escribir, este es un bloque intermedio i.bin ");
+					log_info(logFS,"[Guardar Datos]-Todavia me faltan bloques para escribir, este es un bloque intermedio i.bin ");
 					void* contenido = malloc(bloqueSize-offset);
 					memcpy(contenido,buffer+sizeLeido,bloqueSize-offset);
 					escribirBloque(*(bloques+i),offset,bloqueSize-offset,contenido);
@@ -359,7 +359,7 @@ int guardarDatos(char* path,int offset, int size,void* buffer){
 	FILE* archivoDondeEscriboLosNuevosDatos =fopen(rutaDelArchivo,"w");
 	char* bloquesAEscribir = crearStringBloques(bloques,cantidadDeBloques);
 	fprintf(archivoDondeEscriboLosNuevosDatos,"TAMANO=%d\nBLOQUES=[%s]",tamano,bloquesAEscribir);
-	log_info(logFS,"Se escribio el archivo. Su tamaño es: %d,y tiene los siguientes BLOQUES: [%s]",tamano,bloquesAEscribir);
+	log_info(logFS,"[Guardar Datos]-Se escribio el archivo. Su tamaño es: %d,y tiene los siguientes BLOQUES: [%s]",tamano,bloquesAEscribir);
 	fclose(archivoDondeEscriboLosNuevosDatos);
 	free(bloquesAEscribir);
 	return 1;
@@ -370,7 +370,7 @@ void* configurarTodo(){
 	t_config* configuracion = config_create(obtenerRutaTotal("Metadata.bin","Metadata"));
 
 	if(configuracion == NULL){
-		log_error(logFS,"No se obtuvo el archivo Metadata.bin, por lo que se procede a cerrar el FileSytem");
+		log_error(logFS,"[Configurar Todo]-No se obtuvo el archivo Metadata.bin, por lo que se procede a cerrar el FileSytem");
 		perror("Te falta el archivo de metadata.bin papu");
 		exit(-1);
 	}
@@ -378,20 +378,20 @@ void* configurarTodo(){
 
 	bloqueSize = config_get_int_value(configuracion,"TAMANIO_BLOQUES");
 	cantidadDeBloques = config_get_int_value(configuracion,"CANTIDAD_BLOQUES");
-	log_info(logFS,"Tamaño de bloque: %d",bloqueSize);
-	log_info(logFS,"Cantidad de bloques: %d",cantidadDeBloques);
+	log_info(logFS,"[Configurar Todo]-Tamaño de bloque: %d",bloqueSize);
+	log_info(logFS,"[Configurar Todo]-Cantidad de bloques: %d",cantidadDeBloques);
 	char* rutaDeDirectorioBloques = string_duplicate(getConfigString("PUNTO_MONTAJE"));
 	string_append(&rutaDeDirectorioBloques,"/Bloques");
 	if(opendir(rutaDeDirectorioBloques)==NULL){
 		mkdir(rutaDeDirectorioBloques,0700);
-		log_info(logFS,"Creacion del directorio de Bloques");
+		log_info(logFS,"[Configurar Todo]-Creacion del directorio de Bloques");
 	}
 	free(rutaDeDirectorioBloques);
 	char* rutaDeDirectorioArchivos = string_duplicate(getConfigString("PUNTO_MONTAJE"));
 	string_append(&rutaDeDirectorioBloques,"/Archivos");
 	if(opendir(rutaDeDirectorioBloques)==NULL){
 		mkdir(rutaDeDirectorioBloques,0700);
-		log_info(logFS,"Creacion del directorio de Archivos");
+		log_info(logFS,"[Configurar Todo]-Creacion del directorio de Archivos");
 	}
 
 	int i;
@@ -401,10 +401,11 @@ void* configurarTodo(){
 		string_append(&nombre,".bin");
 		FILE* Bloque = fopen(obtenerRutaTotal(nombre,"Bloques"),"r+");
 		if(Bloque == NULL){
-			log_info(logFS,"Se tuvo que crear el bloque %d.bin",i);
+			log_info(logFS,"[Configurar Todo]-Se tuvo que crear el bloque %d.bin",i);
 			Bloque = fopen(obtenerRutaTotal(nombre,"Bloques"),"w+");
 		}
 		fclose(Bloque);
+		free(nombre);
 	}
 	if(!strcmp(config_get_string_value(configuracion,"MAGIC_NUMBER"),"SADICA")){
 		perror("Ingreso mal el punto de montaje");
@@ -412,7 +413,7 @@ void* configurarTodo(){
 	}
 	FILE* archivoDeBitmap = fopen(obtenerRutaTotal("Bitmap.bin","Metadata"),"r+");
 	if(archivoDeBitmap == NULL){
-		log_info(logFS,"Se tuvo que crear un bitmap nuevo, ya que no habia un bitmap anterior.");
+		log_info(logFS,"[Configurar Todo]-Se tuvo que crear un bitmap nuevo, ya que no habia un bitmap anterior.");
 		archivoDeBitmap =fopen(obtenerRutaTotal("Bitmap.bin","Metadata"),"w+");
 		int cantidad = ceil(((double)cantidadDeBloques)/8.0);
 		char* cosa = string_repeat('\0',cantidad);
@@ -430,7 +431,7 @@ void* configurarTodo(){
 
 	char* bitmap2 = mmap(0, scriptMap.st_size, PROT_WRITE |PROT_READ , MAP_SHARED, fd,  0);
 	bitMap= bitarray_create(bitmap2,cantidadDeBloques);
-	log_info(logFS,"Se creo correctamente el bitmap");
+	log_info(logFS,"[Configurar Todo]-Se creo correctamente el bitmap");
 }
 
 void tramitarPeticionesDelKernel(int socketKernel){
@@ -438,55 +439,71 @@ void tramitarPeticionesDelKernel(int socketKernel){
 	int operacion=1;//Esto es para que si lee 0, se termine el while.
 	while (operacion){
 			operacion = recibirMensaje(socketKernel,&stream);
-			log_info(logFS,"Llego un mensaje del kernel");
+			log_info(logFS,"[Tramitar Peticiones Del Kernel]-Llego un mensaje del kernel con operacion %d",operacion);
 			switch(operacion)
 			{
 					case validacionDerArchivo:{
-						log_info(logFS,"El kernel quiere validar un archivo");
+						log_info(logFS,"[Validar Archivo]-El kernel quiere validar un archivo");
 						char* path = stream;
-						bool respuesta = validarArchivo(path);
+							int respuesta;
+						if(path == NULL){
+							respuesta = 0;
+							log_error(logFS,"[Validar Archivo]- Me llego un NULL.");
+						}else{
+							respuesta = validarArchivo(path);
+						}
 						enviarMensaje(socketKernel,respuestaBooleanaDeFs,&respuesta,sizeof(respuesta));
 						log_info(logFS,"La respuesta enviada al kernel es: %d ", respuesta);
 						break;
 					}
 					case creacionDeArchivo:{
 						char* path = stream;
-						log_info(logFS,"El kernel quiere crear un archivo con el siguiente path: ", path);
-						int respuesta = crearElArchivo(path);
+						int respuesta;
+						if(path == NULL){
+							respuesta = 0;
+							log_error(logFS,"[Validar Archivo]- Me llego un NULL.");
+						}else{
+							log_info(logFS,"El kernel quiere crear un archivo con el siguiente path: ", path);
+							respuesta = crearElArchivo(path);
+						}
 						enviarMensaje(socketKernel,respuestaBooleanaDeFs,&respuesta,sizeof(respuesta));
 						log_info(logFS,"La respuesta enviada al kernel es: %b ", respuesta);
 						break;
 					}
 					case borrarArchivo:{
 						char* path = stream;
-						log_info(logFS,"El kernel quiere crear un archivo con el siguiente path: %s",path);
-
-						int respuesta= borrarUnArchivo(path);
+						int respuesta;
+						if(path == NULL){
+							respuesta = 0;
+							log_error(logFS,"[Validar Archivo]- Me llego un NULL.");
+						}
+						else{log_info(logFS,"[Validar Archivo]-El kernel quiere crear un archivo con el siguiente path: %s",path);
+						respuesta= borrarUnArchivo(path);
 						enviarMensaje(socketKernel,respuestaBooleanaDeFs,&respuesta,sizeof(int));
-						log_info(logFS,"La respuesta enviada al kernel es: %d ", respuesta);
+						log_info(logFS,"[Validar Archivo]-La respuesta enviada al kernel es: %d ", respuesta);
 						break;
 					}
 					case obtenerDatosDeArchivo:{
 
 						t_pedidoFS pedido = deseralizarPedidoFs(stream);
-						log_info(logFS,"El kernel quiere obtener %d bytes desde %d, de la path: %s",pedido.size,pedido.offset,pedido.path);
+						log_info(logFS,"[Obtener datos de Archivo]-El kernel quiere obtener %d bytes desde %d, de la path: %s",pedido.size,pedido.offset,pedido.path);
 						void *contenido= obtenerDatos(pedido.path,pedido.offset,pedido.size);
 						if(contenido != NULL){
 							enviarMensaje(socketKernel,respuestaConContenidoDeFs,contenido,pedido.size);
-							log_info(logFS,"Se encontraron los datos y se envia al kernel: %s",(char*) contenido);
+							log_info(logFS,"[Obtener datos de Archivo]-Se encontraron los datos y se envia al kernel: %s",(char*) contenido);
 						}
 						else{
 							bool respuesta = false;
-							log_info(logFS,"La respuesta enviada al kernel es: %b ", respuesta);
+							log_info(logFS,"[Obtener datos de Archivo]-La respuesta enviada al kernel es: %b ", respuesta);
 							enviarMensaje(socketKernel,respuestaBooleanaDeFs,&respuesta,1);
 						}
 						break;
 					}
 					case guardarDatosDeArchivo:{
 						t_escritura escritura = deserializarEscribirMemoria(stream);
-						log_info(logFS,"El kernel quiere escribir %d bytes desde %d, de la path: %s con el siguiente contenido: %s",escritura.size,escritura.offset,escritura.path,(char*)escritura.buffer);
+						log_info(logFS,"[Guardar datos de Archivo]-El kernel quiere escribir %d bytes desde %d, de la path: %s con el siguiente contenido: %s",escritura.size,escritura.offset,escritura.path,(char*)escritura.buffer);
 						int respuesta= guardarDatos(escritura.path,escritura.offset,escritura.size,escritura.buffer);
-						log_info(logFS,"Se envia al kernel: %d", respuesta);
+						log_info(logFS,"[Guardar datos de Archivo]-Se envia al kernel: %d", respuesta);
 						enviarMensaje(socketKernel,respuestaBooleanaDeFs,&respuesta,sizeof(respuesta));
 						break;
 					}

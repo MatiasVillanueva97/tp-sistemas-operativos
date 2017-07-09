@@ -59,7 +59,7 @@ void cacheHit(int pid, int pagina){
 		return linea->pagina == pagina &&pid ==linea->pid;
 	}
 	lineaCache* elemento = list_remove_by_condition(tablaDeEntradasDeCache,busquedaCache);
-	log_info(logMemoria,"Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.");
+	log_info(logMemoria,"[Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.");
 	list_add_in_index(tablaDeEntradasDeCache,0,elemento);
 }
 lineaCache* buscarLinea(int pid, int pagina){
@@ -97,10 +97,10 @@ void* buscarEnLaCache(int pid,int pagina){
 void cacheMiss(int pid, int pagina,void* contenido){
 	int cantidadDeEntradas= getConfigInt("ENTRADAS_CACHE");
 	if(tieneMenosDeNProcesos(pid)){
-		log_info(logMemoria,"El pid %d tiene menos de %d paginas.",pid,getConfigInt("CACHE_X_PROC"));
+		log_info(logMemoria,"[Solicitar Bytes-Cache  Miss]-El pid %d tiene menos de %d paginas.",pid,getConfigInt("CACHE_X_PROC"));
 		int cantidadDeElementos = list_size(tablaDeEntradasDeCache);
 		if(cantidadDeElementos == cantidadDeEntradas){
-			log_info(logMemoria,"La cache esta llena, por lo que se procede a borrar el ultimo de la lista");
+			log_info(logMemoria,"[Solicitar Bytes-Cache  Miss]-La cache esta llena, por lo que se procede a borrar el ultimo de la lista");
 			list_remove_and_destroy_element(tablaDeEntradasDeCache,cantidadDeEntradas-1,free);// POSIBLEMENTE TENGA QUE HACER UN DESTROYER
 		}
 	}
@@ -115,7 +115,7 @@ void cacheMiss(int pid, int pagina,void* contenido){
 				posicion++;
 		}
 		list_iterate(tablaDeEntradasDeCache,obtenerDondeEstaElLRUdeUnProceso);
-		log_info(logMemoria,"La ultima pagina cacheada del pid %d esta en al posicion %d",pid,posicionMaxima);
+		log_info(logMemoria,"[Solicitar Bytes-Cache  Miss]-La ultima pagina cacheada del pid %d esta en al posicion %d",pid,posicionMaxima);
 
 		list_remove_and_destroy_element(tablaDeEntradasDeCache,posicionMaxima,free);
 	}
@@ -125,12 +125,12 @@ void cacheMiss(int pid, int pagina,void* contenido){
 	void* contenido2 = malloc(sizeOfPaginas);
 	linea->contenido = contenido2;
 	memcpy(linea->contenido,contenido,sizeOfPaginas);
-	log_info(logMemoria,"Se agrega esa fila a la cache.");
+	log_info(logMemoria,"[Solicitar Bytes-Cache  Miss]-Se agrega esa fila a la cache.");
 	list_add_in_index(tablaDeEntradasDeCache,0,linea);
 }
 
 void cacheFlush(){
-	log_info(logMemoria,"Se limpia (Flush) la cache");
+	log_info(logMemoria,"[Cache Flush]-Se limpia (Flush) la cache");
 	list_clean(tablaDeEntradasDeCache);
 }
 

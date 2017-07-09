@@ -168,14 +168,14 @@ int cantidadDePaginasDeUnProcesoDeUnProceso(int pid){
 int liberarPagina(int pid, int pagina){ //Esta sincronizado en finalizarPrograma.
 	int i;
 	int posicionEnLaTabla =funcionHash(pid,pagina);
-	log_info(logMemoria,"La funcion de hash aproxima a la posicion %d de la tabla de paginacion invetida", posicionEnLaTabla);
+	log_info(logMemoria,"[Liberar Pagina]-La funcion de hash aproxima a la posicion %d de la tabla de paginacion invetida", posicionEnLaTabla);
 	sem_wait(&mutex_TablaDeCantidadDePaginas);
 	bool buscarPid(filaTablaCantidadDePaginas* fila){
 			return (fila->pid== pid);
 	}
 	filaTablaCantidadDePaginas* fila =list_find(tablaConCantidadDePaginas,buscarPid);
 	if(fila == NULL){
-		log_error(logMemoria,"No existe la entrada en la tabla de cantidad de paginas.Por lo tanto, se ingreso un pid invalido");
+		log_error(logMemoria,"[Liberar Pagina]-No existe la entrada en la tabla de cantidad de paginas.Por lo tanto, se ingreso un pid invalido");
 		sem_post(&mutex_TablaDeCantidadDePaginas);
 		return 0;
 	}
@@ -188,7 +188,7 @@ int liberarPagina(int pid, int pagina){ //Esta sincronizado en finalizarPrograma
 			tablaDePaginacionInvertida[i].pagina = -1;
 			tablaDePaginacionInvertida[i].pid = -1;
 			sem_post(&mutex_TablaDePaginasInvertida);
-			log_info(logMemoria,"Se asigno el frame %d para la pagina %d del pid %d",tablaDePaginacionInvertida[i].frame,pagina,pid);
+			log_info(logMemoria,"[Liberar Pagina]-Se libero el frame %d de la pagina %d del pid %d",tablaDePaginacionInvertida[i].frame,pagina,pid);
 			return 1;
 		}
 	}
@@ -198,12 +198,12 @@ int liberarPagina(int pid, int pagina){ //Esta sincronizado en finalizarPrograma
 			tablaDePaginacionInvertida[i].pagina = -1;
 			tablaDePaginacionInvertida[i].pid = -1;
 			sem_post(&mutex_TablaDePaginasInvertida);
-			log_info(logMemoria,"Se asigno el frame %d para la pagina %d del pid %d",tablaDePaginacionInvertida[i].frame,pagina,pid);
+			log_info(logMemoria,"[Liberar Pagina]-Se libero el frame %d de la pagina %d del pid %d",tablaDePaginacionInvertida[i].frame,pagina,pid);
 			return 1;
 		}
 	}
 	sem_post(&mutex_TablaDePaginasInvertida);
-	log_error(logMemoria,"No se encontro la pagina %d del pid %d en la tabla de paginacion invertida",pagina,pid);
-
+	log_error(logMemoria,"[Liberar Pagina]-No se encontro la pagina %d del pid %d en la tabla de paginacion invertida",pagina,pid);
+	fila->cantidadDePaginasReales+=1; // Subido ultimamente
 	return 0;
 }

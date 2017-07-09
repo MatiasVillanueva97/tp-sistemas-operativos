@@ -75,7 +75,7 @@ void* leerMemoriaPosta (int pid, int pagina ){
 	}
 	void * contenido = malloc(getConfigInt("MARCO_SIZE"));
 	memcpy(contenido,memoriaTotal+frame*getConfigInt("MARCO_SIZE"),getConfigInt("MARCO_SIZE"));
-	log_info(logMemoria,"Se lee toda la pagina %d del pid &d.",pagina,pid);
+	log_info(logMemoria,"[Solicitar Bytes]-Se lee toda la pagina %d del pid &d.",pagina,pid);
 
 	return contenido;
 }
@@ -202,29 +202,29 @@ void* solicitarBytesDeUnaPagina(int pid, int pagina, int desplazamiento, int tam
 	void* contenidoDeLaPagina;
 	sem_wait(&mutex_cache);
 	if((contenidoDeLaPagina= buscarEnLaCache(pid,pagina))!=NULL){
-		log_info(logMemoria,"La pagina %d del proceso %d esta en la cache, se procede a un cache hit",pid,pagina);
+		log_info(logMemoria,"[Solicitar Bytes]-La pagina %d del proceso %d esta en la cache, se procede a un cache hit",pid,pagina);
 
 		cacheHit(pid,pagina);
 		sem_post(&mutex_cache);
 	}
 	else{
-		log_info(logMemoria,"La pagina %d del proceso %d no esta en la cache",pid,pagina);
+		log_info(logMemoria,"[Solicitar Bytes]-La pagina %d del proceso %d no esta en la cache",pid,pagina);
 
 		sem_post(&mutex_cache);
 
 		sem_wait(&mutex_retardo);
 		int retardoLocal = retardo;
 		sem_post(&mutex_retardo);
-		log_info(logMemoria,"Se procede a ejecutar el retardo por no estar en cache %d", retardoLocal);
-		sleep(retardoLocal);
+		log_info(logMemoria,"[Solicitar Bytes]- Se procede a ejecutar el retardo por no estar en cache %d", retardoLocal);
+		usleep(retardoLocal*1000);
 		sem_wait(&mutex_Memoria); //No se si son 2 mutex distintos
 		contenidoDeLaPagina = leerMemoriaPosta(pid,pagina);
 		if ((int)contenidoDeLaPagina == 0){
-			log_error(logMemoria,"La solicutd de la pagina %d del pid %d es invalida!",pagina,pid);
+			log_error(logMemoria,"[Solicitar Bytes]-La solicutd de la pagina %d del pid %d es invalida!",pagina,pid);
 			free(contenidoDeLaPagina);
 			return 0;
 		}
-		log_info(logMemoria,"Se encontro el contenido y se procede a ejecutar un cache miss");
+		log_info(logMemoria,"[Solicitar Bytes]-Se encontro el contenido y se procede a ejecutar un cache miss");
 		sem_wait(&mutex_cache);
 		cacheMiss(pid,pagina,contenidoDeLaPagina);
 		sem_post(&mutex_cache);
@@ -264,12 +264,12 @@ int asignarPaginasAUnProceso(int pid, int cantidadDePaginas){
 
 
 	int paginaMaxima = buscarCantidadDePaginas(pid);
-	log_info(logMemoria,"El proceso %d tiene %d paginas en memoria y pidio %d paginas nuevas",pid,paginaMaxima,cantidadDePaginas);
+	log_info(logMemoria,"[Asignar Paginas]-El proceso %d tiene %d paginas en memoria y pidio %d paginas nuevas",pid,paginaMaxima,cantidadDePaginas);
 
 	sem_wait(&mutex_TablaDePaginasInvertida);
 	for(i= 0 ;i < cantidadDePaginas; i++){
 		if(reservarFrame(pid,paginaMaxima+i) == 0){
-			log_error(logMemoria,"No se pudo asignar paginas al proceso");
+			log_error(logMemoria,"[Asignar Paginas]-No se pudo asignar paginas al proceso, se procede a liberar las paginas");
 			int w ;
 			for(w = 0;w<i;w++){
 				liberarPagina(pid,paginaMaxima+w);
@@ -281,7 +281,7 @@ int asignarPaginasAUnProceso(int pid, int cantidadDePaginas){
 	sem_post(&mutex_TablaDePaginasInvertida);
 	sem_wait(&mutex_TablaDeCantidadDePaginas);
 	if(paginaMaxima == 0){
-		log_warning(logMemoria,"Hay que crear una nueva entrada a la tabla cantidad de paginas");
+		log_warning(logMemoria,"[Asignar Paginas]-Hay que crear una nueva entrada a la tabla cantidad de paginas");
 
 		filaTablaCantidadDePaginas * x = malloc(sizeof(filaTablaCantidadDePaginas));
 		x->paginaMaxima= cantidadDePaginas;
@@ -290,7 +290,7 @@ int asignarPaginasAUnProceso(int pid, int cantidadDePaginas){
 		list_add(tablaConCantidadDePaginas,x);
 	}
 	else{
-		log_info(logMemoria,"Se encontro una página. Se procede a modificar el elemento de la lista de cantidad de paginas.");
+		log_info(logMemoria,"[Asignar Paginas]-Se encontro una página. Se procede a modificar el elemento de la lista de cantidad de paginas.");
 
 		filaTablaCantidadDePaginas * elemento = buscarFilaEnTablaCantidadDePaginas(pid);
 		elemento->paginaMaxima += cantidadDePaginas;
@@ -303,7 +303,7 @@ int asignarPaginasAUnProceso(int pid, int cantidadDePaginas){
 int finalizarUnPrograma(int pid){
 	int paginas = buscarCantidadDePaginas(pid);
 	if(paginas == 0){
-		log_warning(logMemoria,"No se encontraba ninguna pagina del proceso en memoria.");
+		log_warning(logMemoria,"[Finalizar Programa]-No se encontraba ninguna pagina del proceso en memoria.");
 		return 0;
 	}
 	int i;
@@ -318,7 +318,7 @@ int finalizarUnPrograma(int pid){
 	list_remove_and_destroy_by_condition(tablaConCantidadDePaginas,buscarPid,free);//faltaria un destroyer decente
 	sem_post(&mutex_TablaDeCantidadDePaginas);
 	sem_wait(&mutex_cache);
-	log_info(logMemoria,"Se borra de la cache las paginas del proceso.");
+	log_info(logMemoria,"[Finalizar Programa]-Se borra de la cache las paginas del proceso.");
 	borraDeLaCache(pid);
 	sem_post(&mutex_cache);
 	return 1;
@@ -436,24 +436,25 @@ typedef struct {
 //Funciones de Conexion
 void recibirMensajesMemoria(void* arg){
 	int socket = (int)arg;
+	log_info(logMemoria,"[recibirMensajesMemoria]-Entramos a recibirMensajesMemoria con %d como socket", socket);
 	void* stream;
 	int operacion=1;//Esto es para que si lee 0, se termine el while.
 	while (operacion){
 
 		operacion = recibirMensaje(socket,&stream);
-		log_info(logMemoria,"Llego la operacion %d", operacion);
+		log_info(logMemoria,"[recibirMensajesMemoria]-Llego la operacion %d", operacion);
 		switch(operacion)
 		{
 				case inicializarPrograma:{ //inicializarPrograma
 					t_inicializarPrograma* estructura = stream;
-					log_info(logMemoria,"El kernel quiere iniciar el pid %d con %d paginas iniciales", estructura->pid,estructura->cantPags);
+					log_info(logMemoria,"[Inicializar Programa] - El kernel quiere iniciar el pid %d con %d paginas iniciales", estructura->pid,estructura->cantPags);
 					int x=1;
 					if(asignarPaginasAUnProceso(estructura->pid,estructura->cantPags)==0){
 						x=0;
 					}
 					enviarMensaje(socket,RespuestaBooleanaDeMemoria,&x,sizeof(int));
 					if(x){
-						log_info(logMemoria,"Se acepto asignar las paginas, por lo que se procede a iniciar el proceso", estructura->pid,estructura->cantPags);
+						log_info(logMemoria,"[Inicializar Programa]-Se acepto asignar las paginas, por lo que se procede a iniciar el proceso", estructura->pid,estructura->cantPags);
 					      int t;
 					      char* contenidoPag ;
 					      char* contenidoDeLaPaginaPosta= malloc(sizeOfPaginas);
@@ -462,12 +463,16 @@ void recibirMensajesMemoria(void* arg){
 					      for(t=0;t<estructura->cantPags ;t++)
 					      {
 					    	  recibirMensaje(socket,&contenidoPag);
-					    	  log_info(logMemoria,"Se recibio el contenido de  la pagina numero %d y se depositara el contenido: %s",t,(char*) contenidoPag);
+					    	  if(contenidoPag == NULL){
+					    		  operacion = 0;
+					    		  break;
+					    	  }
+					    	  log_info(logMemoria,"[Inicializar Programa]-Se recibio el contenido de  la pagina numero %d y se depositara el contenido: %s",t,(char*) contenidoPag);
 					    	  memcpy(contenidoDeLaPaginaPosta,contenidoPag,sizeOfPaginas);
 					    	  free(contenidoPag);
 					    	  //rta_escribir_Memoria=escribirMemoriaPosta(estructura->pid,t,contenidoPag);
 					    	  rta_escribir_Memoria=escribirMemoriaPosta(estructura->pid,t,contenidoDeLaPaginaPosta);
-					    	  log_info(logMemoria,"Se envio %b a kernel como respuesta",rta_escribir_Memoria);
+					    	  log_info(logMemoria,"[Inicializar Programa]-Se envio %d a kernel como respuesta",rta_escribir_Memoria);
 					    	  enviarMensaje(socket,RespuestaBooleanaDeMemoria,&rta_escribir_Memoria,sizeof(int));
 					      }
 					      free(contenidoDeLaPaginaPosta);
@@ -486,14 +491,14 @@ void recibirMensajesMemoria(void* arg){
 					if(!contenidoDeLaPagina){
 						respuesta =0;
 						enviarMensaje(socket,RespuestaBooleanaDeMemoria,&respuesta,sizeof(int));
-						 log_info(logMemoria,"Se envio %b a kernel como respuesta",respuesta);
+						 log_info(logMemoria,"[Solicitar Bytes]-Se envio %b a kernel como respuesta",respuesta);
 					}
 					else{
 
-							enviarMensaje(socket,RespuestaBooleanaDeMemoria,&respuesta,sizeof(int));
-						 log_info(logMemoria,"Se envio %b a kernel como respuesta",respuesta);
+						enviarMensaje(socket,RespuestaBooleanaDeMemoria,&respuesta,sizeof(int));
+						 log_info(logMemoria,"[Solicitar Bytes]-Se envio %b a kernel como respuesta",respuesta);
 						 enviarMensaje(socket,lineaDeCodigo,contenidoDeLaPagina,estructura->direccion.size);
-						 log_info(logMemoria,"Se envio el siguiente contenido a kernel: %s",(char*)contenidoDeLaPagina);
+						 log_info(logMemoria,"[Solicitar Bytes]-Se envio el siguiente contenido a kernel: %s",(char*)contenidoDeLaPagina);
 					}
 					free(contenidoDeLaPagina);
 					break;
@@ -507,13 +512,14 @@ void recibirMensajesMemoria(void* arg){
 						x=0;
 					}
 					enviarMensaje(socket,RespuestaBooleanaDeMemoria,&x,sizeof(int));
-					log_info(logMemoria,"Se envio %b a kernel como respuesta",x);
+					log_info(logMemoria,"[Almacenar Bytes]-Se envio % a kernel como respuesta",x);
 
 					break;
 				}
 				case asignarPaginas:{//PedirMasPaginas
 					t_asignarPaginas* estructura = stream;
 					int x;
+					log_info(logMemoria,"[Asignar Paginas] Se quieren asignar %d paginas para el pid %d",estructura->cantPags,estructura->pid);
 					if(asignarPaginasAUnProceso(estructura->pid,estructura->cantPags)==-1){
 					  							x=0;
 					}
@@ -521,30 +527,30 @@ void recibirMensajesMemoria(void* arg){
 					 						x=buscarCantidadDePaginas(estructura->pid) -1;
 					}
 					enviarMensaje(socket,RespuestaBooleanaDeMemoria,&x,sizeof(int));
-					log_info(logMemoria,"Se envio %d a kernel como respuesta",x);
+					log_info(logMemoria,"[Asignar Paginas]-Se envio %d a kernel como respuesta",x);
 					break;
 				}
 				case finalizarPrograma:{//FinalzarPrograma
 
 					int* pid = stream;
 					int x=0;
-					log_info(logMemoria,"Entramos a Finalizar Programa. Pid: %d \n", *pid);
+					log_info(logMemoria,"[Finalizar Programa]-Entramos a Finalizar Programa. Pid: %d \n", *pid);
 					if(finalizarUnPrograma(*pid)){
 							x=1;
 					}
 					enviarMensaje(socket,RespuestaBooleanaDeMemoria,&x,sizeof(int));
-					log_info(logMemoria,"Se envio %d a kernel como respuesta",x);
+					log_info(logMemoria,"[Finalizar Programa]-Se envio %d a kernel como respuesta",x);
 					break;
 				}
 				case liberarUnaPagina:{
 				     int* pid = stream;
 				     int* pagina = stream+sizeof(int);
-				     log_info(logMemoria,"Entramos a liberar pagina.Pid:%d Pagina: %d\n", *pid,*pagina);
+				     log_info(logMemoria,"[Liberar Pagina]-Entramos a liberar pagina.Pid:%d Pagina: %d\n", *pid,*pagina);
 				     liberarPagina(*pid,*pagina);
 				     break;
 				}
 				case 0:{
-					log_info(logMemoria,"Se cerro el kernel");
+					log_info(logMemoria,"[Rip Kernel]-Se cerro el kernel");
 					close(socket);
 					break;
 				}
