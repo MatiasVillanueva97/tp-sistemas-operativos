@@ -7,6 +7,10 @@
 
 #include "funcionesCapaFS.h"
 
+void borrarEnTablasGlobales(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_de_archivo, ENTRADA_DE_TABLA_DE_PROCESO* entrada_de_tabla_proceso, int pid);
+int recibirBooleanoDeFS(PCB_DATA* pcbaux, int exitcode);
+int agregarNuevaAperturaDeArchivo(char* path, int pid, char* flags);
+int crearArchivo(char* path, int pid, char* flags);
 
 
 ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* encontrarElDeIgualPid(int pid){
@@ -160,11 +164,197 @@ void liberarRecursosArchivo(PCB_DATA* pcb){
 	list_remove_and_destroy_element(tablaGlobalDeArchivosDeProcesos,posicionEnTablaGlobalArchivosDeProceso(entrada_a_eliminar),liberarEntradaTablaGlobalDeArchivosDeProceso);
 }
 
+
+
+int borrarArchivoPermanente(t_archivo estructura){
+
+ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(estructura.pid);
+
+ENTRADA_DE_TABLA_DE_PROCESO* entrada_a_evaluar= list_get(aux->tablaProceso,estructura.fileDescriptor);
+int rtaCPU = 0;
+PCB_DATA* pcbaux;
+pcbaux = buscarPCB(estructura.pid);
+if (entrada_a_evaluar != NULL){
+	ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_de_archivo= list_get(tablaGlobalDeArchivos,entrada_a_evaluar->globalFD);
+	if(entrada_de_archivo!=NULL){
+		if(entrada_de_archivo->cantidad_aperturas == 1){
+			enviarMensaje(socketFS,borrarArchivo,entrada_de_archivo->path,strlen(entrada_de_archivo->path)+1);
+			rtaCPU = recibirBooleanoDeFS(pcbaux,-16);
+		}else{
+			finalizarPid(pcbaux,-14);//No se pudo borrar, porque otro proceso lo esta usando
+		}
+		}else{
+			finalizarPid(pcbaux,accesoArchivoInexistente);
+	}
+	}else{
+		finalizarPid(pcbaux,accesoArchivoInexistente);
+	}
+return rtaCPU;
+}
+
+
+int cerrarArchivoPermanente(t_archivo estructura){
+	PCB_DATA* pcbaux;
+	pcbaux = buscarPCB(estructura.pid);
+	int rtaCPU = 0;
+	ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(estructura.pid);
+	ENTRADA_DE_TABLA_DE_PROCESO* entrada_de_tabla_proceso= list_get(aux->tablaProceso,estructura.fileDescriptor);
+	if (entrada_de_tabla_proceso != NULL){
+		ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_de_archivo= list_get(tablaGlobalDeArchivos,entrada_de_tabla_proceso->globalFD);
+		if (entrada_de_archivo !=NULL ){
+			borrarEnTablasGlobales(entrada_de_archivo, entrada_de_tabla_proceso, estructura.pid);
+			rtaCPU = 1;
+		}else{
+			finalizarPid(pcbaux,accesoArchivoInexistente);//Por ahora
+	}
+	}else{
+		finalizarPid(pcbaux,accesoArchivoInexistente);
+	}
+	return rtaCPU;
+}
+
+int escribirEnUnArchivo(t_mensajeDeProceso msj, int tamanoDelBuffer){
+	int rtaCPU = 0;
+	PCB_DATA* pcbaux;
+	pcbaux = buscarPCB(msj.pid);
+
+	ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(msj.pid);
+
+	ENTRADA_DE_TABLA_DE_PROCESO *entrada_de_tabla_proceso= list_get(aux->tablaProceso,msj.descriptorArchivo);
+
+	if (entrada_de_tabla_proceso!= NULL){
+		ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_de_archivo= list_get(tablaGlobalDeArchivos,entrada_de_tabla_proceso->globalFD);
+		if(entrada_de_archivo !=NULL){
+			if (string_contains(entrada_de_tabla_proceso->flags,"w")){
+				void* pedidoEscritura = serializarEscribirMemoria(tamanoDelBuffer,entrada_de_tabla_proceso->offset,entrada_de_archivo->path, msj.mensaje);
+				enviarMensaje(socketFS,guardarDatosDeArchivo, pedidoEscritura,4+strlen(entrada_de_archivo->path)+tamanoDelBuffer+sizeof(int)*2);
+				rtaCPU = recibirBooleanoDeFS(pcbaux,-15);
+				}else{
+					finalizarPid(pcbaux,escrituraDenegada);
+			}
+			}else{
+				finalizarPid(pcbaux,accesoArchivoInexistente);
+			}
+			}else{
+				finalizarPid(pcbaux,accesoArchivoInexistente);
+		}
+	return rtaCPU;
+}
+
+int moverUnCursor(t_moverCursor estructura){
+	PCB_DATA* pcbaux;
+	pcbaux = buscarPCB(estructura.pid);
+	int rtaCPU = 0;
+
+	ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(estructura.pid);
+
+	ENTRADA_DE_TABLA_DE_PROCESO* entrada_de_tabla_proceso= list_get(aux->tablaProceso,estructura.fileDescriptor);
+
+	if(entrada_de_tabla_proceso != NULL){
+		ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_de_archivo= list_get(tablaGlobalDeArchivos,entrada_de_tabla_proceso->globalFD);
+		if (entrada_de_archivo != NULL){
+			entrada_de_tabla_proceso->offset += estructura.posicion;
+			rtaCPU = 1;
+		}else{
+			finalizarPid(pcbaux,-18);
+		}
+	}else{
+		finalizarPid(pcbaux,accesoArchivoInexistente);
+	}
+	return rtaCPU;
+}
+
+void abrirArchivoPermanente(bool existeArchivo, t_crearArchivo estructura, int socketCPU){
+	PCB_DATA* pcbaux;
+	pcbaux = buscarPCB(estructura.pid);
+	int rtaCPU = 0;
+	if(existeArchivo){
+		int fileDescriptor = agregarNuevaAperturaDeArchivo(estructura.path,estructura.pid,estructura.flags);
+		enviarMensaje(socketCPU,envioDelFileDescriptor,&fileDescriptor,sizeof(int));
+		}else if (string_contains(estructura.flags,"c")){
+			int fileDescriptor = crearArchivo(estructura.path,estructura.pid,estructura.flags );
+			if(fileDescriptor){
+				enviarMensaje(socketCPU,envioDelFileDescriptor,&fileDescriptor,sizeof(int));
+			}else{
+				finalizarPid(pcbaux,accesoArchivoInexistente);
+				enviarMensaje(socketCPU,respuestaBooleanaKernel,&rtaCPU,sizeof(int));
+			}
+			}else{
+				finalizarPid(pcbaux,accesoArchivoInexistente);
+				enviarMensaje(socketCPU,respuestaBooleanaKernel,&rtaCPU,sizeof(int));
+		}
+}
+
+void leerEnUnArchivo(t_lectura estructura, int socketCPU){
+	PCB_DATA* pcbaux;
+	pcbaux = buscarPCB(estructura.pid);
+	int rtaCPU = 0;
+
+	ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(estructura.pid);
+
+	ENTRADA_DE_TABLA_DE_PROCESO* entrada_a_evaluar= list_get(aux->tablaProceso,estructura.fileDescriptor);
+
+	if (entrada_a_evaluar != NULL){
+		ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_de_archivo= list_get(tablaGlobalDeArchivos,entrada_a_evaluar->globalFD);
+		if(entrada_de_archivo!=NULL){
+			if (string_contains(entrada_a_evaluar->flags,"r")){
+
+				void* pedidoDeLectura = serializarPedidoFs(estructura.size,entrada_a_evaluar->offset,entrada_de_archivo->path);//Patos, basicamente
+				enviarMensaje(socketFS,obtenerDatosDeArchivo,pedidoDeLectura,4+strlen(entrada_de_archivo->path)+sizeof(int)*2+1);
+				void* contenido;
+				if(recibirMensaje(socketFS,&contenido) == respuestaConContenidoDeFs){
+					enviarMensaje(socketCPU,respuestaLectura, contenido,estructura.size);
+					entrada_a_evaluar->offset += estructura.size;
+				}
+				else{
+					finalizarPid(pcbaux,-15);//Respuesta Mala de FS, no hay que leer en el archivo
+					enviarMensaje(socketCPU,respuestaBooleanaKernel,&rtaCPU,sizeof(int));
+				}
+			}else{
+				finalizarPid(pcbaux,lecturaDenegada);
+				enviarMensaje(socketCPU,respuestaBooleanaKernel,&rtaCPU,sizeof(int));
+			}
+		}else{
+			finalizarPid(pcbaux,accesoArchivoInexistente);
+			enviarMensaje(socketCPU,respuestaBooleanaKernel,&rtaCPU,sizeof(int));
+		}
+	}else{
+		finalizarPid(pcbaux,accesoArchivoInexistente);
+		enviarMensaje(socketCPU,respuestaBooleanaKernel,&rtaCPU,sizeof(int));
+		}
+}
+
+
+
+///////Privadas
+void borrarEnTablasGlobales(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_de_archivo, ENTRADA_DE_TABLA_DE_PROCESO* entrada_de_tabla_proceso, int pid){
+	entrada_de_archivo->cantidad_aperturas--;
+	if(entrada_de_archivo->cantidad_aperturas==0){
+	list_remove_and_destroy_element(tablaGlobalDeArchivos,entrada_de_tabla_proceso->globalFD,liberarEntradaTablaGlobalDeArchivos);
+	}
+	bool sonDeIgualPid(ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO * elementos){
+			return  elementos->pid == pid;
+	}
+	list_remove_and_destroy_by_condition(tablaGlobalDeArchivosDeProcesos,(void*) sonDeIgualPid,liberarEntradaDeTablaProceso);
+
+}
+int recibirBooleanoDeFS(PCB_DATA* pcbaux, int exitcode){
+	void* stream2;
+	recibirMensaje(socketFS,&stream2);
+	int rtaFS = (*(int*) stream2);
+	if(rtaFS){
+		return 1;
+	}else{
+	finalizarPid(pcbaux,exitcode);
+	return 0;
+	}
+}
+
 int crearArchivo(char* path, int pid, char* flags){
 	enviarMensaje(socketFS,creacionDeArchivo,path,strlen(path)+1);
 	void* stream;
 	recibirMensaje(socketFS,&stream);
-	bool seCreoArchivo = *(bool*)stream;
+	int seCreoArchivo = (*(int*)stream);
 	if (seCreoArchivo){
 		agregarATablaGlobalDeArchivos(path,1);
 		ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(pid);

@@ -198,8 +198,6 @@ void *rutinaCPU(void * arg)
 				t_mensajeDeProceso msj = deserializarMensajeAEscribir(stream);
 
 					int tamanoDelBuffer =  tamanoMensajeAEscribir(strlen(msj.mensaje));
-					PCB_DATA* pcbaux;
-					pcbaux = buscarPCB(msj.pid);
 					bool respuestaACPU = false;
 
 				//***Si el fileDescriptro es 1, se imprime por consola
@@ -215,33 +213,7 @@ void *rutinaCPU(void * arg)
 
 				}
 				else{
-					ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(msj.pid);
-
-					ENTRADA_DE_TABLA_DE_PROCESO *entrada_de_tabla_proceso= list_get(aux->tablaProceso,msj.descriptorArchivo);
-
-					if (entrada_de_tabla_proceso!= NULL){
-					ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_de_archivo= list_get(tablaGlobalDeArchivos,entrada_de_tabla_proceso->globalFD);
-						if(entrada_de_archivo !=NULL){
-							if (string_contains(entrada_de_tabla_proceso->flags,"w")){
-								int offset = entrada_de_tabla_proceso->offset;//DEBE CAMBIAR.QUE ES UN CURSOR?
-								void* pedidoEscritura = serializarEscribirMemoria(tamanoDelBuffer,offset,entrada_de_archivo->path, msj.mensaje);
-								enviarMensaje(socketFS,guardarDatosDeArchivo, pedidoEscritura,4+strlen(entrada_de_archivo->path)+tamanoDelBuffer+sizeof(int)*2);
-								void* contenido;
-								recibirMensaje(socketFS,&contenido);
-								int respuestaFS = leerInt(contenido);
-								respuestaACPU = respuestaFS;
-								if(!respuestaFS){
-									finalizarPid(pcbaux,-1);
-								}
-							}else{
-								finalizarPid(pcbaux,-3);
-							}
-						}else{
-							finalizarPid(pcbaux,-2);
-						}
-					}else{
-						finalizarPid(pcbaux,-2);
-					}
+					respuestaACPU = escribirEnUnArchivo(msj,tamanoDelBuffer);
 					enviarMensaje(socketCPU,respuestaBooleanaKernel,&respuestaACPU,sizeof(bool));
 				}
 			}break;
@@ -249,59 +221,19 @@ void *rutinaCPU(void * arg)
 		case abrirArchivo: {// No se que tan bien funcionan los deserializar y serializa
 					t_crearArchivo estructura = deserializarCrearArchivo(stream);
 					enviarMensaje(socketFS,validacionDerArchivo,estructura.path,strlen(estructura.path)+1);
-					PCB_DATA* pcbaux;
-					pcbaux = buscarPCB(estructura.pid);
-					int rtaCPU = 0;
 					void * stream2;
 					recibirMensaje(socketFS,&stream2);
 					bool existeArchivo = *(bool*) stream2;
-					 if(existeArchivo){
-						int fileDescriptor = agregarNuevaAperturaDeArchivo(estructura.path,estructura.pid,estructura.flags);
-						enviarMensaje(socketCPU,envioDelFileDescriptor,&fileDescriptor,sizeof(int));
-						}else if (string_contains(estructura.flags,"c")){
-							int fileDescriptor = crearArchivo(estructura.path,estructura.pid,estructura.flags);
-							if (fileDescriptor){
-								enviarMensaje(socketCPU,envioDelFileDescriptor,&fileDescriptor,sizeof(int));
-							}else{
-								finalizarPid(pcbaux,-2);
-								enviarMensaje(socketCPU,respuestaBooleanaKernel,&rtaCPU,sizeof(int));
-							}
-						}else{
-						finalizarPid(pcbaux,-2);
-						enviarMensaje(socketCPU,respuestaBooleanaKernel,&rtaCPU,sizeof(int));
-					}
+					abrirArchivoPermanente(existeArchivo,estructura, socketCPU);
 			 }
-			break;
-
 			break;
 
 		case cerrarArchivo:{
 			t_archivo estructura;
 			estructura = *((t_archivo*)stream);
-			PCB_DATA* pcbaux;
-			pcbaux = buscarPCB(estructura.pid);
-			int rtaCPU = 0;
-			ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(estructura.pid);
-			ENTRADA_DE_TABLA_DE_PROCESO* entrada_de_tabla_proceso= list_get(aux->tablaProceso,estructura.fileDescriptor);
 
-			if (entrada_de_tabla_proceso != NULL){
-				ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_de_archivo= list_get(tablaGlobalDeArchivos,entrada_de_tabla_proceso->globalFD);
-				if (entrada_de_archivo !=NULL ){
-					entrada_de_archivo->cantidad_aperturas--;
-					if(entrada_de_archivo->cantidad_aperturas==0){
-						list_remove_and_destroy_element(tablaGlobalDeArchivos,entrada_de_tabla_proceso->globalFD,liberarEntradaTablaGlobalDeArchivos);
-				}
-				bool sonDeIgualPid(ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO * elementos){
-								return  elementos->pid == estructura.pid;
-								}
-				list_remove_and_destroy_by_condition(tablaGlobalDeArchivosDeProcesos,(void*) sonDeIgualPid,liberarEntradaDeTablaProceso);
-				rtaCPU = 1;
-				}else{
-					finalizarPid(pcbaux,-2);//Por ahora
-				}
-			}else{
-				finalizarPid(pcbaux,-2);
-			}
+			int rtaCPU = cerrarArchivoPermanente(estructura);
+
 			enviarMensaje(socketCPU,respuestaBooleanaKernel,&rtaCPU,sizeof(int));
 
 		}break;
@@ -309,106 +241,28 @@ void *rutinaCPU(void * arg)
 		case borrarArchivoCPU:{
 			t_archivo estructura;
 			estructura = *((t_archivo*)stream);
-			PCB_DATA* pcbaux;
-			pcbaux = buscarPCB(estructura.pid);
-			int rtaCPU = 0;
-			ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(estructura.pid);
 
-			ENTRADA_DE_TABLA_DE_PROCESO* entrada_a_evaluar= list_get(aux->tablaProceso,estructura.fileDescriptor);
-			if (entrada_a_evaluar != NULL){
-					ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_de_archivo= list_get(tablaGlobalDeArchivos,entrada_a_evaluar->globalFD);
-				if(entrada_de_archivo!=NULL){
-					if(entrada_de_archivo->cantidad_aperturas == 1){
-						enviarMensaje(socketFS,borrarArchivo,entrada_de_archivo->path,strlen(entrada_de_archivo->path)+1);
-						void* stream2;
-						recibirMensaje(socketFS,&stream2);
-						int rtaFS = leerInt(stream2);
-						if(rtaFS){
-						rtaCPU = 1;
-						}else{
-							finalizarPid(pcbaux,-15);//Falla de FS
-						}
-					}else{
-						finalizarPid(pcbaux,-14);//No se pudo borrar, porque otro proceso lo esta usando
-					}
-				}else{
-					finalizarPid(pcbaux,-2);
-				}
-			}else{
-				finalizarPid(pcbaux,-2);
-		}
+			int rtaCPU = borrarArchivoPermanente(estructura);
+
 			enviarMensaje(socketCPU,respuestaBooleanaKernel,&rtaCPU,sizeof(int));
-	}break;
+		}break;
 
-			case leerArchivo:{
+		case leerArchivo:{
 
-				t_lectura estructura;
-				estructura = *((t_lectura*)stream);
-				PCB_DATA* pcbaux;
-				pcbaux = buscarPCB(estructura.pid);
-				int rtaCPU = 0;
+			t_lectura estructura;
+			estructura = *((t_lectura*)stream);
+			leerEnUnArchivo(estructura,socketCPU);
 
-				ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(estructura.pid);
+		}break;
+		case moverCursorArchivo:{
+			t_moverCursor estructura;
 
-				ENTRADA_DE_TABLA_DE_PROCESO* entrada_a_evaluar= list_get(aux->tablaProceso,estructura.fileDescriptor);
+			estructura = *((t_moverCursor*)stream);
 
-				if (entrada_a_evaluar != NULL){
-					ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_de_archivo= list_get(tablaGlobalDeArchivos,entrada_a_evaluar->globalFD);
-					if(entrada_de_archivo!=NULL){
-						if (string_contains(entrada_a_evaluar->flags,"r")){
+			int rtaCPU = moverUnCursor(estructura);
 
-							int tamanioDelPedido = estructura.size ;
-							void* pedidoDeLectura = serializarPedidoFs(tamanioDelPedido,entrada_a_evaluar->offset,entrada_de_archivo->path);//Patos, basicamente
-							enviarMensaje(socketFS,obtenerDatosDeArchivo,pedidoDeLectura,4+strlen(entrada_de_archivo->path)+sizeof(int)*2+1);
-							void* contenido;
-							if(recibirMensaje(socketFS,&contenido) == respuestaConContenidoDeFs){
-								enviarMensaje(socketCPU,respuestaLectura, contenido,tamanioDelPedido);
-								entrada_a_evaluar->offset += estructura.size;
-								}
-							else{
-								finalizarPid(pcbaux,-15);//Respuesta Mala de FS
-								enviarMensaje(socketCPU,respuestaBooleanaKernel,&rtaCPU,sizeof(int));
-								}
-						}else{
-							finalizarPid(pcbaux,-3);
-							enviarMensaje(socketCPU,respuestaBooleanaKernel,&rtaCPU,sizeof(int));
-						}
-					}else{
-						finalizarPid(pcbaux,-2);
-						enviarMensaje(socketCPU,respuestaBooleanaKernel,&rtaCPU,sizeof(int));
-						}
-				}else{
-					finalizarPid(pcbaux,-2);
-					enviarMensaje(socketCPU,respuestaBooleanaKernel,&rtaCPU,sizeof(int));
-				}
-			}break;
-			case moverCursorArchivo:{
-				t_moverCursor estructura;
-
-				estructura = *((t_moverCursor*)stream);
-
-				PCB_DATA* pcbaux;
-				pcbaux = buscarPCB(estructura.pid);
-				int rtaCPU = 0;
-
-				ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(estructura.pid);
-
-				ENTRADA_DE_TABLA_DE_PROCESO* entrada_de_tabla_proceso= list_get(aux->tablaProceso,estructura.fileDescriptor);
-
-				if(entrada_de_tabla_proceso != NULL){
-					ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_de_archivo= list_get(tablaGlobalDeArchivos,entrada_de_tabla_proceso->globalFD);
-					if (entrada_de_archivo != NULL){
-						entrada_de_tabla_proceso->offset += estructura.posicion;
-						rtaCPU = 1;
-
-					}else{
-					finalizarPid(pcbaux,-2);
-				}
-				}else{
-					finalizarPid(pcbaux,-2);
-				}
 			enviarMensaje(socketCPU,respuestaBooleanaKernel,&rtaCPU,sizeof(int));
-			}break;
+		}break;
 
 
 			//TE MANDO UN NOMBRE DE UN SEMAFORO Y QUIERO QUE HAGAS UN WAIT, ME DEBERIAS DECIR SI ME BLOQUEO O NO

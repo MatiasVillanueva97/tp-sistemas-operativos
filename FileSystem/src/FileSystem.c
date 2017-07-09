@@ -119,7 +119,7 @@ int buscarPosicionLibre(){
 
 }
 
-bool crearElArchivo(char* path){
+int crearElArchivo(char* path){
 	 DIR *dirp;
 	char* rutaTotal=obtenerRutaTotal("","Archivos");
 	//strcpy(rutaTotal,getConfigString("PUNTO_MONTAJE"));
@@ -139,14 +139,14 @@ bool crearElArchivo(char* path){
 	int posicionDelBitMap = buscarPosicionLibre();
 	if(posicionDelBitMap == -1){
 		log_error(logFS,"No hay bloques disponibles ");
-		return false;
+		return 0;
 	}
 	bitarray_set_bit(bitMap,posicionDelBitMap-1);
 
 	fprintf(archivo,"TAMANO=0\nBLOQUES=[%d]\n",posicionDelBitMap);
 	log_info(logFS,"Se creo el archivo con TAMANO=0\nBLOQUES=[%d]\n", posicionDelBitMap);
 	fclose(archivo);
-	return true;
+	return 1;
 	//falta la parte de escribir el archivo con el tamano de archivo(Seria 0) y asignarle el bloque en el archivo
 }
 int borrarUnArchivo(char* path){
@@ -452,7 +452,7 @@ void tramitarPeticionesDelKernel(int socketKernel){
 					case creacionDeArchivo:{
 						char* path = stream;
 						log_info(logFS,"El kernel quiere crear un archivo con el siguiente path: ", path);
-						bool respuesta = crearElArchivo(path);
+						int respuesta = crearElArchivo(path);
 						enviarMensaje(socketKernel,respuestaBooleanaDeFs,&respuesta,sizeof(respuesta));
 						log_info(logFS,"La respuesta enviada al kernel es: %b ", respuesta);
 						break;
