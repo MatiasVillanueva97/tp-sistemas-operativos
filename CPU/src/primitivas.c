@@ -472,9 +472,22 @@ void AnSISOP_borrar(t_descriptor_archivo direccion) {
 
 	void* stream;
 
-	recibirMensaje(socketKernel, &stream);
-
-	//Aca manejar algun error
+	if (recibirMensaje(socketKernel, &stream) == respuestaBooleanaKernel) {
+		int rtaKernel = *(int*) stream;
+		free(stream);
+		if (rtaKernel == 0) {
+			puts("Quiere borrar un archivo que nunca abrio");
+			terminoPrograma = true;
+			pcb->exitCode = -13;
+		} else {
+			puts("Archivo borrado con exito");
+		}
+	} else {
+		free(stream);
+		puts("Error en el protocolo de comunicacion");
+		terminoPrograma = true;
+		pcb->exitCode = -42;
+	}
 
 }
 
@@ -516,8 +529,7 @@ void AnSISOP_moverCursor(t_descriptor_archivo descriptor_archivo,t_valor_variabl
 	archivo.fileDescriptor = descriptor_archivo;
 	archivo.posicion = posicion;
 
-	enviarMensaje(socketKernel, moverCursorArchivo, (void*) &archivo,
-			sizeof(int) * 3);
+	enviarMensaje(socketKernel, moverCursorArchivo, (void*) &archivo,sizeof(int) * 3);
 
 	void* stream;
 
