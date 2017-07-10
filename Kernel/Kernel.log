@@ -4354,3 +4354,233 @@
 [INFO] 22:22:40:796 Kernel/(10199:10218): Se almaceno correctamente los bytes en memoria.
 [INFO] 22:22:40:796 Kernel/(10199:10218): Se añade la pagina a la tabla de heap, y se retorna el offset de la variable pedida.
 [INFO] 22:24:58:443 Kernel/(10199:10210): Se removieron todos las paginas
+[INFO] 19:27:38:159 Kernel/(2690:2700): 
+[rutina estadoNEW] - Entramos al planificador de largo plazo!
+
+[INFO] 19:27:38:201 Kernel/(2690:2701): 
+[Rutina planificadorCortoPlazo] - Entramos al planificador de corto plazo!
+
+[INFO] 19:27:41:336 Kernel/(2690:2707): 
+[rutina aceptarConexiones] - Nueva CPU Conectada
+Socket CPU 7
+
+
+[INFO] 19:27:41:468 Kernel/(2690:2710): [Rutina rutinaCPU] - Entramos al hilo de la CPU cuyo socket es: 7.
+
+[INFO] 19:27:41:476 Kernel/(2690:2710): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 19:27:43:596 Kernel/(2690:2707): 
+[rutina aceptarConexiones] - Nueva Consola Conectada!
+Socket Consola 8
+
+
+[INFO] 19:27:43:713 Kernel/(2690:2713): [Rutina rutinaConsola] - Entramos al hilo de la consola: 8!
+
+[INFO] 19:27:52:14 Kernel/(2690:2713): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 19:27:52:17 Kernel/(2690:2713): El stream es : #!/usr/bin/ansisop
+begin
+prim
+end
+function prim
+variables a
+a=1
+prints n a
+seg
+end
+function seg
+variables a
+a=0
+prints n a
+prim
+end
+ /n
+[INFO] 19:27:52:90 Kernel/(2690:2700): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 19:27:52:91 Kernel/(2690:2700): Estructura:--
+Pid: 1
+Script: #!/usr/bin/ansisop
+begin
+prim
+end
+function prim
+variables a
+a=1
+prints n a
+seg
+end
+function seg
+variables a
+a=0
+prints n a
+prim
+end
+
+SocketConsola:8
+
+
+[INFO] 19:27:52:91 Kernel/(2690:2700): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+prim
+end
+function prim
+variables a
+a=1
+prints n a
+seg
+end
+function seg
+variables a
+a=0
+prints n a
+prim
+end
+
+[INFO] 19:27:52:92 Kernel/(2690:2700): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 19:27:52:94 Kernel/(2690:2700): Envio una pagina: 0
+
+[INFO] 19:27:52:94 Kernel/(2690:2700): La pagina 0, contiene:
+[INFO] 19:27:52:94 Kernel/(2690:2700): #!/usr/bin/ansisop
+begin
+prim
+end
+function prim
+variables a
+a=1
+prints n a
+seg
+end
+function seg
+variables a
+a=0
+prints n a
+prim
+end
+
+[INFO] 19:32:23:240 Kernel/(2690:2710): [Rutina rutinaCPU] - Entramos al Caso de que CPU termino la ejecucion de un proceso: accion- 104!
+
+[INFO] 19:39:56:738 Kernel/(2854:2865): 
+[rutina estadoNEW] - Entramos al planificador de largo plazo!
+
+[INFO] 19:39:56:816 Kernel/(2854:2866): 
+[Rutina planificadorCortoPlazo] - Entramos al planificador de corto plazo!
+
+[INFO] 19:39:59:691 Kernel/(2854:2872): 
+[rutina aceptarConexiones] - Nueva CPU Conectada
+Socket CPU 7
+
+
+[INFO] 19:39:59:808 Kernel/(2854:2875): [Rutina rutinaCPU] - Entramos al hilo de la CPU cuyo socket es: 7.
+
+[INFO] 19:39:59:808 Kernel/(2854:2875): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 19:40:02:369 Kernel/(2854:2872): 
+[rutina aceptarConexiones] - Nueva Consola Conectada!
+Socket Consola 8
+
+
+[INFO] 19:40:02:440 Kernel/(2854:2878): [Rutina rutinaConsola] - Entramos al hilo de la consola: 8!
+
+[INFO] 19:40:19:434 Kernel/(2854:2878): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 19:40:19:434 Kernel/(2854:2878): El stream es : #!/usr/bin/ansisop
+begin
+prim
+end
+function prim
+variables a
+a=1
+prints n a
+seg
+end
+function seg
+variables a
+a=0
+prints n a
+prim
+end
+ /n
+[INFO] 19:40:19:466 Kernel/(2854:2865): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 19:40:19:466 Kernel/(2854:2865): Estructura:--
+Pid: 1
+Script: #!/usr/bin/ansisop
+begin
+prim
+end
+function prim
+variables a
+a=1
+prints n a
+seg
+end
+function seg
+variables a
+a=0
+prints n a
+prim
+end
+
+SocketConsola:8
+
+
+[INFO] 19:40:19:466 Kernel/(2854:2865): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+prim
+end
+function prim
+variables a
+a=1
+prints n a
+seg
+end
+function seg
+variables a
+a=0
+prints n a
+prim
+end
+
+[INFO] 19:40:19:484 Kernel/(2854:2865): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 19:40:19:485 Kernel/(2854:2865): Envio una pagina: 0
+
+[INFO] 19:40:19:485 Kernel/(2854:2865): La pagina 0, contiene:
+[INFO] 19:40:19:485 Kernel/(2854:2865): #!/usr/bin/ansisop
+begin
+prim
+end
+function prim
+variables a
+a=1
+prints n a
+seg
+end
+function seg
+variables a
+a=0
+prints n a
+prim
+end
+
+[INFO] 19:50:49:85 Kernel/(2854:2875): [Rutina rutinaCPU] - Entramos al Caso de que CPU termino la ejecucion de un proceso: accion- 104!
+
+[INFO] 19:51:28:200 Kernel/(2854:2875): 
+dentro de la busqueda
+[INFO] 19:51:34:806 Kernel/(2854:2870): Se acaba de mandar a la consola n°: 8, que el proceso 1 acaba de finalizar con exit code: -5
+
+[INFO] 19:51:35:747 Kernel/(2854:2875): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+

@@ -163,7 +163,12 @@ void *rutinaCPU(void * arg)
 
 				// aca como que deberiamos validar que no haya sido finalizado ya este procesito
 				if(!proceso_EstaFinalizado(pcb->pid)){
-					finalizarPid(pcb,0);
+					if(pcb->exitCode<0){
+						finalizarPid(pcb,pcb->exitCode);
+					}
+					else{
+						finalizarPid(pcb,0);
+					}
 				    modificarPCB(pcb);
 				}
 				sem_wait(&mutex_cola_CPUs_libres);
