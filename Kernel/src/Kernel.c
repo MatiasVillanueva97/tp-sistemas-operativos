@@ -94,7 +94,7 @@ bool proceso_finalizacionExterna(int pid, int exitCode)
 void newToReady(){
 
 	printf("\n\n\nEstamos en la función newToReady a largo plazo!\n\n");
-
+	log_info(logKernel,"\n\n\nEstamos en la función newToReady a largo plazo!\n\n");
 	//***Tomo el primer elemento de la cola sin sacarlo de ella
 	sem_wait(&mutex_cola_New);
 	PROCESOS* programaAnsisop = queue_peek(cola_New);
@@ -102,7 +102,7 @@ void newToReady(){
 	//*** Valido si el programa ya fue finalizado! Si aun no fue finalizado, se procede a valirdar si se puede pasar a ready... En caso de estar finalizado ya se pasa a la cola de terminados
 	if(programaAnsisop->pcb->estadoDeProceso == paraEjecutar)
 	{
-		printf("Estructura:--\nPid: %d\nScript: %s\nSocketConsola:%d\n\n",programaAnsisop->pid,programaAnsisop->scriptAnsisop,programaAnsisop->socketConsola);
+		log_info(logKernel,"Estructura:--\nPid: %d\nScript: %s\nSocketConsola:%d\n\n",programaAnsisop->pid,programaAnsisop->scriptAnsisop,programaAnsisop->socketConsola);
 
 		//***Calculo cuantas paginas necesitara la memoria para este script
 		int cant_paginas = memoria_CalcularCantidadPaginas(programaAnsisop->scriptAnsisop);
@@ -118,7 +118,7 @@ void newToReady(){
 		recibirMensaje(socketMemoria, &ok); // Esperamos a que memoria me indique si puede guardar o no el stream
 		if(*ok)
 		{
-			printf("\n\n[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-%d\n", *ok);
+			log_info(logKernel,"\n\n[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-%d\n", *ok);
 
 			//***Quito el script de la cola de new
 			queue_pop(cola_New);
@@ -132,9 +132,9 @@ void newToReady(){
 			for(i=0; i<cant_paginas && *ok; i++)
 			{
 				enviarMensaje(socketMemoria,envioCantidadPaginas,scriptEnPaginas[i],size_pagina);
-				printf("Envio una pagina: %d\n", i);
-				printf("La pagina %d, contiene:",i);
-				puts(scriptEnPaginas[i]);
+				log_info(logKernel,"Envio una pagina: %d\n", i);
+				log_info(logKernel,"La pagina %d, contiene:",i);
+				log_info(logKernel,scriptEnPaginas[i]);
 				recibirMensaje(socketMemoria,&ok);
 			}
 
@@ -176,6 +176,7 @@ void newToReady(){
 
 
 			printf("[Funcion newToReady] - No hubo espacio para guardar en memoria!\n");
+			log_info(logKernel,"[Funcion newToReady] - No hubo espacio para guardar en memoria!\n");
 		}
 		free(ok);
 	}
@@ -225,7 +226,7 @@ bool hayProgramasEnNew()
 void * estadoNEW()
 {
 	printf("\n[rutina estadoNEW] - Entramos al planificador de largo plazo!\n");
-
+	log_info(logKernel,"\n[rutina estadoNEW] - Entramos al planificador de largo plazo!\n");
 	//*** el booleano finPorConsolaDelKernel esta en false desde el inicio, en el momento en el que el kernel quiera frenar la planificiacion esta variable pasara a true, y se frenara la planificacion
 	while(!finPorConsolaDelKernel)
 	{
@@ -331,7 +332,7 @@ bool hayCpusDisponibles(){
 void * estadoReady()
 {
 	printf("\n[Rutina planificadorCortoPlazo] - Entramos al planificador de corto plazo!\n");
-
+	log_info(logKernel,"\n[Rutina planificadorCortoPlazo] - Entramos al planificador de corto plazo!\n");
 	//*** el booleano finPorConsolaDelKernel esta en false desde el inicio, en el momento en el que el kernel quiera frenar la planificiacion esta variable pasara a true, y se frenara la planificacion
 	while(!finPorConsolaDelKernel)
 	{
@@ -519,7 +520,7 @@ void proceso_avisarAConsola(){
 	{
 		proceso_liberarRecursos(procesoFinalizado->pcb);
 		enviarMensaje(procesoFinalizado->socketConsola, pidFinalizado, &procesoFinalizado->pid, sizeof(int));
-
+		log_info(logKernel,"Se acaba de mandar a la consola n°: %d, que el proceso %d acaba de finalizar con exit code: %d\n", procesoFinalizado->socketConsola, procesoFinalizado->pid, procesoFinalizado->pcb->exitCode);
 		printf("Se acaba de mandar a la consola n°: %d, que el proceso %d acaba de finalizar con exit code: %d\n", procesoFinalizado->socketConsola, procesoFinalizado->pid, procesoFinalizado->pcb->exitCode);
 
 		// y ahora pongo que el este proceso ya le aviso a su consola
@@ -593,7 +594,7 @@ void * aceptarConexiones_Cpu_o_Consola( void *arg ){
 		{
 			case Consola: // Si es un cliente conectado es una CPU
 			{
-				printf("\n[rutina aceptarConexiones] - Nueva Consola Conectada!\nSocket Consola %d\n\n", nuevoSocket);
+				log_info(logKernel,"\n[rutina aceptarConexiones] - Nueva Consola Conectada!\nSocket Consola %d\n\n", nuevoSocket);
 
 				consola_crearHiloDetach(nuevoSocket);
 
@@ -601,7 +602,7 @@ void * aceptarConexiones_Cpu_o_Consola( void *arg ){
 
 			case CPU: // Si el cliente conectado es el cpu
 			{
-				printf("\n[rutina aceptarConexiones] - Nueva CPU Conectada\nSocket CPU %d\n\n", nuevoSocket);
+				log_info(logKernel,"\n[rutina aceptarConexiones] - Nueva CPU Conectada\nSocket CPU %d\n\n", nuevoSocket);
 
 				t_CPU* nuevaCPU = malloc(sizeof(t_CPU));
 
@@ -619,7 +620,7 @@ void * aceptarConexiones_Cpu_o_Consola( void *arg ){
 
 			default:
 			{
-				printf("[rutina aceptarConexiones_CPU_o_Consola] - Se esta conectado cualquier cosa, algo que no es ni cpu ni consola\n");
+				log_error(logKernel,"[rutina aceptarConexiones_CPU_o_Consola] - Se esta conectado cualquier cosa, algo que no es ni cpu ni consola\n");
 				close(nuevoSocket);
 			}
 		}

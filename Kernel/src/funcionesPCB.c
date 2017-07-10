@@ -35,7 +35,7 @@ PCB_DATA* modificarPCB(PCB_DATA * pcbNuevo){
 	{
 		if(aviso->pid == pcbNuevo->pid)
 		{
-			puts("\ndentro de la busqueda");
+			log_info(logKernel,"\ndentro de la busqueda");
 			//imprimirPCB(aviso->pcb);
 			return true;
 		}

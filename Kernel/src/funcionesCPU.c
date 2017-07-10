@@ -120,7 +120,7 @@ void *rutinaCPU(void * arg)
 
 	PCB_DATA* pcb;
 
-	printf("[Rutina rutinaCPU] - Entramos al hilo de la CPU cuyo socket es: %d.\n", socketCPU);
+	log_info(logKernel,"[Rutina rutinaCPU] - Entramos al hilo de la CPU cuyo socket es: %d.\n", socketCPU);
 
 	bool busqueda(t_CPU* cpu){
 		return cpu->socketCPU == socketCPU;
@@ -140,7 +140,7 @@ void *rutinaCPU(void * arg)
 		switch(accionCPU){
 			//*** La CPU me pide un PCB para poder trabajar
 			case pedirPCB:{
-				printf("[Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- %d!\n", pedirPCB);
+				log_info(logKernel,"[Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- %d!\n", pedirPCB);
 
 				pcb = cpu_pedirPCBDeExec();
 
@@ -157,7 +157,7 @@ void *rutinaCPU(void * arg)
 
 			//TE MANDO UN PCB QUE YA TERMINE DE EJECUTAR POR COMPLETO, ARREGLATE LAS COSAS DE MOVER DE UNA COLA A LA OTRA Y ESO
 			case enviarPCBaTerminado:{
-				printf("[Rutina rutinaCPU] - Entramos al Caso de que CPU termino la ejecucion de un proceso: accion- %d!\n", enviarPCBaTerminado);
+				log_info(logKernel,"[Rutina rutinaCPU] - Entramos al Caso de que CPU termino la ejecucion de un proceso: accion- %d!\n", enviarPCBaTerminado);
 
 				pcb = deserializarPCB(stream);
 
@@ -175,7 +175,7 @@ void *rutinaCPU(void * arg)
 
 			//TE MANDO UN PCB QUE TERMINA PORQUE SE QUEDO SIN QUANTUM, ARREGLATE LAS COSAS DE MOVER DE UNA COLA A LA OTRA Y ESO
 			case enviarPCBaReady:{
-				printf("[Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- %d!\n", enviarPCBaReady);
+				log_info(logKernel,"[Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- %d!\n", enviarPCBaReady);
 
 				pcb = deserializarPCB(stream);
 				modificarPCB(pcb);
@@ -289,7 +289,7 @@ void *rutinaCPU(void * arg)
 			//TE MANDO UN NOMBRE DE UN SEMAFORO Y QUIERO QUE HAGAS UN SIGNAL, LE DEBERIAS INFORMAR A ALGUIEN SI ESTABA BLOQUEADO EN UN WAIT DE ESTE SEMAFORO
 			case signalSemaforo:{
 
-				printf("[Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- %d!\n", signalSemaforo);
+				log_info(logKernel,"[Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- %d!\n", signalSemaforo);
 
 				char* nombreSemaforo;
 				PCB_DATA* pcbRecibido = deserializarPCBYSemaforo(stream, &nombreSemaforo);
@@ -305,7 +305,7 @@ void *rutinaCPU(void * arg)
 
 			//TE MANDO UNA ESTRUCTURA CON {VALOR, NOMBRE_VARIABLE(CHAR*)} PARA QUE LE ASIGNES ESE VALOR A DICHA VARIABLE
 			case asignarValorCompartida:{
-				printf("[Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- %d!\n", asignarValorCompartida);
+				log_info(logKernel,"[Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- %d!\n", asignarValorCompartida);
 
 				char* nombreVarGlob = leerString(stream);
 
@@ -328,7 +328,7 @@ void *rutinaCPU(void * arg)
 
 			//TE MANDO EL NOMBRE DE UNA VARIABLE COMPARTIDA Y ME DEBERIAS DEVOLVER SU VALOR
 			case pedirValorCompartida:{
-				printf("[Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- %d!\n", pedirValorCompartida);
+				log_info(logKernel,"[Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- %d!\n", pedirValorCompartida);
 
 				char* nombreVarGlob = leerString(stream);
 
@@ -370,7 +370,7 @@ void *rutinaCPU(void * arg)
 
 			//QUE PASA SI SE DESCONECTA LA CPU
 			case 0:{
-				printf("[Rutina rutinaCPU] - Desconecto la CPU N°: %d\n", socketCPU);
+				log_info(logKernel,"[Rutina rutinaCPU] - Desconecto la CPU N°: %d\n", socketCPU);
 				todaviaHayTrabajo=false;
 
 				cpu_quitarDeLista(socketCPU);
@@ -379,7 +379,7 @@ void *rutinaCPU(void * arg)
 
 			//QUE PASA CUANDO SE MUERTE LA CPU
 			default:{
-				printf("[Rutina rutinaCPU] - Se recibio una accion que no esta contemplada: %d se cerrara el socket\n",accionCPU);
+				log_info(logKernel,"[Rutina rutinaCPU] - Se recibio una accion que no esta contemplada: %d se cerrara el socket\n",accionCPU);
 				todaviaHayTrabajo=false;
 
 				cpu_quitarDeLista(socketCPU);

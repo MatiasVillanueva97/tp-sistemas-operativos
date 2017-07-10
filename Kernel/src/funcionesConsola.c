@@ -55,7 +55,7 @@ void consola_finalizarTodosLosProcesos(int socketConsola){
 			recibirMensaje(socketMemoria,&joaquin);
 			free(joaquin);
 
-			printf("Murio el proceso: %d\n", process->pid);
+			log_info(logKernel,"Murio el proceso: %d\n", process->pid);
 		}
 	}
 
@@ -101,7 +101,7 @@ void *rutinaConsola(void * arg)
 	int socketConsola = (int)arg;
 	bool todaviaHayTrabajo = true;
 	void * stream;
-	printf("[Rutina rutinaConsola] - Entramos al hilo de la consola: %d!\n", socketConsola);
+	log_info(logKernel,"[Rutina rutinaConsola] - Entramos al hilo de la consola: %d!\n", socketConsola);
 
 
 	while(todaviaHayTrabajo){
@@ -110,10 +110,10 @@ void *rutinaConsola(void * arg)
 		switch(a){
 			case envioScriptAnsisop:{
 				//***Estoy recibiendo un script para inicializar. Creo un neuvo proceso y ya comeizno a rellenarlo con los datos que ya tengo
-				printf("[Rutina rutinaConsola] - Nuevo script recibido!\n");
+				log_info(logKernel,"[Rutina rutinaConsola] - Nuevo script recibido!\n");
 
 				char* scripAnsisop = (char *)stream;
-				printf("El stream es : %s /n",scripAnsisop);
+				log_info(logKernel,"El stream es : %s /n",scripAnsisop);
 
 				PROCESOS * nuevoPrograma = malloc(sizeof(PROCESOS));
 
@@ -169,7 +169,7 @@ void *rutinaConsola(void * arg)
 				int pid = leerInt(stream);
 				int* respuesta = malloc(sizeof(int));
 
-				printf("Entramos a finalizar el script, del pid: %d\n", pid);
+				log_info(logKernel,"Entramos a finalizar el script, del pid: %d\n", pid);
 
 				//***Le digo a memoria que mate a este programa
 				enviarMensaje(socketMemoria,finalizarPrograma, &pid,sizeof(int));//CAMBIAR
