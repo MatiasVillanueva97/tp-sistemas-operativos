@@ -142,6 +142,7 @@ void newToReady(){
 			char * paginasParaElStack;
 			// puto el que lee
 			paginasParaElStack = string_repeat(' ',size_pagina);
+			paginasParaElStack[size_pagina-1]='\0';
 			for(i=0; i<getConfigInt("STACK_SIZE") && *ok;i++)
 			{
 				enviarMensaje(socketMemoria,envioCantidadPaginas,paginasParaElStack,size_pagina);
