@@ -294,10 +294,10 @@ offsetTamanoYHeader* liberarMemoriaHeap(int offset,void* pagina){
 	while(recorrido<size_pagina&&recorrido+sizeof(HeapMetadata)<offset){
 		recorridoDesdeDondeTengoQueCopiar = recorrido-5;
 		headerAnterior = headerActual;
-		log_info(logKernel,"El HeapMetadata Anterior es: %d tamano y esta %b como booleano ",offset,headerAnterior->size,headerAnterior->isFree);
+		log_info(logKernel,"El HeapMetadata Anterior es: %d tamano y esta %d como booleano ",offset,headerAnterior->size,headerAnterior->isFree);
 		recorrido+=headerActual->size;
 		headerActual = ((HeapMetadata*) (pagina+recorrido));
-		log_info(logKernel,"El HeapMetadata Actual es: %d tamano y esta %b como booleano ",offset,headerActual->size,headerActual->isFree);
+		log_info(logKernel,"El HeapMetadata Actual es: %d tamano y esta %d como booleano ",offset,headerActual->size,headerActual->isFree);
 
 		recorrido+= tamanoHeader;
 	}
@@ -306,6 +306,7 @@ offsetTamanoYHeader* liberarMemoriaHeap(int offset,void* pagina){
 			return NULL;
 	}
 	else{
+		offsetQueTengoQueDevolver = offset-sizeof(HeapMetadata);
 		offsetTamanoYHeader* x = malloc(sizeof(offsetTamanoYHeader));
 			x->tamanoLibre = headerActual->size;
 			headerActual->isFree= true;
