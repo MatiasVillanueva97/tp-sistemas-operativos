@@ -367,11 +367,11 @@ void * estadoReady()
 void execTo()
 {
 	//**Tomo el primer elemento de la lista,
-	PCB_DATA* pcb=queue_pop(cola_Exec);
+	PCB_DATA* pcb=queue_peek(cola_Exec);
 
 	//***Valido que el proceso haya finalizado
 	if(pcb->estadoDeProceso == finalizado){
-
+		queue_pop(cola_Exec);
 		//*** si el proceso ya finalizo lo paso a la cola de finished
 		sem_wait(&mutex_cola_Finished);
 			queue_push(cola_Finished,pcb);
@@ -381,14 +381,12 @@ void execTo()
 	else{
 		//*** Valido que el proceso este bloqueado, si lo esta lo mando a wait
 		if(pcb->estadoDeProceso == bloqueado){
+			queue_pop(cola_Exec);
 			//*** si el proceso esta  bloqueado lo paso ala cola de bloqueado
 			sem_wait(&mutex_cola_Wait);
 				queue_push(cola_Wait,pcb);
 			sem_post(&mutex_cola_Wait);
 
-		}
-		else{
-			queue_push(cola_Exec, pcb);
 		}
 	}
 }

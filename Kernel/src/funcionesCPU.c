@@ -175,9 +175,14 @@ void *rutinaCPU(void * arg)
 			//TE MANDO UN PCB QUE TERMINA PORQUE SE QUEDO SIN QUANTUM, ARREGLATE LAS COSAS DE MOVER DE UNA COLA A LA OTRA Y ESO
 			case enviarPCBaReady:{
 				log_info(logKernel,"[Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- %d!\n", enviarPCBaReady);
-
 				pcb = deserializarPCB(stream);
 				pcb->estadoDeProceso = paraEjecutar;
+
+				sem_wait(&mutex_cola_Exec);
+				 modificarPCB(pcb);
+				 sem_post(&mutex_cola_Exec);
+/*
+
 				sem_wait(&mutex_cola_Exec);
 					queue_pop(cola_Exec);
 				sem_post(&mutex_cola_Exec);
@@ -185,7 +190,7 @@ void *rutinaCPU(void * arg)
 				sem_wait(&mutex_cola_Ready);
 					queue_push(cola_Ready, modificarPCB(pcb));
 				sem_post(&mutex_cola_Ready);
-
+*/
 				/// Revisar esto - y poner semaforos
 			}break;
 
