@@ -506,6 +506,7 @@ void recibirMensajesMemoria(void* arg){
 
 				case almacenarBytes://almacenarBytes en una pagina
 				{
+
 					t_escrituraMemoria estructura = deserializarAlmacenarBytes(stream);
 					int x=1;
 					if(almacenarBytesEnPagina(estructura.id,estructura.direccion.page,estructura.direccion.offset,estructura.direccion.size,estructura.valor)==0){

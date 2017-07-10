@@ -72,7 +72,7 @@ int buscarFrameCorrespondiente(int pidRecibido,int pagina)
 	int posicionDadaPorElHash = funcionHash(pidRecibido,pagina);
 	filaDeTablaPaginaInvertida filaActual;
 	int i;
-	for (i=0;i < getConfigInt("MARCOS");i++){
+	for (i=posicionDadaPorElHash;i < getConfigInt("MARCOS");i++){
 		filaActual =tablaDePaginacionInvertida[i];
 		if (filaActual.pid == pidRecibido && filaActual.pagina == pagina ){
 
@@ -80,7 +80,7 @@ int buscarFrameCorrespondiente(int pidRecibido,int pagina)
 			return filaActual.frame;
 		}
 	}
-	for (i=0;posicionDadaPorElHash >0;i++){
+	for (i=0;posicionDadaPorElHash >i;i++){
 		filaActual =tablaDePaginacionInvertida[i];
 		if (filaActual.pid == pidRecibido && filaActual.pagina == pagina ){
 			log_info(logMemoria,"Se devolvio el frame %d de la busqueda en la tabla",filaActual.frame);
@@ -106,9 +106,7 @@ int reservarFrame(int pid, int pagina){
 	for(i=0;posicionEnLatabla> i;i++){
 			filaDeTablaPaginaInvertida filaActual = tablaDePaginacionInvertida[i];
 			if(filaActual.pagina == -1 && filaActual.pid == -1){
-				filaTablaCantidadDePaginas* fila = malloc(sizeof(filaTablaCantidadDePaginas));
-				list_add(tablaConCantidadDePaginas,fila);
-				tablaDePaginacionInvertida[i].pagina = pagina;
+			tablaDePaginacionInvertida[i].pagina = pagina;
 				tablaDePaginacionInvertida[i].pid = pid;
 				log_info(logMemoria,"Se reservo el frame %d para la pagina %d del pid %d",tablaDePaginacionInvertida[i].frame,pid,pagina);
 				return 1;

@@ -163,8 +163,7 @@ void *rutinaCPU(void * arg)
 
 				// aca como que deberiamos validar que no haya sido finalizado ya este procesito
 				if(!proceso_EstaFinalizado(pcb->pid)){
-
-					pcb->estadoDeProceso = finalizado;
+					finalizarPid(pcb,0);
 				    modificarPCB(pcb);
 				}
 				sem_wait(&mutex_cola_CPUs_libres);
@@ -306,7 +305,6 @@ void *rutinaCPU(void * arg)
 			//TE MANDO UNA ESTRUCTURA CON {VALOR, NOMBRE_VARIABLE(CHAR*)} PARA QUE LE ASIGNES ESE VALOR A DICHA VARIABLE
 			case asignarValorCompartida:{
 				log_info(logKernel,"[Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- %d!\n", asignarValorCompartida);
-
 				char* nombreVarGlob = leerString(stream);
 
 				sem_wait(&mutex_variables_compartidas);
@@ -351,12 +349,28 @@ void *rutinaCPU(void * arg)
 				sem_wait(&mutex_tablaDeHeap);
 				int offset = manejarPedidoDeMemoria(pid,tamano);
 				sem_post(&mutex_tablaDeHeap);
+				if(offset == 0){
+					PCB_DATA* pcb = buscarPCB(pid);
+					if(pcb != NULL){
+						finalizarPid(pcb,-9);
+					}
+					else{
+						liberarRecursosHeap(pid);
+					}
+				}
 				if(offset == -1){
+					PCB_DATA* pcb = buscarPCB(pid);
 					offset= 0;
+					if(pcb != NULL){
+						finalizarPid(pcb,-8);
+					}
+					else{
+						liberarRecursosHeap(pid);
+					}
 					enviarMensaje(socketCPU,pedidoRechazadoPorPedirMas,&offset,sizeof(int));
 				}
 				else{
-				enviarMensaje(socketCPU,enviarOffsetDeVariableReservada,&offset,sizeof(offset)); // Negro tene cuidado. Si te tiro un 0, es que rompio. Nunca te puedo dar el 0, porque va el metadata.
+					enviarMensaje(socketCPU,enviarOffsetDeVariableReservada,&offset,sizeof(offset)); // Negro tene cuidado. Si te tiro un 0, es que rompio. Nunca te puedo dar el 0, porque va el metadata.
 				}
 			}break;
 			case liberarVariable:{
@@ -365,8 +379,18 @@ void *rutinaCPU(void * arg)
 				sem_wait(&mutex_tablaDeHeap);
 				int x = manejarLiberacionDeHeap(pid,offset);
 				sem_post(&mutex_tablaDeHeap);
+				if(x== 0){
+					PCB_DATA* pcb = buscarPCB(pid);
+					offset= 0;
+					if(pcb != NULL){
+						finalizarPid(pcb,-7);
+					}
+					else{
+						liberarRecursosHeap(pid);
+					}
+				}
 				enviarMensaje(socketCPU,enviarSiSePudoLiberar,&x,sizeof(int));
-				}break;
+			}break;
 
 			//QUE PASA SI SE DESCONECTA LA CPU
 			case 0:{

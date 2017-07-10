@@ -518,7 +518,7 @@ void proceso_avisarAConsola(){
 
 	if(procesoFinalizado != NULL)
 	{
-		proceso_liberarRecursos(procesoFinalizado->pcb);
+		//proceso_liberarRecursos(procesoFinalizado->pcb);
 		enviarMensaje(procesoFinalizado->socketConsola, pidFinalizado, &procesoFinalizado->pid, sizeof(int));
 		log_info(logKernel,"Se acaba de mandar a la consola n°: %d, que el proceso %d acaba de finalizar con exit code: %d\n", procesoFinalizado->socketConsola, procesoFinalizado->pid, procesoFinalizado->pcb->exitCode);
 		printf("Se acaba de mandar a la consola n°: %d, que el proceso %d acaba de finalizar con exit code: %d\n", procesoFinalizado->socketConsola, procesoFinalizado->pid, procesoFinalizado->pcb->exitCode);

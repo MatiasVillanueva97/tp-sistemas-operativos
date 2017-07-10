@@ -131,6 +131,7 @@ void* serializarEscribirMemoria(int size, int offset,char* path, char* buffer){
 void finalizarPid(PCB_DATA* pcb,int exitCode){
 	pcb->exitCode = exitCode;
 	pcb->estadoDeProceso = finalizado;
+	proceso_liberarRecursos(pcb);
 }
 void liberarEntradaDeTablaProceso(ENTRADA_DE_TABLA_DE_PROCESO* entrada){
 	free(entrada);
