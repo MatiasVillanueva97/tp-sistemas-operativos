@@ -21,15 +21,15 @@ int tamanoMensajeAEscribir(int tamanioContenido){
 }
 
 void* serializarMensajeAEscribir(t_mensajeDeProceso mensaje, int tamanio){
-	void* stream = malloc(tamanoMensajeAEscribir(tamanio));
+	void* stream = malloc(tamanoMensajeAEscribir(mensaje.tamanio));
 
 	memcpy(stream,&mensaje.pid,sizeof(int));
 
 	memcpy(stream + sizeof(int),&mensaje.descriptorArchivo,sizeof(int));
 
-	memcpy(stream + sizeof(int) * 2,&tamanio,sizeof(int));
+	memcpy(stream + sizeof(int) * 2,&mensaje.tamanio,sizeof(int));
 
-	memcpy(stream + sizeof(int) * 3,mensaje.mensaje,tamanio);
+	memcpy(stream + sizeof(int) * 3,mensaje.mensaje,mensaje.tamanio);
 
 	return stream;
 }

@@ -187,7 +187,9 @@ void *rutinaCPU(void * arg)
 			case enviarPCBaReady:{
 				log_info(logKernel,"[Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- %d!\n", enviarPCBaReady);
 				pcb = deserializarPCB(stream);
-				pcb->estadoDeProceso = paraEjecutar;
+				if(pcb->estadoDeProceso != bloqueado){
+					pcb->estadoDeProceso = paraEjecutar;
+				}
 
 				sem_wait(&mutex_cola_Exec);
 				 modificarPCB(pcb);
@@ -215,14 +217,12 @@ void *rutinaCPU(void * arg)
 
 				t_mensajeDeProceso msj = deserializarMensajeAEscribir(stream);
 
-
-
-					int tamanoDelBuffer =  msj.tamanio;
+					int tamanoDelBuffer =  msj.tamanio + sizeof(int)*3;
 					bool respuestaACPU = false;
 
 				//***Si el fileDescriptro es 1, se imprime por consola
 				if(msj.descriptorArchivo == 1){
-					void * stream2 = serializarMensajeAEscribir(msj,strlen(msj.mensaje));
+					void * stream2 = serializarMensajeAEscribir(msj,msj.tamanio);
 					int socketConsola = consola_buscarSocketConsola(msj.pid);
 
 					enviarMensaje(socketConsola,imprimirPorPantalla,stream2,tamanoDelBuffer);
@@ -233,7 +233,7 @@ void *rutinaCPU(void * arg)
 
 				}
 				else{
-					respuestaACPU = escribirEnUnArchivo(msj,tamanoDelBuffer);
+					respuestaACPU = escribirEnUnArchivo(msj,msj.tamanio);
 					enviarMensaje(socketCPU,respuestaBooleanaKernel,&respuestaACPU,sizeof(bool));
 				}
 

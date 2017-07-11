@@ -326,8 +326,10 @@ void AnSISOP_wait(t_nombre_semaforo identificador_semaforo) {
 		terminoPrograma = true;
 		perror("Error en el mensaje maquinola j3j3");
 	}
-	if (!respuestaDeKernel)
+	if (!respuestaDeKernel){
 		bloqueado = true;
+		pcb->estadoDeProceso = 2; //Esto significa bloqueado
+	}
 
 }
 
