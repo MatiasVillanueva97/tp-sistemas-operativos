@@ -123,7 +123,7 @@ int main(void)
 
 			free(instruccion);
 			quantumRestante--;
-			usleep(quantumSleep * 1000);
+			//usleep(quantumSleep * 1000);
 		}
 
 		//ACA AVISARLE A KERNEL QUE TERMINE QUE CON ESTE PROCESO

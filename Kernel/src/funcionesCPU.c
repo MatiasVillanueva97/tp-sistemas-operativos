@@ -147,12 +147,17 @@ void *rutinaCPU(void * arg)
 				void* pcbSerializado = serializarPCB(pcb);
 				enviarMensaje(socketCPU,envioPCB,pcbSerializado,tamanoPCB(pcb));
 
+				free(stream);
+
 			}break;
 
 			case dameQuantumSleep:{
 				sem_wait(&mutex_Quantum_Sleep);
 					enviarMensaje(socketCPU,respuestaBooleanaKernel,&quantumSleep,sizeof(int));
 				sem_post(&mutex_Quantum_Sleep);
+
+				free(stream);
+
 			}break;
 
 			//TE MANDO UN PCB QUE YA TERMINE DE EJECUTAR POR COMPLETO, ARREGLATE LAS COSAS DE MOVER DE UNA COLA A LA OTRA Y ESO
@@ -174,6 +179,7 @@ void *rutinaCPU(void * arg)
 				sem_wait(&mutex_cola_CPUs_libres);
 				   	estaCPU->esperaTrabajo = true;
 				sem_post(&mutex_cola_CPUs_libres);
+				free(stream);
 
 			}break;
 
@@ -197,6 +203,10 @@ void *rutinaCPU(void * arg)
 				sem_post(&mutex_cola_Ready);
 */
 				/// Revisar esto - y poner semaforos
+
+				 free(stream);
+
+
 			}break;
 
 			//TE MANDO UNA ESTRUCTURA CON {PID, DESCRIPTOR, MENSAJE(CHAR*)} PARA QUE:  iF(DESCRIPTOR == 1) ESCRIBE EN LA CONSOLA QUE LE CORRESPONDE ; ELSE ESCRIBE EN EL ARCHIVO ASOCIADO A ESE DESCRIPTOR
@@ -204,6 +214,8 @@ void *rutinaCPU(void * arg)
 				//printf("[Rutina rutinaCPU] - Entramos al Caso de que CPU me mande a imprimir algo a la consola: accion- %d!\n", mensajeParaEscribir);
 
 				t_mensajeDeProceso msj = deserializarMensajeAEscribir(stream);
+
+
 
 					int tamanoDelBuffer =  tamanoMensajeAEscribir(strlen(msj.mensaje));
 					bool respuestaACPU = false;
@@ -224,6 +236,9 @@ void *rutinaCPU(void * arg)
 					respuestaACPU = escribirEnUnArchivo(msj,tamanoDelBuffer);
 					enviarMensaje(socketCPU,respuestaBooleanaKernel,&respuestaACPU,sizeof(bool));
 				}
+
+				free(stream);
+
 			}break;
 
 		case abrirArchivo: {// No se que tan bien funcionan los deserializar y serializa
@@ -233,6 +248,8 @@ void *rutinaCPU(void * arg)
 					recibirMensaje(socketFS,&stream2);
 					bool existeArchivo = *(bool*) stream2;
 					abrirArchivoPermanente(existeArchivo,estructura, socketCPU);
+					free(stream);
+					free(stream2);
 			 }
 			break;
 
@@ -244,6 +261,9 @@ void *rutinaCPU(void * arg)
 
 			enviarMensaje(socketCPU,respuestaBooleanaKernel,&rtaCPU,sizeof(int));
 
+			free(stream);
+
+
 		}break;
 
 		case borrarArchivoCPU:{
@@ -253,6 +273,9 @@ void *rutinaCPU(void * arg)
 			int rtaCPU = borrarArchivoPermanente(estructura);
 
 			enviarMensaje(socketCPU,respuestaBooleanaKernel,&rtaCPU,sizeof(int));
+
+			free(stream);
+
 		}break;
 
 		case leerArchivo:{
@@ -260,6 +283,8 @@ void *rutinaCPU(void * arg)
 			t_lectura estructura;
 			estructura = *((t_lectura*)stream);
 			leerEnUnArchivo(estructura,socketCPU);
+
+			free(stream);
 
 		}break;
 		case moverCursorArchivo:{
@@ -270,6 +295,9 @@ void *rutinaCPU(void * arg)
 			int rtaCPU = moverUnCursor(estructura);
 
 			enviarMensaje(socketCPU,respuestaBooleanaKernel,&rtaCPU,sizeof(int));
+
+			free(stream);
+
 		}break;
 
 
@@ -320,6 +348,7 @@ void *rutinaCPU(void * arg)
 				t_variableGlobal* varGlob = buscarVariableGlobal(nombreVarGlob);
 
 				if(varGlob == NULL){
+					free(stream);
 					sem_post(&mutex_variables_compartidas);
 					enviarMensaje(socketCPU,noExisteVarCompartida,NULL,sizeof(NULL));
 				}else{
@@ -329,6 +358,7 @@ void *rutinaCPU(void * arg)
 						varGlob->valor = *((int*)stream);
 					}
 					sem_post(&mutex_variables_compartidas);
+					free(stream);
 				}
 
 			}break;
@@ -349,12 +379,14 @@ void *rutinaCPU(void * arg)
 				}
 				
 				sem_post(&mutex_variables_compartidas);
+				free(stream);
 
 			}break;
 
 			case reservarVariable:{
 				int tamano = *(int*) stream;
 				int pid =  *(int*) (stream+4);
+				free(stream);
 				sem_wait(&mutex_tablaDeHeap);
 				int offset = manejarPedidoDeMemoria(pid,tamano);
 				sem_post(&mutex_tablaDeHeap);
@@ -385,6 +417,7 @@ void *rutinaCPU(void * arg)
 			case liberarVariable:{
 				int offset = *(int*) stream;
 				int pid = *(int*) (stream+4);
+				free(stream);
 				sem_wait(&mutex_tablaDeHeap);
 				int x = manejarLiberacionDeHeap(pid,offset);
 				sem_post(&mutex_tablaDeHeap);
@@ -405,6 +438,7 @@ void *rutinaCPU(void * arg)
 			case 0:{
 				log_info(logKernel,"[Rutina rutinaCPU] - Desconecto la CPU N°: %d\n", socketCPU);
 				todaviaHayTrabajo=false;
+				free(stream);
 
 				cpu_quitarDeLista(socketCPU);
 
@@ -414,10 +448,12 @@ void *rutinaCPU(void * arg)
 			default:{
 				log_info(logKernel,"[Rutina rutinaCPU] - Se recibio una accion que no esta contemplada: %d se cerrara el socket\n",accionCPU);
 				todaviaHayTrabajo=false;
+				free(stream);
 
 				cpu_quitarDeLista(socketCPU);
 			}break;
 		}
+
 	}
 
 	close(socketCPU);
