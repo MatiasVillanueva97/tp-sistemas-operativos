@@ -1,0 +1,10 @@
+#!/usr/bin/ansisop
+
+begin
+	variables a,b
+	alocar a 200
+	liberar a	
+	alocar b 200
+	alocar d 200
+	wait c
+end

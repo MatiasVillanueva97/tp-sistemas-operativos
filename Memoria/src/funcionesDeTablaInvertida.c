@@ -25,7 +25,7 @@ void iniciarTablaDePaginacionInvertida(){
 	}
 	filaTablaCantidadDePaginas* nuevaFila= malloc(sizeof(filaTablaCantidadDePaginas));
 	nuevaFila->pid = 0;
-	nuevaFila->cantidadDePaginasReales = cantidad;
+	nuevaFila->listaDePaginasLiberadas=list_create();
 	nuevaFila->paginaMaxima = cantidad;
 	log_info(logMemoria,"Se agrego las paginas administrativas a la tabla de cantidad de paginas");
 
@@ -126,7 +126,7 @@ int sum(t_list *lista,int(* funcion) (void*)){
 	return contador;
 }*/
 int getCantidadDePaginas(filaTablaCantidadDePaginas * fila){
-	return fila->cantidadDePaginasReales;
+	return fila->paginaMaxima-list_size(fila->listaDePaginasLiberadas);
 }
 int memoriaFramesLibres(){
 	int i = 0;
@@ -163,6 +163,16 @@ int cantidadDePaginasDeUnProcesoDeUnProceso(int pid){
 		}
 	return paginas;
 }*/
+void agregarIntAArray(int* array, int cosaAAgregar){
+	if(array==NULL){
+		array = malloc(sizeof(int));
+		*array = cosaAAgregar;
+	}
+	else{
+		array = realloc(array,cantidadDeElementosDeUnArray(array)+sizeof(int));
+		array[cantidadDeElementosDeUnArray(array)] = cosaAAgregar;
+	}
+}
 int liberarPagina(int pid, int pagina){ //Esta sincronizado en finalizarPrograma.
 	int i;
 	int posicionEnLaTabla =funcionHash(pid,pagina);
@@ -177,7 +187,7 @@ int liberarPagina(int pid, int pagina){ //Esta sincronizado en finalizarPrograma
 		sem_post(&mutex_TablaDeCantidadDePaginas);
 		return 0;
 	}
-	fila->cantidadDePaginasReales-=1;
+	list_add(fila->listaDePaginasLiberadas,pagina);
 	sem_post(&mutex_TablaDeCantidadDePaginas);
 	sem_wait(&mutex_TablaDePaginasInvertida);
 	for(i=posicionEnLaTabla;getConfigInt("MARCOS") > i;i++){
@@ -202,6 +212,5 @@ int liberarPagina(int pid, int pagina){ //Esta sincronizado en finalizarPrograma
 	}
 	sem_post(&mutex_TablaDePaginasInvertida);
 	log_error(logMemoria,"[Liberar Pagina]-No se encontro la pagina %d del pid %d en la tabla de paginacion invertida",pagina,pid);
-	fila->cantidadDePaginasReales+=1; // Subido ultimamente
 	return 0;
 }

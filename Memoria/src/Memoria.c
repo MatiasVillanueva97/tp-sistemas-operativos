@@ -52,7 +52,16 @@ int funcionHash (int pid, int pagina){
 	unsigned int indice = atoi(str1) % cantidadDeMarcos;
 	return indice;
 }
-
+int cantidadDeElementosDeUnArray (int* array){
+	int i = 0;
+	if(array == NULL){
+		return 0;
+	}
+	while (array[i]!=NULL){
+		i++;
+	}
+	return i;
+}
 
 t_escrituraMemoria deserializarAlmacenarBytes(void* almacenar){
 	t_escrituraMemoria x;
@@ -253,7 +262,7 @@ int buscarCantidadDePaginas(int pid){
 	if (x==NULL){
 		return 0;
 	}
-	return x->cantidadDePaginasReales;
+	return x->paginaMaxima;
 
 }
 
@@ -261,10 +270,33 @@ int buscarCantidadDePaginas(int pid){
 int asignarPaginasAUnProceso(int pid, int cantidadDePaginas){
 //	int paginaMaxima = cantidadDePaginasDeUnProcesoDeUnProceso(pid);
 	int i;
-
+	bool seLibero=false;
 
 	int paginaMaxima = buscarCantidadDePaginas(pid);
 	log_info(logMemoria,"[Asignar Paginas]-El proceso %d tiene %d paginas en memoria y pidio %d paginas nuevas",pid,paginaMaxima,cantidadDePaginas);
+	if(cantidadDePaginas == 1){
+		sem_wait(&mutex_TablaDeCantidadDePaginas);
+		filaTablaCantidadDePaginas* x= buscarFilaEnTablaCantidadDePaginas(pid);
+		if(list_size(x->listaDePaginasLiberadas) >0){
+			int* pagina = list_remove(x->listaDePaginasLiberadas,0);
+			sem_wait(&mutex_TablaDePaginasInvertida);
+			if(reservarFrame(pid,pagina)== 0){
+				sem_post(&mutex_TablaDeCantidadDePaginas);
+				sem_post(&mutex_TablaDePaginasInvertida);
+
+				return 0;
+			}
+			seLibero = true;
+
+		}
+		else{
+			reservarFrame(pid,paginaMaxima);
+			sem_post(&mutex_TablaDePaginasInvertida);
+		}
+		sem_post(&mutex_TablaDeCantidadDePaginas);
+	}
+	else{
+
 
 	sem_wait(&mutex_TablaDePaginasInvertida);
 	for(i= 0 ;i < cantidadDePaginas; i++){
@@ -279,13 +311,14 @@ int asignarPaginasAUnProceso(int pid, int cantidadDePaginas){
 		}
 	}
 	sem_post(&mutex_TablaDePaginasInvertida);
+	}
 	sem_wait(&mutex_TablaDeCantidadDePaginas);
 	if(paginaMaxima == 0){
 		log_warning(logMemoria,"[Asignar Paginas]-Hay que crear una nueva entrada a la tabla cantidad de paginas");
 
 		filaTablaCantidadDePaginas * x = malloc(sizeof(filaTablaCantidadDePaginas));
 		x->paginaMaxima= cantidadDePaginas;
-		x->cantidadDePaginasReales = cantidadDePaginas;
+		x->listaDePaginasLiberadas = list_create();
 		x->pid = pid;
 		list_add(tablaConCantidadDePaginas,x);
 	}
@@ -294,7 +327,9 @@ int asignarPaginasAUnProceso(int pid, int cantidadDePaginas){
 
 		filaTablaCantidadDePaginas * elemento = buscarFilaEnTablaCantidadDePaginas(pid);
 		elemento->paginaMaxima += cantidadDePaginas;
-		elemento->cantidadDePaginasReales += cantidadDePaginas;
+		if(seLibero){
+			elemento->paginaMaxima -= 1;
+		}
 	}
 	sem_post(&mutex_TablaDeCantidadDePaginas);
 	return 1;
@@ -315,7 +350,11 @@ int finalizarUnPrograma(int pid){
 	bool buscarPid(filaTablaCantidadDePaginas* fila){
 			return (fila->pid== pid);
 	}
-	list_remove_and_destroy_by_condition(tablaConCantidadDePaginas,buscarPid,free);//faltaria un destroyer decente
+	void destroyerCantidadDeFilas(filaTablaCantidadDePaginas* fila){
+		list_destroy_and_destroy_elements(fila->listaDePaginasLiberadas,free);
+		free(fila);
+	}
+	list_remove_and_destroy_by_condition(tablaConCantidadDePaginas,buscarPid,destroyerCantidadDeFilas);//faltaria un destroyer decente
 	sem_post(&mutex_TablaDeCantidadDePaginas);
 	sem_wait(&mutex_cache);
 	log_info(logMemoria,"[Finalizar Programa]-Se borra de la cache las paginas del proceso.");
@@ -410,8 +449,9 @@ void *rutinaConsolaMemoria(void* x){
 							log_info(logMemoria,"Entramos en size PID:");
 							comandoConsola = string_split(comandoConsola[2], "\n");
 							int pidPedido = atoi(comandoConsola[0]);
-							log_info(logMemoria,"El proceso %d tiene %d\n",pidPedido,((filaTablaCantidadDePaginas*)buscarFilaEnTablaCantidadDePaginas(pidPedido))->cantidadDePaginasReales);
-							printf("El proceso %d tiene %d\n",pidPedido,((filaTablaCantidadDePaginas*)buscarFilaEnTablaCantidadDePaginas(pidPedido))->cantidadDePaginasReales);
+							filaTablaCantidadDePaginas* fila = buscarFilaEnTablaCantidadDePaginas(pidPedido);
+							log_info(logMemoria,"El proceso %d tiene %d\n",pidPedido,fila->paginaMaxima-list_size(fila->listaDePaginasLiberadas));
+							printf("El proceso %d tiene %d\n",pidPedido,fila->paginaMaxima-list_size(fila->listaDePaginasLiberadas));
 						}
 				}
 				liberarArray(comandoConsola);

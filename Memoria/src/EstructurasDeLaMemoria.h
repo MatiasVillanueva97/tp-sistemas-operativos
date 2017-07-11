@@ -32,7 +32,7 @@ t_log* logMemoria;
 typedef struct{
 	int pid;
 	int paginaMaxima;
-	int cantidadDePaginasReales;
+	t_list* listaDePaginasLiberadas;
 }filaTablaCantidadDePaginas;
 typedef struct{
 	int pid;
