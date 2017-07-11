@@ -69,13 +69,19 @@ void* serializarEscribirMemoria(int size, int offset,char* path, char* buffer){
 }
 t_escritura deserializarEscribirMemoria(void* contenido){
 	t_escritura escritura;
-	escritura.size= *(int*)contenido;
+	escritura.offset = *(int*)contenido;
+	escritura.size= *(int*)(contenido+sizeof(int));
+	//Lineas muy ricas
+	//como la del diego
+	//rica rica
+	//amarga
 	escritura.buffer= malloc(escritura.size);
-	memcpy(escritura.buffer,(contenido+sizeof(int)),escritura.size);
-	int tamanoRuta =  *(int*)(contenido +sizeof(int)+escritura.size);
+	memcpy(escritura.buffer,(contenido+sizeof(int)+sizeof(int)),escritura.size);
+	int tamanoRuta =  *(int*)(contenido +sizeof(int)+escritura.size+sizeof(int));
 	escritura.path = malloc(tamanoRuta);
-	memcpy(escritura.path,contenido+sizeof(int)*2+escritura.size,tamanoRuta);
-	memcpy(&escritura.offset,contenido+sizeof(int)*2+tamanoRuta+escritura.size,sizeof(int));
+	memcpy(escritura.path,contenido+sizeof(int)*2+escritura.size+sizeof(int),tamanoRuta);
+
+	escritura.path[tamanoRuta-1] = '\0';
 
 	return escritura;
 }
@@ -330,10 +336,9 @@ int guardarDatos(char* path,int offset, int size,void* buffer){
 				}
 
 				else{
-					free(bloques);
 					bloques= tmp;
 				}
-				bitarray_set_bit(bitMap,posicionLibre-1);
+				bitarray_set_bit(bitMap,posicionLibre);
 				*(bloques+i) = posicionLibre;
 				log_info(logFS,"[Guardar Datos]-Se asigna el bloque %d.bin",posicionLibre);
 				cantidadDeBloques+=1;

@@ -117,13 +117,13 @@ t_crearArchivo deserializarCrearArchivo(void* stream){
 
 
 void* serializarEscribirMemoria(int size, int offset,char* path, char* buffer){
-	void *contenido = malloc(4+strlen(path)+size+sizeof(int)*2);
-	memcpy(contenido,&size,sizeof(int));
-	memcpy(contenido+sizeof(int),buffer,size);
-	int tamanoRuta= strlen(path);
-	memcpy(contenido+sizeof(int)+size,&tamanoRuta,sizeof(int));
-	memcpy(contenido+sizeof(int)*2+size,path,tamanoRuta);
-	memcpy(contenido+sizeof(int)*2+tamanoRuta+size,&offset,sizeof(int));
+	void *contenido = malloc(sizeof(int)+strlen(path)+1+size+sizeof(int)*2);
+	memcpy(contenido,&offset,sizeof(int));
+	memcpy(contenido+sizeof(int),&size,sizeof(int));
+	memcpy(contenido+sizeof(int)+sizeof(int),buffer,size);
+	int tamanoRuta= strlen(path)+1;
+	memcpy(contenido+sizeof(int)+size+sizeof(int),&tamanoRuta,sizeof(int));
+	memcpy(contenido+sizeof(int)*2+size+sizeof(int),path,tamanoRuta);
 	return contenido;
 }
 
@@ -228,7 +228,7 @@ int escribirEnUnArchivo(t_mensajeDeProceso msj, int tamanoDelBuffer){
 		if(entrada_de_archivo !=NULL){
 			if (string_contains(entrada_de_tabla_proceso->flags,"w")){
 				void* pedidoEscritura = serializarEscribirMemoria(tamanoDelBuffer,entrada_de_tabla_proceso->offset,entrada_de_archivo->path, msj.mensaje);
-				enviarMensaje(socketFS,guardarDatosDeArchivo, pedidoEscritura,4+strlen(entrada_de_archivo->path)+tamanoDelBuffer+sizeof(int)*2);
+				enviarMensaje(socketFS,guardarDatosDeArchivo, pedidoEscritura,sizeof(int)+strlen(entrada_de_archivo->path)+tamanoDelBuffer+sizeof(int)*2);
 				rtaCPU = recibirBooleanoDeFS(pcbaux,-15);
 				}else{
 					finalizarPid(pcbaux,escrituraDenegada);

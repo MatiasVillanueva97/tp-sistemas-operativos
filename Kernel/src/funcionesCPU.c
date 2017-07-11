@@ -217,7 +217,7 @@ void *rutinaCPU(void * arg)
 
 
 
-					int tamanoDelBuffer =  tamanoMensajeAEscribir(strlen(msj.mensaje));
+					int tamanoDelBuffer =  msj.tamanio;
 					bool respuestaACPU = false;
 
 				//***Si el fileDescriptro es 1, se imprime por consola

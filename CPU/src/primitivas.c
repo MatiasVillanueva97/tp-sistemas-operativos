@@ -22,7 +22,7 @@ int paginaInicio();
 
 int tamanoMensajeAEscribir(int tamanioContenido);
 
-void* serializarMensajeAEscribir(t_mensajeDeProceso mensaje, int tamanio);
+void* serializarMensajeAEscribir(t_mensajeDeProceso mensaje);
 
 char* generarStringFlags(t_banderas flags);
 
@@ -556,11 +556,12 @@ void AnSISOP_escribir(t_descriptor_archivo descriptor_archivo,void* informacion,
 	t_mensajeDeProceso mensajeDeProceso = {
 			.pid = pcb->pid,
 			.descriptorArchivo = descriptor_archivo,
+			.tamanio = tamanio,
 			.mensaje =(char*) informacion
 	};
 
 
-	void* mensajeSerializado = serializarMensajeAEscribir(mensajeDeProceso,tamanio);
+	void* mensajeSerializado = serializarMensajeAEscribir(mensajeDeProceso);
 
 	enviarMensaje(socketKernel, mensajeParaEscribir, mensajeSerializado,tamanoMensajeAEscribir(tamanio));
 
@@ -869,16 +870,16 @@ int tamanoMensajeAEscribir(int tamanioContenido) {
 	return sizeof(int) * 3 + tamanioContenido;
 }
 
-void* serializarMensajeAEscribir(t_mensajeDeProceso mensaje, int tamanio) {
-	void* stream = malloc(tamanoMensajeAEscribir(tamanio));
+void* serializarMensajeAEscribir(t_mensajeDeProceso mensaje) {
+	void* stream = malloc(tamanoMensajeAEscribir(mensaje.tamanio));
 
 	memcpy(stream, &mensaje.pid, sizeof(int));
 
 	memcpy(stream + sizeof(int), &mensaje.descriptorArchivo, sizeof(int));
 
-	memcpy(stream + sizeof(int) * 2, &tamanio, sizeof(int));
+	memcpy(stream + sizeof(int) * 2, &mensaje.tamanio, sizeof(int));
 
-	memcpy(stream + sizeof(int) * 3, mensaje.mensaje, tamanio);
+	memcpy(stream + sizeof(int) * 3, mensaje.mensaje, mensaje.tamanio);
 
 	return stream;
 }

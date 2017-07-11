@@ -45,6 +45,8 @@ t_mensajeDeProceso deserializarMensajeAEscribir(void* stream){
 
 	memcpy(&tamanoContenido,stream + sizeof(int) * 2,sizeof(int));
 
+	mensaje.tamanio = tamanoContenido;
+
 	mensaje.mensaje = malloc(tamanoContenido);
 
 	memcpy(mensaje.mensaje,stream + sizeof(int) * 3, tamanoContenido);

@@ -65,6 +65,7 @@ typedef struct{
 typedef struct{
 	int pid;
 	int descriptorArchivo;
+	int tamanio;
 	char* mensaje;
 }__attribute__((packed)) t_mensajeDeProceso;
 
