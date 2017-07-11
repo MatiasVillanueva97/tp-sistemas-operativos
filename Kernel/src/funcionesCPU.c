@@ -438,7 +438,7 @@ void *rutinaCPU(void * arg)
 			case 0:{
 				log_info(logKernel,"[Rutina rutinaCPU] - Desconecto la CPU N°: %d\n", socketCPU);
 				todaviaHayTrabajo=false;
-				free(stream);
+
 
 				cpu_quitarDeLista(socketCPU);
 
@@ -448,7 +448,6 @@ void *rutinaCPU(void * arg)
 			default:{
 				log_info(logKernel,"[Rutina rutinaCPU] - Se recibio una accion que no esta contemplada: %d se cerrara el socket\n",accionCPU);
 				todaviaHayTrabajo=false;
-				free(stream);
 
 				cpu_quitarDeLista(socketCPU);
 			}break;
