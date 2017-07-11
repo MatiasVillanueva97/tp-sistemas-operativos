@@ -19322,3 +19322,317 @@ end                                                                             
 [INFO] 13:00:25:895 Memoria/(3960:3993): Se procede a borrar todos las paginas cacheadas del pid 1 ya que fue finalizado.
 [INFO] 13:00:25:899 Memoria/(3960:3993): [Finalizar Programa]-Se envio 1 a kernel como respuesta
 [INFO] 13:00:25:906 Memoria/(3960:4011): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 00:33:20:206 Memoria/(13402:13402): Se inicializo la memoria
+[INFO] 00:33:20:206 Memoria/(13402:13402): La tabla de paginacion invertida ocupa 5 paginas para administracion
+[INFO] 00:33:20:206 Memoria/(13402:13402): Se agrego las paginas administrativas a la tabla de cantidad de paginas
+[INFO] 00:33:20:206 Memoria/(13402:13402): Se le dio formato a la tabla de paginacion invertida
+[INFO] 00:33:20:206 Memoria/(13402:13402): Se inicializo la tabla de paginacion invertida
+[INFO] 00:33:20:218 Memoria/(13402:13402): Se inicio el hilo consola de la memoria
+[INFO] 00:33:20:218 Memoria/(13402:13402): Se bindeo el listener
+[INFO] 00:33:20:228 Memoria/(13402:13402): Se inicio el hilo que atiende al kernel
+[INFO] 00:33:20:231 Memoria/(13402:13402): Se inicio el hilo aceptar conexiones cpu
+[INFO] 00:35:54:33 Memoria/(13481:13481): Se inicializo la memoria
+[INFO] 00:35:54:33 Memoria/(13481:13481): La tabla de paginacion invertida ocupa 5 paginas para administracion
+[INFO] 00:35:54:33 Memoria/(13481:13481): Se agrego las paginas administrativas a la tabla de cantidad de paginas
+[INFO] 00:35:54:33 Memoria/(13481:13481): Se le dio formato a la tabla de paginacion invertida
+[INFO] 00:35:54:33 Memoria/(13481:13481): Se inicializo la tabla de paginacion invertida
+[INFO] 00:35:54:46 Memoria/(13481:13481): Se inicio el hilo consola de la memoria
+[INFO] 00:35:54:47 Memoria/(13481:13481): Se bindeo el listener
+[INFO] 00:35:54:51 Memoria/(13481:13481): Se inicio el hilo que atiende al kernel
+[INFO] 00:35:56:324 Memoria/(13402:13411): [Rutina Kernel] - Kernel conectado exitosamente
+
+[INFO] 00:35:56:324 Memoria/(13402:13411): [recibirMensajesMemoria]-Entramos a recibirMensajesMemoria con 5 como socket
+[INFO] 00:35:56:324 Memoria/(13402:13412): [AceptarConexionesCPU] - Ya se ha establecido Conexion con un Kernel, ahora si se pueden conectar CPUs: 
+
+[INFO] 00:37:01:190 Memoria/(13534:13534): Se inicializo la memoria
+[INFO] 00:37:01:190 Memoria/(13534:13534): La tabla de paginacion invertida ocupa 5 paginas para administracion
+[INFO] 00:37:01:190 Memoria/(13534:13534): Se agrego las paginas administrativas a la tabla de cantidad de paginas
+[INFO] 00:37:01:190 Memoria/(13534:13534): Se le dio formato a la tabla de paginacion invertida
+[INFO] 00:37:01:190 Memoria/(13534:13534): Se inicializo la tabla de paginacion invertida
+[INFO] 00:37:01:201 Memoria/(13534:13534): Se inicio el hilo consola de la memoria
+[INFO] 00:37:01:202 Memoria/(13534:13534): Se bindeo el listener
+[INFO] 00:37:01:211 Memoria/(13534:13534): Se inicio el hilo que atiende al kernel
+[INFO] 00:37:01:221 Memoria/(13534:13534): Se inicio el hilo aceptar conexiones cpu
+[INFO] 00:37:07:225 Memoria/(13534:13540): [Rutina Kernel] - Kernel conectado exitosamente
+
+[INFO] 00:37:07:225 Memoria/(13534:13540): [recibirMensajesMemoria]-Entramos a recibirMensajesMemoria con 5 como socket
+[INFO] 00:37:07:225 Memoria/(13534:13541): [AceptarConexionesCPU] - Ya se ha establecido Conexion con un Kernel, ahora si se pueden conectar CPUs: 
+
+[INFO] 00:37:24:327 Memoria/(13534:13540): [recibirMensajesMemoria]-Llego la operacion 203
+[INFO] 00:37:24:327 Memoria/(13534:13540): [Inicializar Programa] - El kernel quiere iniciar el pid 1 con 3 paginas iniciales
+[INFO] 00:37:24:327 Memoria/(13534:13540): [Asignar Paginas]-El proceso 1 tiene 0 paginas en memoria y pidio 3 paginas nuevas
+[INFO] 00:37:24:327 Memoria/(13534:13540): Se reservo el frame 10 para la pagina 1 del pid 0
+[INFO] 00:37:24:327 Memoria/(13534:13540): Se reservo el frame 11 para la pagina 1 del pid 1
+[INFO] 00:37:24:327 Memoria/(13534:13540): Se reservo el frame 12 para la pagina 1 del pid 2
+[WARNING] 00:37:24:327 Memoria/(13534:13540): [Asignar Paginas]-Hay que crear una nueva entrada a la tabla cantidad de paginas
+[INFO] 00:37:24:327 Memoria/(13534:13540): [Inicializar Programa]-Se acepto asignar las paginas, por lo que se procede a iniciar el proceso
+[INFO] 00:37:24:327 Memoria/(13534:13540): [Inicializar Programa]-Se recibio el contenido de  la pagina numero 0 y se depositara el contenido: #!/usr/bin/ansisop
+begin
+variables a
+variables b
+variables c
+variables d
+variables e
+alocar a 100
+alocar b 50
+alocar c 30
+alocar d 30
+alocar e 20
+end
+[INFO] 00:37:24:327 Memoria/(13534:13540): Se devolvio el frame 10 de la busqueda en la tabla
+[INFO] 00:37:24:327 Memoria/(13534:13540): Se escribe el contenido en memoria: #!/usr/bin/ansisop
+begin
+variables a
+variables b
+variables c
+variables d
+variables e
+alocar a 100
+alocar b 50
+alocar c 30
+alocar d 30
+alocar e 20
+end
+[INFO] 00:37:24:327 Memoria/(13534:13540): [Inicializar Programa]-Se envio 1 a kernel como respuesta
+[INFO] 00:37:24:327 Memoria/(13534:13540): [Inicializar Programa]-Se recibio el contenido de  la pagina numero 1 y se depositara el contenido:                                                                                                                                                                                                                                                                
+[INFO] 00:37:24:327 Memoria/(13534:13540): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 00:37:24:327 Memoria/(13534:13540): Se escribe el contenido en memoria:                                                                                                                                                                                                                                                                
+[INFO] 00:37:24:327 Memoria/(13534:13540): [Inicializar Programa]-Se envio 1 a kernel como respuesta
+[INFO] 00:37:24:327 Memoria/(13534:13540): [Inicializar Programa]-Se recibio el contenido de  la pagina numero 2 y se depositara el contenido:                                                                                                                                                                                                                                                                
+[INFO] 00:37:24:327 Memoria/(13534:13540): Se devolvio el frame 12 de la busqueda en la tabla
+[INFO] 00:37:24:327 Memoria/(13534:13540): Se escribe el contenido en memoria:                                                                                                                                                                                                                                                                
+[INFO] 00:37:24:327 Memoria/(13534:13540): [Inicializar Programa]-Se envio 1 a kernel como respuesta
+[INFO] 00:37:27:214 Memoria/(13534:13541): [AceptarConexionesCPU] - Nueva CPU Conectada! Socket CPU: 6
+
+[INFO] 00:37:27:222 Memoria/(13534:13558): [recibirMensajesMemoria]-Entramos a recibirMensajesMemoria con 6 como socket
+[INFO] 00:37:27:293 Memoria/(13534:13558): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 00:37:27:293 Memoria/(13534:13558): La busqueda en la cache dio como resultado %b
+[WARNING] 00:37:27:293 Memoria/(13534:13558): La pagina 0 del pid 1 no esta en la cache.
+[INFO] 00:37:27:293 Memoria/(13534:13558): [Solicitar Bytes]-La pagina 1 del proceso 0 no esta en la cache
+[INFO] 00:37:27:293 Memoria/(13534:13558): [Solicitar Bytes]- Se procede a ejecutar el retardo por no estar en cache 500
+[INFO] 00:37:27:794 Memoria/(13534:13558): Se devolvio el frame 10 de la busqueda en la tabla
+[INFO] 00:37:27:794 Memoria/(13534:13558): [Solicitar Bytes]-Se lee toda la pagina 0 del pid &d.
+[INFO] 00:37:27:794 Memoria/(13534:13558): [Solicitar Bytes]-Se encontro el contenido y se procede a ejecutar un cache miss
+[INFO] 00:37:27:794 Memoria/(13534:13558): El proceso 1 tiene 0 paginas en cache
+[INFO] 00:37:27:794 Memoria/(13534:13558): [Solicitar Bytes-Cache  Miss]-El pid 1 tiene menos de 3 paginas.
+[INFO] 00:37:27:794 Memoria/(13534:13558): [Solicitar Bytes-Cache  Miss]-Se agrega esa fila a la cache.
+[INFO] 00:37:27:795 Memoria/(13534:13558): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 00:37:27:795 Memoria/(13534:13558): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: variables a
+	
+[INFO] 00:37:28:295 Memoria/(13534:13558): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 00:37:28:295 Memoria/(13534:13558): La busqueda en la cache dio como resultado %b
+[INFO] 00:37:28:295 Memoria/(13534:13558): La pagina 0 del pid 1 esta en al cache
+[INFO] 00:37:28:295 Memoria/(13534:13558): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 00:37:28:295 Memoria/(13534:13558): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 00:37:28:295 Memoria/(13534:13558): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 00:37:28:295 Memoria/(13534:13558): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: variables b
+	
+[INFO] 00:37:28:796 Memoria/(13534:13558): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 00:37:28:796 Memoria/(13534:13558): La busqueda en la cache dio como resultado %b
+[INFO] 00:37:28:796 Memoria/(13534:13558): La pagina 0 del pid 1 esta en al cache
+[INFO] 00:37:28:796 Memoria/(13534:13558): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 00:37:28:796 Memoria/(13534:13558): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 00:37:28:796 Memoria/(13534:13558): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 00:37:28:796 Memoria/(13534:13558): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: variables c
+	
+[INFO] 00:37:29:297 Memoria/(13534:13558): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 00:37:29:297 Memoria/(13534:13558): La busqueda en la cache dio como resultado %b
+[INFO] 00:37:29:297 Memoria/(13534:13558): La pagina 0 del pid 1 esta en al cache
+[INFO] 00:37:29:297 Memoria/(13534:13558): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 00:37:29:297 Memoria/(13534:13558): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 00:37:29:297 Memoria/(13534:13558): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 00:37:29:297 Memoria/(13534:13558): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: variables d
+	
+[INFO] 00:37:29:841 Memoria/(13534:13558): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 00:37:29:842 Memoria/(13534:13558): La busqueda en la cache dio como resultado %b
+[INFO] 00:37:29:842 Memoria/(13534:13558): La pagina 0 del pid 1 esta en al cache
+[INFO] 00:37:29:842 Memoria/(13534:13558): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 00:37:29:842 Memoria/(13534:13558): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 00:37:29:842 Memoria/(13534:13558): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 00:37:29:842 Memoria/(13534:13558): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: variables e
+	
+[INFO] 00:37:30:342 Memoria/(13534:13558): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 00:37:30:342 Memoria/(13534:13558): La busqueda en la cache dio como resultado %b
+[INFO] 00:37:30:342 Memoria/(13534:13558): La pagina 0 del pid 1 esta en al cache
+[INFO] 00:37:30:342 Memoria/(13534:13558): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 00:37:30:342 Memoria/(13534:13558): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 00:37:30:342 Memoria/(13534:13558): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 00:37:30:342 Memoria/(13534:13558): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: alocar a 100
+
+[INFO] 00:37:30:343 Memoria/(13534:13540): [recibirMensajesMemoria]-Llego la operacion 206
+[INFO] 00:37:30:343 Memoria/(13534:13540): [Asignar Paginas] Se quieren asignar 1 paginas para el pid 1
+[INFO] 00:37:30:343 Memoria/(13534:13540): [Asignar Paginas]-El proceso 1 tiene 3 paginas en memoria y pidio 1 paginas nuevas
+[INFO] 00:37:30:343 Memoria/(13534:13540): Se reservo el frame 13 para la pagina 1 del pid 3
+[INFO] 00:37:30:343 Memoria/(13534:13540): [Asignar Paginas]-Se encontro una página. Se procede a modificar el elemento de la lista de cantidad de paginas.
+[INFO] 00:37:30:343 Memoria/(13534:13540): [Asignar Paginas]-Se envio 3 a kernel como respuesta
+[INFO] 00:37:30:343 Memoria/(13534:13540): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 00:37:30:343 Memoria/(13534:13540): Se devolvio el frame 13 de la busqueda en la tabla
+[INFO] 00:37:30:343 Memoria/(13534:13540): La pagina 3 del pid 1 se corresponde con el frame 13
+[INFO] 00:37:30:343 Memoria/(13534:13540): La busqueda en la cache dio como resultado %b
+[WARNING] 00:37:30:343 Memoria/(13534:13540): La pagina 3 del pid 1 no esta en la cache.
+[INFO] 00:37:30:343 Memoria/(13534:13540): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 00:37:30:343 Memoria/(13534:13540): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 00:37:30:343 Memoria/(13534:13558): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 00:37:30:343 Memoria/(13534:13558): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 00:37:30:343 Memoria/(13534:13558): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 00:37:30:343 Memoria/(13534:13558): La busqueda en la cache dio como resultado %b
+[WARNING] 00:37:30:343 Memoria/(13534:13558): La pagina 1 del pid 1 no esta en la cache.
+[INFO] 00:37:30:343 Memoria/(13534:13558): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 00:37:30:343 Memoria/(13534:13558): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 00:37:30:844 Memoria/(13534:13558): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 00:37:30:844 Memoria/(13534:13558): La busqueda en la cache dio como resultado %b
+[INFO] 00:37:30:844 Memoria/(13534:13558): La pagina 0 del pid 1 esta en al cache
+[INFO] 00:37:30:844 Memoria/(13534:13558): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 00:37:30:844 Memoria/(13534:13558): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 00:37:30:844 Memoria/(13534:13558): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 00:37:30:844 Memoria/(13534:13558): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: alocar b 50
+!	
+[INFO] 00:37:30:845 Memoria/(13534:13540): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 00:37:30:845 Memoria/(13534:13540): La busqueda en la cache dio como resultado %b
+[WARNING] 00:37:30:845 Memoria/(13534:13540): La pagina 3 del pid 1 no esta en la cache.
+[INFO] 00:37:30:845 Memoria/(13534:13540): [Solicitar Bytes]-La pagina 1 del proceso 3 no esta en la cache
+[INFO] 00:37:30:845 Memoria/(13534:13540): [Solicitar Bytes]- Se procede a ejecutar el retardo por no estar en cache 500
+[INFO] 00:37:31:345 Memoria/(13534:13540): Se devolvio el frame 13 de la busqueda en la tabla
+[INFO] 00:37:31:345 Memoria/(13534:13540): [Solicitar Bytes]-Se lee toda la pagina 3 del pid &d.
+[INFO] 00:37:31:345 Memoria/(13534:13540): [Solicitar Bytes]-Se encontro el contenido y se procede a ejecutar un cache miss
+[INFO] 00:37:31:345 Memoria/(13534:13540): El proceso 1 tiene 1 paginas en cache
+[INFO] 00:37:31:345 Memoria/(13534:13540): [Solicitar Bytes-Cache  Miss]-El pid 1 tiene menos de 3 paginas.
+[INFO] 00:37:31:345 Memoria/(13534:13540): [Solicitar Bytes-Cache  Miss]-Se agrega esa fila a la cache.
+[INFO] 00:37:31:345 Memoria/(13534:13540): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 00:37:31:345 Memoria/(13534:13540): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: d
+[INFO] 00:37:31:349 Memoria/(13534:13540): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 00:37:31:349 Memoria/(13534:13540): Se devolvio el frame 13 de la busqueda en la tabla
+[INFO] 00:37:31:349 Memoria/(13534:13540): La pagina 3 del pid 1 se corresponde con el frame 13
+[INFO] 00:37:31:349 Memoria/(13534:13540): La busqueda en la cache dio como resultado %b
+[INFO] 00:37:31:349 Memoria/(13534:13540): La pagina 3 del pid 1 esta en al cache
+[INFO] 00:37:31:349 Memoria/(13534:13540): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 00:37:31:349 Memoria/(13534:13540): La busqueda en la cache dio como resultado %b
+[INFO] 00:37:31:350 Memoria/(13534:13540): Se actualizo la pagina 3 del pid 1
+[INFO] 00:37:31:350 Memoria/(13534:13540): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 00:37:31:350 Memoria/(13534:13540): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 00:37:31:350 Memoria/(13534:13558): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 00:37:31:350 Memoria/(13534:13558): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 00:37:31:350 Memoria/(13534:13558): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 00:37:31:350 Memoria/(13534:13558): La busqueda en la cache dio como resultado %b
+[WARNING] 00:37:31:350 Memoria/(13534:13558): La pagina 1 del pid 1 no esta en la cache.
+[INFO] 00:37:31:350 Memoria/(13534:13558): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 00:37:31:350 Memoria/(13534:13558): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 00:37:31:851 Memoria/(13534:13558): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 00:37:31:851 Memoria/(13534:13558): La busqueda en la cache dio como resultado %b
+[INFO] 00:37:31:851 Memoria/(13534:13558): La pagina 0 del pid 1 esta en al cache
+[INFO] 00:37:31:851 Memoria/(13534:13558): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 00:37:31:851 Memoria/(13534:13558): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 00:37:31:851 Memoria/(13534:13558): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 00:37:31:851 Memoria/(13534:13558): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: alocar c 30
+
+[INFO] 00:37:31:857 Memoria/(13534:13540): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 00:37:31:857 Memoria/(13534:13540): La busqueda en la cache dio como resultado %b
+[INFO] 00:37:31:857 Memoria/(13534:13540): La pagina 3 del pid 1 esta en al cache
+[INFO] 00:37:31:857 Memoria/(13534:13540): [Solicitar Bytes]-La pagina 1 del proceso 3 esta en la cache, se procede a un cache hit
+[INFO] 00:37:31:857 Memoria/(13534:13540): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 00:37:31:857 Memoria/(13534:13540): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 00:37:31:857 Memoria/(13534:13540): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: d
+[INFO] 00:37:31:858 Memoria/(13534:13540): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 00:37:31:858 Memoria/(13534:13540): Se devolvio el frame 13 de la busqueda en la tabla
+[INFO] 00:37:31:858 Memoria/(13534:13540): La pagina 3 del pid 1 se corresponde con el frame 13
+[INFO] 00:37:31:858 Memoria/(13534:13540): La busqueda en la cache dio como resultado %b
+[INFO] 00:37:31:858 Memoria/(13534:13540): La pagina 3 del pid 1 esta en al cache
+[INFO] 00:37:31:858 Memoria/(13534:13540): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 00:37:31:858 Memoria/(13534:13540): La busqueda en la cache dio como resultado %b
+[INFO] 00:37:31:858 Memoria/(13534:13540): Se actualizo la pagina 3 del pid 1
+[INFO] 00:37:31:858 Memoria/(13534:13540): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 00:37:31:858 Memoria/(13534:13540): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 00:37:31:858 Memoria/(13534:13558): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 00:37:31:858 Memoria/(13534:13558): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 00:37:31:858 Memoria/(13534:13558): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 00:37:31:858 Memoria/(13534:13558): La busqueda en la cache dio como resultado %b
+[WARNING] 00:37:31:858 Memoria/(13534:13558): La pagina 1 del pid 1 no esta en la cache.
+[INFO] 00:37:31:858 Memoria/(13534:13558): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 00:37:31:859 Memoria/(13534:13558): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 00:37:32:416 Memoria/(13534:13558): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 00:37:32:416 Memoria/(13534:13558): La busqueda en la cache dio como resultado %b
+[INFO] 00:37:32:416 Memoria/(13534:13558): La pagina 0 del pid 1 esta en al cache
+[INFO] 00:37:32:416 Memoria/(13534:13558): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 00:37:32:416 Memoria/(13534:13558): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 00:37:32:417 Memoria/(13534:13558): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 00:37:32:417 Memoria/(13534:13558): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: alocar d 30
+
+[INFO] 00:37:32:417 Memoria/(13534:13540): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 00:37:32:417 Memoria/(13534:13540): La busqueda en la cache dio como resultado %b
+[INFO] 00:37:32:417 Memoria/(13534:13540): La pagina 3 del pid 1 esta en al cache
+[INFO] 00:37:32:417 Memoria/(13534:13540): [Solicitar Bytes]-La pagina 1 del proceso 3 esta en la cache, se procede a un cache hit
+[INFO] 00:37:32:417 Memoria/(13534:13540): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 00:37:32:417 Memoria/(13534:13540): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 00:37:32:417 Memoria/(13534:13540): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: d
+[INFO] 00:37:32:417 Memoria/(13534:13540): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 00:37:32:417 Memoria/(13534:13540): Se devolvio el frame 13 de la busqueda en la tabla
+[INFO] 00:37:32:417 Memoria/(13534:13540): La pagina 3 del pid 1 se corresponde con el frame 13
+[INFO] 00:37:32:417 Memoria/(13534:13540): La busqueda en la cache dio como resultado %b
+[INFO] 00:37:32:417 Memoria/(13534:13540): La pagina 3 del pid 1 esta en al cache
+[INFO] 00:37:32:417 Memoria/(13534:13540): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 00:37:32:417 Memoria/(13534:13540): La busqueda en la cache dio como resultado %b
+[INFO] 00:37:32:417 Memoria/(13534:13540): Se actualizo la pagina 3 del pid 1
+[INFO] 00:37:32:417 Memoria/(13534:13540): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 00:37:32:417 Memoria/(13534:13540): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 00:37:32:417 Memoria/(13534:13558): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 00:37:32:417 Memoria/(13534:13558): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 00:37:32:417 Memoria/(13534:13558): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 00:37:32:417 Memoria/(13534:13558): La busqueda en la cache dio como resultado %b
+[WARNING] 00:37:32:417 Memoria/(13534:13558): La pagina 1 del pid 1 no esta en la cache.
+[INFO] 00:37:32:417 Memoria/(13534:13558): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 00:37:32:417 Memoria/(13534:13558): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 00:37:32:918 Memoria/(13534:13558): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 00:37:32:918 Memoria/(13534:13558): La busqueda en la cache dio como resultado %b
+[INFO] 00:37:32:918 Memoria/(13534:13558): La pagina 0 del pid 1 esta en al cache
+[INFO] 00:37:32:918 Memoria/(13534:13558): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 00:37:32:918 Memoria/(13534:13558): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 00:37:32:918 Memoria/(13534:13558): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 00:37:32:918 Memoria/(13534:13558): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: alocar e 20
+
+[INFO] 00:37:32:922 Memoria/(13534:13540): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 00:37:32:922 Memoria/(13534:13540): La busqueda en la cache dio como resultado %b
+[INFO] 00:37:32:922 Memoria/(13534:13540): La pagina 3 del pid 1 esta en al cache
+[INFO] 00:37:32:922 Memoria/(13534:13540): [Solicitar Bytes]-La pagina 1 del proceso 3 esta en la cache, se procede a un cache hit
+[INFO] 00:37:32:922 Memoria/(13534:13540): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 00:37:32:922 Memoria/(13534:13540): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 00:37:32:922 Memoria/(13534:13540): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: d
+[INFO] 00:37:32:922 Memoria/(13534:13540): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 00:37:32:922 Memoria/(13534:13540): Se devolvio el frame 13 de la busqueda en la tabla
+[INFO] 00:37:32:922 Memoria/(13534:13540): La pagina 3 del pid 1 se corresponde con el frame 13
+[INFO] 00:37:32:922 Memoria/(13534:13540): La busqueda en la cache dio como resultado %b
+[INFO] 00:37:32:922 Memoria/(13534:13540): La pagina 3 del pid 1 esta en al cache
+[INFO] 00:37:32:922 Memoria/(13534:13540): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 00:37:32:922 Memoria/(13534:13540): La busqueda en la cache dio como resultado %b
+[INFO] 00:37:32:922 Memoria/(13534:13540): Se actualizo la pagina 3 del pid 1
+[INFO] 00:37:32:922 Memoria/(13534:13540): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 00:37:32:922 Memoria/(13534:13540): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 00:37:32:922 Memoria/(13534:13558): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 00:37:32:922 Memoria/(13534:13558): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 00:37:32:923 Memoria/(13534:13558): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 00:37:32:923 Memoria/(13534:13558): La busqueda en la cache dio como resultado %b
+[WARNING] 00:37:32:923 Memoria/(13534:13558): La pagina 1 del pid 1 no esta en la cache.
+[INFO] 00:37:32:923 Memoria/(13534:13558): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 00:37:32:923 Memoria/(13534:13558): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 00:37:33:423 Memoria/(13534:13558): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 00:37:33:423 Memoria/(13534:13558): La busqueda en la cache dio como resultado %b
+[INFO] 00:37:33:423 Memoria/(13534:13558): La pagina 0 del pid 1 esta en al cache
+[INFO] 00:37:33:423 Memoria/(13534:13558): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 00:37:33:423 Memoria/(13534:13558): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 00:37:33:423 Memoria/(13534:13558): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 00:37:33:423 Memoria/(13534:13558): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: end
+[INFO] 00:37:33:923 Memoria/(13534:13540): [recibirMensajesMemoria]-Llego la operacion 208
+[INFO] 00:37:33:923 Memoria/(13534:13540): [Liberar Pagina]-Entramos a liberar pagina.Pid:1 Pagina: 3
+
+[INFO] 00:37:33:923 Memoria/(13534:13540): [Liberar Pagina]-La funcion de hash aproxima a la posicion 13 de la tabla de paginacion invetida
+[INFO] 00:37:33:923 Memoria/(13534:13540): [Liberar Pagina]-Se libero el frame 13 de la pagina 3 del pid 1
+[INFO] 00:37:33:962 Memoria/(13534:13540): [recibirMensajesMemoria]-Llego la operacion 207
+[INFO] 00:37:33:962 Memoria/(13534:13540): [Finalizar Programa]-Entramos a Finalizar Programa. Pid: 1 
+
+[INFO] 00:37:33:962 Memoria/(13534:13540): [Liberar Pagina]-La funcion de hash aproxima a la posicion 10 de la tabla de paginacion invetida
+[INFO] 00:37:33:962 Memoria/(13534:13540): [Liberar Pagina]-Se libero el frame 10 de la pagina 0 del pid 1
+[INFO] 00:37:33:962 Memoria/(13534:13540): [Liberar Pagina]-La funcion de hash aproxima a la posicion 11 de la tabla de paginacion invetida
+[INFO] 00:37:33:962 Memoria/(13534:13540): [Liberar Pagina]-Se libero el frame 11 de la pagina 1 del pid 1
+[INFO] 00:37:33:962 Memoria/(13534:13540): [Liberar Pagina]-La funcion de hash aproxima a la posicion 12 de la tabla de paginacion invetida
+[INFO] 00:37:33:962 Memoria/(13534:13540): [Liberar Pagina]-Se libero el frame 12 de la pagina 2 del pid 1
+[INFO] 00:37:33:962 Memoria/(13534:13540): [Finalizar Programa]-Se borra de la cache las paginas del proceso.
+[INFO] 00:38:14:311 Memoria/(13534:13540): Se procede a borrar todos las paginas cacheadas del pid 1 ya que fue finalizado.

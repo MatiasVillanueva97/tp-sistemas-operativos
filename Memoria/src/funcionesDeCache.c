@@ -31,8 +31,18 @@ void borraDeLaCache(int pid){
 	bool buscarPid(lineaCache* fila){
 				return (fila->pid== pid);
 	}
+	void lineaCacheDestroyer(lineaCache* linea){
+		free(linea->contenido);
+		free(linea);
+	}
+
 	log_info(logMemoria,"Se procede a borrar todos las paginas cacheadas del pid %d ya que fue finalizado.", pid);
-	list_remove_and_destroy_by_condition(tablaDeEntradasDeCache,buscarPid,free);//faltaria un destroyer decente
+
+	int i;
+	int cantidad = list_count_satisfying(tablaDeEntradasDeCache,buscarPid);
+	for(i=0;i<cantidad;i++){
+		list_remove_and_destroy_by_condition(tablaDeEntradasDeCache,buscarPid,lineaCacheDestroyer);
+	}
 
 }
 
