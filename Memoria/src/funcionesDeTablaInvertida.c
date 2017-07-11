@@ -191,6 +191,7 @@ int liberarPagina(int pid, int pagina){ //Esta sincronizado en finalizarPrograma
 				return *pagina2 == pagina;
 		}
 	if(list_any_satisfy(fila->listaDePaginasLiberadas,buscarPag)){
+		sem_post(&mutex_TablaDeCantidadDePaginas);
 		return 1;
 	}
 	int* paginaAMeter = malloc(sizeof(int));

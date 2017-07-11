@@ -450,8 +450,15 @@ void *rutinaConsolaMemoria(void* x){
 							comandoConsola = string_split(comandoConsola[2], "\n");
 							int pidPedido = atoi(comandoConsola[0]);
 							filaTablaCantidadDePaginas* fila = buscarFilaEnTablaCantidadDePaginas(pidPedido);
-							log_info(logMemoria,"El proceso %d tiene %d\n",pidPedido,fila->paginaMaxima-list_size(fila->listaDePaginasLiberadas));
-							printf("El proceso %d tiene %d\n",pidPedido,fila->paginaMaxima-list_size(fila->listaDePaginasLiberadas));
+							if(fila == NULL){
+								log_info(logMemoria,"Pidio un pid invalido");
+								printf("Pidio un pid invalido");
+
+							}
+							else{
+								log_info(logMemoria,"El proceso %d tiene %d\n",pidPedido,fila->paginaMaxima-list_size(fila->listaDePaginasLiberadas));
+								printf("El proceso %d tiene %d\n",pidPedido,fila->paginaMaxima-list_size(fila->listaDePaginasLiberadas));
+							}
 						}
 				}
 				liberarArray(comandoConsola);
