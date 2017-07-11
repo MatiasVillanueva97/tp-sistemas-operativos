@@ -813,7 +813,7 @@ void conectarConFS()
 	if (socketFS == 2){
 		perror("No se conectado con el FileSystem, asegurese de que este abierto el proceso");
 	}
-	if ( (rta_conexion = handshakeCliente(socketFS, Kernel)) == -1) {
+	if ( (rta_conexion = handshakeCliente(socketFS, Kernel)) != 4) {
 		perror("Error en el handshake con FileSystem");
 		close(socketFS);
 	}
