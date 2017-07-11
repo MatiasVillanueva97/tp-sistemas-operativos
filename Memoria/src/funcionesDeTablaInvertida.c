@@ -187,7 +187,15 @@ int liberarPagina(int pid, int pagina){ //Esta sincronizado en finalizarPrograma
 		sem_post(&mutex_TablaDeCantidadDePaginas);
 		return 0;
 	}
-	list_add(fila->listaDePaginasLiberadas,pagina);
+	bool buscarPag(int* pagina2){
+				return *pagina2 == pagina;
+		}
+	if(list_any_satisfy(fila->listaDePaginasLiberadas,buscarPag)){
+		return 1;
+	}
+	int* paginaAMeter = malloc(sizeof(int));
+	*paginaAMeter= pagina;
+	list_add(fila->listaDePaginasLiberadas,paginaAMeter);
 	sem_post(&mutex_TablaDeCantidadDePaginas);
 	sem_wait(&mutex_TablaDePaginasInvertida);
 	for(i=posicionEnLaTabla;getConfigInt("MARCOS") > i;i++){
