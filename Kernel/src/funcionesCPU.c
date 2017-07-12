@@ -99,7 +99,33 @@ bool proceso_EstaFinalizado(int pid)
 	 PCB_DATA* pcb = ((PROCESOS*)list_find(avisos, busqueda))->pcb;
 	 return pcb->estadoDeProceso == finalizado;
 }
+void agregarATablaEstadistica(int pid,int tamano,bool esAlocar){
+	bool encontrarPorPid(filaEstadisticaDeHeap* fila2){
+		return fila2->pid == pid;
+	}
+	sem_wait(&mutex_tabla_estadistica_de_heap);
+	filaEstadisticaDeHeap* fila = list_find(tablaEstadisticaDeHeap,encontrarPorPid);
+	if(esAlocar){
+		fila->tamanoAlocadoEnBytes+=tamano;
+		fila->tamanoAlocadoEnOperaciones++;
+	}
+	else{
+		fila->tamanoLiberadoEnBytes+=tamano;
+		fila->tamanoLiberadoEnOperaciones++;
+	}
+	sem_post(&mutex_tabla_estadistica_de_heap);
 
+}
+
+void agregarPedirPaginaATablaEstadistica(int pid){
+	bool encontrarPorPid(filaEstadisticaDeHeap* fila2){
+		return fila2->pid == pid;
+	}
+	sem_wait(&mutex_tabla_estadistica_de_heap);
+	filaEstadisticaDeHeap* fila = list_find(tablaEstadisticaDeHeap,encontrarPorPid);
+	fila->cantidadDePaginasHistoricasPedidas++;
+	sem_post(&mutex_tabla_estadistica_de_heap);
+}
 
 
 
@@ -412,6 +438,7 @@ void *rutinaCPU(void * arg)
 				}
 				else{
 					enviarMensaje(socketCPU,enviarOffsetDeVariableReservada,&offset,sizeof(offset)); // Negro tene cuidado. Si te tiro un 0, es que rompio. Nunca te puedo dar el 0, porque va el metadata.
+					agregarATablaEstadistica(pid,tamano,true);
 				}
 			}break;
 			case liberarVariable:{

@@ -134,9 +134,91 @@ void * consolaKernel()
 
 			}break;
 			case 2:{
+			/*	La cantidad de rafagas ejecutadas.
+				b. La cantidad de operaciones privilegiadas que ejecutó.
+				c. Obtener la tabla de archivos abiertos por el proceso.
+				d. La cantidad de páginas de Heap utilizadas
+				i. Cantidad de acciones alocar realizadas en cantidad de operaciones y en
+				bytes
+				ii. Cantidad de acciones liberar realizadas en cantidad de operaciones y en
+				bytes
+				*/
 				int pid;
-				printf("\nIngrese pid del proceso a finalizar: ");
-				scanf("%d",&pid);
+				printf("\Ingrese pid:\n");
+				scanf("%d", &pid);
+				printf("\nSelecione opcion para pid:\n"
+								"1- Cantidad de rafagas ejecutadas.\n"
+								"2- Cantidad de operaciones privilegiadas que ejecuto\n"
+								"3- Obtener tabla de archivos abiertos por procesos\n"
+								"4- Cantidad de paginas de heap utilizadas\n" //?
+								"5- Cantidad de acciones alocar realizadas en bytes y en operaciones\n"
+								"6- Cantidad de acciones liberar realizadas en bytes y en operaciones\n\n"
+								"Elija el numero de su opcion: ");
+								scanf("%d", &opcion);
+				switch (opcion) {
+				case 1: {
+					//Cosa del negro
+				}
+					break;
+				case 2: {
+					//cosa del negro
+
+				}
+					break;
+				case 3: {
+					//cosa de juli
+				}
+					break;
+				case 4: {
+					bool encontrarPorPid(filaEstadisticaDeHeap* fila){
+						return fila->pid == pid;
+					}
+					sem_wait(&mutex_tabla_estadistica_de_heap);
+					filaEstadisticaDeHeap* fila = list_find(tablaEstadisticaDeHeap,encontrarPorPid);
+					if(fila == NULL){
+						printf("Pid invalido!");
+					}
+					else{
+						printf("El pid %d pidio %d paginas de heap durante su ejecucion",pid,fila->cantidadDePaginasHistoricasPedidas);
+					}
+					sem_post(&mutex_tabla_estadistica_de_heap);
+				}
+					break;
+				case 5: {
+					bool encontrarPorPid(filaEstadisticaDeHeap* fila){
+					return fila->pid == pid;
+					}
+					sem_wait(&mutex_tabla_estadistica_de_heap);
+					filaEstadisticaDeHeap* fila = list_find(tablaEstadisticaDeHeap,encontrarPorPid);
+					if(fila == NULL){
+						printf("Pid invalido!");
+					}
+					else{
+						printf("El pid %d hizo %d operacion alocar y fueron %d bytes reservados ",pid,fila->tamanoAlocadoEnOperaciones,fila->tamanoAlocadoEnBytes);
+					}
+					sem_post(&mutex_tabla_estadistica_de_heap);
+				}
+					break;
+				case 6: {
+					bool encontrarPorPid(filaEstadisticaDeHeap* fila){
+										return fila->pid == pid;
+									}
+					sem_wait(&mutex_tabla_estadistica_de_heap);
+					filaEstadisticaDeHeap* fila = list_find(tablaEstadisticaDeHeap,encontrarPorPid);
+					if(fila == NULL){
+						printf("Pid invalido!");
+					}
+					else{
+						printf("El pid %d hizo %d operacion liberar y fueron %d bytes reservados ",pid,fila->tamanoLiberadoEnOperaciones,fila->tamanoLiberadoEnBytes);
+					}
+					sem_post(&mutex_tabla_estadistica_de_heap);
+				}
+					break;
+				default: {
+					printf("\nOpcion invalida! Intente nuevamente.\n");
+				}
+					break;
+				}
 /*
 				2. Obtener para un proceso dado:
 				a. La cantidad de rafagas ejecutadas.

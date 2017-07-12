@@ -72,6 +72,15 @@ typedef struct{
 
 t_list* lista_CPUS;
 t_list* tablaDeHeapMemoria;
+t_list* tablaEstadisticaDeHeap;
+typedef struct{
+	int pid;
+	int tamanoAlocadoEnOperaciones;
+	int tamanoAlocadoEnBytes;
+	int tamanoLiberadoEnOperaciones;
+	int tamanoLiberadoEnBytes;
+	int cantidadDePaginasHistoricasPedidas;
+}filaEstadisticaDeHeap;
 typedef struct{
 	int pid;
 	int pagina;
@@ -165,6 +174,7 @@ pthread_mutex_t mutex_semaforos_ANSISOP;
 pthread_mutex_t mutex_variables_compartidas;
 pthread_mutex_t mutex_tablaDeHeap;
 pthread_mutex_t mutex_Quantum_Sleep;
+pthread_mutex_t mutex_tabla_estadistica_de_heap;
 
 
 sem_t sem_ConsolaKernelLenvantada;

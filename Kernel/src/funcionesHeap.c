@@ -76,6 +76,7 @@ int pedirPagina(int pid,int tamano){
 				elemento->tamanoDisponible = size_pagina -sizeof(HeapMetadata)*2-tamano;
 				list_add(tablaDeHeapMemoria,elemento);
 				log_info(logKernel,"Se añade la pagina a la tabla de heap, y se retorna el offset de la variable pedida.");
+				agregarPedirPaginaATablaEstadistica(pid);
 				return tamanoHeader + pagina*size_pagina;
 			}
 			log_error(logKernel,"No se pudo almacenar los bytes pedidos por algun motivo. Se libera la pagina y se retorna el error."); // Puede pasar muy rara vez, todavia nunca nos paso. Pero mejor chequearlo.
@@ -125,6 +126,7 @@ int manejarLiberacionDeHeap(int pid,int offset){
 		enviarMensaje(socketMemoria,almacenarBytes,serializarAlmacenarBytes2(almacenamiento),sizeof(int)*4+sizeof(HeapMetadata));
 		free(stream);
 		recibirMensaje(socketMemoria,&stream);
+
 		if(fila->tamanoDisponible +loQueTengoQueEscribir->tamanoLibre < size_pagina-sizeof(HeapMetadata)){
 			log_info(logKernel,"Se agrego %d a la pagina %d del pid %d",loQueTengoQueEscribir->tamanoLibre,fila->pagina,fila->pid);
 
@@ -142,6 +144,7 @@ int manejarLiberacionDeHeap(int pid,int offset){
 			list_remove_and_destroy_by_condition(tablaDeHeapMemoria,busqueda2,free);// falta un destroyer
 			log_info(logKernel,"Se libero la pagina %d del pid %d.",fila->pagina,fila->pid);
 		}
+		agregarATablaEstadistica(pid,loQueTengoQueEscribir->tamanoLibre-5,false);
 		return leerInt(stream);
 	}
 	log_error(logKernel,"No se acepto el pedido de la pagina a memoria.");

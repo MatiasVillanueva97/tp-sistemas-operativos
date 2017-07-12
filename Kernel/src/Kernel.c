@@ -159,7 +159,17 @@ void newToReady(){
 			free(paginasParaElStack);
 			//***Termino de completar el PCB
 
+			filaEstadisticaDeHeap* fila = malloc(sizeof(filaEstadisticaDeHeap));
+			fila->pid = programaAnsisop->pid;
+			fila->tamanoAlocadoEnBytes = 0;
+			fila->tamanoAlocadoEnOperaciones = 0;
+			fila->tamanoLiberadoEnBytes = 0;
+			fila->tamanoAlocadoEnOperaciones = 0;
+			fila->cantidadDePaginasHistoricasPedidas =0;
 
+			sem_wait(&mutex_tabla_estadistica_de_heap);
+			list_add(tablaEstadisticaDeHeap,fila);
+			sem_post(&mutex_tabla_estadistica_de_heap);
 			programaAnsisop->pcb->contPags_pcb= cant_paginas+getConfigInt("STACK_SIZE");
 
 			//***Añado el pcb a la cola de Ready
@@ -650,7 +660,7 @@ int main(void) {
 		tablaDeHeapMemoria = list_create();
 		tablaGlobalDeArchivos = list_create();
 		tablaGlobalDeArchivosDeProcesos= list_create();
-
+		tablaEstadisticaDeHeap = list_create();
 		//***Inicializo las colas
 		cola_New = queue_create();
 		cola_Ready = queue_create();
@@ -764,6 +774,7 @@ void inicializarSemaforo(){
 	sem_init(&mutex_semaforos_ANSISOP,0,1);
 	sem_init(&mutex_variables_compartidas,0,1);
 	sem_init(&mutex_Quantum_Sleep,0,1);
+	sem_init(&mutex_tabla_estadistica_de_heap,0,1);
 
 
 	sem_init(&sem_ConsolaKernelLenvantada,0,0);

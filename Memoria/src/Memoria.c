@@ -288,7 +288,7 @@ int asignarPaginasAUnProceso(int pid, int cantidadDePaginas){
 		if(list_size(x->listaDePaginasLiberadas) >0){
 			int* pagina = list_remove(x->listaDePaginasLiberadas,0);
 			sem_wait(&mutex_TablaDePaginasInvertida);
-			if(reservarFrame(pid,pagina)== 0){
+			if(reservarFrame(pid,*pagina)== 0){
 				sem_post(&mutex_TablaDeCantidadDePaginas);
 				sem_post(&mutex_TablaDePaginasInvertida);
 
