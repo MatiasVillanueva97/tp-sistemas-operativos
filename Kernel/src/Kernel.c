@@ -114,7 +114,7 @@ void newToReady(){
 		//***Le Enviamos a memoria el pid con el que vamos a trabajar - Junto a la accion que vamos a realizar - Le envio a memeoria la cantidad de paginas que necesitaré reservar
 		enviarMensaje(socketMemoria,inicializarPrograma, &dataParaMemoria, sizeof(int)*2); // Enviamos el pid a memoria
 
-		int* ok=malloc(sizeof(int));
+		int* ok;
 		recibirMensaje(socketMemoria, &ok); // Esperamos a que memoria me indique si puede guardar o no el stream
 		if(*ok)
 		{
@@ -129,28 +129,34 @@ void newToReady(){
 
 			//***Le envio a memoria tiodo el scrip pagina a pagina
 			int i;
-			for(i=0; i<cant_paginas && *ok; i++)
+
+			for(i=0; i<cant_paginas ; i++)
 			{
 				enviarMensaje(socketMemoria,envioCantidadPaginas,scriptEnPaginas[i],size_pagina);
 				log_info(logKernel,"Envio una pagina: %d\n", i);
 				log_info(logKernel,"La pagina %d, contiene:",i);
 				log_info(logKernel,scriptEnPaginas[i]);
+				free(ok);
 				recibirMensaje(socketMemoria,&ok);
+				free(scriptEnPaginas[i]);
 			}
+			free(scriptEnPaginas);
 
 			//***Le envio a memoria las paginas del stack
 			char * paginasParaElStack;
 			// puto el que lee
 			paginasParaElStack = string_repeat(' ',size_pagina);
 			paginasParaElStack[size_pagina-1]='\0';
-			for(i=0; i<getConfigInt("STACK_SIZE") && *ok;i++)
+			for(i=0; i<getConfigInt("STACK_SIZE")&&*ok;i++)
 			{
+				free(ok);
 				enviarMensaje(socketMemoria,envioCantidadPaginas,paginasParaElStack,size_pagina);
 				printf("Envio una pagina: %d\n", i+cant_paginas);
 
 				recibirMensaje(socketMemoria,&ok);
 			}
-
+			free(ok);
+			free(paginasParaElStack);
 			//***Termino de completar el PCB
 
 
@@ -541,6 +547,7 @@ void proceso_liberarRecursos(PCB_DATA* pcb){
 	enviarMensaje(socketMemoria,finalizarPrograma,&pcb->pid,sizeof(int));
 	void* respuesta;
 	recibirMensaje(socketMemoria,&respuesta);
+	free(respuesta);
 
 }
 

@@ -146,7 +146,7 @@ void *rutinaCPU(void * arg)
 
 				void* pcbSerializado = serializarPCB(pcb);
 				enviarMensaje(socketCPU,envioPCB,pcbSerializado,tamanoPCB(pcb));
-
+				free(pcbSerializado);
 				free(stream);
 
 			}break;
@@ -228,7 +228,7 @@ void *rutinaCPU(void * arg)
 					enviarMensaje(socketConsola,imprimirPorPantalla,stream2,tamanoDelBuffer);
 
 					respuestaACPU = true;
-
+					free(stream2);
 					enviarMensaje(socketCPU,respuestaBooleanaKernel,&respuestaACPU,sizeof(bool));
 
 				}
@@ -236,7 +236,7 @@ void *rutinaCPU(void * arg)
 					respuestaACPU = escribirEnUnArchivo(msj,msj.tamanio);
 					enviarMensaje(socketCPU,respuestaBooleanaKernel,&respuestaACPU,sizeof(bool));
 				}
-
+				free(msj.mensaje);
 				free(stream);
 
 			}break;

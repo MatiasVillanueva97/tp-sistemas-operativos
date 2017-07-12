@@ -67,6 +67,7 @@ char** memoria_dividirScriptEnPaginas(int cant_paginas, char *copiaScriptAnsisop
 	if(strlen(scriptDivididoEnPaginas[i-1]) < size_pagina){
 		char* x = string_repeat('\0',size_pagina-strlen(scriptDivididoEnPaginas[i-1]));
 		string_append(&(scriptDivididoEnPaginas[i-1]),x);
+		free(x);
 	}
 	return scriptDivididoEnPaginas;
 }
