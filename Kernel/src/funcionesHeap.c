@@ -40,7 +40,7 @@ int pedirPagina(int pid,int tamano){
 			}
 			//log_info(logKernel,"Se recibe %d como respuesta,(Cantidad de paginas)",pagina );
 			t_escrituraMemoria *w = malloc(sizeof(t_escrituraMemoria));
-			void* cosaAMandar = malloc(tamano + sizeof(HeapMetadata)*2);
+			void* cosaAMandar;
 			HeapMetadata* heap1 = malloc(sizeof(HeapMetadata));
 			heap1->isFree = false;
 			heap1->size = tamano;
@@ -66,8 +66,10 @@ int pedirPagina(int pid,int tamano){
 
 
 			enviarMensaje(socketMemoria,almacenarBytes,cosaAMandar,sizeof(t_direccion)+sizeof(int)+w->direccion.size);//esta mal, necesito el deserealizador de spisso.
+			free(cosaAMandar);
 			recibirMensaje(socketMemoria,&stream);
-
+			free(w->valor);
+			free(w);
 			if(leerInt(stream)){
 				log_info(logKernel,"Se almaceno correctamente los bytes en memoria.");
 				filaTablaDeHeapMemoria* elemento = malloc(sizeof(filaTablaDeHeapMemoria));
@@ -161,6 +163,7 @@ int manejarPedidoDeMemoria(int pid,int tamano){
 	t_list* listaFiltrada = list_filter(tablaDeHeapMemoria,busqueda);
 	if(list_is_empty(listaFiltrada)){
 		log_info(logKernel,"No tiene paginas de heap. Se procede a pedir una pagina.");
+		list_destroy(listaFiltrada);
 		return pedirPagina(pid,tamano);
 
 	}
@@ -205,14 +208,14 @@ int manejarPedidoDeMemoria(int pid,int tamano){
 						recibirMensaje(socketMemoria,&stream2);
 						fila->tamanoDisponible -= tamano-tamanoHeader;
 						log_info(logKernel,"Se cambia el tamano disponible, dejandolo en %d", fila->tamanoDisponible);
-
+						list_destroy(listaFiltrada);
 						return x.offset +fila->pagina*size_pagina;
 					}
 				}
 			}
 		}
 		log_info(logKernel,"Se recorrio todas las paginas de heap del proceso y no se pudo guardar. Por lo tanto, se pide una pagina nueva.");
-
+		list_destroy(listaFiltrada);
 		return pedirPagina(pid,tamano);//
 	}
 }
