@@ -120,9 +120,11 @@ void imprimirContenidoCache(){
 		for (i=0;i<list_size(tablaDeEntradasDeCache);i++){
 			lineaCache* linea = list_get(tablaDeEntradasDeCache,i);
 			printf("La pagina %d, del pid %d, tiene este contenido:\n", linea->pagina,linea->pid );
-			puts((char*)linea->contenido);
-			//printf("%s", (char*) &linea->contenido );
 			fprintf(archivo, "La pagina %d, del pid %d, tiene este contenido:\n ", linea->pagina,linea->pid );
+			int i;
+			for(i =0; i< sizeOfPaginas;i++){
+				printf("%c",((char*)linea->contenido)[i]);
+			}
 			fwrite((char*)linea->contenido,sizeOfPaginas,1,archivo);
 			fwrite("\n",1,1,archivo);
 		}
@@ -142,10 +144,15 @@ void imprimirContenidoMemoria(){
 		for(w=0;w<fila.paginaMaxima;w++){
 			char* contenido =leerMemoriaPosta(fila.pid,w);
 			if(contenido != 0){
+				//memcpy(contenidoAImprimir,contenido,sizeOfPaginas);
 				fprintf(archivo, "\nContenido de la pagina numero %s: \n",  string_itoa(w));
 				fwrite(contenido,sizeOfPaginas,1,archivo);
 				printf( "\n Contenido de la pagina numero %s: \n ",  string_itoa(w));
-				puts((char*)contenido);
+				//printf("Contenido: %s",(char*)contenidoAImprimir);
+				int i;
+				for(i =0; i< sizeOfPaginas;i++){
+					printf("%c",contenido[i]);
+				}
 				free(contenido);
 			}
 		}
@@ -659,7 +666,7 @@ int main(void) {
 	liberarMemoriaHeap(46,pagina);
 
 */
-	logMemoria = log_create("Memoria.log","Memoria",0,0);
+		logMemoria = log_create("Memoria.log","Memoria",0,0);
 	printf("Inicializando Memoria.....\n\n");
 	sem_init(&mutex_Memoria,0,1);
 	sem_init(&mutex_TablaDeCantidadDePaginas,0,1);
