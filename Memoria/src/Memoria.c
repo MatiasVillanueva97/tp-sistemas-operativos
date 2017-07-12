@@ -146,6 +146,7 @@ void imprimirContenidoMemoria(){
 				fwrite(contenido,sizeOfPaginas,1,archivo);
 				printf( "\n Contenido de la pagina numero %s: \n ",  string_itoa(w));
 				puts((char*)contenido);
+				free(contenido);
 			}
 		}
 	}

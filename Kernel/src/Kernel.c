@@ -184,8 +184,8 @@ void newToReady(){
 
 			printf("[Funcion newToReady] - No hubo espacio para guardar en memoria!\n");
 			log_info(logKernel,"[Funcion newToReady] - No hubo espacio para guardar en memoria!\n");
-		}
 		free(ok);
+		}
 	}
 	else
 	{
