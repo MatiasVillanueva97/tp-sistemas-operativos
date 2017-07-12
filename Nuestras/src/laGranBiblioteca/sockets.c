@@ -106,7 +106,7 @@ int conexionConServidor(char* puerto, char* ip)
 	}
 
 	if (p == NULL) {
-		fprintf(stderr, "CPU: failed to connect\n");
+		fprintf(stderr, "failed to connect\n");
 		return 2;
 	}
 

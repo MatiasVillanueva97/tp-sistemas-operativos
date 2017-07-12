@@ -827,9 +827,12 @@ void conectarConFS()
 	socketFS = conexionConServidor(getConfigString("PUERTO_FS"),getConfigString("IP_FS")); // Asignación del socket que se conectara con el filesytem
 	if (socketFS == 1){
 		perror("Falla en el protocolo de comunicación");
+		exit(-1);
 	}
 	if (socketFS == 2){
 		perror("No se conectado con el FileSystem, asegurese de que este abierto el proceso");
+		perror("Error en el handshake con FileSystem");
+		exit(-1);
 	}
 	if ( (rta_conexion = handshakeCliente(socketFS, Kernel)) != 4) {
 		perror("Error en el handshake con FileSystem");
