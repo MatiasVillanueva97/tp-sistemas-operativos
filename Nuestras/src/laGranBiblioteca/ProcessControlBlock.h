@@ -66,6 +66,10 @@ char* indiceEtiquetas; // ¡??¡?'¿¿'??¡ que es¡?
 
 
  int exitCode;
+
+ int cantDeInstPrivilegiadas;
+ int cantDeRafagasEjecutadas;
+ int cantPaginasDeCodigo;
 }__attribute__((packed)) PCB_DATA;
 
 

@@ -134,11 +134,13 @@ int main(void)
 			free(pcbSerializado);
 		}
 
-		if(quantumRestante == 0){
-			printf("Envie el PCB al Kernel porque me quede sin quantum\n");
-			void* pcbSerializado = serializarPCB(pcb);
-			enviarMensaje(socketKernel,enviarPCBaReady,pcbSerializado,tamanoPCB(pcb));
-			free(pcbSerializado);
+		else{
+			if(quantumRestante == 0){
+				printf("Envie el PCB al Kernel porque me quede sin quantum\n");
+				void* pcbSerializado = serializarPCB(pcb);
+				enviarMensaje(socketKernel,enviarPCBaReady,pcbSerializado,tamanoPCB(pcb));
+				free(pcbSerializado);
+			}
 		}
 
 		//libera la memoria malloqueada por el PCB

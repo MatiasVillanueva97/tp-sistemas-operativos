@@ -68,6 +68,7 @@ enum estadosProcesos{
 typedef struct{
 	int socketCPU;
 	bool esperaTrabajo;
+	PCB_DATA* pcbQueSeLlevo;
 }t_CPU;
 
 t_list* lista_CPUS;
@@ -169,6 +170,9 @@ pthread_mutex_t mutex_cola_Ready;
 pthread_mutex_t mutex_cola_Wait;
 pthread_mutex_t mutex_cola_Exec;
 pthread_mutex_t mutex_cola_Finished;
+
+pthread_mutex_t activarHilo_Exec;
+
 
 pthread_mutex_t mutex_semaforos_ANSISOP;
 pthread_mutex_t mutex_variables_compartidas;

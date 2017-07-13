@@ -58,8 +58,9 @@ int tamanoPCB(PCB_DATA * pcb){
 				+sizeof(uint32_t) 												//por la cantidad de entradas
 				+tamanoDe__t_entradas(pcb->indiceStack,pcb->cantidadDeEntradas)//por las entradas
 				+sizeof(uint32_t)												//por la cantidadDeEtiquetas
-				+sizeof(uint32_t);												//por el exit code
-				//+sizeof(uint32_t)*2; 											//Creo que es por los headers de las listas
+				+sizeof(uint32_t)												//por el exit code
+				+sizeof(uint32_t)												//por la cantidad de paginas de codigo
+				+sizeof(uint32_t)*2; 											//por la cantidad de rafagas y la cant de instr privilegiadas (estadisticas)
 }
 
 
@@ -350,6 +351,15 @@ void *  serializarPCB(PCB_DATA * pcb){
 
 
 	memcpy(stream + recorrido, &(pcb->exitCode), sizeof(uint32_t));
+		recorrido += sizeof(uint32_t);
+
+	memcpy(stream + recorrido, &(pcb->cantDeInstPrivilegiadas), sizeof(uint32_t));
+	recorrido += sizeof(uint32_t);
+
+	memcpy(stream + recorrido, &(pcb->cantDeRafagasEjecutadas), sizeof(uint32_t));
+	recorrido += sizeof(uint32_t);
+
+	memcpy(stream + recorrido, &(pcb->cantPaginasDeCodigo), sizeof(uint32_t));
 	recorrido += sizeof(uint32_t);
 
 	 //if(recorrido == tamanoPCB(pcb)) printf("LA TENGO ENORME");
@@ -392,6 +402,10 @@ PCB_DATA* deserializarPCB(void* stream){
 	pcb->cantidadDeEtiquetas = leerUINT32(stream, &recorrido);
 
 	pcb->exitCode = leerUINT32(stream,&recorrido);
+
+	pcb->cantDeInstPrivilegiadas = leerUINT32(stream,&recorrido);
+	pcb->cantDeRafagasEjecutadas = leerUINT32(stream,&recorrido);
+	pcb->cantPaginasDeCodigo = leerUINT32(stream,&recorrido);
 
 	return pcb;
 }

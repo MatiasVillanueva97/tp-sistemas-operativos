@@ -12,14 +12,69 @@
 t_mensajeDeProceso deserializarMensajeAEscribir(void* stream);
 
 
-void cpu_quitarDeLista(socketCPU){
+bool cpu_hayCPUDisponible(){
+	bool condicion(t_CPU* CPU){
+		return CPU->esperaTrabajo;
+	}
+	return list_any_satisfy(lista_CPUS,condicion);
+}
 
-	bool busqueda(t_CPU* nodo)
-	{
+void cpu_asignarPCBACPU(PCB_DATA* PCB){
+	bool condicion(t_CPU* CPU){
+		return CPU->esperaTrabajo;
+	}
+	t_CPU* CPU = list_find(lista_CPUS, condicion);
+	CPU->pcbQueSeLlevo = PCB;
+
+	void* pcbSerializado = serializarPCB(PCB);
+	enviarMensaje(CPU->socketCPU,envioPCB,pcbSerializado,tamanoPCB(PCB));
+	free(pcbSerializado);
+
+}
+
+t_CPU* cpu_buscarCPU(int socketCPU){
+	bool busqueda(t_CPU* nodo){
+			return nodo->socketCPU == socketCPU;
+	}
+	return list_find(lista_CPUS, busqueda);
+}
+
+bool cpu_laCpuExiste(int socketCPU){
+
+	sem_wait(&mutex_cola_CPUs_libres);
+		t_CPU* CPU =  cpu_buscarCPU(socketCPU);
+	sem_post(&mutex_cola_CPUs_libres);
+	return CPU != NULL;
+}
+
+//Esta funcion sirve para decirle a la lista de CPUs si la cpu esta disponible o no
+void cpu_laCpuEsperaTrabajo(int socketCPU, bool valor){
+	sem_wait(&mutex_cola_CPUs_libres);
+		t_CPU* CPU =  cpu_buscarCPU(socketCPU);
+		CPU->esperaTrabajo = valor;
+	sem_post(&mutex_cola_CPUs_libres);
+
+}
+
+void cpu_BorradorDeCPUs(t_CPU* CPU){
+	if(CPU->pcbQueSeLlevo != NULL){
+		CPU->pcbQueSeLlevo = paraEjecutar;
+	}
+	free(CPU);
+}
+
+void cpu_quitarDeLista(int socketCPU){
+
+
+
+	bool busqueda(t_CPU* nodo){
 		return nodo->socketCPU == socketCPU;
 	}
 
-	list_remove_and_destroy_by_condition(lista_CPUS,busqueda,free);
+
+	sem_wait(&mutex_cola_CPUs_libres);
+		list_remove_and_destroy_by_condition(lista_CPUS,busqueda,cpu_BorradorDeCPUs);
+	sem_post(&mutex_cola_CPUs_libres);
 }
 
 void cpu_crearHiloDetach(int nuevoSocket){
@@ -44,50 +99,6 @@ void cpu_crearHiloDetach(int nuevoSocket){
 	}
 
 	pthread_attr_destroy(&attr);
-}
-
-
-//***Esa funcion devuelve un un PCB que este listo para mandarse a ejecutar , en caso de que ninguno este listo retorna null
-PCB_DATA * cpu_pedirPCBDeExec(){
-
-	bool encontroPCB = false;
-	PCB_DATA* pcb;
-	int i, cantidadProcesos=0;
-
-	//***Voy a estar buscando en la cola de exec hasta que encuentre alguno
-	while(!encontroPCB)
-	{
-		sem_wait(&mutex_cola_Exec);
-		//***Me fijo la cantidad de procesos que hay en la cola de exec
-		cantidadProcesos = queue_size(cola_Exec);
-
-		//***Voy a iterar tantas veces como elementos tenga en la cola de exec
-		for(i=0; i < cantidadProcesos; i++)
-		{
-			//***Tomo el primer pcb de la cola
-			pcb = queue_pop(cola_Exec);
-
-			//*** Valido si el pcb se puede mandar a ejecutar
-			if(pcb->estadoDeProceso == paraEjecutar)
-			{
-				//***Esta listo para ejecutar, le cambio el exitcode
-				pcb->estadoDeProceso = loEstaUsandoUnaCPU;
-
-				//***Lo agrego al final de la cola de exec
-				queue_push(cola_Exec, pcb);
-
-				//***Cambio el booleano a true, porque acabo de encontrar un pcb y asi cortar el while y hago el break del for
-				encontroPCB=true;
-				break;
-			}
-			else{
-				queue_push(cola_Exec, pcb);
-			}
-		}
-		sem_post(&mutex_cola_Exec);
-	}
-
-	return pcb;
 }
 
 
@@ -148,12 +159,9 @@ void *rutinaCPU(void * arg)
 
 	log_info(logKernel,"[Rutina rutinaCPU] - Entramos al hilo de la CPU cuyo socket es: %d.\n", socketCPU);
 
-	bool busqueda(t_CPU* cpu){
-		return cpu->socketCPU == socketCPU;
-	}
 
 	sem_wait(&mutex_cola_CPUs_libres);
-			t_CPU* estaCPU = list_find(lista_CPUS,busqueda);
+			t_CPU* estaCPU = cpu_buscarCPU(socketCPU);
 	sem_post(&mutex_cola_CPUs_libres);
 
 
@@ -168,11 +176,9 @@ void *rutinaCPU(void * arg)
 			case pedirPCB:{
 				log_info(logKernel,"[Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- %d!\n", pedirPCB);
 
-				pcb = cpu_pedirPCBDeExec();
+				cpu_laCpuEsperaTrabajo(socketCPU, true);
 
-				void* pcbSerializado = serializarPCB(pcb);
-				enviarMensaje(socketCPU,envioPCB,pcbSerializado,tamanoPCB(pcb));
-				free(pcbSerializado);
+
 				free(stream);
 
 			}break;
@@ -193,7 +199,7 @@ void *rutinaCPU(void * arg)
 				pcb = deserializarPCB(stream);
 
 				// aca como que deberiamos validar que no haya sido finalizado ya este procesito
-				if(!proceso_EstaFinalizado(pcb->pid)){
+				if(estaCPU->pcbQueSeLlevo->estadoDeProceso != finalizado){
 					if(pcb->exitCode<0){
 						finalizarPid(pcb,pcb->exitCode);
 					}
@@ -201,10 +207,15 @@ void *rutinaCPU(void * arg)
 						finalizarPid(pcb,0);
 					}
 				    modificarPCB(pcb);
+				   /* sem_wait(&mutex_cola_Finished);
+				    	proceso_moverProcesoDeExecA(pcb->pid, cola_Finished);
+				    sem_post(&mutex_cola_Finished);*/
 				}
-				sem_wait(&mutex_cola_CPUs_libres);
-				   	estaCPU->esperaTrabajo = true;
-				sem_post(&mutex_cola_CPUs_libres);
+
+
+				estaCPU->esperaTrabajo = true;
+				estaCPU->pcbQueSeLlevo = NULL;
+
 				free(stream);
 
 			}break;
@@ -213,24 +224,21 @@ void *rutinaCPU(void * arg)
 			case enviarPCBaReady:{
 				log_info(logKernel,"[Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- %d!\n", enviarPCBaReady);
 				pcb = deserializarPCB(stream);
-				if(pcb->estadoDeProceso != bloqueado){
-					pcb->estadoDeProceso = paraEjecutar;
-				}
 
-				sem_wait(&mutex_cola_Exec);
-				 modificarPCB(pcb);
-				 sem_post(&mutex_cola_Exec);
-/*
 
-				sem_wait(&mutex_cola_Exec);
-					queue_pop(cola_Exec);
-				sem_post(&mutex_cola_Exec);
+				//if(estaCPU->pcbQueSeLlevo != NULL){ ////ESTE IF ES UN PARCHE. CON ROUND ROBIN LA CPU MANDA 2 VECES EL PCB A TERMINADO
+					if(estaCPU->pcbQueSeLlevo->estadoDeProceso != finalizado){
+						pcb->estadoDeProceso = paraEjecutar;
+						modificarPCB(pcb);
 
-				sem_wait(&mutex_cola_Ready);
-					queue_push(cola_Ready, modificarPCB(pcb));
-				sem_post(&mutex_cola_Ready);
-*/
-				/// Revisar esto - y poner semaforos
+						/*sem_wait(&mutex_cola_Ready);
+							proceso_moverProcesoDeExecA(pcb->pid, cola_Ready);
+						sem_post(&mutex_cola_Ready);*/
+					}
+				//}
+
+				estaCPU->esperaTrabajo = true;
+				estaCPU->pcbQueSeLlevo = NULL;
 
 				 free(stream);
 
@@ -464,19 +472,19 @@ void *rutinaCPU(void * arg)
 			//QUE PASA SI SE DESCONECTA LA CPU
 			case 0:{
 				log_info(logKernel,"[Rutina rutinaCPU] - Desconecto la CPU N°: %d\n", socketCPU);
-				todaviaHayTrabajo=false;
-
 
 				cpu_quitarDeLista(socketCPU);
+				printf("\n\nLa CPU de socket: %d se ha desconectado\n\n", socketCPU);
+				todaviaHayTrabajo=false;
 
 			}break;
 
 			//QUE PASA CUANDO SE MUERTE LA CPU
 			default:{
 				log_info(logKernel,"[Rutina rutinaCPU] - Se recibio una accion que no esta contemplada: %d se cerrara el socket\n",accionCPU);
-				todaviaHayTrabajo=false;
-
 				cpu_quitarDeLista(socketCPU);
+				printf("\n\nLa CPU de socket: %d se ha desconectado\n\n", socketCPU);
+				todaviaHayTrabajo=false;
 			}break;
 		}
 

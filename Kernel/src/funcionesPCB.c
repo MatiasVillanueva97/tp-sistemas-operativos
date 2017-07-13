@@ -19,6 +19,9 @@ PCB_DATA* crearPCB(char * scriptAnsisop, int pid, int contPags){
 		pcb->cantidadDeInstrucciones = metadata->instrucciones_size;
 		pcb->programCounter = metadata->instruccion_inicio;
 
+		pcb->cantDeInstPrivilegiadas = 0;
+		pcb->cantDeRafagasEjecutadas = 0;
+
 	return pcb;
 }
 //Sincronizame señor!Por favor!
@@ -60,6 +63,9 @@ PCB_DATA* modificarPCB(PCB_DATA * pcbNuevo){
 			pcbViejo->indiceStack = pcbNuevo->indiceStack;
 			pcbViejo->estadoDeProceso = pcbNuevo->estadoDeProceso;
 			pcbViejo->programCounter = pcbNuevo->programCounter;
+			pcbViejo->cantDeInstPrivilegiadas = pcbNuevo->cantDeInstPrivilegiadas;
+			pcbViejo->cantDeRafagasEjecutadas = pcbNuevo->cantDeRafagasEjecutadas;
+			pcbViejo->cantPaginasDeCodigo = pcbNuevo->cantPaginasDeCodigo;
 		}
 	}
 
