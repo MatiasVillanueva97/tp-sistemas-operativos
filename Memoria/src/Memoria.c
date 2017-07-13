@@ -279,7 +279,7 @@ int asignarPaginasAUnProceso(int pid, int cantidadDePaginas){
 //	int paginaMaxima = cantidadDePaginasDeUnProcesoDeUnProceso(pid);
 	int i;
 	bool seLibero=false;
-
+	int paginaADevolver = 0;
 	int paginaMaxima = buscarCantidadDePaginas(pid);
 	log_info(logMemoria,"[Asignar Paginas]-El proceso %d tiene %d paginas en memoria y pidio %d paginas nuevas",pid,paginaMaxima,cantidadDePaginas);
 	if(cantidadDePaginas == 1){
@@ -292,13 +292,19 @@ int asignarPaginasAUnProceso(int pid, int cantidadDePaginas){
 				sem_post(&mutex_TablaDeCantidadDePaginas);
 				sem_post(&mutex_TablaDePaginasInvertida);
 
-				return 0;
+				return -1;
 			}
+			paginaADevolver = *pagina;
 			seLibero = true;
 
 		}
 		else{
-			reservarFrame(pid,paginaMaxima);
+			if(reservarFrame(pid,paginaMaxima)==0){
+				sem_post(&mutex_TablaDeCantidadDePaginas);
+				sem_post(&mutex_TablaDePaginasInvertida);
+				return -1;
+			}
+			paginaADevolver = paginaMaxima;
 			sem_post(&mutex_TablaDePaginasInvertida);
 		}
 		sem_post(&mutex_TablaDeCantidadDePaginas);
@@ -340,7 +346,7 @@ int asignarPaginasAUnProceso(int pid, int cantidadDePaginas){
 		}
 	}
 	sem_post(&mutex_TablaDeCantidadDePaginas);
-	return 1;
+	return paginaADevolver;
 }
 
 int finalizarUnPrograma(int pid){
@@ -504,7 +510,7 @@ void recibirMensajesMemoria(void* arg){
 					t_inicializarPrograma* estructura = stream;
 					log_info(logMemoria,"[Inicializar Programa] - El kernel quiere iniciar el pid %d con %d paginas iniciales", estructura->pid,estructura->cantPags);
 					int x=1;
-					if(asignarPaginasAUnProceso(estructura->pid,estructura->cantPags)==0){
+					if(asignarPaginasAUnProceso(estructura->pid,estructura->cantPags)==-1){
 						x=0;
 					}
 					enviarMensaje(socket,RespuestaBooleanaDeMemoria,&x,sizeof(int));
@@ -576,11 +582,9 @@ void recibirMensajesMemoria(void* arg){
 					t_asignarPaginas* estructura = stream;
 					int x;
 					log_info(logMemoria,"[Asignar Paginas] Se quieren asignar %d paginas para el pid %d",estructura->cantPags,estructura->pid);
-					if(asignarPaginasAUnProceso(estructura->pid,estructura->cantPags)==-1){
-					  							x=0;
-					}
-					else{
-					 						x=buscarCantidadDePaginas(estructura->pid) -1;
+					x=asignarPaginasAUnProceso(estructura->pid,estructura->cantPags);
+					if(x== -1){
+						x = 0;
 					}
 					enviarMensaje(socket,RespuestaBooleanaDeMemoria,&x,sizeof(int));
 					log_info(logMemoria,"[Asignar Paginas]-Se envio %d a kernel como respuesta",x);

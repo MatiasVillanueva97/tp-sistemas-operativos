@@ -152,7 +152,7 @@ int crearElArchivo(char* path){
 		log_error(logFS,"[Crear Archivo]-No hay bloques disponibles ");
 		return 0;
 	}
-	bitarray_set_bit(bitMap,posicionDelBitMap-1);
+	bitarray_set_bit(bitMap,posicionDelBitMap);
 
 	fprintf(archivo,"TAMANO=0\nBLOQUES=[%d]\n",posicionDelBitMap);
 	log_info(logFS,"[Crear Archivo]-Se creo en la ruta: %s el archivo con TAMANO=0\nBLOQUES=[%d]\n", rutaTotal ,posicionDelBitMap);
