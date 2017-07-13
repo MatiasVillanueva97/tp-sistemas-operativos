@@ -50,7 +50,6 @@ void liberarEntradaTablaDeArchivosDeProceso(ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO *
 
 void liberarRecursosArchivo(PCB_DATA* pcb);
 
-
 int borrarArchivoPermanente(t_archivo estructura);
 
 int cerrarArchivoPermanente(t_archivo estructura);
@@ -60,6 +59,9 @@ int moverUnCursor(t_moverCursor estructura);
 void abrirArchivoPermanente(bool existeArchivo, t_crearArchivo estructura, int socketCPU);
 
 void leerEnUnArchivo(t_lectura estructura, int socketCPU);
+
+int escribirEnUnArchivo(t_mensajeDeProceso msj, int tamanoDelBuffer);
+
 
 
 #endif /* FUNCIONESCAPAFS_H_ */

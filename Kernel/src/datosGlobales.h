@@ -43,9 +43,9 @@ t_log* logKernel;
 enum exitCode{
 	finalizadoCorrectamente =0,
 	noSePudoReservarRecursos = -1,
-	accesoArchivoInexistente = -2,
-	lecturaDenegada = -3,
-	escrituraDenegada = -4,
+	archivoInexistente = -2,
+	lecturaDenegadaPorFaltaDePermisos = -3,
+	escrituraDenegadaPorFaltaDePermisos = -4,
 	excepcionMemoria = -5,
 	deconexionConsola = -6,
 	finalizacionDesdeConsola = -7,
@@ -53,7 +53,11 @@ enum exitCode{
 	noSePuedenAsignarMasPaginas = -9,
 	finalizacionDesdeKenel = -10,
 	intentoAccederAUnSemaforoInexistente = -11,
-	intentoAccederAUnaVariableCompartidaInexistente = -12
+	intentoAccederAUnaVariableCompartidaInexistente = -12,
+	lecturaDenegadaPorFileSystem = -13,
+	escrituraDenegadaPorFileSystem = -14,
+	noSeCreoElArchivoPorFileSystem = -15,
+	falloEnElFileDescriptor = -16
 };
 
 enum estadosProcesos{
@@ -170,6 +174,8 @@ pthread_mutex_t mutex_cola_Ready;
 pthread_mutex_t mutex_cola_Wait;
 pthread_mutex_t mutex_cola_Exec;
 pthread_mutex_t mutex_cola_Finished;
+pthread_mutex_t mutex_tablaGlobalDeArchivos;
+pthread_mutex_t mutex_tablaGlobalDeArchivosDeProcesos;
 
 pthread_mutex_t activarHilo_Exec;
 

@@ -18,7 +18,9 @@ ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* encontrarElDeIgualPid(int pid){
 			bool sonDeIgualPid(ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO * elementos){
 				return  elementos->pid == pid;
 				}
+			sem_wait(&mutex_tablaGlobalDeArchivosDeProcesos);
 			aux = list_find(tablaGlobalDeArchivosDeProcesos,(void *)sonDeIgualPid);
+			sem_post(&mutex_tablaGlobalDeArchivosDeProcesos);
 						return aux;
 }
 
@@ -27,7 +29,9 @@ ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* encontrarElDeIgualPath(char* path){
 bool sonDeIgualPath(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS * elemento){
 				return  !strcmp(elemento->path,path);
 		}
+		sem_wait(&mutex_tablaGlobalDeArchivos);
 		auxiliar = list_find(tablaGlobalDeArchivos,sonDeIgualPath);
+		sem_post(&mutex_tablaGlobalDeArchivos);
 		return auxiliar;
 }
 
@@ -42,7 +46,9 @@ int posicionEnTablaGlobalDeArchivos(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* auxilia
 					i++;
 					return  !strcmp(elemento->path,auxiliar->path);
 			}
+			sem_wait(&mutex_tablaGlobalDeArchivos);
 			auxiliar = list_find(tablaGlobalDeArchivos,(void *)buscarPosicion);
+			sem_post(&mutex_tablaGlobalDeArchivos);
 			return i;
 }
 
@@ -52,20 +58,13 @@ int posicionEnTablaGlobalArchivosDeProceso(ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* a
 					i++;
 					return  elemento->pid== auxiliar->pid;
 			}
+			sem_wait(&mutex_tablaGlobalDeArchivosDeProcesos);
 			auxiliar = list_find(tablaGlobalDeArchivosDeProcesos,(void *)buscarPosicion);
+			sem_post(&mutex_tablaGlobalDeArchivosDeProcesos);
 			return i;
 }
 
-/*int posicionEnUnaLista(t_list* lista, void* nodo,void(*condicion)(void*)){
-	int i = 0;
-	void * auxiliar;
-	bool buscarPosicion(void * nodo){
-			i++;
-			return   condicion(nodo) == condicion(auxiliar);
-				}
-	auxiliar = list_find(lista,(void *)buscarPosicion);
-	return i;
-}*/
+
 
 void agregarATablaDeProceso(int globalFD, char* flags, t_list* tablaProceso){
 	ENTRADA_DE_TABLA_DE_PROCESO* nuevaEntradaProceso = malloc(sizeof(ENTRADA_DE_TABLA_DE_PROCESO));
@@ -79,13 +78,17 @@ void agregarATablaGlobalDeArchivos(char* path,int aperturas){
 	ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS * nuevaEntrada = malloc(sizeof(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS));
 	nuevaEntrada->path = string_duplicate(path);
 	nuevaEntrada->cantidad_aperturas = aperturas;
+	sem_wait(&mutex_tablaGlobalDeArchivos);
 	list_add(tablaGlobalDeArchivos,nuevaEntrada);
+	sem_post(&mutex_tablaGlobalDeArchivos);
 }
 void agregarATablaGlobalDeArchivosDeProcesos(int pid, t_list* tablaProceso){
 	ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO * nuevaEntrada = malloc(sizeof(int)+4);
 	nuevaEntrada->pid = pid;
 	nuevaEntrada->tablaProceso = tablaProceso;
+	sem_wait(&mutex_tablaGlobalDeArchivosDeProcesos);
 	list_add(tablaGlobalDeArchivosDeProcesos,nuevaEntrada);
+	sem_post(&mutex_tablaGlobalDeArchivosDeProcesos);
 }
 
 void* serializarPedidoFs(int size, int offset,char* path){
@@ -134,18 +137,17 @@ void finalizarPid(PCB_DATA* pcb,int exitCode){
 	proceso_liberarRecursos(pcb);
 }
 void liberarEntradaDeTablaProceso(ENTRADA_DE_TABLA_DE_PROCESO* entrada){
+	free (entrada->flags);
 	free(entrada);
 }
 
 void liberarEntradaTablaGlobalDeArchivos(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada){
-	free(entrada->cantidad_aperturas);
 	free(entrada->path);
 	free(entrada);
 }
 
 void liberarEntradaTablaGlobalDeArchivosDeProceso(ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO*entrada){
 	list_clean_and_destroy_elements(entrada->tablaProceso,liberarEntradaDeTablaProceso);
-	free(entrada->pid);
 	free(entrada);
 }
 
@@ -153,16 +155,20 @@ void liberarEntradaTablaGlobalDeArchivosDeProceso(ENTRADA_DE_TABLA_GLOBAL_DE_PRO
 void liberarRecursosArchivo(PCB_DATA* pcb){
 	ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* entrada_a_eliminar = encontrarElDeIgualPid(pcb->pid);
 	int i;
-	int tamanoTabla=list_size(entrada_a_eliminar->tablaProceso);
-	for(i=3;i<tamanoTabla;i++){
-		ENTRADA_DE_TABLA_DE_PROCESO *entrada_de_tabla_proceso= list_get(entrada_a_eliminar->tablaProceso,i);
+	int tamanoTabla=list_size(entrada_a_eliminar->tablaProceso+1);
+	for(i=0;i<tamanoTabla;i++){
+		ENTRADA_DE_TABLA_DE_PROCESO* entrada_de_tabla_proceso= list_get(entrada_a_eliminar->tablaProceso,i);
+		sem_wait(&mutex_tablaGlobalDeArchivos);
 		ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_de_archivo= list_get(tablaGlobalDeArchivos,entrada_de_tabla_proceso->globalFD);
+		sem_post(&mutex_tablaGlobalDeArchivos);
 		entrada_de_archivo->cantidad_aperturas--;
 		if(entrada_de_archivo->cantidad_aperturas==0){
 			list_remove_and_destroy_element(tablaGlobalDeArchivos,entrada_de_tabla_proceso->globalFD,liberarEntradaTablaGlobalDeArchivos);
 		}
 	}
+	sem_wait(&mutex_tablaGlobalDeArchivosDeProcesos);
 	list_remove_and_destroy_element(tablaGlobalDeArchivosDeProcesos,posicionEnTablaGlobalArchivosDeProceso(entrada_a_eliminar),liberarEntradaTablaGlobalDeArchivosDeProceso);
+	sem_post(&mutex_tablaGlobalDeArchivosDeProcesos);
 }
 
 
@@ -176,7 +182,9 @@ int rtaCPU = 0;
 PCB_DATA* pcbaux;
 pcbaux = buscarPCB(estructura.pid);
 if (entrada_a_evaluar != NULL){
+	sem_wait(&mutex_tablaGlobalDeArchivos);
 	ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_de_archivo= list_get(tablaGlobalDeArchivos,entrada_a_evaluar->globalFD);
+	sem_post(&mutex_tablaGlobalDeArchivos);
 	if(entrada_de_archivo!=NULL){
 		if(entrada_de_archivo->cantidad_aperturas == 1){
 			enviarMensaje(socketFS,borrarArchivo,entrada_de_archivo->path,strlen(entrada_de_archivo->path)+1);
@@ -185,10 +193,10 @@ if (entrada_a_evaluar != NULL){
 			finalizarPid(pcbaux,-14);//No se pudo borrar, porque otro proceso lo esta usando
 		}
 		}else{
-			finalizarPid(pcbaux,accesoArchivoInexistente);
+			finalizarPid(pcbaux,archivoInexistente);
 	}
 	}else{
-		finalizarPid(pcbaux,accesoArchivoInexistente);
+		finalizarPid(pcbaux,falloEnElFileDescriptor);
 	}
 return rtaCPU;
 }
@@ -201,15 +209,17 @@ int cerrarArchivoPermanente(t_archivo estructura){
 	ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(estructura.pid);
 	ENTRADA_DE_TABLA_DE_PROCESO* entrada_de_tabla_proceso= list_get(aux->tablaProceso,estructura.fileDescriptor);
 	if (entrada_de_tabla_proceso != NULL){
+		sem_wait(&mutex_tablaGlobalDeArchivos);
 		ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_de_archivo= list_get(tablaGlobalDeArchivos,entrada_de_tabla_proceso->globalFD);
+		sem_post(&mutex_tablaGlobalDeArchivos);
 		if (entrada_de_archivo !=NULL ){
 			borrarEnTablasGlobales(entrada_de_archivo, entrada_de_tabla_proceso, estructura.pid);
 			rtaCPU = 1;
 		}else{
-			finalizarPid(pcbaux,accesoArchivoInexistente);//Por ahora
+			finalizarPid(pcbaux,archivoInexistente);//Por ahora
 	}
 	}else{
-		finalizarPid(pcbaux,accesoArchivoInexistente);
+		finalizarPid(pcbaux,falloEnElFileDescriptor);
 	}
 	return rtaCPU;
 }
@@ -224,20 +234,22 @@ int escribirEnUnArchivo(t_mensajeDeProceso msj, int tamanoDelBuffer){
 	ENTRADA_DE_TABLA_DE_PROCESO *entrada_de_tabla_proceso= list_get(aux->tablaProceso,msj.descriptorArchivo);
 
 	if (entrada_de_tabla_proceso!= NULL){
+		sem_wait(&mutex_tablaGlobalDeArchivos);
 		ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_de_archivo= list_get(tablaGlobalDeArchivos,entrada_de_tabla_proceso->globalFD);
+		sem_post(&mutex_tablaGlobalDeArchivos);
 		if(entrada_de_archivo !=NULL){
 			if (string_contains(entrada_de_tabla_proceso->flags,"w")){
 				void* pedidoEscritura = serializarEscribirMemoria(tamanoDelBuffer,entrada_de_tabla_proceso->offset,entrada_de_archivo->path, msj.mensaje);
 				enviarMensaje(socketFS,guardarDatosDeArchivo, pedidoEscritura,sizeof(int)+strlen(entrada_de_archivo->path)+tamanoDelBuffer+sizeof(int)*2);
-				rtaCPU = recibirBooleanoDeFS(pcbaux,-15);
+				rtaCPU = recibirBooleanoDeFS(pcbaux,escrituraDenegadaPorFileSystem);
 				}else{
-					finalizarPid(pcbaux,escrituraDenegada);
+					finalizarPid(pcbaux,escrituraDenegadaPorFaltaDePermisos);
 			}
 			}else{
-				finalizarPid(pcbaux,accesoArchivoInexistente);
+				finalizarPid(pcbaux,archivoInexistente);
 			}
 			}else{
-				finalizarPid(pcbaux,accesoArchivoInexistente);
+				finalizarPid(pcbaux,falloEnElFileDescriptor);
 		}
 	return rtaCPU;
 }
@@ -252,15 +264,17 @@ int moverUnCursor(t_moverCursor estructura){
 	ENTRADA_DE_TABLA_DE_PROCESO* entrada_de_tabla_proceso= list_get(aux->tablaProceso,estructura.fileDescriptor);
 
 	if(entrada_de_tabla_proceso != NULL){
+		sem_wait(&mutex_tablaGlobalDeArchivos);
 		ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_de_archivo= list_get(tablaGlobalDeArchivos,entrada_de_tabla_proceso->globalFD);
+		sem_post(&mutex_tablaGlobalDeArchivos);
 		if (entrada_de_archivo != NULL){
-			entrada_de_tabla_proceso->offset += estructura.posicion;
+			entrada_de_tabla_proceso->offset = estructura.posicion;
 			rtaCPU = 1;
 		}else{
-			finalizarPid(pcbaux,-18);
+			finalizarPid(pcbaux,archivoInexistente);
 		}
 	}else{
-		finalizarPid(pcbaux,accesoArchivoInexistente);
+		finalizarPid(pcbaux,falloEnElFileDescriptor);
 	}
 	return rtaCPU;
 }
@@ -277,11 +291,11 @@ void abrirArchivoPermanente(bool existeArchivo, t_crearArchivo estructura, int s
 			if(fileDescriptor){
 				enviarMensaje(socketCPU,envioDelFileDescriptor,&fileDescriptor,sizeof(int));
 			}else{
-				finalizarPid(pcbaux,accesoArchivoInexistente);
+				finalizarPid(pcbaux,noSeCreoElArchivoPorFileSystem);
 				enviarMensaje(socketCPU,respuestaBooleanaKernel,&rtaCPU,sizeof(int));
 			}
 			}else{
-				finalizarPid(pcbaux,accesoArchivoInexistente);
+				finalizarPid(pcbaux,archivoInexistente);
 				enviarMensaje(socketCPU,respuestaBooleanaKernel,&rtaCPU,sizeof(int));
 		}
 }
@@ -296,7 +310,9 @@ void leerEnUnArchivo(t_lectura estructura, int socketCPU){
 	ENTRADA_DE_TABLA_DE_PROCESO* entrada_a_evaluar= list_get(aux->tablaProceso,estructura.fileDescriptor);
 
 	if (entrada_a_evaluar != NULL){
+		sem_wait(&mutex_tablaGlobalDeArchivos);
 		ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_de_archivo= list_get(tablaGlobalDeArchivos,entrada_a_evaluar->globalFD);
+		sem_post(&mutex_tablaGlobalDeArchivos);
 		if(entrada_de_archivo!=NULL){
 			if (string_contains(entrada_a_evaluar->flags,"r")){
 
@@ -304,23 +320,24 @@ void leerEnUnArchivo(t_lectura estructura, int socketCPU){
 				enviarMensaje(socketFS,obtenerDatosDeArchivo,pedidoDeLectura,4+strlen(entrada_de_archivo->path)+sizeof(int)*2+1);
 				void* contenido;
 				if(recibirMensaje(socketFS,&contenido) == respuestaConContenidoDeFs){
+
 					enviarMensaje(socketCPU,respuestaLectura, contenido,estructura.size);
 					entrada_a_evaluar->offset += estructura.size;
 				}
 				else{
-					finalizarPid(pcbaux,-15);//Respuesta Mala de FS, no hay que leer en el archivo
+					finalizarPid(pcbaux,lecturaDenegadaPorFileSystem );//Respuesta Mala de FS, no hay que leer en el archivo
 					enviarMensaje(socketCPU,respuestaBooleanaKernel,&rtaCPU,sizeof(int));
 				}
 			}else{
-				finalizarPid(pcbaux,lecturaDenegada);
+				finalizarPid(pcbaux,lecturaDenegadaPorFaltaDePermisos);
 				enviarMensaje(socketCPU,respuestaBooleanaKernel,&rtaCPU,sizeof(int));
 			}
 		}else{
-			finalizarPid(pcbaux,accesoArchivoInexistente);
+			finalizarPid(pcbaux,archivoInexistente);
 			enviarMensaje(socketCPU,respuestaBooleanaKernel,&rtaCPU,sizeof(int));
 		}
 	}else{
-		finalizarPid(pcbaux,accesoArchivoInexistente);
+		finalizarPid(pcbaux,falloEnElFileDescriptor);
 		enviarMensaje(socketCPU,respuestaBooleanaKernel,&rtaCPU,sizeof(int));
 		}
 }
@@ -336,8 +353,9 @@ void borrarEnTablasGlobales(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_de_arch
 	bool sonDeIgualPid(ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO * elementos){
 			return  elementos->pid == pid;
 	}
+	sem_wait(&mutex_tablaGlobalDeArchivosDeProcesos);
 	list_remove_and_destroy_by_condition(tablaGlobalDeArchivosDeProcesos,(void*) sonDeIgualPid,liberarEntradaDeTablaProceso);
-
+	sem_post(&mutex_tablaGlobalDeArchivosDeProcesos);
 }
 int recibirBooleanoDeFS(PCB_DATA* pcbaux, int exitcode){
 	void* stream2;
@@ -360,7 +378,10 @@ int crearArchivo(char* path, int pid, char* flags){
 		agregarATablaGlobalDeArchivos(path,1);
 		ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* aux = encontrarElDeIgualPid(pid);
 		int fileDescriptor= list_size(aux->tablaProceso);
-		agregarATablaDeProceso(list_size(tablaGlobalDeArchivos)-1,flags,aux->tablaProceso);
+		sem_wait(&mutex_tablaGlobalDeArchivos);
+		int globalFD = list_size(tablaGlobalDeArchivos)-1;
+		sem_post(&mutex_tablaGlobalDeArchivos);
+		agregarATablaDeProceso(globalFD,flags,aux->tablaProceso);
 		return fileDescriptor;
 		}
 	else{
@@ -375,7 +396,9 @@ int agregarNuevaAperturaDeArchivo(char* path, int pid, char* flags){
 		agregarATablaGlobalDeArchivos(path,1);
 		archivo = encontrarElDeIgualPath(path);
 	}else{
+		sem_wait(&mutex_tablaGlobalDeArchivos);
 		archivo->cantidad_aperturas++;
+		sem_post(&mutex_tablaGlobalDeArchivos);
 	}
 	int fileDescriptor= list_size(aux->tablaProceso);
 	agregarATablaDeProceso(posicionEnTablaGlobalDeArchivos(archivo),flags,aux->tablaProceso);
