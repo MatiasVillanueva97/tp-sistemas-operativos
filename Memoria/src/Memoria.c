@@ -282,49 +282,50 @@ int asignarPaginasAUnProceso(int pid, int cantidadDePaginas){
 	int paginaADevolver = 0;
 	int paginaMaxima = buscarCantidadDePaginas(pid);
 	log_info(logMemoria,"[Asignar Paginas]-El proceso %d tiene %d paginas en memoria y pidio %d paginas nuevas",pid,paginaMaxima,cantidadDePaginas);
-	if(cantidadDePaginas == 1){
+	if (cantidadDePaginas == 1) {
 		sem_wait(&mutex_TablaDeCantidadDePaginas);
-		filaTablaCantidadDePaginas* x= buscarFilaEnTablaCantidadDePaginas(pid);
-		if(list_size(x->listaDePaginasLiberadas) >0){
-			int* pagina = list_remove(x->listaDePaginasLiberadas,0);
+		filaTablaCantidadDePaginas* x = buscarFilaEnTablaCantidadDePaginas(pid);
+		if (list_size(x->listaDePaginasLiberadas) > 0) {
+			int* pagina = list_remove(x->listaDePaginasLiberadas, 0);
 			sem_wait(&mutex_TablaDePaginasInvertida);
-			if(reservarFrame(pid,*pagina)== 0){
+			if (reservarFrame(pid, *pagina) == 0) {
 				sem_post(&mutex_TablaDeCantidadDePaginas);
 				sem_post(&mutex_TablaDePaginasInvertida);
 
 				return -1;
 			}
+			sem_post(&mutex_TablaDePaginasInvertida);
 			paginaADevolver = *pagina;
 			seLibero = true;
 
-		}
-		else{
-			if(reservarFrame(pid,paginaMaxima)==0){
+		} else {
+			sem_wait(&mutex_TablaDePaginasInvertida);
+			if (reservarFrame(pid, paginaMaxima) == 0) {
 				sem_post(&mutex_TablaDeCantidadDePaginas);
 				sem_post(&mutex_TablaDePaginasInvertida);
 				return -1;
 			}
+			sem_post(&mutex_TablaDePaginasInvertida);
 			paginaADevolver = paginaMaxima;
-			sem_post(&mutex_TablaDePaginasInvertida);
 		}
+
 		sem_post(&mutex_TablaDeCantidadDePaginas);
-	}
-	else{
+	} else {
 
-
-	sem_wait(&mutex_TablaDePaginasInvertida);
-	for(i= 0 ;i < cantidadDePaginas; i++){
-		if(reservarFrame(pid,paginaMaxima+i) == 0){
-			log_error(logMemoria,"[Asignar Paginas]-No se pudo asignar paginas al proceso, se procede a liberar las paginas");
-			int w ;
-			for(w = 0;w<i;w++){
-				liberarPagina(pid,paginaMaxima+w);
+		sem_wait(&mutex_TablaDePaginasInvertida);
+		for (i = 0; i < cantidadDePaginas; i++) {
+			if (reservarFrame(pid, paginaMaxima + i) == 0) {
+				log_error(logMemoria,
+						"[Asignar Paginas]-No se pudo asignar paginas al proceso, se procede a liberar las paginas");
+				int w;
+				for (w = 0; w < i; w++) {
+					liberarPagina(pid, paginaMaxima + w);
+				}
+				sem_post(&mutex_TablaDePaginasInvertida);
+				return -1;
 			}
-			sem_post(&mutex_TablaDePaginasInvertida);
-			return -1;
 		}
-	}
-	sem_post(&mutex_TablaDePaginasInvertida);
+		sem_post(&mutex_TablaDePaginasInvertida);
 	}
 	sem_wait(&mutex_TablaDeCantidadDePaginas);
 	if(paginaMaxima == 0){
