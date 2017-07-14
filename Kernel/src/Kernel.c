@@ -464,6 +464,7 @@ void execTo()
 					pcb->estadoDeProceso = loEstaUsandoUnaCPU;
 					void* pcbSerializado = serializarPCB(pcb);
 					enviarMensaje(cpu->socketCPU,envioPCB,pcbSerializado,tamanoPCB(pcb));
+					cpu->pcbQueSeLlevo = pcb;
 					free(pcbSerializado);
 					cpu->esperaTrabajo = false;
 				}

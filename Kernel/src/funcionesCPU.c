@@ -183,14 +183,7 @@ void *rutinaCPU(void * arg)
 				free(pcbSerializado);
 				*/
 				estaCPU->esperaTrabajo=true;
-				/*if(recibirMensaje(socketCPU,&stream) == 0){
-					log_info(logKernel,"La CPU de socket c");
-					sem_wait(&mutex_cola_Ready);
-						queue_push(cola_Ready, pcb);
-					sem_post(&mutex_cola_Ready);
-					cpu_quitarDeLista(socketCPU);
-					todaviaHayTrabajo=false;
-				}*/
+
 				free(stream);
 
 			}break;
@@ -222,6 +215,8 @@ void *rutinaCPU(void * arg)
 				}
 				sem_wait(&mutex_cola_CPUs_libres);
 				   	estaCPU->esperaTrabajo = true;
+					estaCPU->pcbQueSeLlevo = NULL;
+
 				sem_post(&mutex_cola_CPUs_libres);
 				free(stream);
 
@@ -234,8 +229,10 @@ void *rutinaCPU(void * arg)
 				if(pcb->estadoDeProceso != bloqueado){
 					pcb->estadoDeProceso = moverAReady;
 				}
-
+				sem_wait(&mutex_cola_CPUs_libres);
 				estaCPU->esperaTrabajo = true;
+				estaCPU->pcbQueSeLlevo = NULL;
+				sem_post(&mutex_cola_CPUs_libres);
 				sem_wait(&mutex_cola_Exec);
 				 modificarPCB(pcb);
 				 sem_post(&mutex_cola_Exec);
@@ -483,10 +480,17 @@ void *rutinaCPU(void * arg)
 			//QUE PASA SI SE DESCONECTA LA CPU
 			case 0:{
 				log_info(logKernel,"[Rutina rutinaCPU] - Desconecto la CPU N°: %d\n", socketCPU);
+				sem_wait(&mutex_cola_CPUs_libres);
+				if(estaCPU->pcbQueSeLlevo!=NULL){
+					log_info(logKernel,"La CPU de socket c");
+					sem_wait(&mutex_cola_Ready);
+					queue_push(cola_Ready, pcb);
+					sem_post(&mutex_cola_Ready);
 
-
+				}
 				cpu_quitarDeLista(socketCPU);
 				todaviaHayTrabajo=false;
+				sem_post(&mutex_cola_CPUs_libres);
 
 			}break;
 
