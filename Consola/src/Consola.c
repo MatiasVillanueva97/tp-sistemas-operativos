@@ -357,61 +357,82 @@ void* rutinaPrograma(void* parametro){
 			}
 		}
 	char* tiempoFin = temporal_get_string_time();
-
+	char* diferencia1 = diferencia(tiempoInicio,tiempoFin);
 	printf("\nAcaba de finalizar el pid: %d\n", pid);
 	printf("Tiempo de inicio: %s\n",tiempoInicio);
 	printf("Tiempo de Finalización: %s\n",tiempoFin);
-	printf("Tiempo de Ejecución: %s\n",diferencia(tiempoInicio,tiempoFin));
+	printf("Tiempo de Ejecución: %s\n",diferencia1);
 	printf("Cantidad de impresiones del programa ansisop: %d\n",cantImpresiones);
+	free(diferencia1);
+	free(tiempoFin);
+	free(tiempoInicio);
+
 
 
 }
 
-void* rutinaEscucharKernel(){
+void* rutinaEscucharKernel() {
 
-	while(!error){
+	while (!error) {
 		int operacion;
 		void * stream;
-		operacion =recibirMensaje(socketKernel,&stream);
-		switch(operacion){
-		case(envioDelPidEnSeco):{
+		operacion = recibirMensaje(socketKernel, &stream);
+		switch (operacion) {
+		case (envioDelPidEnSeco): {
 			int pid;
-			pid = *((int*)stream);
+			pid = *((int*) stream);
 			crearHiloDetachPrograma(&pid);
 			break;
 		}
-		case(imprimirPorPantalla):{
+		case (imprimirPorPantalla): {
 			t_mensajeDeProceso aux = deserializarMensajeAEscribir(stream);
-			 t_Estado* programaEstado;
+			t_Estado* programaEstado;
 			programaEstado = encontrarElDeIgualPid(aux.pid);
 			programaEstado->mensajeAImprimir = string_duplicate(aux.mensaje);
 			programaEstado->hayParaImprimir = true;
+			free(aux.mensaje);
 			break;
 		}
-		case(pidFinalizado):{
-			int  pid;
-			pid = (*(int*)stream);
+		case (pidFinalizado): {
+			int pid;
+			pid = (*(int*) stream);
 			matarHiloPrograma(pid);
 
 			break;
-		}case(errorFinalizacionPid):{
-			int  pid;
-			pid = (*(int*)stream);
+		}
+		case (errorFinalizacionPid): {
+			int pid;
+			pid = (*(int*) stream);
 
 			matarHiloPrograma(pid);
 
 			printf("No se ha finalizado correctamente el pid: %d \n", pid);
 			break;
 		}
-		case (0):{
-				printf("Se desconecto el kernel\n");
-				error = true;
-				printf("Ingrese una tecla cualquiera para salir\n");
-				break;
-				}
-		default:{
+		case (0): {
+			printf("Se desconecto el kernel\n");
+			error = true;
+			printf("Ingrese una tecla cualquiera para salir\n");
+			break;
+		}
+		case (pidFinalizadoPorFaltaDeMemoria): {
+			int pid;
+			pid = (*(int*) stream);
+
+			matarHiloPrograma(pid);
+
+			printf(
+					"\nNo se ha finalizado correctamente el pid %d por falta de memoria\n",
+					pid);
+			break;
+
+		}
+		default: {
 			perror("Error: no se pudo obtener mensaje \n");
 		}
-}
+		}
+		if (operacion != 0)
+			free(stream);
+
 }
 }
