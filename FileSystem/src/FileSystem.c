@@ -190,7 +190,7 @@ void* leerBloque(FILE* archivo,int offset, int size){
 	free(x);
 	return contenido;
 }
-int* obtenerBloques (char* path){
+int* obtenerBloques (char* path, int* cantidad){
 	char* pathconfiguracion = obtenerRutaTotal(path,"Archivos");
 	t_config *configuracion = config_create(pathconfiguracion);
 	free(pathconfiguracion);
@@ -206,6 +206,7 @@ int* obtenerBloques (char* path){
 		*(bloques+i) = atoi(bloquesEnString[i]);
 		log_info(logFS,"[Obtener Bloques]-Se obtuvo el bloque numero: %s ", bloquesEnString[i]);
 	}
+	*cantidad = i;
 	log_info(logFS,"[Obtener Bloques]-Se obtuvieron los bloques del archivo %s", path);
 	config_destroy(configuracion);
 	liberarArray(bloquesEnString);
@@ -229,7 +230,8 @@ int cantidadDeElementosDeUnArray (int* array){
 	return i;
 }
 void* obtenerDatos(char* path,int offset, int size){
-	int *bloques = obtenerBloques(path);
+	int cantidadDebloques;
+	int *bloques = obtenerBloques(path,&cantidadDebloques);
 	int bloqueInicial = offset / bloqueSize;
 	if(offset+size > devolverTamano(path)){
 		log_error(logFS,"[Obtener datos]-Se pidio un offset mas grande que el tamano del archivo");
@@ -305,12 +307,12 @@ char* crearStringBloques(int* bloques,int cantidad){
 	return bloquesString;
 }
 int guardarDatos(char* path,int offset, int size,void* buffer){
-	int *bloques = obtenerBloques(path);
+	int cantidadDeBloques;
+	int *bloques = obtenerBloques(path,&cantidadDeBloques);
 	if(bloques == NULL){
 		log_error(logFS,"[Guardar Datos]-No existia el archivo con la path: %s",path);
 		return 0;
 	}
-	int cantidadDeBloques = cantidadDeElementosDeUnArray(bloques);
 	int bloqueInicialDondeQuiereEscribir = offset/bloqueSize;
 	int bloqueQueQuiereEscribir = (size+offset) / bloqueSize;
 	int i;
