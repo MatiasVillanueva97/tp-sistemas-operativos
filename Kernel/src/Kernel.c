@@ -173,7 +173,9 @@ void newToReady(){
 			programaAnsisop->pcb->contPags_pcb= cant_paginas+getConfigInt("STACK_SIZE");
 
 			//***Añado el pcb a la cola de Ready
+			sem_wait(&mutex_cola_Ready);
 			queue_push(cola_Ready,programaAnsisop->pcb);
+			sem_post(&mutex_cola_Ready);
 		}
 		else
 		{
@@ -216,13 +218,13 @@ void newToReady(){
 //***Esta Función lo que hace es sumar el size de todas las colas que determinan el grado de multiplicacion y devuelve la suma ///***Esta Función esta Probada y anda (falta meterle tres semaforos mutex)
 int cantidadProgramasEnProcesamiento()
 {
-	//sem_wait(&mutex_cola_Ready);
-	//sem_wait(&mutex_cola_Exec);
-	//sem_wait(&mutex_cola_Wait);
+	sem_wait(&mutex_cola_Ready);
+	sem_wait(&mutex_cola_Exec);
+	sem_wait(&mutex_cola_Wait);
 		int cantidadProcesosEnLasColas = queue_size(cola_Ready)+queue_size(cola_Wait)+queue_size(cola_Exec);
-	//sem_post(&mutex_cola_Wait);
-	//sem_post(&mutex_cola_Exec);
-	//sem_post(&mutex_cola_Ready);
+	sem_post(&mutex_cola_Wait);
+	sem_post(&mutex_cola_Exec);
+	sem_post(&mutex_cola_Ready);
 
 	return cantidadProcesosEnLasColas;
 }
@@ -329,7 +331,7 @@ void readyToExec()
 	sem_wait(&mutex_cola_Exec);
 
 	//*** Tomo el primer elemento de la cola de ready y lo quito
-	PCB_DATA* pcb = queue_pop(cola_Ready);
+	PCB_DATA* pcb = queue_peek(cola_Ready);
 
 
 	//*** Valido que el proceso no haya sido terminado ya
@@ -337,6 +339,7 @@ void readyToExec()
 	{
 		//*** Si ya fue finalizado lo paso a la cola de finalizados
 		sem_wait(&mutex_cola_Finished);
+		queue_pop(cola_Ready);
 			queue_push(cola_Finished,pcb);
 		sem_post(&mutex_cola_Finished);
 
@@ -356,13 +359,12 @@ void readyToExec()
 		}
 	}
 	else{
-		queue_push(cola_Exec,pcb);
+		sem_post(&mutex_cola_Exec);
+		sem_post(&mutex_cola_Ready);
 	}
 
 	//*** Como el proceso que encontre no esta terminado, entonces lo pongo en la cola de excec y lo retorno
 
-	sem_post(&mutex_cola_Exec);
-	sem_post(&mutex_cola_Ready);
 }
 
 
@@ -452,9 +454,8 @@ void execTo()
 			case moverAReady:{
 				//queue_pop(cola_Exec);
 				pcb->estadoDeProceso = paraEjecutar;
-				sem_wait(&mutex_cola_Ready);
 					queue_push(cola_Ready,pcb);
-				sem_post(&mutex_cola_Ready);
+
 			}break;
 			case paraEjecutar:{
 				t_CPU* cpu = cpu_buscarCPUDisponible();
@@ -465,6 +466,9 @@ void execTo()
 					enviarMensaje(cpu->socketCPU,envioPCB,pcbSerializado,tamanoPCB(pcb));
 					free(pcbSerializado);
 					cpu->esperaTrabajo = false;
+				}
+				else{
+					queue_push(cola_Exec,pcb);
 				}
 			}break;
 			default:{
@@ -490,17 +494,21 @@ void* estadoEXEC(){
 	//*** el booleano finPorConsolaDelKernel esta en false desde el inicio, en el momento en el que el kernel quiera frenar la planificiacion esta variable pasara a true, y se frenara la planificacion
 	while(!finPorConsolaDelKernel)
 	{
+		sem_wait(&mutex_cola_Ready);
 		sem_wait(&mutex_cola_Exec);
 
 		//***Validamos que haya procesos en la cola de exec
 		if(queue_size(cola_Exec)>0){
 
 			//***Llamamos a la funcion excetToReady que pasa los procesos que ya hallan finalizado a la cola de finalizados, y retorna el pid del proceso que acaba de pasar. No haber encotrado ninguno retorna -1
+
 			execTo();
 			sem_post(&mutex_cola_Exec);
+			sem_post(&mutex_cola_Ready);
 		}
 		else{
 			sem_post(&mutex_cola_Exec);
+			sem_post(&mutex_cola_Ready);
 		}
 	}
 	return NULL;
