@@ -20,6 +20,7 @@
 #include <semaphore.h>
 #include <pthread.h>
 
+
 #include "../../Nuestras/src/laGranBiblioteca/sockets.c"
 #include "../../Nuestras/src/laGranBiblioteca/config.c"
 #include "../../Nuestras/src/laGranBiblioteca/funcionesParaTodosYTodas.c"
@@ -32,6 +33,9 @@ void* rutinaPrograma(void*);
 char* diferencia(char*,char*);
 void transformarFechaAInts(char*, int[4]);
 void* rutinaEscucharKernel();
+
+
+
 
 typedef struct {
 	int pid;
@@ -50,11 +54,13 @@ int socketKernel;
 char* mensajeActual;
 t_list* listaEstadoPrograma;
 bool error;
+bool signal_terminar;
 
 
 pthread_mutex_t mutex_lista;
 pthread_mutex_t mutex_ordenDeEscritura;
 pthread_mutex_t mutex_mensajeActual;
+pthread_mutex_t mutex_espera;
 
 
 size_t tamanoArchivo(FILE * archivo){
@@ -248,6 +254,12 @@ void inicializarSemaforos(){
 	sem_init(&mutex_lista,0,1);
 	sem_init(&mutex_ordenDeEscritura,0,0);
 	sem_init(&mutex_mensajeActual,0,1);
+	sem_init(&mutex_espera,0,0);
+}
+void sigint_handler(int signal) {
+	printf("Se recibio una SIGINT, se finalizará el proceso\n" );
+	signal_terminar = true;
+	return;
 }
 
 
@@ -262,7 +274,9 @@ int main(void)
 	char* mensaje = NULL;
 	listaEstadoPrograma = list_create();
 	error = false;
+	signal_terminar = false;
 	inicializarSemaforos();
+	signal(SIGINT, sigint_handler);
 
 	// ******* Configuración inicial Consola
 
@@ -275,7 +289,7 @@ int main(void)
 
 	pthread_t hiloMaster ;
 	pthread_create(hiloMaster, NULL,rutinaEscucharKernel, NULL);
-	while(!error){//Ciclo donde se ejecutan los comandos principales.
+	while(!error && !signal_terminar){//Ciclo donde se ejecutan los comandos principales.
 
 		printf("\nIngrese Comando: \n");
 
@@ -309,7 +323,7 @@ int main(void)
 
 			continue;
 		}
-		if(strcmp(comandoConsola[0],"desconectarConsola\n") == 0){
+		if(strcmp(comandoConsola[0],"desconectarConsola\n") == 0 || signal_terminar){
 			liberarArray(comandoConsola);
 			enviarMensaje(socketKernel,desconectarConsola, NULL, 0);
 			break;
@@ -318,7 +332,7 @@ int main(void)
 			break;
 		}
 
-	puts("Comando Inválido!");
+	puts("Comando Inválido!\n");
 	}
 
 	pthread_join(hiloMaster,NULL);
@@ -344,6 +358,7 @@ void* rutinaPrograma(void* parametro){
 	programaEstado = encontrarElDeIgualPid(pid);
 		printf("Numero de pid del proces: %d \n",pid);
 		sem_post(&mutex_ordenDeEscritura);
+		sem_post(&mutex_espera);
 		while(1){
 
 		if(programaEstado->hayParaImprimir){
@@ -366,10 +381,10 @@ void* rutinaPrograma(void* parametro){
 	free(diferencia1);
 	free(tiempoFin);
 	free(tiempoInicio);
-
-
-
 }
+
+
+
 
 void* rutinaEscucharKernel() {
 
@@ -382,6 +397,7 @@ void* rutinaEscucharKernel() {
 			int pid;
 			pid = *((int*) stream);
 			crearHiloDetachPrograma(&pid);
+			sem_wait(&mutex_espera);
 			break;
 		}
 		case (imprimirPorPantalla): {
@@ -412,7 +428,7 @@ void* rutinaEscucharKernel() {
 		case (0): {
 			printf("Se desconecto el kernel\n");
 			error = true;
-			printf("Ingrese una tecla cualquiera para salir\n");
+			printf("Ingrese una tecla para salir\n");
 			break;
 		}
 		case (pidFinalizadoPorFaltaDeMemoria): {
