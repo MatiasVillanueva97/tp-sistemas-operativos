@@ -109,7 +109,7 @@ typedef struct{
 	int socketConsola;
 	bool avisoAConsola;
 	PCB_DATA* pcb;
-	char* semaforoTomado;
+	t_list* semaforosTomados;
 	//archivos tomados
 	//elementos de heap tomados
 } PROCESOS;
