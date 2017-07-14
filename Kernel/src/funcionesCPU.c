@@ -352,12 +352,21 @@ void *rutinaCPU(void * arg)
 
 				PCB_DATA* pcbRecibido = deserializarPCBYSemaforo(stream, &nombreSemaforo);
 
+
+				sem_wait(&mutex_cola_Exec);
+
+
+
 				//Validar que el proceso no haya sido finalizado, responder siempre a la CPU si
 				PCB_DATA* pcbDelProcesoActual = modificarPCB(pcbRecibido);
 
 				sem_wait(&mutex_semaforos_ANSISOP);
 					bool respuestaParaCPU = SEM_wait(nombreSemaforo, pcbDelProcesoActual);
 				sem_post(&mutex_semaforos_ANSISOP);
+
+
+				sem_post(&mutex_cola_Exec);
+
 
 				free(nombreSemaforo);
 
@@ -369,13 +378,19 @@ void *rutinaCPU(void * arg)
 
 				log_info(logKernel,"[Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- %d!\n", signalSemaforo);
 
+				puts("Entro al signalSemaforo\n");
 				char* nombreSemaforo;
+
+				sem_wait(&mutex_cola_Exec);
+
 				PCB_DATA* pcbRecibido = deserializarPCBYSemaforo(stream, &nombreSemaforo);
 				PCB_DATA* pcbDelProcesoActual = modificarPCB(pcbRecibido);
 
 				sem_wait(&mutex_semaforos_ANSISOP);
 					bool respuestaParaCPU = SEM_signal(nombreSemaforo, pcbDelProcesoActual);
 				sem_post(&mutex_semaforos_ANSISOP);
+
+				sem_post(&mutex_cola_Exec);
 
 				free(nombreSemaforo);
 				enviarMensaje(socketCPU,respuestaBooleanaKernel, &respuestaParaCPU, sizeof(bool));
