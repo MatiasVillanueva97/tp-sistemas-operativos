@@ -65,6 +65,7 @@ enum estadosProcesos{
 	loEstaUsandoUnaCPU = 1,
 	bloqueado = 2,
 	paraEjecutar = 53,
+	moverAReady = 42
 };
 
 //ESTRUCTURA PARA MANEJAR LAS CPUS

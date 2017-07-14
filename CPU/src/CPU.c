@@ -94,18 +94,16 @@ int main(void)
 
 
  	void * stream;
- 	if(recibirMensajeSeguro(socketKernel, &stream) != 7){
- 		recibirMensajeSeguro(socketKernel,(void*)&datosIniciales);
- 		/*
+ 	if(recibirMensajeSeguro(socketKernel,(void*)&datosIniciales) != 7){
+ 		//recibirMensajeSeguro(socketKernel,(void*)&datosIniciales);
+
  		perror("Kernel envio mal los datos iniciales, se desconecta la CPU");
  		close(socketMemoria);
  		close(socketKernel);
  		liberarConfiguracion();
  		exit(-1);
- 		*/
+
  	}
- 	else
- 		datosIniciales = stream;
 
  	printf("Datos recibidos de Kernel:\nsize_pag-%d\nquantum-%d\nsize_stack-%d\n", datosIniciales->size_pag, datosIniciales->quantum, datosIniciales->size_stack);
 
@@ -255,7 +253,7 @@ void sigint_handler(int signal) {
 
 	if(terminoPrograma && !hayPCB){ //si NO esta ejecutando
 		printf("Se recibio una SIGINT, se desconecta esta CPU\n");
-		close(socketKernel);
+		//close(socketKernel);
 		liberarConfiguracion();
 		free(datosIniciales);
 		exit(-1);
@@ -272,8 +270,6 @@ void pedidoPCB(){
 	if(recibirMensajeSeguro(socketKernel,&pcbSerializado) != envioPCB){
 		puts("Error en el protocolo de comunicacion");
 	}else{
-		int unEntero = 42;
-		enviarMensaje(socketKernel,42,&unEntero,sizeof(int));
 		hayPCB = true;
 		pcb=deserializarPCB(pcbSerializado);
 		free(pcbSerializado);

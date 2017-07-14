@@ -216,13 +216,13 @@ void newToReady(){
 //***Esta Función lo que hace es sumar el size de todas las colas que determinan el grado de multiplicacion y devuelve la suma ///***Esta Función esta Probada y anda (falta meterle tres semaforos mutex)
 int cantidadProgramasEnProcesamiento()
 {
-	sem_wait(&mutex_cola_Ready);
-	sem_wait(&mutex_cola_Exec);
-	sem_wait(&mutex_cola_Wait);
+	//sem_wait(&mutex_cola_Ready);
+	//sem_wait(&mutex_cola_Exec);
+	//sem_wait(&mutex_cola_Wait);
 		int cantidadProcesosEnLasColas = queue_size(cola_Ready)+queue_size(cola_Wait)+queue_size(cola_Exec);
-	sem_post(&mutex_cola_Wait);
-	sem_post(&mutex_cola_Exec);
-	sem_post(&mutex_cola_Ready);
+	//sem_post(&mutex_cola_Wait);
+	//sem_post(&mutex_cola_Exec);
+	//sem_post(&mutex_cola_Ready);
 
 	return cantidadProcesosEnLasColas;
 }
@@ -272,9 +272,58 @@ void * estadoNEW()
 /// **************************** SEGUNDA PARTE - PASAR PROCESOS DE READY A EXEC ****************************///
 /// ********************************************************************************************************///
 
+int cantDeProcesosEnEjecucion(){
+
+	int valor = queue_size(cola_Exec);
+
+	return valor;
+}
+
+int cantDeCpus(){
+	sem_wait(&lista_CPUS);
+	int valor = list_size(lista_CPUS);
+	sem_post(&lista_CPUS);
+	return valor;
+}
+
+void readyToExec2()
+{
+	sem_wait(&mutex_cola_Ready);
+	PCB_DATA* pcb=queue_pop(cola_Ready);
+
+		if(pcb != NULL){
+			//***Valido que el proceso haya finalizado
+
+			switch(pcb->estadoDeProceso){
+				case finalizado:{
+					//queue_pop(cola_Ready);
+					//*** si el proceso ya finalizo lo paso a la cola de finished
+					sem_wait(&mutex_cola_Finished);
+						queue_push(cola_Finished,pcb);
+					sem_post(&mutex_cola_Finished);
+				}break;
+				case paraEjecutar:{
+					sem_wait(&mutex_cola_Exec);
+					if( cantDeCpus() > cantDeProcesosEnEjecucion()){
+					//	queue_pop(cola_Ready);
+						queue_push(cola_Exec, pcb);
+					}else{
+						queue_push(cola_Ready, pcb);
+					}
+					sem_post(&mutex_cola_Exec);
+				}break;
+				default:{
+					queue_push(cola_Ready, pcb);
+				}
+			}
+		}
+		sem_post(&mutex_cola_Ready);
+
+}
+
 
 ///*** Quito el primer elemento de la cola de ready, valido que no haya sido finalizado y lo pongo en la cola de exec //**** Esta funcion anda bien,
-PCB_DATA* readyToExec()
+void readyToExec()
 {
 	sem_wait(&mutex_cola_Ready);
 	sem_wait(&mutex_cola_Exec);
@@ -297,23 +346,23 @@ PCB_DATA* readyToExec()
 			//*** Si como aun quedan porcesos en la cola de ready vuelvo a llamar a la funcion tomarPCBdeReady
 			sem_post(&mutex_cola_Exec);
 			sem_post(&mutex_cola_Ready);
-			return readyToExec();
+			readyToExec();
 		}
 		else
 		{
 			//** En caso de que ya no haya mas procesos para trabajar, devuelvo null
 			sem_post(&mutex_cola_Exec);
 			sem_post(&mutex_cola_Ready);
-			return NULL;
 		}
+	}
+	else{
+		queue_push(cola_Exec,pcb);
 	}
 
 	//*** Como el proceso que encontre no esta terminado, entonces lo pongo en la cola de excec y lo retorno
-	queue_push(cola_Exec,pcb);
 
 	sem_post(&mutex_cola_Exec);
 	sem_post(&mutex_cola_Ready);
-	return pcb;
 }
 
 
@@ -332,13 +381,11 @@ bool hayCpusDisponibles(){
 
 	//SI LA CPU ESTA ESPERANDO TRABAJO es porque esta disponible y espera un PCB para trabajar
 	int sumaSi(t_CPU* cpu){
-		if(cpu->esperaTrabajo)
-			return 1;
-		return 0;
+		return	(cpu->esperaTrabajo);
 	}
 
 	sem_wait(&mutex_cola_CPUs_libres);
-		bool valor = sum(lista_CPUS,sumaSi) > 0;
+		bool valor = list_find(lista_CPUS, sumaSi);
 	sem_post(&mutex_cola_CPUs_libres);
 
 	return valor;
@@ -356,7 +403,7 @@ void * estadoReady()
 		if(hayCpusDisponibles() && hayProcesosEnReady())
 		{
 			///*** Quito el primer elemento de la cola de ready, valido que no haya sido finalizado y lo pongo en la cola de exec - en caso de no encontrar uno para poder trabajar no hago nada
-			readyToExec();
+			readyToExec2();
 		}
 	}
 	return NULL;
@@ -383,27 +430,45 @@ void * estadoReady()
 void execTo()
 {
 	//**Tomo el primer elemento de la lista,
-	PCB_DATA* pcb=queue_peek(cola_Exec);
+	PCB_DATA* pcb=queue_pop(cola_Exec);
 
 	if(pcb != NULL){
 		//***Valido que el proceso haya finalizado
-		if(pcb->estadoDeProceso == finalizado){
-			queue_pop(cola_Exec);
-			//*** si el proceso ya finalizo lo paso a la cola de finished
-			sem_wait(&mutex_cola_Finished);
-				queue_push(cola_Finished,pcb);
-			sem_post(&mutex_cola_Finished);
-
-		}
-		else{
-			//*** Valido que el proceso este bloqueado, si lo esta lo mando a wait
-			if(pcb->estadoDeProceso == bloqueado){
-				queue_pop(cola_Exec);
+		switch(pcb->estadoDeProceso){
+			case finalizado:{
+				//queue_pop(cola_Exec);
+				//*** si el proceso ya finalizo lo paso a la cola de finished
+				sem_wait(&mutex_cola_Finished);
+					queue_push(cola_Finished,pcb);
+				sem_post(&mutex_cola_Finished);
+			}break;
+			case bloqueado:{
+				//queue_pop(cola_Exec);
 				//*** si el proceso esta  bloqueado lo paso ala cola de bloqueado
 				sem_wait(&mutex_cola_Wait);
 					queue_push(cola_Wait,pcb);
 				sem_post(&mutex_cola_Wait);
-
+			}break;
+			case moverAReady:{
+				//queue_pop(cola_Exec);
+				pcb->estadoDeProceso = paraEjecutar;
+				sem_wait(&mutex_cola_Ready);
+					queue_push(cola_Ready,pcb);
+				sem_post(&mutex_cola_Ready);
+			}break;
+			case paraEjecutar:{
+				t_CPU* cpu = cpu_buscarCPUDisponible();
+				if (cpu != NULL){
+					queue_push(cola_Exec,pcb);
+					pcb->estadoDeProceso = loEstaUsandoUnaCPU;
+					void* pcbSerializado = serializarPCB(pcb);
+					enviarMensaje(cpu->socketCPU,envioPCB,pcbSerializado,tamanoPCB(pcb));
+					free(pcbSerializado);
+					cpu->esperaTrabajo = false;
+				}
+			}break;
+			default:{
+				queue_push(cola_Exec,pcb);
 			}
 		}
 	}

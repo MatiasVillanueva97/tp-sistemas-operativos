@@ -127,6 +127,12 @@ void agregarPedirPaginaATablaEstadistica(int pid){
 	sem_post(&mutex_tabla_estadistica_de_heap);
 }
 
+t_CPU* cpu_buscarCPUDisponible(){
+	bool busqueda(t_CPU* cpu){
+		return cpu->esperaTrabajo;
+	}
+	return list_find(lista_CPUS,busqueda);
+}
 
 
 void *rutinaCPU(void * arg)
@@ -168,22 +174,23 @@ void *rutinaCPU(void * arg)
 			case pedirPCB:{
 				log_info(logKernel,"[Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- %d!\n", pedirPCB);
 
-				pcb = cpu_pedirPCBDeExec();
+				/*pcb = cpu_pedirPCBDeExec();
 
 				free(stream);
 
 				void* pcbSerializado = serializarPCB(pcb);
 				enviarMensaje(socketCPU,envioPCB,pcbSerializado,tamanoPCB(pcb));
 				free(pcbSerializado);
-
-				if(recibirMensaje(socketCPU,&stream) == 0){
+				*/
+				estaCPU->esperaTrabajo=true;
+				/*if(recibirMensaje(socketCPU,&stream) == 0){
 					log_info(logKernel,"La CPU de socket c");
 					sem_wait(&mutex_cola_Ready);
 						queue_push(cola_Ready, pcb);
 					sem_post(&mutex_cola_Ready);
 					cpu_quitarDeLista(socketCPU);
 					todaviaHayTrabajo=false;
-				}
+				}*/
 				free(stream);
 
 			}break;
@@ -225,9 +232,10 @@ void *rutinaCPU(void * arg)
 				log_info(logKernel,"[Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- %d!\n", enviarPCBaReady);
 				pcb = deserializarPCB(stream);
 				if(pcb->estadoDeProceso != bloqueado){
-					pcb->estadoDeProceso = paraEjecutar;
+					pcb->estadoDeProceso = moverAReady;
 				}
 
+				estaCPU->esperaTrabajo = true;
 				sem_wait(&mutex_cola_Exec);
 				 modificarPCB(pcb);
 				 sem_post(&mutex_cola_Exec);
