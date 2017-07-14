@@ -46,7 +46,8 @@ int pedirPagina(int pid,int tamano){
 			heap1->size = tamano;
 
 
-			w->valor = malloc(tamano + sizeof(HeapMetadata)*2);
+			w->valor = string_repeat('\0',tamano + sizeof(HeapMetadata)*2);
+
 			memcpy(w->valor,heap1,sizeof(HeapMetadata));
 			log_info(logKernel,"Se reservan %d bytes  en la pagina pedida.",tamano );
 
@@ -225,7 +226,7 @@ int manejarPedidoDeMemoria(int pid,int tamano){
 offsetYBuffer escribirMemoria(int tamano,void* memoria){
 
 	HeapMetadata headerAnterior = *((HeapMetadata*) memoria);
-	void* buffer = malloc(tamano+sizeof(HeapMetadata)*2);
+	void* buffer = string_repeat('\0',tamano + sizeof(HeapMetadata)*2);
 	int recorrido=0;
 		recorrido = recorrido +tamanoHeader;//El recorrido se posiciona en donde termina el header.
 	log_info(logKernel,"Empiezo a recorrer la pagina");

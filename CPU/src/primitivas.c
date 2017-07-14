@@ -604,7 +604,6 @@ void AnSISOP_leer(t_descriptor_archivo descriptor_archivo,t_puntero informacion,
 			terminoPrograma = true;
 		}break;
 		case respuestaLectura: {
-
 			puts("Se leyo con exito el archivo");
 			escribirEnLaVariable(informacion,stream,tamanio);
 			//Aca hacer algo, pero sinceramente nose que espera el parser que haga por el
