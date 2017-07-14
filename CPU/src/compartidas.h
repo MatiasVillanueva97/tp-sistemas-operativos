@@ -24,6 +24,8 @@ PCB_DATA* pcb;
 bool terminoPrograma;
 bool bloqueado;
 bool signal_SIGUSR1;
+bool signal_sigint;
+bool hayPCB;
 t_datosIniciales* datosIniciales;
 int quantumSleep;
 #endif //ESTACOSA

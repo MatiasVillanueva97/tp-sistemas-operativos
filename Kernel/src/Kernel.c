@@ -771,6 +771,9 @@ void inicializarSemaforo(){
 	sem_init(&mutex_cola_Finished,0,1);
 	sem_init(&mutex_tablaDeHeap,0,1);
 
+	sem_init(&mutex_tablaGlobalDeArchivos,0,1);
+	sem_init(&mutex_tablaGlobalDeArchivosDeProcesos,0,1);
+
 	sem_init(&mutex_semaforos_ANSISOP,0,1);
 	sem_init(&mutex_variables_compartidas,0,1);
 	sem_init(&mutex_Quantum_Sleep,0,1);

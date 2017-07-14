@@ -135,7 +135,7 @@ t_valor_variable AnSISOP_obtenerValorCompartida(t_nombre_compartida variable) {
 
 	void* stream;
 
-	switch (recibirMensaje(socketKernel, &stream)) {
+	switch (recibirMensajeSeguro(socketKernel, &stream)) {
 	case noExisteVarCompartida: {
 		terminoPrograma = true;
 		pcb->exitCode = -12;
@@ -165,7 +165,7 @@ t_valor_variable AnSISOP_asignarValorCompartida(t_nombre_compartida variable,t_v
 
 	void* stream;
 
-	switch (recibirMensaje(socketKernel, &stream)) {
+	switch (recibirMensajeSeguro(socketKernel, &stream)) {
 		case noExisteVarCompartida: {
 			terminoPrograma = true;
 			pcb->exitCode = -12;
@@ -312,6 +312,8 @@ void AnSISOP_retornar(t_valor_variable retorno) {
 void AnSISOP_wait(t_nombre_semaforo identificador_semaforo) {
 	puts("AnSISOP_wait");
 
+	pcb->cantDeInstPrivilegiadas++;
+
 	printf("Le pido al Kernel que haga wait del semaforo: %s\n",identificador_semaforo);
 	pcb->programCounter++;
 	void * stream = serializarPCBYSemaforo(pcb, identificador_semaforo);
@@ -320,7 +322,7 @@ void AnSISOP_wait(t_nombre_semaforo identificador_semaforo) {
 	free(stream);
 	pcb->programCounter--;
 	bool respuestaDeKernel;
-	if (recibirMensaje(socketKernel, &stream) == respuestaBooleanaKernel)
+	if (recibirMensajeSeguro(socketKernel, &stream) == respuestaBooleanaKernel)
 		respuestaDeKernel = *((bool*) stream);
 	else {
 		terminoPrograma = true;
@@ -336,6 +338,7 @@ void AnSISOP_wait(t_nombre_semaforo identificador_semaforo) {
 void AnSISOP_signal(t_nombre_semaforo identificador_semaforo) {
 	puts("AnSISOP_signal");
 
+	pcb->cantDeInstPrivilegiadas++;
 	printf("Le pido al Kernel que haga signal del semaforo: %s\n",identificador_semaforo);
 	pcb->programCounter++;
 	void * stream = serializarPCBYSemaforo(pcb, identificador_semaforo);
@@ -343,7 +346,7 @@ void AnSISOP_signal(t_nombre_semaforo identificador_semaforo) {
 	free(stream);
 	pcb->programCounter--;
 	bool respuestaDeKernel;
-	if (recibirMensaje(socketKernel, &stream) == respuestaBooleanaKernel)
+	if (recibirMensajeSeguro(socketKernel, &stream) == respuestaBooleanaKernel)
 		respuestaDeKernel = *((bool*) stream);
 	else {
 		terminoPrograma = true;
@@ -357,6 +360,7 @@ void AnSISOP_signal(t_nombre_semaforo identificador_semaforo) {
 t_puntero AnSISOP_reservar(t_valor_variable espacio) {
 	puts("AnSISOP_reservar");
 
+	pcb->cantDeInstPrivilegiadas++;
 	int dosEnteros[2] = { espacio, pcb->pid };
 
 	enviarMensaje(socketKernel, reservarVariable, (void*) dosEnteros,sizeof(int) * 2);
@@ -364,7 +368,7 @@ t_puntero AnSISOP_reservar(t_valor_variable espacio) {
 	void* stream;
 	int offset = 0;
 
-	switch (recibirMensaje(socketKernel, &stream)) {
+	switch (recibirMensajeSeguro(socketKernel, &stream)) {
 	case enviarOffsetDeVariableReservada: {
 		offset = *(int*) stream;
 		free(stream);
@@ -393,13 +397,15 @@ t_puntero AnSISOP_reservar(t_valor_variable espacio) {
 void AnSISOP_liberar(t_puntero puntero) {
 	puts("AnSISOP_liberar");
 
+	pcb->cantDeInstPrivilegiadas++;
+
 	int dosEnteros[2] = { puntero, pcb->pid };
 
 	enviarMensaje(socketKernel, liberarVariable, dosEnteros, sizeof(int) * 2);
 
 	void* stream;
 
-	if (recibirMensaje(socketKernel, &stream) != enviarSiSePudoLiberar) {
+	if (recibirMensajeSeguro(socketKernel, &stream) != enviarSiSePudoLiberar) {
 		free(stream);
 		puts("Error en el protocolo de comunicacion");
 			terminoPrograma = true;
@@ -423,6 +429,8 @@ void AnSISOP_liberar(t_puntero puntero) {
 t_descriptor_archivo AnSISOP_abrir(t_direccion_archivo direccion,t_banderas flags) {
 	puts("AnSISOP_abrir");
 
+	pcb->cantDeInstPrivilegiadas++;
+
 	t_crearArchivo archivo;
 	archivo.pid = pcb->pid;
 	archivo.path = direccion;
@@ -442,7 +450,7 @@ t_descriptor_archivo AnSISOP_abrir(t_direccion_archivo direccion,t_banderas flag
 
 	void* stream;
 
-	switch (recibirMensaje(socketKernel, &stream)) {
+	switch (recibirMensajeSeguro(socketKernel, &stream)) {
 		case envioDelFileDescriptor: {
 			t_descriptor_archivo FD = leerInt(stream);
 			printf("El FD del archivo pedido es: %d \n", FD);
@@ -466,6 +474,8 @@ t_descriptor_archivo AnSISOP_abrir(t_direccion_archivo direccion,t_banderas flag
 void AnSISOP_borrar(t_descriptor_archivo direccion) {
 	puts("AnSISOP_borrar");
 
+	pcb->cantDeInstPrivilegiadas++;
+
 	t_archivo archivo;
 	archivo.pid = pcb->pid;
 	archivo.fileDescriptor = direccion;
@@ -474,7 +484,7 @@ void AnSISOP_borrar(t_descriptor_archivo direccion) {
 
 	void* stream;
 
-	if (recibirMensaje(socketKernel, &stream) == respuestaBooleanaKernel) {
+	if (recibirMensajeSeguro(socketKernel, &stream) == respuestaBooleanaKernel) {
 		int rtaKernel = *(int*) stream;
 		free(stream);
 		if (rtaKernel == 0) {
@@ -496,6 +506,8 @@ void AnSISOP_borrar(t_descriptor_archivo direccion) {
 void AnSISOP_cerrar(t_descriptor_archivo descriptor_archivo) {
 	puts("AnSISOP_cerrar");
 
+	pcb->cantDeInstPrivilegiadas++;
+
 	t_archivo archivo;
 	archivo.pid = pcb->pid;
 	archivo.fileDescriptor = descriptor_archivo;
@@ -504,7 +516,7 @@ void AnSISOP_cerrar(t_descriptor_archivo descriptor_archivo) {
 
 	void* stream;
 
-	if (recibirMensaje(socketKernel, &stream) == respuestaBooleanaKernel) {
+	if (recibirMensajeSeguro(socketKernel, &stream) == respuestaBooleanaKernel) {
 		int rtaKernel = *(int*) stream;
 		free(stream);
 		if (rtaKernel == 0) {
@@ -526,6 +538,8 @@ void AnSISOP_cerrar(t_descriptor_archivo descriptor_archivo) {
 void AnSISOP_moverCursor(t_descriptor_archivo descriptor_archivo,t_valor_variable posicion) {
 	puts("AnSISOP_moverCursor");
 
+	pcb->cantDeInstPrivilegiadas++;
+
 	t_moverCursor archivo;
 	archivo.pid = pcb->pid;
 	archivo.fileDescriptor = descriptor_archivo;
@@ -535,7 +549,7 @@ void AnSISOP_moverCursor(t_descriptor_archivo descriptor_archivo,t_valor_variabl
 
 	void* stream;
 
-	if (recibirMensaje(socketKernel, &stream) == respuestaBooleanaKernel) {
+	if (recibirMensajeSeguro(socketKernel, &stream) == respuestaBooleanaKernel) {
 		int rtaKernel = *(int*) stream;
 		free(stream);
 		if (rtaKernel == 0) {
@@ -555,6 +569,9 @@ void AnSISOP_moverCursor(t_descriptor_archivo descriptor_archivo,t_valor_variabl
 
 void AnSISOP_escribir(t_descriptor_archivo descriptor_archivo,void* informacion, t_valor_variable tamanio) {
 	puts("AnSISOP_escribir");
+
+	pcb->cantDeInstPrivilegiadas++;
+
 	t_mensajeDeProceso mensajeDeProceso = {
 			.pid = pcb->pid,
 			.descriptorArchivo = descriptor_archivo,
@@ -571,7 +588,7 @@ void AnSISOP_escribir(t_descriptor_archivo descriptor_archivo,void* informacion,
 
 	void* stream;
 
-	if(recibirMensaje(socketKernel, &stream) == respuestaBooleanaKernel) {
+	if(recibirMensajeSeguro(socketKernel, &stream) == respuestaBooleanaKernel) {
 		bool rtaKernel = *(bool*)stream;
 		if(rtaKernel){
 			puts("La escritura fue exitosa");
@@ -592,12 +609,14 @@ void AnSISOP_escribir(t_descriptor_archivo descriptor_archivo,void* informacion,
 void AnSISOP_leer(t_descriptor_archivo descriptor_archivo,t_puntero informacion, t_valor_variable tamanio) {
 	puts("AnSISOP_leer");
 
+	pcb->cantDeInstPrivilegiadas++;
+
 	int tresEnteros[] = { pcb->pid, descriptor_archivo, tamanio };
 
 	enviarMensaje(socketKernel, leerArchivo, tresEnteros, sizeof(int) * 3);
 
 	void* stream;
-	switch (recibirMensaje(socketKernel, &stream)) {
+	switch (recibirMensajeSeguro(socketKernel, &stream)) {
 		case respuestaBooleanaKernel: {
 			/*si nunca habia abierto el archivo*/
 			puts("Se produjo un error al intentar leer el archivo");
@@ -637,7 +656,7 @@ t_valor_variable pedirValorAMemoria(t_direccion direccion) {
 	int* valor;
 	int* booleano;
 
-	int accion = recibirMensaje(socketMemoria, &stream);
+	int accion = recibirMensajeSeguro(socketMemoria, &stream);
 
 	switch (accion) {
 		case RespuestaBooleanaDeMemoria: {
@@ -651,7 +670,7 @@ t_valor_variable pedirValorAMemoria(t_direccion direccion) {
 	}
 	if (*booleano) {
 		free(stream);
-		accion = recibirMensaje(socketMemoria, &stream);
+		accion = recibirMensajeSeguro(socketMemoria, &stream);
 		switch (accion) {
 			case lineaDeCodigo: {
 				valor = stream;
@@ -687,7 +706,7 @@ void escribirValorEnMemoria(t_direccion direccion, t_valor_variable valor) {
 	//Devuelve un OK o mata con un Stack Overflow
 	void* stream;
 	int* respuesta;
-	int accion = recibirMensaje(socketMemoria, &stream);
+	int accion = recibirMensajeSeguro(socketMemoria, &stream);
 	switch (accion) {
 		case RespuestaBooleanaDeMemoria: {
 			respuesta = stream;
@@ -928,7 +947,7 @@ void escribirEnLaVariable(t_puntero puntero,void* cosaDelFS, int tamanio){
  //Devuelve un OK o mata con un Stack Overflow
  void* stream;
  int* respuesta;
- int accion = recibirMensaje(socketMemoria, &stream);
+ int accion = recibirMensajeSeguro(socketMemoria, &stream);
  switch (accion) {
   case RespuestaBooleanaDeMemoria: {
    respuesta = stream;
@@ -950,3 +969,20 @@ void escribirEnLaVariable(t_puntero puntero,void* cosaDelFS, int tamanio){
 }
 
 
+int recibirMensajeSeguro(int socket, void ** stream){
+	int valor = recibirMensaje(socket, stream);
+	if(valor == 0){
+		if(socket==socketKernel)
+			printf("El Kernel ");
+		else
+			printf("La Memoria ");
+		printf("se ha desconectado, se finalizara esta CPU\n");
+		close(socketKernel);
+		close(socketMemoria);
+		liberarConfiguracion();
+		if(hayPCB) 	destruirPCB_Puntero(pcb);
+		free(datosIniciales);
+		exit(-1);
+	}
+	return valor;
+}
