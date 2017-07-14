@@ -23,6 +23,8 @@
 #include "../../Nuestras/src/laGranBiblioteca/datosGobalesGenerales.h"
 
 
+	int recibirMensajeSeguro(int socketKernel, void ** stream);
+
 	//IMPLEMENTADA
 	t_direccion calcularDireccion(t_puntero puntero);
 	t_puntero calcularPuntero(t_direccion direccion);
