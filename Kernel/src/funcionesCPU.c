@@ -170,9 +170,20 @@ void *rutinaCPU(void * arg)
 
 				pcb = cpu_pedirPCBDeExec();
 
+				free(stream);
+
 				void* pcbSerializado = serializarPCB(pcb);
 				enviarMensaje(socketCPU,envioPCB,pcbSerializado,tamanoPCB(pcb));
 				free(pcbSerializado);
+
+				if(recibirMensaje(socketCPU,&stream) == 0){
+					log_info(logKernel,"La CPU de socket c");
+					sem_wait(&mutex_cola_Ready);
+						queue_push(cola_Ready, pcb);
+					sem_post(&mutex_cola_Ready);
+					cpu_quitarDeLista(socketCPU);
+					todaviaHayTrabajo=false;
+				}
 				free(stream);
 
 			}break;
@@ -464,19 +475,19 @@ void *rutinaCPU(void * arg)
 			//QUE PASA SI SE DESCONECTA LA CPU
 			case 0:{
 				log_info(logKernel,"[Rutina rutinaCPU] - Desconecto la CPU N°: %d\n", socketCPU);
-				todaviaHayTrabajo=false;
 
 
 				cpu_quitarDeLista(socketCPU);
+				todaviaHayTrabajo=false;
 
 			}break;
 
 			//QUE PASA CUANDO SE MUERTE LA CPU
 			default:{
 				log_info(logKernel,"[Rutina rutinaCPU] - Se recibio una accion que no esta contemplada: %d se cerrara el socket\n",accionCPU);
-				todaviaHayTrabajo=false;
 
 				cpu_quitarDeLista(socketCPU);
+				todaviaHayTrabajo=false;
 			}break;
 		}
 

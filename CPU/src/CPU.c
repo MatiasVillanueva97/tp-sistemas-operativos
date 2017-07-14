@@ -272,6 +272,8 @@ void pedidoPCB(){
 	if(recibirMensajeSeguro(socketKernel,&pcbSerializado) != envioPCB){
 		puts("Error en el protocolo de comunicacion");
 	}else{
+		int unEntero = 42;
+		enviarMensaje(socketKernel,42,&unEntero,sizeof(int));
 		hayPCB = true;
 		pcb=deserializarPCB(pcbSerializado);
 		free(pcbSerializado);
