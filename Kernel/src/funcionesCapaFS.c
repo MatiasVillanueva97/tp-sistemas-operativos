@@ -155,19 +155,23 @@ void liberarEntradaTablaGlobalDeArchivosDeProceso(ENTRADA_DE_TABLA_GLOBAL_DE_PRO
 void liberarRecursosArchivo(PCB_DATA* pcb){
 	ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* entrada_a_eliminar = encontrarElDeIgualPid(pcb->pid);
 	int i;
-	int tamanoTabla=list_size(entrada_a_eliminar->tablaProceso+1);
-	for(i=0;i<tamanoTabla;i++){
-		ENTRADA_DE_TABLA_DE_PROCESO* entrada_de_tabla_proceso= list_get(entrada_a_eliminar->tablaProceso,i);
-		sem_wait(&mutex_tablaGlobalDeArchivos);
-		ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_de_archivo= list_get(tablaGlobalDeArchivos,entrada_de_tabla_proceso->globalFD);
-		sem_post(&mutex_tablaGlobalDeArchivos);
-		entrada_de_archivo->cantidad_aperturas--;
-		if(entrada_de_archivo->cantidad_aperturas==0){
-			list_remove_and_destroy_element(tablaGlobalDeArchivos,entrada_de_tabla_proceso->globalFD,liberarEntradaTablaGlobalDeArchivos);
+	int tamanoTabla=list_size(entrada_a_eliminar->tablaProceso);
+
+	if (tamanoTabla > 3){
+		for(i=3;i<tamanoTabla;i++){
+			ENTRADA_DE_TABLA_DE_PROCESO* entrada_de_tabla_proceso= list_get(entrada_a_eliminar->tablaProceso,i);
+			sem_wait(&mutex_tablaGlobalDeArchivos);
+			ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_de_archivo= list_get(tablaGlobalDeArchivos,entrada_de_tabla_proceso->globalFD);
+			sem_post(&mutex_tablaGlobalDeArchivos);
+			entrada_de_archivo->cantidad_aperturas--;
+				if(entrada_de_archivo->cantidad_aperturas==0){
+					list_remove_and_destroy_element(tablaGlobalDeArchivos,entrada_de_tabla_proceso->globalFD,liberarEntradaTablaGlobalDeArchivos);
+				}
 		}
 	}
+	int posicion = posicionEnTablaGlobalArchivosDeProceso(entrada_a_eliminar);
 	sem_wait(&mutex_tablaGlobalDeArchivosDeProcesos);
-	list_remove_and_destroy_element(tablaGlobalDeArchivosDeProcesos,posicionEnTablaGlobalArchivosDeProceso(entrada_a_eliminar),liberarEntradaTablaGlobalDeArchivosDeProceso);
+	list_remove_and_destroy_element(tablaGlobalDeArchivosDeProcesos,posicion,liberarEntradaTablaGlobalDeArchivosDeProceso);
 	sem_post(&mutex_tablaGlobalDeArchivosDeProcesos);
 }
 
@@ -403,6 +407,7 @@ int agregarNuevaAperturaDeArchivo(char* path, int pid, char* flags){
 		sem_post(&mutex_tablaGlobalDeArchivos);
 	}
 	int fileDescriptor= list_size(aux->tablaProceso);
-	agregarATablaDeProceso(posicionEnTablaGlobalDeArchivos(archivo),flags,aux->tablaProceso);
+	int posicion = posicionEnTablaGlobalDeArchivos(archivo);
+	agregarATablaDeProceso(posicion,flags,aux->tablaProceso);
 	return fileDescriptor;
 }

@@ -554,7 +554,9 @@ void proceso_liberarRecursos(PCB_DATA* pcb){
 	else{
 		printf("Se liberaron correctamente los recursos del heap del pid %d\n",pcb->pid);
 	}
+	liberarRecursosArchivo(pcb);
 	enviarMensaje(socketMemoria,finalizarPrograma,&pcb->pid,sizeof(int));
+
 	void* respuesta;
 	recibirMensaje(socketMemoria,&respuesta);
 	free(respuesta);
