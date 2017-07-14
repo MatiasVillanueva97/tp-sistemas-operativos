@@ -1,0 +1,10 @@
+begin
+f 0
+end
+
+function f
+prints n $0
+jz $0 termina
+f $0 + 1
+:termina
+end

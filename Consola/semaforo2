@@ -1,0 +1,8 @@
+#!/usr/bin/ansisop
+begin	
+
+signal b
+		prints l te libero forro
+
+
+end
