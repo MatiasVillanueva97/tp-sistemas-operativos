@@ -31,7 +31,6 @@
 void conectarConMemoria();
 void conectarConKernel();
 void sigusr1_handler(int signal);
-void sigint_handler(int signal);
 void pedidoValido(int*,void*,int);
 char* pedirInstruccion();
 void pedidoPCB();
@@ -67,13 +66,11 @@ int main(void)
 	};
 
 
-	terminoPrograma = true;
+
 	signal_SIGUSR1 = false;
-	signal_sigint = false;
-	hayPCB = false;
 
 	signal(SIGUSR1, sigusr1_handler);
-	signal(SIGINT, sigint_handler);
+	signal(SIGINT, sigusr1_handler);
 
 	printf("Inicializando CPU.....\n\n");
 
@@ -92,41 +89,26 @@ int main(void)
 
 
 
- 	void * stream;
- 	if(recibirMensajeSeguro(socketKernel, &stream) != 7){
- 		recibirMensajeSeguro(socketKernel,(void*)&datosIniciales);
- 		/*
- 		perror("Kernel envio mal los datos iniciales, se desconecta la CPU");
- 		close(socketMemoria);
- 		close(socketKernel);
- 		liberarConfiguracion();
- 		exit(-1);
- 		*/
- 	}
- 	else
- 		datosIniciales = stream;
+ 	if(recibirMensaje(socketKernel,(void*)&datosIniciales) != 7) perror("Kernel que es esta basura? Dame mis datos para comenzar");
 
  	printf("Datos recibidos de Kernel:\nsize_pag-%d\nquantum-%d\nsize_stack-%d\n", datosIniciales->size_pag, datosIniciales->quantum, datosIniciales->size_stack);
 
  	//ESTE GRAN WHILE(1) ESTA COMENTADO PORQUE EN REALIDAD ES PARA RECIBIR UN PCB ATRAS DE OTRO Y EJECUTARLOS HASTA QUE EL KERNEL ME DIGA MORITE HIPPIE
 
-	while(!signal_SIGUSR1 && !signal_sigint){
+	while(!signal_SIGUSR1){
 
  		int quantumRestante = datosIniciales->quantum;
 
+ 		terminoPrograma = false;
+ 		bloqueado = false;
 
 		// Recepcion del pcb
 
  		pedidoPCB();
 
- 		terminoPrograma = false;
- 		bloqueado = false;
-
- 		pcb->cantDeRafagasEjecutadas++;
-
  		confirmarQuantumSleep();
 
-		while(!terminoPrograma && quantumRestante != 0 && !bloqueado && !signal_sigint){
+		while(!terminoPrograma && quantumRestante != 0 && !bloqueado){
 
 			char* instruccion = pedirInstruccion();
 
@@ -152,31 +134,20 @@ int main(void)
 			free(pcbSerializado);
 		}
 
-		else{
-			if(quantumRestante == 0){
-				printf("Envie el PCB al Kernel porque me quede sin quantum\n");
-				void* pcbSerializado = serializarPCB(pcb);
-				enviarMensaje(socketKernel,enviarPCBaReady,pcbSerializado,tamanoPCB(pcb));
-				free(pcbSerializado);
-			}
-			else{
-				if(signal_sigint){
-					printf("Envie el PCB al Kernel porque me desconectaron bruscamente\n");
-					void* pcbSerializado = serializarPCB(pcb);
-					enviarMensaje(socketKernel,enviarPCBaReady,pcbSerializado,tamanoPCB(pcb));
-					free(pcbSerializado);
-				}
-			}
+		if(quantumRestante == 0){
+			printf("Envie el PCB al Kernel porque me quede sin quantum\n");
+			void* pcbSerializado = serializarPCB(pcb);
+			enviarMensaje(socketKernel,enviarPCBaReady,pcbSerializado,tamanoPCB(pcb));
+			free(pcbSerializado);
 		}
 
 		//libera la memoria malloqueada por el PCB
 		destruirPCB_Puntero(pcb);
-		hayPCB = false;
+
 	}
 
 
 	close(socketKernel);
-	close(socketMemoria);
 	liberarConfiguracion();
 	free(datosIniciales);
 
@@ -236,32 +207,13 @@ void pedidoValido(int* booleano,void* stream, int accion){
 void sigusr1_handler(int signal) {
 	signal_SIGUSR1 = true;
 
-	if(terminoPrograma && !hayPCB){ //si NO esta ejecutando
-			printf("Se recibio una SIGUSR1, se desconecta esta CPU\n");
-			close(socketKernel);
-			liberarConfiguracion();
-			free(datosIniciales);
-			exit(-1);
-
+	printf("Se recibio una ");
+	if(signal == SIGUSR1 ){
+		printf("SIGUSR1");
+	}else{
+		printf("SIGINT");
 	}
-
-	printf("Se recibio una SIGUSR1, la CPU se desconectara luego de terminada la rafaga\n");
-	return;
-}
-
-void sigint_handler(int signal) {
-
-	signal_sigint = true;
-
-	if(terminoPrograma && !hayPCB){ //si NO esta ejecutando
-		printf("Se recibio una SIGINT, se desconecta esta CPU\n");
-		close(socketKernel);
-		liberarConfiguracion();
-		free(datosIniciales);
-		exit(-1);
-		return;
-	}
-	printf("Se recibio una SIGINT, la CPU se desconectara luego de terminada la instruccion\n");
+	printf(", la CPU se desconectara luego de terminada la rafaga\n");
 	return;
 }
 
@@ -269,20 +221,16 @@ void pedidoPCB(){
 	enviarMensaje(socketKernel,pedirPCB,&(datosIniciales->quantum),sizeof(int));
 	void* pcbSerializado;
 	puts("esperando pcb\n");
-	if(recibirMensajeSeguro(socketKernel,&pcbSerializado) != envioPCB){
-		puts("Error en el protocolo de comunicacion");
-	}else{
-		hayPCB = true;
-		pcb=deserializarPCB(pcbSerializado);
-		free(pcbSerializado);
-		puts("PCB recibido");
-		//En el caso que esta sea la primera vez que el proceso entra en una CPU su indice de stack estara NULL porque no habia entradas anteriores, entonces se inicializa la primera entrada
-		if(pcb->indiceStack == NULL){
-			pcb->indiceStack = realloc(pcb->indiceStack,sizeof(t_entrada));
-			pcb->indiceStack->argumentos = list_create();
-			pcb->indiceStack->variables = list_create();
-			pcb->cantidadDeEntradas++;
-		}
+	if(recibirMensaje(socketKernel,&pcbSerializado) != envioPCB) puts("Error en el protocolo de comunicacion");
+	pcb=deserializarPCB(pcbSerializado);
+	free(pcbSerializado);
+	puts("PCB recibido");
+	//En el caso que esta sea la primera vez que el proceso entra en una CPU su indice de stack estara NULL porque no habia entradas anteriores, entonces se inicializa la primera entrada
+	if(pcb->indiceStack == NULL){
+		pcb->indiceStack = realloc(pcb->indiceStack,sizeof(t_entrada));
+		pcb->indiceStack->argumentos = list_create();
+		pcb->indiceStack->variables = list_create();
+		pcb->cantidadDeEntradas++;
 	}
 }
 
@@ -291,7 +239,7 @@ void confirmarQuantumSleep(){
 
 	void* stream;
 
-	if(recibirMensajeSeguro(socketKernel,&stream) == respuestaBooleanaKernel){
+	if(recibirMensaje(socketKernel,&stream) == respuestaBooleanaKernel){
 		quantumSleep = *(int*)stream;
 		free(stream);
 	}else{
@@ -306,12 +254,12 @@ void recepcionCodigo(t_pedidoMemoria pedido,char* instruccion,int tamano){
 	void* stream;
 	int booleano;
 	//Se recibe si tal pedido es valido o rompe por todos lados
-	int accion = recibirMensajeSeguro(socketMemoria,&stream);
+	int accion = recibirMensaje(socketMemoria,&stream);
 	pedidoValido(&booleano,stream,accion);
 	//Si el pedido salio bien se pasa a pedir el codigo concretamente
 	if(booleano){
 		free(stream);
-		if(recibirMensajeSeguro(socketMemoria,&stream) == lineaDeCodigo){
+		if(recibirMensaje(socketMemoria,&stream) == lineaDeCodigo){
 			memcpy(instruccion,stream,tamano);
 			free(stream);
 		}

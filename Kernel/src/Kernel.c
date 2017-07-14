@@ -111,8 +111,6 @@ void newToReady(){
 		dataParaMemoria.cantPags=cant_paginas+getConfigInt("STACK_SIZE");
 		dataParaMemoria.pid=programaAnsisop->pid;
 
-		programaAnsisop->pcb->cantPaginasDeCodigo = cant_paginas;//Esto se guarda en el PCB porque lo necesita la CPU
-
 		//***Le Enviamos a memoria el pid con el que vamos a trabajar - Junto a la accion que vamos a realizar - Le envio a memeoria la cantidad de paginas que necesitaré reservar
 		enviarMensaje(socketMemoria,inicializarPrograma, &dataParaMemoria, sizeof(int)*2); // Enviamos el pid a memoria
 
@@ -387,9 +385,7 @@ void execTo()
 	//**Tomo el primer elemento de la lista,
 	PCB_DATA* pcb=queue_peek(cola_Exec);
 
-
 	if(pcb != NULL){
-
 		//***Valido que el proceso haya finalizado
 		if(pcb->estadoDeProceso == finalizado){
 			queue_pop(cola_Exec);
@@ -409,14 +405,6 @@ void execTo()
 				sem_post(&mutex_cola_Wait);
 
 			}
-			else if(pcb->estadoDeProceso == paraEjecutar){
-				sem_wait(&mutex_cola_CPUs_libres);
-					if(cpu_hayCPUDisponible()){
-						cpu_asignarPCBACPU(pcb);
-						pcb->estadoDeProceso = loEstaUsandoUnaCPU;
-					}
-				sem_post(&mutex_cola_CPUs_libres);
-			}
 		}
 	}
 }
@@ -424,6 +412,15 @@ void execTo()
 
 //*** esta funcion te pasa las cosas de excet a finshed, sea el caso que sea y te manda el mensaje a cnsola de cada cosa que acaba de mover -- Aunque esta accion de enviar a consola las cosas terminadas no deberia estar aca.. este hilo va a cambiar muchisimo
 void* estadoEXEC(){
+	int pidParaAvisar;
+
+	bool busqueda(PROCESOS * aviso)
+	{
+		if(aviso->pid == pidParaAvisar)
+			return true;
+
+		return false;
+	}
 
 	//*** el booleano finPorConsolaDelKernel esta en false desde el inicio, en el momento en el que el kernel quiera frenar la planificiacion esta variable pasara a true, y se frenara la planificacion
 	while(!finPorConsolaDelKernel)
@@ -773,15 +770,11 @@ void inicializarSemaforo(){
 	sem_init(&mutex_cola_Exec,0,1);
 	sem_init(&mutex_cola_Finished,0,1);
 	sem_init(&mutex_tablaDeHeap,0,1);
-	sem_init(&mutex_tablaGlobalDeArchivos,0,1);
-	sem_init(&mutex_tablaGlobalDeArchivosDeProcesos,0,1);
 
 	sem_init(&mutex_semaforos_ANSISOP,0,1);
 	sem_init(&mutex_variables_compartidas,0,1);
 	sem_init(&mutex_Quantum_Sleep,0,1);
 	sem_init(&mutex_tabla_estadistica_de_heap,0,1);
-
-	sem_init(&activarHilo_Exec,0,0);
 
 
 	sem_init(&sem_ConsolaKernelLenvantada,0,0);

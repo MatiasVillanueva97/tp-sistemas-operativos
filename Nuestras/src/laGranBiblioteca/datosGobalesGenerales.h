@@ -94,11 +94,10 @@ typedef struct {
 
 enum tipos_de_Acciones{
 	//***Todas las acciones del Kernel al enviar
-		envioPCB = 4,
 		envioDelPidEnSeco = 1,
 		envioCantidadPaginas = 2,
 		envioPaginaMemoria = 3,
-		pidFinalizadoPorFaltaDeMemoria = 8,
+		envioPCB = 4,
 		errorFinalizacionPid = 5,
 		pidFinalizado = 6,
 		enviarDatosCPU = 7,
@@ -110,6 +109,7 @@ enum tipos_de_Acciones{
 		noExisteVarCompartida = 13,
 		envioValorCompartida = 14,
 		respuestaLectura = 15,
+		pidFinalizadoPorFaltaDeMemoria = 16,
 
 
 		liberarVariable = 70,
