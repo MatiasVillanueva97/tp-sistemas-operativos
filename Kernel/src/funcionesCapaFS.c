@@ -348,7 +348,9 @@ void leerEnUnArchivo(t_lectura estructura, int socketCPU){
 void borrarEnTablasGlobales(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_de_archivo, ENTRADA_DE_TABLA_DE_PROCESO* entrada_de_tabla_proceso, int pid){
 	entrada_de_archivo->cantidad_aperturas--;
 	if(entrada_de_archivo->cantidad_aperturas==0){
-	list_remove_and_destroy_element(tablaGlobalDeArchivos,entrada_de_tabla_proceso->globalFD,liberarEntradaTablaGlobalDeArchivos);
+		sem_wait(&mutex_tablaGlobalDeArchivosDeProcesos);
+		list_remove_and_destroy_element(tablaGlobalDeArchivos,entrada_de_tabla_proceso->globalFD,liberarEntradaTablaGlobalDeArchivos);
+		sem_post(&mutex_tablaGlobalDeArchivosDeProcesos);
 	}
 	bool sonDeIgualPid(ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO * elementos){
 			return  elementos->pid == pid;

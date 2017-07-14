@@ -47,6 +47,44 @@ void imprimirProcesosdeCola(t_queue* unaCola)
 		printf("No hay elementos en esta cola.\n");
 }
 
+void imprimirArchivosAbiertosProceso(int pid){
+	ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* entrada_a_imprimir = encontrarElDeIgualPid(pid);
+	if (entrada_a_imprimir != NULL){
+		int i;
+		int tamanoTabla = list_size(entrada_a_imprimir->tablaProceso);
+		if(tamanoTabla-3 > 0){
+			for(i=3;i<tamanoTabla;i++){
+				ENTRADA_DE_TABLA_DE_PROCESO* entrada_de_tabla_proceso= list_get(entrada_a_imprimir->tablaProceso,i);
+				printf("Entrada: %d \n",i);
+				printf("Flags: %s \n",entrada_de_tabla_proceso->flags);
+				printf("Descriptor global: %d \n",entrada_de_tabla_proceso->globalFD);
+				printf("Desplazamiento: %d \n",entrada_de_tabla_proceso->offset);
+			}
+		}else{
+			printf("El proceso no contiene archivos abiertos \n");
+		}
+	}else{
+		printf("No existe el pid \n");
+	}
+
+}
+void imprimirTablaGlobaldeArchivos(){
+	if(!list_is_empty(tablaGlobalDeArchivos)){
+		int i;
+		int tamanoTabla = list_size(tablaGlobalDeArchivos);
+		for(i=0;i<tamanoTabla;i++){
+			sem_wait(&mutex_tablaGlobalDeArchivos);
+			ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_a_imprimir = list_get(tablaGlobalDeArchivos,i);
+			sem_post(&mutex_tablaGlobalDeArchivos);
+			printf("Entrada: %d \n",i);
+			printf("Path: %s \n",entrada_a_imprimir->path);
+			printf("Cantidad de Aperturas: %d \n",entrada_a_imprimir->cantidad_aperturas);
+	}
+	}else{
+		printf("No hay archivos en la tabla");
+	}
+}
+
 
 
 
@@ -166,7 +204,7 @@ void * consolaKernel()
 				}
 					break;
 				case 3: {
-					//cosa de juli
+					imprimirArchivosAbiertosProceso(pid);
 				}
 					break;
 				case 4: {
@@ -232,7 +270,7 @@ void * consolaKernel()
 				e. Cantidad de syscalls ejecutadas*/
 			}break;
 			case 3:{
-				/// ni idea que es esto
+				 imprimirTablaGlobaldeArchivos();
 			}break;
 			case 4:{
 				int gradoNuevo;
