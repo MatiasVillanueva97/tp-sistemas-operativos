@@ -292,7 +292,7 @@ void readyToExec2()
 {
 	sem_wait(&mutex_cola_Ready);
 	PCB_DATA* pcb=queue_pop(cola_Ready);
-
+// .
 		if(pcb != NULL){
 			//***Valido que el proceso haya finalizado
 

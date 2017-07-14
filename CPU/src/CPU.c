@@ -130,7 +130,7 @@ int main(void)
 			char* instruccion = pedirInstruccion();
 
 			//Si se recibio una linea de codigo se analiza
-			if(instruccion != NULL){
+			if(instruccion != NULL && !terminoPrograma){
 				printf("\nInstruccion leida: %s\n\n",instruccion);
 
 				//Magia del Parser para llamar a las primitivas
