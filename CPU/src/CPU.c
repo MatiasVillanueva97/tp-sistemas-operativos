@@ -20,6 +20,7 @@
 #include "parser/parser.h"
 #include "commons/string.h"
 #include "commons/collections/list.h"
+#include "commons/log.h"
 
 #include "../../Nuestras/src/laGranBiblioteca/datosGobalesGenerales.h"
 #include "../../Nuestras/src/laGranBiblioteca/ProcessControlBlock.c"
@@ -67,6 +68,8 @@ int main(void)
 			.AnSISOP_leer = AnSISOP_leer
 	};
 
+	logCPU = log_create("CPU.log","CPU",1,0);
+
 
 	terminoPrograma = true;
 	signal_SIGUSR1 = false;
@@ -76,14 +79,14 @@ int main(void)
 	signal(SIGUSR1, sigusr1_handler);
 	signal(SIGINT, sigint_handler);
 
-	printf("Inicializando CPU.....\n\n");
+	log_info(logCPU,"Inicializando CPU.....\n\n");
 
 
 	// ******* Configuracion Inicial de CPU
 
- 	printf("Configuracion Inicial: \n");
+ 	log_info(logCPU,"Configuracion Inicial: \n");
 
- 	configuracionInicial("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/CPU/cpu.config");
+ 	configuracionInicial("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/CPU/cpu.config\n");
 
  	imprimirConfiguracion();
 
@@ -97,15 +100,16 @@ int main(void)
  	if(recibirMensajeSeguro(socketKernel,(void*)&datosIniciales) != 7){
  		//recibirMensajeSeguro(socketKernel,(void*)&datosIniciales);
 
- 		perror("Kernel envio mal los datos iniciales, se desconecta la CPU");
+ 		log_error(logCPU,"Kernel envio mal los datos iniciales, se desconecta la CPU\n");
  		close(socketMemoria);
  		close(socketKernel);
  		liberarConfiguracion();
+ 		log_destroy(logCPU);
  		exit(-1);
 
  	}
 
- 	printf("Datos recibidos de Kernel:\nsize_pag-%d\nquantum-%d\nsize_stack-%d\n", datosIniciales->size_pag, datosIniciales->quantum, datosIniciales->size_stack);
+ 	log_info(logCPU,"Datos recibidos de Kernel:\nsize_pag-%d\nquantum-%d\nsize_stack-%d\n", datosIniciales->size_pag, datosIniciales->quantum, datosIniciales->size_stack);
 
  	//ESTE GRAN WHILE(1) ESTA COMENTADO PORQUE EN REALIDAD ES PARA RECIBIR UN PCB ATRAS DE OTRO Y EJECUTARLOS HASTA QUE EL KERNEL ME DIGA MORITE HIPPIE
 
@@ -131,7 +135,7 @@ int main(void)
 
 			//Si se recibio una linea de codigo se analiza
 			if(instruccion != NULL && !terminoPrograma){
-				printf("\nInstruccion leida: %s\n\n",instruccion);
+				log_info(logCPU,"\nInstruccion leida: %s\n\n",instruccion);
 
 				//Magia del Parser para llamar a las primitivas
 				analizadorLinea(instruccion,&AnSISOP_funciones,&AnSISOP_funciones_kernel);
@@ -145,7 +149,7 @@ int main(void)
 
 		//ACA AVISARLE A KERNEL QUE TERMINE QUE CON ESTE PROCESO
 		if(terminoPrograma){
-			printf("Envie el PCB al Kernel\n");
+			log_info(logCPU,"Envie el PCB al Kernel\n");
 			void* pcbSerializado = serializarPCB(pcb);
 			enviarMensaje(socketKernel,enviarPCBaTerminado,pcbSerializado,tamanoPCB(pcb));
 			free(pcbSerializado);
@@ -153,14 +157,14 @@ int main(void)
 
 		else{
 			if(quantumRestante == 0){
-				printf("Envie el PCB al Kernel porque me quede sin quantum\n");
+				log_info(logCPU,"Envie el PCB al Kernel porque me quede sin quantum\n");
 				void* pcbSerializado = serializarPCB(pcb);
 				enviarMensaje(socketKernel,enviarPCBaReady,pcbSerializado,tamanoPCB(pcb));
 				free(pcbSerializado);
 			}
 			else{
 				if(signal_sigint){
-					printf("Envie el PCB al Kernel porque me desconectaron bruscamente\n");
+					log_info(logCPU,"Envie el PCB al Kernel porque me desconectaron bruscamente\n");
 					void* pcbSerializado = serializarPCB(pcb);
 					enviarMensaje(socketKernel,enviarPCBaReady,pcbSerializado,tamanoPCB(pcb));
 					free(pcbSerializado);
@@ -177,6 +181,7 @@ int main(void)
 	close(socketKernel);
 	close(socketMemoria);
 	liberarConfiguracion();
+	log_destroy(logCPU);
 	free(datosIniciales);
 
 	return 0;
@@ -190,16 +195,16 @@ void conectarConMemoria(){
 	int rta_conexion;
 	socketMemoria = conexionConServidor(getConfigString("PUERTO_MEMORIA"),getConfigString("IP_MEMORIA")); // Asignación del socket que se conectara con la memoria
 	if (socketMemoria == 1){
-		perror("Falla en el protocolo de comunicación");
+		log_error(logCPU,"Falla en el protocolo de comunicación\n");
 	}
 	if (socketMemoria == 2){
-		perror("No se conectado con el Memoria, asegurese de que este abierto el proceso");
+		log_error(logCPU,"No se conectado con el Memoria, asegurese de que este abierto el proceso\n");
 	}
 	if ( (rta_conexion = handshakeCliente(socketMemoria, CPU)) == -1) {
-				perror("Error en el handshake con Memoria");
+		log_error(logCPU,"Error en el handshake con Memoria\n");
 				close(socketMemoria);
 	}
-	printf("Conexión exitosa con el Memoria(%i)!!\n",rta_conexion);
+	log_info(logCPU,"Conexión exitosa con el Memoria(%i)!!\n",rta_conexion);
 }
 
 void conectarConKernel()
@@ -207,16 +212,16 @@ void conectarConKernel()
 	int rta_conexion;
 	socketKernel = conexionConServidor(getConfigString("PUERTO_KERNEL"),getConfigString("IP_KERNEL")); // Asignación del socket que se conectara con la memoria
 	if (socketKernel == 1){
-		perror("Falla en el protocolo de comunicación");
+		log_error(logCPU,"Falla en el protocolo de comunicación\n");
 	}
 	if (socketKernel == 2){
-		perror("No se conectado con el Kernel, asegurese de que este abierto el proceso");
+		log_error(logCPU,"No se conectado con el Kernel, asegurese de que este abierto el proceso\n");
 	}
 	if ( (rta_conexion = handshakeCliente(socketKernel, CPU)) == -1) {
-				perror("Error en el handshake con Kernel");
+		log_error(logCPU,"Error en el handshake con Kernel\n");
 				close(socketMemoria);
 	}
-	printf("Conexión exitosa con el Kernel(%i)!!\n",rta_conexion);
+	log_info(logCPU,"Conexión exitosa con el Kernel(%i)!!\n",rta_conexion);
 }
 
 void pedidoValido(int* booleano,void* stream, int accion){
@@ -225,7 +230,7 @@ void pedidoValido(int* booleano,void* stream, int accion){
 			memcpy(booleano,stream,sizeof(int));
 		}break;
 		default:{
-			puts("Error en el protocolo de comunicacion");
+			log_error(logCPU,"Error en el protocolo de comunicacion\n");
 		}break;
 	}
 }
@@ -234,15 +239,16 @@ void sigusr1_handler(int signal) {
 	signal_SIGUSR1 = true;
 
 	if(terminoPrograma && !hayPCB){ //si NO esta ejecutando
-			printf("Se recibio una SIGUSR1, se desconecta esta CPU\n");
+			log_warning(logCPU,"Se recibio una SIGUSR1, se desconecta esta CPU\n");
 			close(socketKernel);
 			liberarConfiguracion();
+			log_destroy(logCPU);
 			free(datosIniciales);
 			exit(-1);
 
 	}
 
-	printf("Se recibio una SIGUSR1, la CPU se desconectara luego de terminada la rafaga\n");
+	log_warning(logCPU,"Se recibio una SIGUSR1, la CPU se desconectara luego de terminada la rafaga\n");
 	return;
 }
 
@@ -251,28 +257,29 @@ void sigint_handler(int signal) {
 	signal_sigint = true;
 
 	if(terminoPrograma && !hayPCB){ //si NO esta ejecutando
-		printf("Se recibio una SIGINT, se desconecta esta CPU\n");
+		log_warning(logCPU,"Se recibio una SIGINT, se desconecta esta CPU\n");
 		//close(socketKernel);
 		liberarConfiguracion();
+		log_destroy(logCPU);
 		free(datosIniciales);
 		exit(-1);
 		return;
 	}
-	printf("Se recibio una SIGINT, la CPU se desconectara luego de terminada la instruccion\n");
+	log_warning(logCPU,"Se recibio una SIGINT, la CPU se desconectara luego de terminada la instruccion\n");
 	return;
 }
 
 void pedidoPCB(){
 	enviarMensaje(socketKernel,pedirPCB,&(datosIniciales->quantum),sizeof(int));
 	void* pcbSerializado;
-	puts("esperando pcb\n");
+	log_info(logCPU,"esperando pcb\n");
 	if(recibirMensajeSeguro(socketKernel,&pcbSerializado) != envioPCB){
-		puts("Error en el protocolo de comunicacion");
+		log_error(logCPU,"Error en el protocolo de comunicacion\n");
 	}else{
 		hayPCB = true;
 		pcb=deserializarPCB(pcbSerializado);
 		free(pcbSerializado);
-		puts("PCB recibido");
+		log_info(logCPU,"PCB recibido\n");
 		//En el caso que esta sea la primera vez que el proceso entra en una CPU su indice de stack estara NULL porque no habia entradas anteriores, entonces se inicializa la primera entrada
 		if(pcb->indiceStack == NULL){
 			pcb->indiceStack = realloc(pcb->indiceStack,sizeof(t_entrada));
@@ -292,7 +299,7 @@ void confirmarQuantumSleep(){
 		quantumSleep = *(int*)stream;
 		free(stream);
 	}else{
-		puts("Error en el protocolo de comunicacion");
+		log_error(logCPU,"Error en el protocolo de comunicacion\n");
 		//algo mas?
 	}
 

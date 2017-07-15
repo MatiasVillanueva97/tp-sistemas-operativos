@@ -12,6 +12,7 @@
 #include <sys/wait.h>
 #include <signal.h>
 #include "commons/string.h"
+#include "commons/log.h"
 #include "commons/collections/list.h"
 
 #include <parser/parser.h>

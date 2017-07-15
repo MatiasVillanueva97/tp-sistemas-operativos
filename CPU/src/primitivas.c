@@ -31,7 +31,7 @@ void* serializarArchivo(t_crearArchivo archivo);
 void escribirEnLaVariable(t_puntero informacion, void* stream, int tamanio);
 
 t_puntero AnSISOP_definirVariable(t_nombre_variable identificador_variable) {
-	puts("AnSISOP_definirVariable");
+	log_info(logCPU,"AnSISOP_definirVariable\n");
 	t_direccion direccion;
 	t_variable* variable = malloc(sizeof(t_variable));
 
@@ -41,7 +41,7 @@ t_puntero AnSISOP_definirVariable(t_nombre_variable identificador_variable) {
 	variable->direccion = direccion;
 
 	if (direccion.page >= pcb->contPags_pcb) {
-		printf("STACK OVERFLOW page: %d , offset: %d , size: %d \n",direccion.page, direccion.offset, direccion.size);
+		log_warning(logCPU,"STACK OVERFLOW page: %d , offset: %d , size: %d \n",direccion.page, direccion.offset, direccion.size);
 		terminoPrograma = true;
 		pcb->exitCode = -5;
 		return -1;
@@ -57,7 +57,7 @@ t_puntero AnSISOP_definirVariable(t_nombre_variable identificador_variable) {
 		list_add(pcb->indiceStack[pcb->contextoActual].variables, variable);
 	}
 
-	printf("Defini %c le asigne la direccion: %d %d %d \n",
+	log_info(logCPU,"Defini %c le asigne la direccion: %d %d %d \n",
 			identificador_variable, direccion.page, direccion.offset,direccion.size);
 
 	return calcularPuntero(direccion);
@@ -65,7 +65,7 @@ t_puntero AnSISOP_definirVariable(t_nombre_variable identificador_variable) {
 
 t_puntero AnSISOP_obtenerPosicionVariable(
 		t_nombre_variable identificador_variable) {
-	puts("AnSISOP_obtenerPosicionVariable");
+	log_info(logCPU,"AnSISOP_obtenerPosicionVariable\n");
 
 	t_variable *variable;
 	t_puntero aRetornar;
@@ -77,7 +77,7 @@ t_puntero AnSISOP_obtenerPosicionVariable(
 
 		aRetornar = calcularPuntero(variable->direccion);
 
-		printf("Obtuve la posicion de %c esta es: %d \n",identificador_variable, aRetornar);
+		log_info(logCPU,"Obtuve la posicion de %c esta es: %d \n",identificador_variable, aRetornar);
 
 		return aRetornar;
 	} else {
@@ -89,7 +89,7 @@ t_puntero AnSISOP_obtenerPosicionVariable(
 
 				aRetornar = calcularPuntero(variable->direccion);
 
-				printf("Obtuve la posicion de %c esta es: %d \n",identificador_variable, aRetornar);
+				log_info(logCPU,"Obtuve la posicion de %c esta es: %d \n",identificador_variable, aRetornar);
 
 				return aRetornar;
 			}
@@ -99,7 +99,7 @@ t_puntero AnSISOP_obtenerPosicionVariable(
 }
 
 t_valor_variable AnSISOP_dereferenciar(t_puntero direccion_variable) {
-	puts("AnSISOP_dereferenciar");
+	log_info(logCPU,"AnSISOP_dereferenciar\n");
 
 	//Se busca la direccion
 	t_direccion direccion = calcularDireccion(direccion_variable);
@@ -107,13 +107,13 @@ t_valor_variable AnSISOP_dereferenciar(t_puntero direccion_variable) {
 	//Se pide el valor a memoria
 	t_valor_variable valorVariable = pedirValorAMemoria(direccion);
 
-	printf("Desreferencie la direccion %d %d %d y el valor es %d \n",direccion.page, direccion.offset, direccion.size, valorVariable);
+	log_info(logCPU,"Desreferencie la direccion %d %d %d y el valor es %d \n",direccion.page, direccion.offset, direccion.size, valorVariable);
 
 	return valorVariable;
 }
 
 void AnSISOP_asignar(t_puntero direccion_variable, t_valor_variable valor) {
-	puts("AnSISOP_asignar");
+	log_info(logCPU,"AnSISOP_asignar\n");
 
 	//Calculo la direccion en memoria de la variable
 	t_direccion direccion = calcularDireccion(direccion_variable);
@@ -121,15 +121,15 @@ void AnSISOP_asignar(t_puntero direccion_variable, t_valor_variable valor) {
 	//Se escribe en Memoria sabiendo la posicion de memoria y el valor a escribir
 	escribirValorEnMemoria(direccion, valor);
 
-	printf("Asigne a la direccion %d %d %d el valor es %d \n", direccion.page,direccion.offset, direccion.size, valor);
+	log_info(logCPU,"Asigne a la direccion %d %d %d el valor es %d \n", direccion.page,direccion.offset, direccion.size, valor);
 }
 
 t_valor_variable AnSISOP_obtenerValorCompartida(t_nombre_compartida variable) {
-	puts("AnSISOP_obtenerValorCompartida");
+	log_info(logCPU,"AnSISOP_obtenerValorCompartida\n");
 
 	t_valor_variable valor = -42;
 
-	printf("Le pido al Kernel que me de el valor de la variable compartida: %s\n",variable);
+	log_info(logCPU,"Le pido al Kernel que me de el valor de la variable compartida: %s\n",variable);
 
 	enviarMensaje(socketKernel, pedirValorCompartida, variable,strlen(variable) + 1);
 
@@ -147,7 +147,7 @@ t_valor_variable AnSISOP_obtenerValorCompartida(t_nombre_compartida variable) {
 	}
 		break;
 	default: {
-		puts("Error en la accion del mensaje maquinola");
+		log_error(logCPU,"Error en la accion del mensaje maquinola\n");
 		free(stream);
 	}
 	}
@@ -156,11 +156,11 @@ t_valor_variable AnSISOP_obtenerValorCompartida(t_nombre_compartida variable) {
 }
 
 t_valor_variable AnSISOP_asignarValorCompartida(t_nombre_compartida variable,t_valor_variable valor) {
-	puts("AnSISOP_asignarValorCompartida");
+	log_info(logCPU,"AnSISOP_asignarValorCompartida\n");
 
 	t_asignarValor mensaje = { .valor = valor, .variable = variable };
 
-	printf("Le pido al Kernel que asigne el valor: %d a la variable compartida: %s\n",valor, variable);
+	log_info(logCPU,"Le pido al Kernel que asigne el valor: %d a la variable compartida: %s\n",valor, variable);
 	enviarMensaje(socketKernel, asignarValorCompartida, mensaje.variable,strlen(mensaje.variable) + 1);
 
 	void* stream;
@@ -176,7 +176,7 @@ t_valor_variable AnSISOP_asignarValorCompartida(t_nombre_compartida variable,t_v
 			enviarMensaje(socketKernel, asignarValorCompartida, &(mensaje.valor),sizeof(int));
 		}break;
 		default: {
-			puts("Error en la accion del mensaje maquinola");
+			log_error(logCPU,"Error en la accion del mensaje maquinola\n");
 			free(stream);
 		}
 	}
@@ -185,7 +185,7 @@ t_valor_variable AnSISOP_asignarValorCompartida(t_nombre_compartida variable,t_v
 }
 
 void AnSISOP_irAlLabel(t_nombre_etiqueta nombre_etiqueta) {
-	puts("AnSISOP_irAlLabel");
+	log_info(logCPU,"AnSISOP_irAlLabel\n");
 
 	t_puntero_instruccion puntero;
 
@@ -201,7 +201,7 @@ void AnSISOP_irAlLabel(t_nombre_etiqueta nombre_etiqueta) {
 }
 
 void AnSISOP_llamarSinRetorno(t_nombre_etiqueta etiqueta) {
-	puts("AnSISOP_llamarSinRetorno");
+	log_info(logCPU,"AnSISOP_llamarSinRetorno\n");
 
 	//Se incrementa el contexto actual para que cada vez que se pida un valor se vaya a buscar el valor en la entrada correspondiente
 	pcb->contextoActual++;
@@ -224,7 +224,7 @@ void AnSISOP_llamarSinRetorno(t_nombre_etiqueta etiqueta) {
 
 void AnSISOP_llamarConRetorno(t_nombre_etiqueta etiqueta,
 		t_puntero donde_retornar) {
-	puts("AnSISOP_llamarConRetorno");
+	log_info(logCPU,"AnSISOP_llamarConRetorno\n");
 
 	//Se incrementa el contexto actual para que cada vez que se pida un valor se vaya a buscar el valor en la entrada correspondiente
 	pcb->contextoActual++;
@@ -249,14 +249,14 @@ void AnSISOP_llamarConRetorno(t_nombre_etiqueta etiqueta,
 }
 
 void AnSISOP_finalizar(void) {
-	puts("AnSISOP_finalizar");
+	log_info(logCPU,"AnSISOP_finalizar\n");
 
 	//En ambos casos deberia de liberar la memoria de alguna manera magico-fantastica
 	//Si es que hay que liberarla lo que ahora comienzo a dudar, se vera con respecto al ultimatum con el pcb
 
 	if (pcb->contextoActual == 0) {
 		//Esto se da en el caso que se termine el programa
-		puts("Se finalizo la ultima instruccion del main");
+		log_info(logCPU,"Se finalizo la ultima instruccion del main\n");
 		terminoPrograma = true;
 
 		pcb->exitCode = 0;
@@ -267,7 +267,7 @@ void AnSISOP_finalizar(void) {
 
 	} else {
 		//En otro caso se vuelve al contexto anterior
-		puts("Se finalizo la ultima instruccion de una funcion");
+		log_info(logCPU,"Se finalizo la ultima instruccion de una funcion\n");
 
 		//Se cambia el ProgramCounter para que siga la ejecucion a partir de la siguiente instruccion de la funcion anterior
 		pcb->programCounter = pcb->indiceStack[pcb->contextoActual].retPos;
@@ -287,7 +287,7 @@ void AnSISOP_finalizar(void) {
 }
 
 void AnSISOP_retornar(t_valor_variable retorno) {
-	puts("AnSISOP_retornar");
+	log_info(logCPU,"AnSISOP_retornar\n");
 
 	//Se escribe el valor devuelto por la funcion en la direccion de retorno
 	escribirValorEnMemoria(pcb->indiceStack[pcb->contextoActual].retVar,retorno);
@@ -310,11 +310,11 @@ void AnSISOP_retornar(t_valor_variable retorno) {
 
 //Operaciones de Kernel
 void AnSISOP_wait(t_nombre_semaforo identificador_semaforo) {
-	puts("AnSISOP_wait");
+	log_info(logCPU,"AnSISOP_wait\n");
 
 	pcb->cantDeInstPrivilegiadas++;
 
-	printf("Le pido al Kernel que haga wait del semaforo: %s\n",identificador_semaforo);
+	log_info(logCPU,"Le pido al Kernel que haga wait del semaforo: %s\n",identificador_semaforo);
 	pcb->programCounter++;
 	void * stream = serializarPCBYSemaforo(pcb, identificador_semaforo);
 	enviarMensaje(socketKernel, waitSemaforo, stream,tamanoPCB(pcb) + sizeof(int) + strlen(identificador_semaforo) + 1);
@@ -326,7 +326,7 @@ void AnSISOP_wait(t_nombre_semaforo identificador_semaforo) {
 		respuestaDeKernel = *((bool*) stream);
 	else {
 		terminoPrograma = true;
-		perror("Error en el mensaje maquinola j3j3");
+		log_error(logCPU,"Error en el protocolo de comunicacion\n");
 	}
 	if (!respuestaDeKernel){
 		bloqueado = true;
@@ -336,10 +336,10 @@ void AnSISOP_wait(t_nombre_semaforo identificador_semaforo) {
 }
 
 void AnSISOP_signal(t_nombre_semaforo identificador_semaforo) {
-	puts("AnSISOP_signal");
+	log_info(logCPU,"AnSISOP_signal\n");
 
 	pcb->cantDeInstPrivilegiadas++;
-	printf("Le pido al Kernel que haga signal del semaforo: %s\n",identificador_semaforo);
+	log_info(logCPU,"Le pido al Kernel que haga signal del semaforo: %s\n",identificador_semaforo);
 	pcb->programCounter++;
 	void * stream = serializarPCBYSemaforo(pcb, identificador_semaforo);
 	enviarMensaje(socketKernel, signalSemaforo, stream,tamanoPCB(pcb) + sizeof(int) + strlen(identificador_semaforo) + 1);
@@ -350,7 +350,7 @@ void AnSISOP_signal(t_nombre_semaforo identificador_semaforo) {
 		respuestaDeKernel = *((bool*) stream);
 	else {
 		terminoPrograma = true;
-		perror("Error en el mensaje maquinola j3j3");
+		log_info(logCPU,"Error en el protocolo de comunicacion\n");
 	}
 	//Esto solo pasa en caso de que noexista el semaforo
 	if (!respuestaDeKernel)
@@ -358,7 +358,7 @@ void AnSISOP_signal(t_nombre_semaforo identificador_semaforo) {
 }
 
 t_puntero AnSISOP_reservar(t_valor_variable espacio) {
-	puts("AnSISOP_reservar");
+	log_info(logCPU,"AnSISOP_reservar\n");
 
 	pcb->cantDeInstPrivilegiadas++;
 	int dosEnteros[2] = { espacio, pcb->pid };
@@ -373,7 +373,7 @@ t_puntero AnSISOP_reservar(t_valor_variable espacio) {
 		offset = *(int*) stream;
 		free(stream);
 		if (offset == 0) {
-			puts("No se pudo asignar otra pagina al proceso");
+			log_warning(logCPU,"No se pudo asignar otra pagina al proceso\n");
 			terminoPrograma = true;
 			pcb->exitCode = -9;
 		} else {
@@ -381,12 +381,12 @@ t_puntero AnSISOP_reservar(t_valor_variable espacio) {
 		}
 	}break;
 	case pedidoRechazadoPorPedirMas: { // en caso de que se pida alocar mas que el tamanio de una pagina
-		puts("Se intentó reservar más memoria que el tamaño de una página");
+		log_warning(logCPU,"Se intentó reservar más memoria que el tamaño de una página\n");
 		terminoPrograma = true;
 		pcb->exitCode = -8;
 	}break;
 	default:
-		puts("Error en el protocolo de comunicacion");
+		log_error(logCPU,"Error en el protocolo de comunicacion\n");
 			terminoPrograma = true;
 			pcb->exitCode = -42;
 	}
@@ -395,7 +395,7 @@ t_puntero AnSISOP_reservar(t_valor_variable espacio) {
 }
 
 void AnSISOP_liberar(t_puntero puntero) {
-	puts("AnSISOP_liberar");
+	log_info(logCPU,"AnSISOP_liberar\n");
 
 	pcb->cantDeInstPrivilegiadas++;
 
@@ -407,17 +407,17 @@ void AnSISOP_liberar(t_puntero puntero) {
 
 	if (recibirMensajeSeguro(socketKernel, &stream) != enviarSiSePudoLiberar) {
 		free(stream);
-		puts("Error en el protocolo de comunicacion");
+		log_error(logCPU,"Error en el protocolo de comunicacion\n");
 			terminoPrograma = true;
 			pcb->exitCode = -42;
 	} else {
 		int entero = leerInt(stream);
 		if (entero == 0) {
-			puts("algo salio muy mal");
+			log_warning(logCPU,"Algo salio mal al liberar la variable\n");
 			bloqueado = true;
 			pcb->exitCode = -42;
 		}else{
-			puts("Se libero correctamente la variable alocada");
+			log_info(logCPU,"Se libero correctamente la variable alocada\n");
 		}
 
 	}
@@ -427,7 +427,7 @@ void AnSISOP_liberar(t_puntero puntero) {
 }
 
 t_descriptor_archivo AnSISOP_abrir(t_direccion_archivo direccion,t_banderas flags) {
-	puts("AnSISOP_abrir");
+	log_info(logCPU,"AnSISOP_abrir\n");
 
 	pcb->cantDeInstPrivilegiadas++;
 
@@ -437,7 +437,7 @@ t_descriptor_archivo AnSISOP_abrir(t_direccion_archivo direccion,t_banderas flag
 	archivo.flags = generarStringFlags(flags);
 
 	if (strcmp(archivo.flags, "") == 0) {
-		printf("Quiere abrir un archivo sin permisos \n");
+		log_error(logCPU,"Quiere abrir un archivo sin permisos \n");
 		//inserte error aqui
 		return 0;
 	}
@@ -453,16 +453,16 @@ t_descriptor_archivo AnSISOP_abrir(t_direccion_archivo direccion,t_banderas flag
 	switch (recibirMensajeSeguro(socketKernel, &stream)) {
 		case envioDelFileDescriptor: {
 			t_descriptor_archivo FD = leerInt(stream);
-			printf("El FD del archivo pedido es: %d \n", FD);
+			log_info(logCPU,"El FD del archivo pedido es: %d \n", FD);
 			return FD;
 		}break;
 		case respuestaBooleanaKernel: {
 			free(stream);
-			puts("Algo salio mal con el archivo, se termina el programa");
+			log_warning(logCPU,"Algo salio mal con el archivo, se termina el programa\n");
 			bloqueado = true;
 		}break;
 		default: {
-			puts("Error en el protocolo de comunicacion");
+			log_error(logCPU,"Error en el protocolo de comunicacion\n");
 			terminoPrograma = true;
 			pcb->exitCode = -42;
 		}
@@ -472,7 +472,7 @@ t_descriptor_archivo AnSISOP_abrir(t_direccion_archivo direccion,t_banderas flag
 }
 
 void AnSISOP_borrar(t_descriptor_archivo direccion) {
-	puts("AnSISOP_borrar");
+	log_info(logCPU,"AnSISOP_borrar\n");
 
 	pcb->cantDeInstPrivilegiadas++;
 
@@ -488,15 +488,15 @@ void AnSISOP_borrar(t_descriptor_archivo direccion) {
 		int rtaKernel = *(int*) stream;
 		free(stream);
 		if (rtaKernel == 0) {
-			puts("Quiere borrar un archivo que nunca abrio");
+			log_warning(logCPU,"Quiere borrar un archivo que nunca abrio\n");
 			terminoPrograma = true;
 			pcb->exitCode = -13;
 		} else {
-			puts("Archivo borrado con exito");
+			log_info(logCPU,"Archivo borrado con exito\n");
 		}
 	} else {
 		free(stream);
-		puts("Error en el protocolo de comunicacion");
+		log_error(logCPU,"Error en el protocolo de comunicacion\n");
 		terminoPrograma = true;
 		pcb->exitCode = -42;
 	}
@@ -504,7 +504,7 @@ void AnSISOP_borrar(t_descriptor_archivo direccion) {
 }
 
 void AnSISOP_cerrar(t_descriptor_archivo descriptor_archivo) {
-	puts("AnSISOP_cerrar");
+	log_info(logCPU,"AnSISOP_cerrar\n");
 
 	pcb->cantDeInstPrivilegiadas++;
 
@@ -520,15 +520,15 @@ void AnSISOP_cerrar(t_descriptor_archivo descriptor_archivo) {
 		int rtaKernel = *(int*) stream;
 		free(stream);
 		if (rtaKernel == 0) {
-			puts("Quiere cerrar un archivo que nunca abrio");
+			log_warning(logCPU,"Quiere cerrar un archivo que nunca abrio\n");
 			terminoPrograma = true;
 			pcb->exitCode = -13;
 		} else {
-			puts("Archivo cerrado con exito");
+			log_info(logCPU,"Archivo cerrado con exito\n");
 		}
 	} else {
 		free(stream);
-		puts("Error en el protocolo de comunicacion");
+		log_error(logCPU,"Error en el protocolo de comunicacion\n");
 		terminoPrograma = true;
 		pcb->exitCode = -42;
 	}
@@ -536,7 +536,7 @@ void AnSISOP_cerrar(t_descriptor_archivo descriptor_archivo) {
 }
 
 void AnSISOP_moverCursor(t_descriptor_archivo descriptor_archivo,t_valor_variable posicion) {
-	puts("AnSISOP_moverCursor");
+	log_info(logCPU,"AnSISOP_moverCursor\n");
 
 	pcb->cantDeInstPrivilegiadas++;
 
@@ -553,22 +553,22 @@ void AnSISOP_moverCursor(t_descriptor_archivo descriptor_archivo,t_valor_variabl
 		int rtaKernel = *(int*) stream;
 		free(stream);
 		if (rtaKernel == 0) {
-			puts("Quiere mover el cursor de un archivo que nunca abrio");
+			log_warning(logCPU,"Quiere mover el cursor de un archivo que nunca abrio\n");
 			terminoPrograma = true;
 			pcb->exitCode = -13;
 		} else {
-			puts("Cursor movido con exito");
+			log_info(logCPU,"Cursor movido con exito\n");
 		}
 	} else {
 		free(stream);
-		puts("Error en el protocolo de comunicacion");
+		log_error(logCPU,"Error en el protocolo de comunicacion\n");
 		terminoPrograma = true;
 		pcb->exitCode = -42;
 	}
 }
 
 void AnSISOP_escribir(t_descriptor_archivo descriptor_archivo,void* informacion, t_valor_variable tamanio) {
-	puts("AnSISOP_escribir");
+	log_info(logCPU,"AnSISOP_escribir\n");
 
 	pcb->cantDeInstPrivilegiadas++;
 
@@ -591,14 +591,14 @@ void AnSISOP_escribir(t_descriptor_archivo descriptor_archivo,void* informacion,
 	if(recibirMensajeSeguro(socketKernel, &stream) == respuestaBooleanaKernel) {
 		bool rtaKernel = *(bool*)stream;
 		if(rtaKernel){
-			puts("La escritura fue exitosa");
+			log_info(logCPU,"La escritura fue exitosa\n");
 		}else{
-			puts("Quiere escribir un archivo que nunca abrio");
+			log_warning(logCPU,"Quiere escribir un archivo que nunca abrio\n");
 			terminoPrograma = true;
 			pcb->exitCode = -13;
 		}
 	}else{
-		puts("Error en el protocolo de comunicacion");
+		log_error(logCPU,"Error en el protocolo de comunicacion\n");
 		terminoPrograma = true;
 		pcb->exitCode = -42;
 	}
@@ -607,7 +607,7 @@ void AnSISOP_escribir(t_descriptor_archivo descriptor_archivo,void* informacion,
 }
 
 void AnSISOP_leer(t_descriptor_archivo descriptor_archivo,t_puntero informacion, t_valor_variable tamanio) {
-	puts("AnSISOP_leer");
+	log_info(logCPU,"AnSISOP_leer\n");
 
 	pcb->cantDeInstPrivilegiadas++;
 
@@ -619,19 +619,19 @@ void AnSISOP_leer(t_descriptor_archivo descriptor_archivo,t_puntero informacion,
 	switch (recibirMensajeSeguro(socketKernel, &stream)) {
 		case respuestaBooleanaKernel: {
 			/*si nunca habia abierto el archivo*/
-			puts("Se produjo un error al intentar leer el archivo");
+			log_warning(logCPU,"Se produjo un error al intentar leer el archivo\n");
 			terminoPrograma = true;
 		}break;
 		case respuestaLectura: {
 
-			puts("Se leyo con exito el archivo");
+			log_info(logCPU,"Se leyo con exito el archivo\n");
 			escribirEnLaVariable(informacion,stream,tamanio);
 			//Aca hacer algo, pero sinceramente nose que espera el parser que haga por el
 
 
 		}break;
 		default: {
-			puts("Error en el protocolo de comunicacion");
+			log_error(logCPU,"Error en el protocolo de comunicacion\n");
 			terminoPrograma = true;
 			pcb->exitCode = -42;
 		}
@@ -649,7 +649,7 @@ t_valor_variable pedirValorAMemoria(t_direccion direccion) {
 	//Se pide a Memoria el contenido de esa posicion que es el valor de la variable
 	enviarMensaje(socketMemoria, solicitarBytes, (void *) &pedido,sizeof(pedido));
 
-	printf("Se pide el valor de la variable en la direccion de memoria: %d %d %d \n",direccion.page, direccion.offset, direccion.size);
+	log_info(logCPU,"Se pide el valor de la variable en la direccion de memoria: %d %d %d \n",direccion.page, direccion.offset, direccion.size);
 
 	//se recibe el valor de la variable
 	void* stream;
@@ -663,7 +663,7 @@ t_valor_variable pedirValorAMemoria(t_direccion direccion) {
 			booleano = stream;
 		}break;
 		default: {
-			puts("Error en el protocolo de comunicacion");
+			log_error(logCPU,"Error en el protocolo de comunicacion\n");
 			terminoPrograma = true;
 			pcb->exitCode = -42;
 		}break;
@@ -677,7 +677,7 @@ t_valor_variable pedirValorAMemoria(t_direccion direccion) {
 				valorVariable = *valor;
 			}break;
 			default: {
-				puts("Error en el protocolo de comunicacion");
+				log_error(logCPU,"Error en el protocolo de comunicacion\n");
 			terminoPrograma = true;
 			pcb->exitCode = -42;
 			}break;
@@ -699,7 +699,7 @@ void escribirValorEnMemoria(t_direccion direccion, t_valor_variable valor) {
 	//se pide a memoria que escriba el valor enviado en la posicion de memoria tambien enviada
 	enviarMensaje(socketMemoria, almacenarBytes, escrituraA,sizeof(int) * 4 + direccion.size);
 
-	printf("Se escribio el valor %d en la direccion de memoria: %d %d %d \n",valor, direccion.page, direccion.offset, direccion.size);
+	log_info(logCPU,"Se escribio el valor %d en la direccion de memoria: %d %d %d \n",valor, direccion.page, direccion.offset, direccion.size);
 
 //	free(auxiliar);
 
@@ -713,7 +713,7 @@ void escribirValorEnMemoria(t_direccion direccion, t_valor_variable valor) {
 			break;
 		}
 		default: {
-			puts("Error en el protocolo de comunicacion");
+			log_error(logCPU,"Error en el protocolo de comunicacion\n");
 			terminoPrograma = true;
 			pcb->exitCode = -42;
 		}
@@ -877,11 +877,11 @@ char* generarStringFlags(t_banderas flags) {
 	char* ret = string_new();
 
 	if (flags.lectura)
-		strcat(ret, "r");
+		strcat(ret, "r\n");
 	if (flags.escritura)
-		strcat(ret, "w");
+		strcat(ret, "w\n");
 	if (flags.creacion)
-		strcat(ret, "c");
+		strcat(ret, "c\n");
 
 	return ret;
 
@@ -954,7 +954,7 @@ void escribirEnLaVariable(t_puntero puntero,void* cosaDelFS, int tamanio){
    break;
   }
   default: {
-   puts("Error en el protocolo de comunicacion");
+	  log_error(logCPU,"Error en el protocolo de comunicacion\n");
    terminoPrograma = true;
    pcb->exitCode = -42;
   }
@@ -973,13 +973,13 @@ int recibirMensajeSeguro(int socket, void ** stream){
 	int valor = recibirMensaje(socket, stream);
 	if(valor == 0){
 		if(socket==socketKernel)
-			printf("El Kernel ");
+			log_warning(logCPU,"El Kernel se ha desconectado, se finalizara esta CPU\n");
 		else
-			printf("La Memoria ");
-		printf("se ha desconectado, se finalizara esta CPU\n");
+			log_warning(logCPU,"La Memoria se ha desconectado, se finalizara esta CPU\n");
 		close(socketKernel);
 		close(socketMemoria);
 		liberarConfiguracion();
+		log_destroy(logCPU);
 		if(hayPCB) 	destruirPCB_Puntero(pcb);
 		free(datosIniciales);
 		exit(-1);

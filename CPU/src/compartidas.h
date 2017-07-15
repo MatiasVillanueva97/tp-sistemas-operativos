@@ -4,6 +4,7 @@
 
 #include "commons/collections/dictionary.h"
 #include "commons/collections/list.h"
+#include "commons/log.h"
 
 #include <parser/metadata_program.h>
 
@@ -18,6 +19,7 @@ typedef struct{
  int size_stack;
 }__attribute__((packed)) t_datosIniciales;
 
+t_log* logCPU;
 int socketKernel;
 int socketMemoria;
 PCB_DATA* pcb;
