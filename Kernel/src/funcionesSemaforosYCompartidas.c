@@ -59,16 +59,12 @@ bool SEM_wait(char* nombreSEM, PCB_DATA * pcb){
 			return proceso->pid == pcb->pid;
 		}
 		PROCESOS* proceso = list_find(avisos, buscar);
-		//Updated upstream
 		proceso->semaforoTomado = string_duplicate(nombreSEM);
 		sem_post(&mutex_listaProcesos);
-
-
-		/*	proceso->semaforoTomado = string_duplicate(nombreSEM);
-				sem_post(&mutex_listaProcesos);*/
-//>>>>>>> Stashed changes
 		if(sem->valor <= 0){
+			sem_wait(&mutex_cola_Exec);
 			pcb->estadoDeProceso = bloqueado;
+			sem_post(&mutex_cola_Exec);
 			queue_push(sem->cola, pcb);
 		}
 		sem->valor--;
@@ -80,16 +76,29 @@ bool SEM_wait(char* nombreSEM, PCB_DATA * pcb){
 	return (sem != NULL) && (sem->valor >= 0);//Si se cumplen estas 2 condiciones, la CPU puede seguir ejecutando el PCB
 }
 
+void despertarProceso(t_semaforo * sem){
+	PCB_DATA* procesoADespertar;
+	int i = 0;
+	int f = queue_size(sem->cola);
+	for(i;i<f; i++){
+		procesoADespertar = queue_pop(sem->cola);
+		if(procesoADespertar->estadoDeProceso == bloqueado){
+			procesoADespertar->estadoDeProceso = paraEjecutar;
+			break;
+		}
+	}
+
+}
 
 bool SEM_signal(char* nombreSEM, PCB_DATA* pcb){
 	t_semaforo* sem = buscarSemaforo(nombreSEM);
 	if(sem != NULL){
-
-		if(queue_size(sem->cola) > 0){
-			PCB_DATA* procesoADespertar = queue_pop(sem->cola);
-			procesoADespertar->estadoDeProceso = paraEjecutar;
-		}
 		sem->valor++;
+		if(queue_size(sem->cola) > 0){
+			sem_wait(&mutex_cola_Wait);
+			despertarProceso(sem);
+			sem_post(&mutex_cola_Wait);
+		}
 	}
 	else{
 		pcb->estadoDeProceso = finalizado;

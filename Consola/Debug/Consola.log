@@ -378,3 +378,1017 @@ end
 [INFO] 07:53:15:542 Consola/(13835:13837): Se creo un hilo Detachable para el proceso 1
 [INFO] 07:53:15:544 Consola/(13835:13838): Se inicializo rutinaPrograma 1 en el tiempo 07:53:15:542
 [ERROR] 07:55:24:116 Consola/(13835:13837): Se desconecto el kernel
+[INFO] 09:44:02:422 Consola/(13850:13850): Se inicializan los semaforos
+[INFO] 09:44:02:427 Consola/(13850:13850): Se conecto la Consola y el Kernel
+[INFO] 09:44:12:715 Consola/(13850:13850): Se escribió un comando en la consola
+[INFO] 09:44:12:715 Consola/(13850:13850): Se creo el script correctamente este dice: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 09:44:12:715 Consola/(13850:13850): Se le envio el script al Kernel que dice : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 09:44:12:723 Consola/(13850:13852): Se creo un hilo Detachable para el proceso 1
+[INFO] 09:44:12:723 Consola/(13850:13854): Se inicializo rutinaPrograma 1 en el tiempo 09:44:12:723
+[INFO] 09:44:28:539 Consola/(13859:13859): Se inicializan los semaforos
+[INFO] 09:44:28:546 Consola/(13859:13859): Se conecto la Consola y el Kernel
+[INFO] 09:44:44:104 Consola/(13859:13859): Se escribió un comando en la consola
+[INFO] 09:44:44:104 Consola/(13859:13859): Se creo el script correctamente este dice: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 09:44:44:105 Consola/(13859:13859): Se le envio el script al Kernel que dice : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 09:44:44:107 Consola/(13859:13861): Se creo un hilo Detachable para el proceso 2
+[INFO] 09:44:44:107 Consola/(13859:13862): Se inicializo rutinaPrograma 2 en el tiempo 09:44:44:107
+[INFO] 09:44:45:371 Consola/(13859:13862): Se imprimio el mensaje del pid 2: 1
+
+[INFO] 09:44:49:587 Consola/(13859:13862): Se imprimio el mensaje del pid 2: 2
+
+[INFO] 09:44:53:743 Consola/(13859:13862): Se imprimio el mensaje del pid 2: 3
+
+[INFO] 09:44:57:915 Consola/(13859:13862): Se imprimio el mensaje del pid 2: 4
+
+[INFO] 09:45:02:50 Consola/(13859:13862): Se imprimio el mensaje del pid 2: 5
+
+[INFO] 09:45:06:246 Consola/(13859:13862): Se imprimio el mensaje del pid 2: 6
+
+[INFO] 09:45:10:443 Consola/(13859:13862): Se imprimio el mensaje del pid 2: 7
+
+[INFO] 09:45:14:551 Consola/(13859:13862): Se imprimio el mensaje del pid 2: 8
+
+[INFO] 09:45:18:731 Consola/(13859:13862): Se imprimio el mensaje del pid 2: 9
+
+[INFO] 09:45:21:479 Consola/(13859:13862): Se imprimio el mensaje del pid 2: 10
+
+[ERROR] 09:46:47:370 Consola/(13850:13852): Se desconecto el kernel
+[ERROR] 09:46:47:374 Consola/(13859:13861): Se desconecto el kernel
+[INFO] 09:47:56:773 Consola/(13850:13850): Se escribió un comando en la consola
+[INFO] 09:47:56:773 Consola/(13850:13850): Se liberan los recursos
+[INFO] 09:47:58:789 Consola/(13931:13931): Se inicializan los semaforos
+[INFO] 09:47:58:790 Consola/(13931:13931): Se conecto la Consola y el Kernel
+[INFO] 09:48:07:128 Consola/(13931:13931): Se escribió un comando en la consola
+[INFO] 09:48:07:129 Consola/(13931:13931): Se creo el script correctamente este dice: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 09:48:07:129 Consola/(13931:13931): Se le envio el script al Kernel que dice : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 09:48:07:135 Consola/(13931:13932): Se creo un hilo Detachable para el proceso 1
+[INFO] 09:48:07:135 Consola/(13931:13934): Se inicializo rutinaPrograma 1 en el tiempo 09:48:07:135
+[INFO] 09:48:15:594 Consola/(13931:13931): Se escribió un comando en la consola
+[INFO] 09:48:15:594 Consola/(13931:13931): Se creo el script correctamente este dice: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 09:48:15:595 Consola/(13931:13931): Se le envio el script al Kernel que dice : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 09:48:15:613 Consola/(13931:13932): Se creo un hilo Detachable para el proceso 2
+[INFO] 09:48:15:616 Consola/(13931:13935): Se inicializo rutinaPrograma 2 en el tiempo 09:48:15:616
+[INFO] 09:48:22:883 Consola/(13931:13935): Se imprimio el mensaje del pid 2: 1
+
+[INFO] 09:48:27:134 Consola/(13931:13935): Se imprimio el mensaje del pid 2: 2
+
+[INFO] 09:48:31:358 Consola/(13931:13935): Se imprimio el mensaje del pid 2: 3
+
+[INFO] 09:48:33:458 Consola/(13931:13935): Se imprimio el mensaje del pid 2: 4
+
+[INFO] 09:48:35:539 Consola/(13931:13935): Se imprimio el mensaje del pid 2: 5
+
+[INFO] 09:49:14:130 Consola/(13931:13931): Se escribió un comando en la consola
+[INFO] 09:49:14:130 Consola/(13931:13931): Se creo el script correctamente este dice: begin
+signal b
+end
+
+[INFO] 09:49:14:130 Consola/(13931:13931): Se le envio el script al Kernel que dice : begin
+signal b
+end
+
+[INFO] 09:49:14:139 Consola/(13931:13932): Se creo un hilo Detachable para el proceso 3
+[INFO] 09:49:14:149 Consola/(13931:13944): Se inicializo rutinaPrograma 3 en el tiempo 09:49:14:149
+[INFO] 09:49:15:922 Consola/(13931:13932): Se cambio el estado del pid 3 a terminado
+[INFO] 09:49:15:922 Consola/(13931:13932): Se finalizo el pid 3 correctamente
+[INFO] 09:49:15:962 Consola/(13931:13944): Finalizo el pid: 3
+[INFO] 09:49:15:963 Consola/(13931:13944): Tiempo de inicio: 09:49:14:149
+
+[INFO] 09:49:15:966 Consola/(13931:13944): Tiempo de Finalización: 09:49:15:962
+
+[INFO] 09:49:15:967 Consola/(13931:13944): Tiempo de Ejecución: 0:0:1:813
+
+[INFO] 09:49:15:967 Consola/(13931:13944): Cantidad de impresiones del programa ansisop: 0
+
+[INFO] 09:49:15:967 Consola/(13931:13944): Se liberaron los recursos del hilo detachable asociado al pid 3
+[ERROR] 09:51:52:719 Consola/(13931:13932): Se desconecto el kernel
+[INFO] 09:52:05:148 Consola/(13931:13931): Se escribió un comando en la consola
+[INFO] 09:52:05:149 Consola/(13931:13931): Se liberan los recursos
+[INFO] 09:52:05:808 Consola/(14020:14020): Se inicializan los semaforos
+[INFO] 09:52:05:810 Consola/(14020:14020): Se conecto la Consola y el Kernel
+[INFO] 09:52:15:397 Consola/(14020:14020): Se escribió un comando en la consola
+[INFO] 09:52:15:397 Consola/(14020:14020): Se creo el script correctamente este dice: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 09:52:15:397 Consola/(14020:14020): Se le envio el script al Kernel que dice : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 09:52:15:400 Consola/(14020:14021): Se creo un hilo Detachable para el proceso 1
+[INFO] 09:52:15:400 Consola/(14020:14023): Se inicializo rutinaPrograma 1 en el tiempo 09:52:15:400
+[INFO] 09:52:18:78 Consola/(13859:13859): Se escribió un comando en la consola
+[INFO] 09:52:18:94 Consola/(13859:13859): Se liberan los recursos
+[INFO] 09:52:22:133 Consola/(14024:14024): Se inicializan los semaforos
+[INFO] 09:52:22:138 Consola/(14024:14024): Se conecto la Consola y el Kernel
+[INFO] 09:52:33:660 Consola/(14024:14024): Se escribió un comando en la consola
+[INFO] 09:52:33:660 Consola/(14024:14024): Se creo el script correctamente este dice: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 09:52:33:660 Consola/(14024:14024): Se le envio el script al Kernel que dice : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 09:52:33:666 Consola/(14024:14026): Se creo un hilo Detachable para el proceso 2
+[INFO] 09:52:33:666 Consola/(14024:14028): Se inicializo rutinaPrograma 2 en el tiempo 09:52:33:666
+[INFO] 09:52:39:987 Consola/(14024:14028): Se imprimio el mensaje del pid 2: 1
+
+[INFO] 09:52:44:137 Consola/(14024:14028): Se imprimio el mensaje del pid 2: 2
+
+[INFO] 09:52:48:322 Consola/(14024:14028): Se imprimio el mensaje del pid 2: 3
+
+[INFO] 09:52:52:503 Consola/(14024:14028): Se imprimio el mensaje del pid 2: 4
+
+[INFO] 09:52:56:739 Consola/(14024:14028): Se imprimio el mensaje del pid 2: 5
+
+[INFO] 09:53:00:930 Consola/(14024:14028): Se imprimio el mensaje del pid 2: 6
+
+[INFO] 09:53:05:177 Consola/(14024:14028): Se imprimio el mensaje del pid 2: 7
+
+[INFO] 09:53:07:824 Consola/(14024:14028): Se imprimio el mensaje del pid 2: 8
+
+[INFO] 09:53:09:966 Consola/(14024:14028): Se imprimio el mensaje del pid 2: 9
+
+[ERROR] 09:54:04:784 Consola/(14020:14021): Se desconecto el kernel
+[ERROR] 09:54:04:788 Consola/(14024:14026): Se desconecto el kernel
+[INFO] 09:54:16:847 Consola/(14020:14020): Se escribió un comando en la consola
+[INFO] 09:54:16:849 Consola/(14020:14020): Se liberan los recursos
+[INFO] 09:54:17:414 Consola/(14052:14052): Se inicializan los semaforos
+[INFO] 09:54:17:416 Consola/(14052:14052): Se conecto la Consola y el Kernel
+[INFO] 09:54:24:246 Consola/(14024:14024): Se escribió un comando en la consola
+[INFO] 09:54:24:247 Consola/(14024:14024): Se liberan los recursos
+[INFO] 09:54:26:348 Consola/(14061:14061): Se inicializan los semaforos
+[INFO] 09:54:26:352 Consola/(14061:14061): Se conecto la Consola y el Kernel
+[INFO] 09:54:46:402 Consola/(14052:14052): Se escribió un comando en la consola
+[INFO] 09:54:46:402 Consola/(14052:14052): Se creo el script correctamente este dice: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 09:54:46:402 Consola/(14052:14052): Se le envio el script al Kernel que dice : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 09:54:46:405 Consola/(14052:14053): Se creo un hilo Detachable para el proceso 1
+[INFO] 09:54:46:405 Consola/(14052:14064): Se inicializo rutinaPrograma 1 en el tiempo 09:54:46:405
+[INFO] 09:54:47:805 Consola/(14061:14061): Se escribió un comando en la consola
+[INFO] 09:54:47:805 Consola/(14061:14061): Se creo el script correctamente este dice: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 09:54:47:805 Consola/(14061:14061): Se le envio el script al Kernel que dice : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 09:54:47:809 Consola/(14061:14063): Se creo un hilo Detachable para el proceso 2
+[INFO] 09:54:47:809 Consola/(14061:14065): Se inicializo rutinaPrograma 2 en el tiempo 09:54:47:809
+[INFO] 09:54:48:982 Consola/(14061:14065): Se imprimio el mensaje del pid 2: 1
+
+[INFO] 09:54:51:71 Consola/(14061:14065): Se imprimio el mensaje del pid 2: 2
+
+[INFO] 09:55:30:642 Consola/(14052:14052): Se escribió un comando en la consola
+[INFO] 09:55:30:643 Consola/(14052:14052): Se creo el script correctamente este dice: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 09:55:30:643 Consola/(14052:14052): Se le envio el script al Kernel que dice : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 09:55:30:658 Consola/(14052:14053): Se creo un hilo Detachable para el proceso 3
+[INFO] 09:55:30:679 Consola/(14052:14067): Se inicializo rutinaPrograma 3 en el tiempo 09:55:30:679
+[INFO] 09:55:48:442 Consola/(14052:14052): Se escribió un comando en la consola
+[INFO] 09:55:48:442 Consola/(14052:14052): Se creo el script correctamente este dice: begin
+signal b
+end
+
+[INFO] 09:55:48:442 Consola/(14052:14052): Se le envio el script al Kernel que dice : begin
+signal b
+end
+
+[INFO] 09:55:48:450 Consola/(14052:14053): Se creo un hilo Detachable para el proceso 4
+[INFO] 09:55:48:462 Consola/(14052:14068): Se inicializo rutinaPrograma 4 en el tiempo 09:55:48:462
+[INFO] 09:55:50:254 Consola/(14061:14065): Se imprimio el mensaje del pid 2: 3
+
+[INFO] 09:55:50:258 Consola/(14052:14053): Se cambio el estado del pid 4 a terminado
+[INFO] 09:55:50:259 Consola/(14052:14053): Se finalizo el pid 4 correctamente
+[INFO] 09:55:50:288 Consola/(14052:14068): Finalizo el pid: 4
+[INFO] 09:55:50:289 Consola/(14052:14068): Tiempo de inicio: 09:55:48:462
+
+[INFO] 09:55:50:289 Consola/(14052:14068): Tiempo de Finalización: 09:55:50:288
+
+[INFO] 09:55:50:289 Consola/(14052:14068): Tiempo de Ejecución: 0:0:1:826
+
+[INFO] 09:55:50:289 Consola/(14052:14068): Cantidad de impresiones del programa ansisop: 0
+
+[INFO] 09:55:50:289 Consola/(14052:14068): Se liberaron los recursos del hilo detachable asociado al pid 4
+[INFO] 09:56:08:6 Consola/(14052:14052): Se escribió un comando en la consola
+[INFO] 09:56:08:7 Consola/(14052:14052): Se creo el script correctamente este dice: begin
+signal b
+end
+
+[INFO] 09:56:08:7 Consola/(14052:14052): Se le envio el script al Kernel que dice : begin
+signal b
+end
+
+[INFO] 09:56:08:36 Consola/(14052:14053): Se creo un hilo Detachable para el proceso 5
+[INFO] 09:56:08:47 Consola/(14052:14069): Se inicializo rutinaPrograma 5 en el tiempo 09:56:08:46
+[INFO] 09:56:09:694 Consola/(14052:14053): Se cambio el estado del pid 5 a terminado
+[INFO] 09:56:09:694 Consola/(14052:14053): Se finalizo el pid 5 correctamente
+[INFO] 09:56:09:695 Consola/(14052:14069): Finalizo el pid: 5
+[INFO] 09:56:09:695 Consola/(14052:14069): Tiempo de inicio: 09:56:08:46
+
+[INFO] 09:56:09:695 Consola/(14052:14069): Tiempo de Finalización: 09:56:09:695
+
+[INFO] 09:56:09:695 Consola/(14052:14069): Tiempo de Ejecución: 0:0:1:649
+
+[INFO] 09:56:09:695 Consola/(14052:14069): Cantidad de impresiones del programa ansisop: 0
+
+[INFO] 09:56:09:695 Consola/(14052:14069): Se liberaron los recursos del hilo detachable asociado al pid 5
+[ERROR] 09:56:58:77 Consola/(14052:14053): Se desconecto el kernel
+[ERROR] 09:56:58:78 Consola/(14061:14063): Se desconecto el kernel
+[INFO] 09:57:02:486 Consola/(14052:14052): Se escribió un comando en la consola
+[INFO] 09:57:02:486 Consola/(14052:14052): Se liberan los recursos
+[INFO] 09:57:04:760 Consola/(14061:14061): Se escribió un comando en la consola
+[INFO] 09:57:04:760 Consola/(14061:14061): Se liberan los recursos
+[INFO] 10:04:44:125 Consola/(14150:14150): Se inicializan los semaforos
+[INFO] 10:04:44:130 Consola/(14150:14150): Se conecto la Consola y el Kernel
+[INFO] 10:04:58:561 Consola/(14153:14153): Se inicializan los semaforos
+[INFO] 10:04:58:564 Consola/(14153:14153): Se conecto la Consola y el Kernel
+[INFO] 10:05:14:433 Consola/(14150:14150): Se escribió un comando en la consola
+[INFO] 10:05:14:433 Consola/(14150:14150): Se creo el script correctamente este dice: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 10:05:14:433 Consola/(14150:14150): Se le envio el script al Kernel que dice : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 10:05:14:436 Consola/(14150:14152): Se creo un hilo Detachable para el proceso 1
+[INFO] 10:05:14:436 Consola/(14150:14159): Se inicializo rutinaPrograma 1 en el tiempo 10:05:14:436
+[INFO] 10:05:20:7 Consola/(14153:14153): Se escribió un comando en la consola
+[INFO] 10:05:20:8 Consola/(14153:14153): Se creo el script correctamente este dice: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 10:05:20:8 Consola/(14153:14153): Se le envio el script al Kernel que dice : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 10:05:20:30 Consola/(14153:14154): Se creo un hilo Detachable para el proceso 2
+[INFO] 10:05:20:30 Consola/(14153:14160): Se inicializo rutinaPrograma 2 en el tiempo 10:05:20:30
+[INFO] 10:05:21:134 Consola/(14153:14160): Se imprimio el mensaje del pid 2: 1
+
+[INFO] 10:05:25:286 Consola/(14153:14160): Se imprimio el mensaje del pid 2: 2
+
+[INFO] 10:05:29:502 Consola/(14153:14160): Se imprimio el mensaje del pid 2: 3
+
+[INFO] 10:05:33:714 Consola/(14153:14160): Se imprimio el mensaje del pid 2: 4
+
+[INFO] 10:05:37:946 Consola/(14153:14160): Se imprimio el mensaje del pid 2: 5
+
+[INFO] 10:05:42:273 Consola/(14153:14160): Se imprimio el mensaje del pid 2: 6
+
+[INFO] 10:05:46:462 Consola/(14153:14160): Se imprimio el mensaje del pid 2: 7
+
+[INFO] 10:05:50:730 Consola/(14153:14160): Se imprimio el mensaje del pid 2: 8
+
+[INFO] 10:05:54:937 Consola/(14153:14160): Se imprimio el mensaje del pid 2: 9
+
+[ERROR] 10:06:18:994 Consola/(14150:14152): Se desconecto el kernel
+[ERROR] 10:06:19:5 Consola/(14153:14154): Se desconecto el kernel
+[INFO] 10:06:37:686 Consola/(14150:14150): Se escribió un comando en la consola
+[INFO] 10:06:37:686 Consola/(14150:14150): Se liberan los recursos
+[INFO] 10:06:40:809 Consola/(14153:14153): Se escribió un comando en la consola
+[INFO] 10:06:40:810 Consola/(14153:14153): Se liberan los recursos
+[INFO] 10:06:43:525 Consola/(14185:14185): Se inicializan los semaforos
+[INFO] 10:06:43:529 Consola/(14185:14185): Se conecto la Consola y el Kernel
+[INFO] 10:06:58:419 Consola/(14188:14188): Se inicializan los semaforos
+[INFO] 10:06:58:422 Consola/(14188:14188): Se conecto la Consola y el Kernel
+[INFO] 10:07:17:137 Consola/(14188:14188): Se escribió un comando en la consola
+[INFO] 10:07:17:137 Consola/(14188:14188): Se creo el script correctamente este dice: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 10:07:17:137 Consola/(14188:14188): Se le envio el script al Kernel que dice : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 10:07:17:138 Consola/(14188:14190): Se creo un hilo Detachable para el proceso 1
+[INFO] 10:07:17:138 Consola/(14188:14191): Se inicializo rutinaPrograma 1 en el tiempo 10:07:17:138
+[INFO] 10:07:24:648 Consola/(14185:14185): Se escribió un comando en la consola
+[INFO] 10:07:24:648 Consola/(14185:14185): Se creo el script correctamente este dice: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 10:07:24:648 Consola/(14185:14185): Se le envio el script al Kernel que dice : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 10:07:24:652 Consola/(14185:14187): Se creo un hilo Detachable para el proceso 2
+[INFO] 10:07:24:652 Consola/(14185:14193): Se inicializo rutinaPrograma 2 en el tiempo 10:07:24:652
+[INFO] 10:07:25:821 Consola/(14185:14193): Se imprimio el mensaje del pid 2: 1
+
+[INFO] 10:07:27:951 Consola/(14185:14193): Se imprimio el mensaje del pid 2: 2
+
+[ERROR] 10:07:37:576 Consola/(14188:14190): Se desconecto el kernel
+[ERROR] 10:07:37:578 Consola/(14185:14187): Se desconecto el kernel
+[INFO] 10:07:48:296 Consola/(14188:14188): Se escribió un comando en la consola
+[INFO] 10:07:48:314 Consola/(14188:14188): Se liberan los recursos
+[INFO] 10:07:49:480 Consola/(14208:14208): Se inicializan los semaforos
+[INFO] 10:07:49:485 Consola/(14208:14208): Se conecto la Consola y el Kernel
+[INFO] 10:08:17:350 Consola/(14185:14185): Se escribió un comando en la consola
+[INFO] 10:08:17:350 Consola/(14185:14185): Se liberan los recursos
+[INFO] 10:08:18:505 Consola/(14218:14218): Se inicializan los semaforos
+[INFO] 10:08:18:508 Consola/(14218:14218): Se conecto la Consola y el Kernel
+[INFO] 10:08:20:438 Consola/(14208:14208): Se escribió un comando en la consola
+[INFO] 10:08:20:438 Consola/(14208:14208): Se creo el script correctamente este dice: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 10:08:20:438 Consola/(14208:14208): Se le envio el script al Kernel que dice : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 10:08:20:440 Consola/(14208:14210): Se creo un hilo Detachable para el proceso 1
+[INFO] 10:08:20:440 Consola/(14208:14221): Se inicializo rutinaPrograma 1 en el tiempo 10:08:20:440
+[ERROR] 10:08:21:255 Consola/(14218:14219): Se desconecto el kernel
+[ERROR] 10:08:21:258 Consola/(14208:14210): Se desconecto el kernel
+[INFO] 10:08:38:545 Consola/(14208:14208): Se escribió un comando en la consola
+[INFO] 10:08:38:545 Consola/(14208:14208): Se liberan los recursos
+[INFO] 10:08:39:218 Consola/(14238:14238): Se inicializan los semaforos
+[INFO] 10:08:39:222 Consola/(14238:14238): Se conecto la Consola y el Kernel
+[INFO] 10:08:41:12 Consola/(14218:14218): Se escribió un comando en la consola
+[INFO] 10:08:41:13 Consola/(14218:14218): Se liberan los recursos
+[INFO] 10:08:41:646 Consola/(14241:14241): Se inicializan los semaforos
+[INFO] 10:08:41:656 Consola/(14241:14241): Se conecto la Consola y el Kernel
+[INFO] 10:08:59:296 Consola/(14238:14238): Se escribió un comando en la consola
+[INFO] 10:08:59:297 Consola/(14238:14238): Se creo el script correctamente este dice: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 10:08:59:297 Consola/(14238:14238): Se le envio el script al Kernel que dice : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 10:08:59:300 Consola/(14238:14239): Se creo un hilo Detachable para el proceso 1
+[INFO] 10:08:59:300 Consola/(14238:14247): Se inicializo rutinaPrograma 1 en el tiempo 10:08:59:300
+[INFO] 10:09:08:299 Consola/(14241:14241): Se escribió un comando en la consola
+[INFO] 10:09:08:300 Consola/(14241:14241): Se creo el script correctamente este dice: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 10:09:08:300 Consola/(14241:14241): Se le envio el script al Kernel que dice : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 10:09:08:303 Consola/(14241:14242): Se creo un hilo Detachable para el proceso 2
+[INFO] 10:09:08:303 Consola/(14241:14248): Se inicializo rutinaPrograma 2 en el tiempo 10:09:08:303
+[INFO] 10:09:09:627 Consola/(14241:14248): Se imprimio el mensaje del pid 2: 1
+
+[INFO] 10:09:13:793 Consola/(14241:14248): Se imprimio el mensaje del pid 2: 2
+
+[INFO] 10:09:18:34 Consola/(14241:14248): Se imprimio el mensaje del pid 2: 3
+
+[INFO] 10:09:22:222 Consola/(14241:14248): Se imprimio el mensaje del pid 2: 4
+
+[INFO] 10:09:26:410 Consola/(14241:14248): Se imprimio el mensaje del pid 2: 5
+
+[INFO] 10:09:30:614 Consola/(14241:14248): Se imprimio el mensaje del pid 2: 6
+
+[INFO] 10:09:31:997 Consola/(14238:14238): Se escribió un comando en la consola
+[INFO] 10:09:31:997 Consola/(14238:14238): Se le envia el pid -1217597440 para que Kernel lo finalice
+[INFO] 10:09:32:5 Consola/(14238:14239): Se cambio el estado del pid 1 a terminado
+[INFO] 10:09:32:5 Consola/(14238:14239): Se finalizo el pid 1 correctamente
+[INFO] 10:09:32:5 Consola/(14238:14247): Finalizo el pid: 1
+[INFO] 10:09:32:6 Consola/(14238:14247): Tiempo de inicio: 10:08:59:300
+
+[INFO] 10:09:32:6 Consola/(14238:14247): Tiempo de Finalización: 10:09:32:5
+
+[INFO] 10:09:32:9 Consola/(14238:14247): Tiempo de Ejecución: 0:0:32:705
+
+[INFO] 10:09:32:10 Consola/(14238:14247): Cantidad de impresiones del programa ansisop: 0
+
+[INFO] 10:09:32:10 Consola/(14238:14247): Se liberaron los recursos del hilo detachable asociado al pid 1
+[INFO] 10:09:32:59 Consola/(14238:14239): Se cambio el estado del pid 1 a terminado
+[INFO] 10:09:32:59 Consola/(14238:14239): Se finalizo el pid 1 correctamente
+[INFO] 10:10:00:656 Consola/(14238:14238): Se escribió un comando en la consola
+[INFO] 10:10:00:656 Consola/(14238:14238): Se creo el script correctamente este dice: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 10:10:00:656 Consola/(14238:14238): Se le envio el script al Kernel que dice : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 10:10:00:662 Consola/(14238:14239): Se creo un hilo Detachable para el proceso 3
+[INFO] 10:10:00:662 Consola/(14238:14250): Se inicializo rutinaPrograma 3 en el tiempo 10:10:00:662
+[INFO] 10:10:03:933 Consola/(14241:14248): Se imprimio el mensaje del pid 2: 7
+
+[INFO] 10:10:08:110 Consola/(14241:14248): Se imprimio el mensaje del pid 2: 8
+
+[INFO] 10:10:12:286 Consola/(14241:14248): Se imprimio el mensaje del pid 2: 9
+
+[INFO] 10:10:16:514 Consola/(14241:14248): Se imprimio el mensaje del pid 2: 10
+
+[INFO] 10:10:20:722 Consola/(14241:14248): Se imprimio el mensaje del pid 2: 11
+
+[INFO] 10:10:24:910 Consola/(14241:14248): Se imprimio el mensaje del pid 2: 12
+
+[INFO] 10:10:29:69 Consola/(14241:14248): Se imprimio el mensaje del pid 2: 13
+
+[INFO] 10:10:33:266 Consola/(14241:14248): Se imprimio el mensaje del pid 2: 14
+
+[INFO] 10:10:37:475 Consola/(14241:14248): Se imprimio el mensaje del pid 2: 15
+
+[INFO] 10:10:41:734 Consola/(14241:14248): Se imprimio el mensaje del pid 2: 16
+
+[INFO] 10:10:45:983 Consola/(14241:14248): Se imprimio el mensaje del pid 2: 17
+
+[INFO] 10:10:50:182 Consola/(14241:14248): Se imprimio el mensaje del pid 2: 18
+
+[INFO] 10:10:54:461 Consola/(14241:14248): Se imprimio el mensaje del pid 2: 19
+
+[INFO] 10:10:58:722 Consola/(14241:14248): Se imprimio el mensaje del pid 2: 20
+
+[INFO] 10:11:01:919 Consola/(14238:14238): Se escribió un comando en la consola
+[INFO] 10:11:01:919 Consola/(14238:14238): Se le envia el pid -1217597440 para que Kernel lo finalice
+[INFO] 10:11:01:969 Consola/(14238:14239): Se cambio el estado del pid 3 a terminado
+[INFO] 10:11:01:969 Consola/(14238:14239): Se finalizo el pid 3 correctamente
+[INFO] 10:11:01:969 Consola/(14238:14250): Finalizo el pid: 3
+[INFO] 10:11:01:969 Consola/(14238:14250): Tiempo de inicio: 10:10:00:662
+
+[INFO] 10:11:01:978 Consola/(14238:14250): Tiempo de Finalización: 10:11:01:969
+
+[INFO] 10:11:01:978 Consola/(14238:14250): Tiempo de Ejecución: 0:1:1:307
+
+[INFO] 10:11:01:978 Consola/(14238:14250): Cantidad de impresiones del programa ansisop: 0
+
+[INFO] 10:11:01:978 Consola/(14238:14250): Se liberaron los recursos del hilo detachable asociado al pid 3
+[INFO] 10:11:01:990 Consola/(14238:14239): Se cambio el estado del pid 3 a terminado
+[INFO] 10:11:01:990 Consola/(14238:14239): Se finalizo el pid 3 correctamente
+[INFO] 10:11:03:390 Consola/(14241:14248): Se imprimio el mensaje del pid 2: 21
+
+[INFO] 10:11:14:590 Consola/(14238:14238): Se escribió un comando en la consola
+[INFO] 10:11:14:590 Consola/(14238:14238): Se creo el script correctamente este dice: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 10:11:14:591 Consola/(14238:14238): Se le envio el script al Kernel que dice : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 10:11:14:594 Consola/(14238:14239): Se creo un hilo Detachable para el proceso 4
+[INFO] 10:11:14:594 Consola/(14238:14253): Se inicializo rutinaPrograma 4 en el tiempo 10:11:14:594
+[ERROR] 10:12:36:131 Consola/(14238:14239): Se desconecto el kernel
+[ERROR] 10:12:36:150 Consola/(14241:14242): Se desconecto el kernel
+[WARNING] 10:12:41:686 Consola/(14238:14238): Se recibio una SIGINT, se finalizará el proceso
+[WARNING] 10:12:43:25 Consola/(14241:14241): Se recibio una SIGINT, se finalizará el proceso
+[INFO] 10:12:58:96 Consola/(14274:14274): Se inicializan los semaforos
+[INFO] 10:12:58:99 Consola/(14274:14274): Se conecto la Consola y el Kernel
+[INFO] 10:13:04:749 Consola/(14283:14283): Se inicializan los semaforos
+[INFO] 10:13:04:753 Consola/(14283:14283): Se conecto la Consola y el Kernel
+[ERROR] 10:13:09:250 Consola/(14274:14275): Se desconecto el kernel
+[ERROR] 10:13:09:259 Consola/(14283:14285): Se desconecto el kernel
+[INFO] 10:13:35:772 Consola/(14274:14274): Se escribió un comando en la consola
+[INFO] 10:13:35:772 Consola/(14274:14274): Se liberan los recursos
+[INFO] 10:13:36:795 Consola/(14300:14300): Se inicializan los semaforos
+[INFO] 10:13:36:799 Consola/(14300:14300): Se conecto la Consola y el Kernel
+[INFO] 10:13:39:88 Consola/(14283:14283): Se escribió un comando en la consola
+[INFO] 10:13:39:88 Consola/(14283:14283): Se liberan los recursos
+[INFO] 10:13:39:820 Consola/(14303:14303): Se inicializan los semaforos
+[INFO] 10:13:39:821 Consola/(14303:14303): Se conecto la Consola y el Kernel
+[INFO] 10:14:00:900 Consola/(14300:14300): Se escribió un comando en la consola
+[INFO] 10:14:00:900 Consola/(14300:14300): Se creo el script correctamente este dice: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 10:14:00:900 Consola/(14300:14300): Se le envio el script al Kernel que dice : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 10:14:00:903 Consola/(14300:14301): Se creo un hilo Detachable para el proceso 1
+[INFO] 10:14:00:903 Consola/(14300:14312): Se inicializo rutinaPrograma 1 en el tiempo 10:14:00:903
+[INFO] 10:14:11:201 Consola/(14303:14303): Se escribió un comando en la consola
+[INFO] 10:14:11:201 Consola/(14303:14303): Se creo el script correctamente este dice: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 10:14:11:201 Consola/(14303:14303): Se le envio el script al Kernel que dice : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 10:14:11:206 Consola/(14303:14305): Se creo un hilo Detachable para el proceso 2
+[INFO] 10:14:11:206 Consola/(14303:14314): Se inicializo rutinaPrograma 2 en el tiempo 10:14:11:206
+[INFO] 10:14:12:421 Consola/(14303:14314): Se imprimio el mensaje del pid 2: 1
+
+[INFO] 10:14:14:458 Consola/(14303:14314): Se imprimio el mensaje del pid 2: 2
+
+[INFO] 10:14:16:472 Consola/(14303:14314): Se imprimio el mensaje del pid 2: 3
+
+[INFO] 10:14:18:547 Consola/(14303:14314): Se imprimio el mensaje del pid 2: 4
+
+[INFO] 10:14:20:589 Consola/(14303:14314): Se imprimio el mensaje del pid 2: 5
+
+[INFO] 10:14:22:665 Consola/(14303:14314): Se imprimio el mensaje del pid 2: 6
+
+[INFO] 10:14:24:717 Consola/(14303:14314): Se imprimio el mensaje del pid 2: 7
+
+[INFO] 10:14:26:793 Consola/(14303:14314): Se imprimio el mensaje del pid 2: 8
+
+[INFO] 10:14:28:875 Consola/(14303:14314): Se imprimio el mensaje del pid 2: 9
+
+[INFO] 10:14:30:950 Consola/(14303:14314): Se imprimio el mensaje del pid 2: 10
+
+[INFO] 10:14:32:682 Consola/(14300:14300): Se escribió un comando en la consola
+[INFO] 10:14:32:682 Consola/(14300:14300): Se le envia el pid -1217155072 para que Kernel lo finalice
+[INFO] 10:14:32:716 Consola/(14300:14301): Se cambio el estado del pid 1 a terminado
+[INFO] 10:14:32:716 Consola/(14300:14301): Se finalizo el pid 1 correctamente
+[INFO] 10:14:32:717 Consola/(14300:14301): Se cambio el estado del pid 1 a terminado
+[INFO] 10:14:32:717 Consola/(14300:14301): Se finalizo el pid 1 correctamente
+[INFO] 10:14:32:717 Consola/(14300:14312): Finalizo el pid: 1
+[INFO] 10:14:32:717 Consola/(14300:14312): Tiempo de inicio: 10:14:00:903
+
+[INFO] 10:14:32:717 Consola/(14300:14312): Tiempo de Finalización: 10:14:32:717
+
+[INFO] 10:14:32:721 Consola/(14300:14312): Tiempo de Ejecución: 0:0:31:814
+
+[INFO] 10:14:32:722 Consola/(14300:14312): Cantidad de impresiones del programa ansisop: 0
+
+[INFO] 10:14:32:722 Consola/(14300:14312): Se liberaron los recursos del hilo detachable asociado al pid 1
+[INFO] 10:14:32:966 Consola/(14303:14314): Se imprimio el mensaje del pid 2: 11
+
+[INFO] 10:15:05:601 Consola/(14300:14300): Se escribió un comando en la consola
+[INFO] 10:15:05:601 Consola/(14300:14300): Se creo el script correctamente este dice: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 10:15:05:601 Consola/(14300:14300): Se le envio el script al Kernel que dice : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 10:15:05:603 Consola/(14300:14301): Se creo un hilo Detachable para el proceso 3
+[INFO] 10:15:05:603 Consola/(14300:14315): Se inicializo rutinaPrograma 3 en el tiempo 10:15:05:603
+[WARNING] 10:28:21:791 Consola/(14300:14300): Se recibio una SIGINT, se finalizará el proceso
+[WARNING] 10:28:23:136 Consola/(14303:14303): Se recibio una SIGINT, se finalizará el proceso
+[INFO] 10:38:16:388 Consola/(14947:14947): Se inicializan los semaforos
+[INFO] 10:38:16:394 Consola/(14947:14947): Se conecto la Consola y el Kernel
+[INFO] 10:38:30:884 Consola/(14947:14947): Se escribió un comando en la consola
+[INFO] 10:38:30:884 Consola/(14947:14947): Se creo el script correctamente este dice: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 10:38:30:884 Consola/(14947:14947): Se le envio el script al Kernel que dice : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 10:38:30:887 Consola/(14947:14948): Se creo un hilo Detachable para el proceso 1
+[INFO] 10:38:30:887 Consola/(14947:14950): Se inicializo rutinaPrograma 1 en el tiempo 10:38:30:887
+[INFO] 10:38:33:415 Consola/(14951:14951): Se inicializan los semaforos
+[INFO] 10:38:33:418 Consola/(14951:14951): Se conecto la Consola y el Kernel
+[INFO] 10:38:58:628 Consola/(14951:14951): Se escribió un comando en la consola
+[INFO] 10:38:58:628 Consola/(14951:14951): Se creo el script correctamente este dice: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 10:38:58:628 Consola/(14951:14951): Se le envio el script al Kernel que dice : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 10:38:58:634 Consola/(14951:14952): Se creo un hilo Detachable para el proceso 2
+[INFO] 10:38:58:634 Consola/(14951:14958): Se inicializo rutinaPrograma 2 en el tiempo 10:38:58:634
+[INFO] 10:38:59:781 Consola/(14951:14958): Se imprimio el mensaje del pid 2: 1
+
+[INFO] 10:39:03:906 Consola/(14951:14958): Se imprimio el mensaje del pid 2: 2
+
+[INFO] 10:39:08:178 Consola/(14951:14958): Se imprimio el mensaje del pid 2: 3
+
+[INFO] 10:39:12:378 Consola/(14951:14958): Se imprimio el mensaje del pid 2: 4
+
+[INFO] 10:39:16:702 Consola/(14951:14958): Se imprimio el mensaje del pid 2: 5
+
+[INFO] 10:39:17:796 Consola/(14947:14947): Se escribió un comando en la consola
+[INFO] 10:39:17:796 Consola/(14947:14947): Se le envia el pid -1217228800 para que Kernel lo finalice
+[INFO] 10:39:17:806 Consola/(14947:14948): Se cambio el estado del pid 1 a terminado
+[INFO] 10:39:17:806 Consola/(14947:14948): Se finalizo el pid 1 correctamente
+[INFO] 10:39:17:806 Consola/(14947:14948): Se cambio el estado del pid 1 a terminado
+[INFO] 10:39:17:806 Consola/(14947:14948): Se finalizo el pid 1 correctamente
+[INFO] 10:39:17:806 Consola/(14947:14950): Finalizo el pid: 1
+[INFO] 10:39:17:806 Consola/(14947:14950): Tiempo de inicio: 10:38:30:887
+
+[INFO] 10:39:17:806 Consola/(14947:14950): Tiempo de Finalización: 10:39:17:806
+
+[INFO] 10:39:17:807 Consola/(14947:14950): Tiempo de Ejecución: 0:0:46:919
+
+[INFO] 10:39:17:807 Consola/(14947:14950): Cantidad de impresiones del programa ansisop: 0
+
+[INFO] 10:39:17:807 Consola/(14947:14950): Se liberaron los recursos del hilo detachable asociado al pid 1
+[INFO] 10:40:19:255 Consola/(14947:14947): Se escribió un comando en la consola
+[INFO] 10:40:19:255 Consola/(14947:14947): Se creo el script correctamente este dice: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 10:40:19:255 Consola/(14947:14947): Se le envio el script al Kernel que dice : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 10:40:19:259 Consola/(14947:14948): Se creo un hilo Detachable para el proceso 3
+[INFO] 10:40:19:259 Consola/(14947:14961): Se inicializo rutinaPrograma 3 en el tiempo 10:40:19:259
+[INFO] 10:40:22:519 Consola/(14951:14958): Se imprimio el mensaje del pid 2: 6
+
+[INFO] 10:40:26:722 Consola/(14951:14958): Se imprimio el mensaje del pid 2: 7
+
+[INFO] 10:40:29:305 Consola/(14951:14958): Se imprimio el mensaje del pid 2: 8
+
+[INFO] 10:40:31:410 Consola/(14951:14958): Se imprimio el mensaje del pid 2: 9
+
+[INFO] 10:40:33:510 Consola/(14951:14958): Se imprimio el mensaje del pid 2: 10
+
+[INFO] 10:40:35:589 Consola/(14951:14958): Se imprimio el mensaje del pid 2: 11
+
+[INFO] 10:40:37:730 Consola/(14951:14958): Se imprimio el mensaje del pid 2: 12
+
+[INFO] 10:40:39:825 Consola/(14951:14958): Se imprimio el mensaje del pid 2: 13
+
+[INFO] 10:40:41:881 Consola/(14951:14958): Se imprimio el mensaje del pid 2: 14
+
+[INFO] 10:40:43:970 Consola/(14951:14958): Se imprimio el mensaje del pid 2: 15
+
+[INFO] 10:40:46:10 Consola/(14951:14958): Se imprimio el mensaje del pid 2: 16
+
+[INFO] 10:40:48:98 Consola/(14951:14958): Se imprimio el mensaje del pid 2: 17
+
+[ERROR] 10:40:48:679 Consola/(14951:14952): Se desconecto el kernel
+[ERROR] 10:40:48:683 Consola/(14947:14948): Se desconecto el kernel
+[INFO] 10:40:57:782 Consola/(14947:14947): Se escribió un comando en la consola
+[INFO] 10:40:57:782 Consola/(14947:14947): Se liberan los recursos
+[INFO] 10:40:58:652 Consola/(14980:14980): Se inicializan los semaforos
+[INFO] 10:40:58:656 Consola/(14980:14980): Se conecto la Consola y el Kernel
+[INFO] 10:41:11:61 Consola/(14980:14980): Se escribió un comando en la consola
+[INFO] 10:41:11:61 Consola/(14980:14980): Se creo el script correctamente este dice: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 10:41:11:61 Consola/(14980:14980): Se le envio el script al Kernel que dice : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 10:41:11:70 Consola/(14980:14981): Se creo un hilo Detachable para el proceso 1
+[INFO] 10:41:11:70 Consola/(14980:14983): Se inicializo rutinaPrograma 1 en el tiempo 10:41:11:70
+[INFO] 10:41:21:666 Consola/(14951:14951): Se escribió un comando en la consola
+[INFO] 10:41:21:666 Consola/(14951:14951): Se liberan los recursos
+[INFO] 10:41:22:563 Consola/(14990:14990): Se inicializan los semaforos
+[INFO] 10:41:22:566 Consola/(14990:14990): Se conecto la Consola y el Kernel
+[INFO] 10:41:31:549 Consola/(14990:14990): Se escribió un comando en la consola
+[INFO] 10:41:31:549 Consola/(14990:14990): Se creo el script correctamente este dice: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 10:41:31:549 Consola/(14990:14990): Se le envio el script al Kernel que dice : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 10:41:31:551 Consola/(14990:14991): Se creo un hilo Detachable para el proceso 2
+[INFO] 10:41:31:551 Consola/(14990:14993): Se inicializo rutinaPrograma 2 en el tiempo 10:41:31:551
+[INFO] 10:41:32:913 Consola/(14990:14993): Se imprimio el mensaje del pid 2: 1
+
+[INFO] 10:41:35:17 Consola/(14990:14993): Se imprimio el mensaje del pid 2: 2
+
+[INFO] 10:41:37:125 Consola/(14990:14993): Se imprimio el mensaje del pid 2: 3
+

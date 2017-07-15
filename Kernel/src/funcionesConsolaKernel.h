@@ -12,6 +12,8 @@
 #include <sys/types.h>
 #include "commons/collections/list.h"
 #include "commons/collections/queue.h"
+#include "funcionesSemaforosYCompartidas.h"
+
 
 #include "datosGlobales.h"
 

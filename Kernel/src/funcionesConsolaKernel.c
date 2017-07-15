@@ -85,7 +85,12 @@ void imprimirTablaGlobaldeArchivos(){
 	}
 }
 
-
+void imprimirSemaforos(){
+	void imprimir(t_semaforo* sem){
+		printf("El semaforo %s vale: %d", sem->nombre,sem->valor);
+	}
+	list_iterate(listaDeSemaforos, imprimir);
+}
 
 
 void * consolaKernel()
@@ -101,6 +106,7 @@ void * consolaKernel()
 			"6- Detener la planificación.\n"
 			"7- Ver cuantas CPUs hay.\n"
 			"8- Imprimir de nuevo el menu.\n\n"
+			"9- Imprimir semaforos \n"
 			"Elija el numero de su opcion: ");
 	sem_post(&sem_ConsolaKernelLenvantada);
 	scanf("%d", &opcion);
@@ -193,13 +199,19 @@ void * consolaKernel()
 								"6- Cantidad de acciones liberar realizadas en bytes y en operaciones\n\n"
 								"Elija el numero de su opcion: ");
 								scanf("%d", &opcion);
+								sem_wait(&mutex_listaProcesos);
+									bool busqueda(PROCESOS* proceso){
+										return pid == proceso->pid;
+									}
+								PCB_DATA* pcb = ((PROCESOS*)list_find(avisos, busqueda))->pcb;
+								sem_post(&mutex_listaProcesos);
 				switch (opcion) {
 				case 1: {
-					//Cosa del negro
+					printf("La cantidad de rafagas ejecutadas es %d",pcb->cantDeRafagasEjecutadas);
 				}
 					break;
 				case 2: {
-					//cosa del negro
+						printf("La cantidad de rafagas privilegiadas que ejecuto es %d", pcb->cantDeInstPrivilegiadas);
 
 				}
 					break;
@@ -311,6 +323,9 @@ void * consolaKernel()
 						"6- Detener la planificación.\n"
 						"7- Imprimir de nuevo el menu.\n\n");
 			}break;
+			case 9:{
+				imprimirSemaforos();
+			}
 			default:{
 
 			}break;
