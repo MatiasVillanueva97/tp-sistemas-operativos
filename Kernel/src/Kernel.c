@@ -65,13 +65,12 @@ bool proceso_finalizacionExterna(int pid, int exitCode)
 	}
 	PROCESOS* procesoAFianalizar =(PROCESOS*)list_find(avisos, busqueda);
 
+	sem_post(&mutex_listaProcesos);
 	if( procesoAFianalizar != NULL){
-		procesoAFianalizar->pcb->exitCode=exitCode;
-		procesoAFianalizar->pcb->estadoDeProceso=finalizado;
+		finalizarPid(procesoAFianalizar->pcb,exitCode);
 		flag=true;
 	}
 
-	sem_post(&mutex_listaProcesos);
 
 	return flag;
 }
@@ -557,12 +556,15 @@ void liberarSemaforo(int pid){
 				return proceso->pid == pid;
 			}
 			PROCESOS* proceso = list_find(avisos, buscar);
-			if(proceso->semaforoTomado != NULL)
+
+			if(proceso->semaforoTomado != NULL){
 				SEM_signal(proceso->semaforoTomado, proceso->pcb);
+			}
+
 			sem_post(&mutex_listaProcesos);
 }
-
 void proceso_liberarRecursos(PCB_DATA* pcb){
+
 
 	if(liberarRecursosHeap(pcb->pid)== 0){
 		printf("No se liberaron los recursos del heap correctamenete del pid %d\n", pcb->pid);
@@ -571,7 +573,8 @@ void proceso_liberarRecursos(PCB_DATA* pcb){
 		printf("Se liberaron correctamente los recursos del heap del pid %d\n",pcb->pid);
 	}
 	liberarRecursosArchivo(pcb);
-	liberarSemaforo(pcb->pid);//deberian ser varios
+
+	liberarSemaforo(pcb->pid);
 	enviarMensaje(socketMemoria,finalizarPrograma,&pcb->pid,sizeof(int));
 	void* respuesta;
 	recibirMensaje(socketMemoria,&respuesta);

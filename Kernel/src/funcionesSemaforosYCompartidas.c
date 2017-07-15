@@ -59,8 +59,14 @@ bool SEM_wait(char* nombreSEM, PCB_DATA * pcb){
 			return proceso->pid == pcb->pid;
 		}
 		PROCESOS* proceso = list_find(avisos, buscar);
+		//Updated upstream
 		proceso->semaforoTomado = string_duplicate(nombreSEM);
 		sem_post(&mutex_listaProcesos);
+
+
+		/*	proceso->semaforoTomado = string_duplicate(nombreSEM);
+				sem_post(&mutex_listaProcesos);*/
+//>>>>>>> Stashed changes
 		if(sem->valor <= 0){
 			pcb->estadoDeProceso = bloqueado;
 			queue_push(sem->cola, pcb);
@@ -78,6 +84,7 @@ bool SEM_wait(char* nombreSEM, PCB_DATA * pcb){
 bool SEM_signal(char* nombreSEM, PCB_DATA* pcb){
 	t_semaforo* sem = buscarSemaforo(nombreSEM);
 	if(sem != NULL){
+
 		if(queue_size(sem->cola) > 0){
 			PCB_DATA* procesoADespertar = queue_pop(sem->cola);
 			procesoADespertar->estadoDeProceso = paraEjecutar;
