@@ -125,7 +125,7 @@ void *rutinaConsola(void * arg)
 				nuevoPrograma->scriptAnsisop = scripAnsisop;
 				nuevoPrograma->socketConsola = socketConsola;
 				nuevoPrograma->avisoAConsola = false;
-				nuevoPrograma->scriptAnsisop = NULL;
+				nuevoPrograma->semaforoTomado = NULL;
 
 				//***Creo el PCB
 				PCB_DATA * pcbNuevo = crearPCB(nuevoPrograma->scriptAnsisop, nuevoPrograma->pid, 0);

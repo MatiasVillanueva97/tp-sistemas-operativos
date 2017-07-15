@@ -1620,3 +1620,481 @@ dentro de la busqueda
 
 [INFO] 05:50:47:331 Kernel/(9147:9157): Murio el proceso: 2
 
+[INFO] 06:33:38:315 Kernel/(9848:9851): 
+[Rutina planificadorCortoPlazo] - Entramos al planificador de corto plazo!
+
+[INFO] 06:33:38:335 Kernel/(9848:9850): 
+[rutina estadoNEW] - Entramos al planificador de largo plazo!
+
+[INFO] 06:33:43:172 Kernel/(9848:9856): 
+[rutina aceptarConexiones] - Nueva Consola Conectada!
+Socket Consola 8
+
+
+[INFO] 06:33:43:178 Kernel/(9848:9859): [Rutina rutinaConsola] - Entramos al hilo de la consola: 8!
+
+[INFO] 06:33:54:767 Kernel/(9848:9859): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 06:33:54:767 Kernel/(9848:9859): El stream es : begin
+variables f, i, t
+#`i`: Iterador
+i=0
+#`f`: Hasta donde contar
+f=20
+:inicio
+#Incrementar el iterador
+i=i+1
+#Imprimir el contador
+prints n i
+#`t`: Comparador entre `i` y `f`
+t=f-i
+#De no ser iguales, salta a inicio
+jnz t inicio
+end
+ /n
+[INFO] 06:33:54:796 Kernel/(9848:9850): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 06:33:54:797 Kernel/(9848:9850): Estructura:--
+Pid: 1
+Script: begin
+variables f, i, t
+#`i`: Iterador
+i=0
+#`f`: Hasta donde contar
+f=20
+:inicio
+#Incrementar el iterador
+i=i+1
+#Imprimir el contador
+prints n i
+#`t`: Comparador entre `i` y `f`
+t=f-i
+#De no ser iguales, salta a inicio
+jnz t inicio
+end
+
+SocketConsola:8
+
+
+[INFO] 06:33:54:797 Kernel/(9848:9850): [memoria_dividirScriptEnPaginas] - begin
+variables f, i, t
+#`i`: Iterador
+i=0
+#`f`: Hasta donde contar
+f=20
+:inicio
+#Incrementar el iterador
+i=i+1
+#Imprimir el contador
+prints n i
+#`t`: Comparador entre `i` y `f`
+t=f-i
+#De no ser iguales, salta a inicio
+jnz t inicio
+end
+
+[INFO] 06:33:54:797 Kernel/(9848:9850): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 06:33:54:804 Kernel/(9848:9850): Envio una pagina: 0
+
+[INFO] 06:33:54:804 Kernel/(9848:9850): La pagina 0, contiene:
+[INFO] 06:33:54:804 Kernel/(9848:9850): begin
+variables f, i, t
+#`i`: Iterador
+i=0
+#`f`: Hasta donde contar
+f=20
+:inicio
+#Incrementar el iterador
+i=i+1
+#Imprimir el contador
+prints n i
+#`t`: Comparador entre `i` y `f`
+t=f-i
+#De no ser iguales, salta a inicio
+jnz t inicio
+end
+
+[INFO] 06:34:07:494 Kernel/(9848:9856): 
+[rutina aceptarConexiones] - Nueva CPU Conectada
+Socket CPU 9
+
+
+[INFO] 06:34:07:562 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al hilo de la CPU cuyo socket es: 9.
+
+[INFO] 06:34:07:562 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:34:10:156 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 06:34:10:156 Kernel/(9848:9864): 
+dentro de la busqueda
+[INFO] 06:34:10:194 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:34:12:465 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 06:34:12:482 Kernel/(9848:9864): 
+dentro de la busqueda
+[INFO] 06:34:12:522 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:34:14:776 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 06:34:14:780 Kernel/(9848:9864): 
+dentro de la busqueda
+[INFO] 06:34:14:819 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:34:17:43 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 06:34:17:43 Kernel/(9848:9864): 
+dentro de la busqueda
+[INFO] 06:34:17:104 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:34:19:313 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 06:34:19:313 Kernel/(9848:9864): 
+dentro de la busqueda
+[INFO] 06:34:19:362 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:34:21:573 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 06:34:21:615 Kernel/(9848:9864): 
+dentro de la busqueda
+[INFO] 06:34:21:615 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:34:23:861 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 06:34:23:862 Kernel/(9848:9864): 
+dentro de la busqueda
+[INFO] 06:34:24:38 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:34:26:294 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 06:34:26:294 Kernel/(9848:9864): 
+dentro de la busqueda
+[INFO] 06:34:26:339 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:34:28:646 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 06:34:28:646 Kernel/(9848:9864): 
+dentro de la busqueda
+[INFO] 06:34:28:693 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:34:30:921 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 06:34:30:921 Kernel/(9848:9864): 
+dentro de la busqueda
+[INFO] 06:34:30:966 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:34:33:214 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 06:34:33:218 Kernel/(9848:9864): 
+dentro de la busqueda
+[INFO] 06:34:33:275 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:34:35:528 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 06:34:35:582 Kernel/(9848:9864): 
+dentro de la busqueda
+[INFO] 06:34:35:582 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:34:37:803 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 06:34:37:807 Kernel/(9848:9864): 
+dentro de la busqueda
+[INFO] 06:34:37:852 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:34:40:68 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 06:34:40:119 Kernel/(9848:9864): 
+dentro de la busqueda
+[INFO] 06:34:40:119 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:34:42:412 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 06:34:42:506 Kernel/(9848:9864): 
+dentro de la busqueda
+[INFO] 06:34:42:506 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:34:44:845 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 06:34:44:863 Kernel/(9848:9864): 
+dentro de la busqueda
+[INFO] 06:34:44:909 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:34:47:133 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 06:34:47:133 Kernel/(9848:9864): 
+dentro de la busqueda
+[INFO] 06:34:47:174 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:34:49:407 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 06:34:49:443 Kernel/(9848:9864): 
+dentro de la busqueda
+[INFO] 06:34:49:530 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:34:51:817 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 06:34:51:834 Kernel/(9848:9864): 
+dentro de la busqueda
+[INFO] 06:34:51:856 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:34:54:199 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 06:34:54:238 Kernel/(9848:9864): 
+dentro de la busqueda
+[INFO] 06:34:54:286 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:34:56:573 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU termino la ejecucion de un proceso: accion- 104!
+
+[INFO] 06:34:56:594 Kernel/(9848:9864): 
+dentro de la busqueda
+[INFO] 06:34:56:595 Kernel/(9848:9854): Se acaba de mandar a la consola n°: 8, que el proceso 1 acaba de finalizar con exit code: 0
+
+[INFO] 06:34:56:616 Kernel/(9848:9864): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:49:29:827 Kernel/(10163:10166): 
+[Rutina planificadorCortoPlazo] - Entramos al planificador de corto plazo!
+
+[INFO] 06:49:29:831 Kernel/(10163:10165): 
+[rutina estadoNEW] - Entramos al planificador de largo plazo!
+
+[INFO] 06:49:32:694 Kernel/(10163:10171): 
+[rutina aceptarConexiones] - Nueva Consola Conectada!
+Socket Consola 8
+
+
+[INFO] 06:49:32:698 Kernel/(10163:10174): [Rutina rutinaConsola] - Entramos al hilo de la consola: 8!
+
+[INFO] 06:49:40:345 Kernel/(10163:10174): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 06:49:40:345 Kernel/(10163:10174): El stream es : begin
+variables f, i, t
+#`i`: Iterador
+i=0
+#`f`: Hasta donde contar
+f=20
+:inicio
+#Incrementar el iterador
+i=i+1
+#Imprimir el contador
+prints n i
+#`t`: Comparador entre `i` y `f`
+t=f-i
+#De no ser iguales, salta a inicio
+jnz t inicio
+end
+ /n
+[INFO] 06:49:40:393 Kernel/(10163:10165): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 06:49:40:393 Kernel/(10163:10165): Estructura:--
+Pid: 1
+Script: begin
+variables f, i, t
+#`i`: Iterador
+i=0
+#`f`: Hasta donde contar
+f=20
+:inicio
+#Incrementar el iterador
+i=i+1
+#Imprimir el contador
+prints n i
+#`t`: Comparador entre `i` y `f`
+t=f-i
+#De no ser iguales, salta a inicio
+jnz t inicio
+end
+
+SocketConsola:8
+
+
+[INFO] 06:49:40:393 Kernel/(10163:10165): [memoria_dividirScriptEnPaginas] - begin
+variables f, i, t
+#`i`: Iterador
+i=0
+#`f`: Hasta donde contar
+f=20
+:inicio
+#Incrementar el iterador
+i=i+1
+#Imprimir el contador
+prints n i
+#`t`: Comparador entre `i` y `f`
+t=f-i
+#De no ser iguales, salta a inicio
+jnz t inicio
+end
+
+[INFO] 06:49:40:394 Kernel/(10163:10165): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 06:49:40:394 Kernel/(10163:10165): Envio una pagina: 0
+
+[INFO] 06:49:40:394 Kernel/(10163:10165): La pagina 0, contiene:
+[INFO] 06:49:40:394 Kernel/(10163:10165): begin
+variables f, i, t
+#`i`: Iterador
+i=0
+#`f`: Hasta donde contar
+f=20
+:inicio
+#Incrementar el iterador
+i=i+1
+#Imprimir el contador
+prints n i
+#`t`: Comparador entre `i` y `f`
+t=f-i
+#De no ser iguales, salta a inicio
+jnz t inicio
+end
+
+[INFO] 06:49:52:973 Kernel/(10163:10171): 
+[rutina aceptarConexiones] - Nueva CPU Conectada
+Socket CPU 9
+
+
+[INFO] 06:49:53:42 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al hilo de la CPU cuyo socket es: 9.
+
+[INFO] 06:49:53:42 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:49:55:598 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 06:49:55:650 Kernel/(10163:10178): 
+dentro de la busqueda
+[INFO] 06:49:55:650 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:49:57:897 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 06:49:57:950 Kernel/(10163:10178): 
+dentro de la busqueda
+[INFO] 06:49:57:967 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:50:00:235 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 06:50:00:235 Kernel/(10163:10178): 
+dentro de la busqueda
+[INFO] 06:50:00:280 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:50:02:491 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 06:50:02:498 Kernel/(10163:10178): 
+dentro de la busqueda
+[INFO] 06:50:02:547 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:50:04:804 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 06:50:04:804 Kernel/(10163:10178): 
+dentro de la busqueda
+[INFO] 06:50:04:842 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:50:07:102 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 06:50:07:169 Kernel/(10163:10178): 
+dentro de la busqueda
+[INFO] 06:50:07:169 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:50:09:548 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 06:50:09:598 Kernel/(10163:10178): 
+dentro de la busqueda
+[INFO] 06:50:09:598 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:50:11:910 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 06:50:11:911 Kernel/(10163:10178): 
+dentro de la busqueda
+[INFO] 06:50:11:980 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:50:14:240 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 06:50:14:247 Kernel/(10163:10178): 
+dentro de la busqueda
+[INFO] 06:50:14:374 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:50:16:631 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 06:50:16:631 Kernel/(10163:10178): 
+dentro de la busqueda
+[INFO] 06:50:16:671 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:50:18:926 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 06:50:18:929 Kernel/(10163:10178): 
+dentro de la busqueda
+[INFO] 06:50:18:984 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:50:21:356 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 06:50:21:446 Kernel/(10163:10178): 
+dentro de la busqueda
+[INFO] 06:50:21:447 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:50:23:685 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 06:50:23:685 Kernel/(10163:10178): 
+dentro de la busqueda
+[INFO] 06:50:23:742 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:50:26:390 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 06:50:26:468 Kernel/(10163:10178): 
+dentro de la busqueda
+[INFO] 06:50:26:468 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:50:28:731 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 06:50:28:787 Kernel/(10163:10178): 
+dentro de la busqueda
+[INFO] 06:50:28:788 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:50:31:4 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 06:50:31:14 Kernel/(10163:10178): 
+dentro de la busqueda
+[INFO] 06:50:31:70 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:50:33:376 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 06:50:33:394 Kernel/(10163:10178): 
+dentro de la busqueda
+[INFO] 06:50:33:418 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:50:35:636 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 06:50:35:636 Kernel/(10163:10178): 
+dentro de la busqueda
+[INFO] 06:50:35:686 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:50:37:989 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 06:50:38:8 Kernel/(10163:10178): 
+dentro de la busqueda
+[INFO] 06:50:38:41 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:50:40:260 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 06:50:40:263 Kernel/(10163:10178): 
+dentro de la busqueda
+[INFO] 06:50:40:298 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:50:42:497 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU termino la ejecucion de un proceso: accion- 104!
+
+[INFO] 06:50:42:515 Kernel/(10163:10178): 
+dentro de la busqueda
+[INFO] 06:50:42:515 Kernel/(10163:10169): Se acaba de mandar a la consola n°: 8, que el proceso 1 acaba de finalizar con exit code: 0
+
+[INFO] 06:50:42:535 Kernel/(10163:10178): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 06:56:45:272 Kernel/(10163:10174): Murio el proceso: 1
+
