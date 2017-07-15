@@ -45,7 +45,6 @@ int pedirPagina(int pid,int tamano){
 			heap1->isFree = false;
 			heap1->size = tamano;
 
-
 			w->valor = string_repeat('\0',tamano + sizeof(HeapMetadata)*2);
 
 			memcpy(w->valor,heap1,sizeof(HeapMetadata));

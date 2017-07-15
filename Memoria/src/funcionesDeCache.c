@@ -88,8 +88,8 @@ lineaCache* buscarLinea(int pid, int pagina){
 void actualizarPaginaDeLaCache(int pid, int pagina, int tamano, int desplazamiento, void* contenidoModificado) {
 	lineaCache* linea = buscarLinea(pid,pagina);
 	if(linea == NULL){
-		log_warning(logMemoria,"La pagina %d del pid %d  no esta en al cache.",pagina,pid);
-	}
+			log_warning(logMemoria,"La pagina %d del pid %d  no esta en al cache.",pagina,pid);
+		}
 	else{
 	void* contenido = linea->contenido;
 	memcpy(contenido+desplazamiento,contenidoModificado,tamano);

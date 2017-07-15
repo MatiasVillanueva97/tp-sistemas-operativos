@@ -1,26 +1,37 @@
-[INFO] 19:14:51:430 FileSystem/(4935:4935): Inicializando FileSystem.....
+[INFO] 02:35:50:957 FileSystem/(4597:4597): Inicializando FileSystem.....
 
 
-[INFO] 19:14:51:430 FileSystem/(4935:4935): Configuracion Inicial: 
+[INFO] 02:35:50:957 FileSystem/(4597:4597): Configuracion Inicial: 
 
-[INFO] 19:14:51:430 FileSystem/(4935:4935): Se cargo el archivo Metadata.bin
-[INFO] 19:14:51:430 FileSystem/(4935:4935): [Configurar Todo]-Tamaño de bloque: 64
-[INFO] 19:14:51:430 FileSystem/(4935:4935): [Configurar Todo]-Cantidad de bloques: 5192
-[INFO] 19:15:06:461 FileSystem/(4935:4935): Se cargo el bitmap al FileSystem
-[INFO] 19:15:10:127 FileSystem/(4935:4935): [Configurar Todo]-Se creo correctamente el bitmap
-[INFO] 19:16:21:113 FileSystem/(4935:4935): [Tramitar Peticiones Del Kernel]-Llego un mensaje del kernel con operacion 401
-[INFO] 19:16:21:113 FileSystem/(4935:4935): [Validar Archivo]-El kernel quiere validar un archivo
-[INFO] 19:16:21:113 FileSystem/(4935:4935): La respuesta enviada al kernel es: 1 
-[INFO] 19:16:22:713 FileSystem/(4935:4935): [Tramitar Peticiones Del Kernel]-Llego un mensaje del kernel con operacion 404
-[INFO] 19:16:28:856 FileSystem/(4935:4935): [Obtener datos de Archivo]-El kernel quiere obtener 10 bytes desde 0, de la path: /archivo.bin
-[INFO] 19:19:56:938 FileSystem/(4935:4935): [Obtener Bloques]-El archivo tiene 2 bloques
-[INFO] 19:19:56:938 FileSystem/(4935:4935): [Obtener Bloques]-Se obtuvo el bloque numero: 10 
-[INFO] 19:19:56:938 FileSystem/(4935:4935): [Obtener Bloques]-Se obtuvo el bloque numero: 9 
-[INFO] 19:19:56:938 FileSystem/(4935:4935): [Obtener Bloques]-Se obtuvieron los bloques del archivo /archivo.bin
-[INFO] 19:20:21:239 FileSystem/(4935:4935): El archivo tiene un tamaño de: 100
-[INFO] 19:20:42:105 FileSystem/(4935:4935): [Obtener datos]-Se abrio el archivo 10.bin
-[INFO] 19:20:47:535 FileSystem/(4935:4935): [Leer Bloque]-Se leyo el bloque y se obtuvo: HOLASOYUNP 
-[INFO] 19:21:43:927 FileSystem/(4935:4935): [Obtener datos]-Se obtuvo el buffer: HOLASOYUNP
-[INFO] 19:21:47:56 FileSystem/(4935:4935): [Obtener datos de Archivo]-Se encontraron los datos y se envia al kernel: HOLASOYUNP
-[INFO] 19:26:29:510 FileSystem/(4935:4935): [Tramitar Peticiones Del Kernel]-Llego un mensaje del kernel con operacion 0
-[INFO] 19:26:29:510 FileSystem/(4935:4935): Se cerro el kernel y se procede a cerrar el socket
+[INFO] 02:35:50:957 FileSystem/(4597:4597): Se cargo el archivo Metadata.bin
+[INFO] 02:35:50:957 FileSystem/(4597:4597): [Configurar Todo]-Tamaño de bloque: 64
+[INFO] 02:35:50:957 FileSystem/(4597:4597): [Configurar Todo]-Cantidad de bloques: 24
+[INFO] 02:35:50:957 FileSystem/(4597:4597): [Configurar Todo]-Creacion del directorio de Archivos
+[INFO] 02:35:50:957 FileSystem/(4597:4597): Se cargo el bitmap al FileSystem
+[INFO] 02:35:50:957 FileSystem/(4597:4597): [Configurar Todo]-Se creo correctamente el bitmap
+[INFO] 02:36:42:801 FileSystem/(4597:4597): [Tramitar Peticiones Del Kernel]-Llego un mensaje del kernel con operacion 401
+[INFO] 02:37:02:262 FileSystem/(4597:4597): [Validar Archivo]-El kernel quiere validar un archivo
+[INFO] 02:37:45:222 FileSystem/(4597:4597): La respuesta enviada al kernel es: 0 
+[INFO] 02:37:58:485 FileSystem/(4597:4597): [Tramitar Peticiones Del Kernel]-Llego un mensaje del kernel con operacion 402
+[INFO] 02:38:20:132 FileSystem/(4597:4597): El kernel quiere crear un archivo con el siguiente path: 
+[INFO] 02:38:50:943 FileSystem/(4597:4597): [Buscar frame libre]-Se encontro la posicion 3 en el bitmap libre.
+[INFO] 02:41:01:365 FileSystem/(4770:4770): Inicializando FileSystem.....
+
+
+[INFO] 02:41:01:365 FileSystem/(4770:4770): Configuracion Inicial: 
+
+[INFO] 02:41:01:365 FileSystem/(4770:4770): Se cargo el archivo Metadata.bin
+[INFO] 02:41:01:365 FileSystem/(4770:4770): [Configurar Todo]-Tamaño de bloque: 64
+[INFO] 02:41:01:365 FileSystem/(4770:4770): [Configurar Todo]-Cantidad de bloques: 24
+[INFO] 02:41:01:365 FileSystem/(4770:4770): [Configurar Todo]-Creacion del directorio de Archivos
+[INFO] 02:41:01:365 FileSystem/(4770:4770): Se cargo el bitmap al FileSystem
+[INFO] 02:41:01:365 FileSystem/(4770:4770): [Configurar Todo]-Se creo correctamente el bitmap
+[INFO] 02:41:22:889 FileSystem/(4770:4770): [Tramitar Peticiones Del Kernel]-Llego un mensaje del kernel con operacion 401
+[INFO] 02:41:26:846 FileSystem/(4770:4770): [Validar Archivo]-El kernel quiere validar un archivo
+[INFO] 02:41:26:846 FileSystem/(4770:4770): La respuesta enviada al kernel es: 0 
+[INFO] 02:41:26:850 FileSystem/(4770:4770): [Tramitar Peticiones Del Kernel]-Llego un mensaje del kernel con operacion 402
+[INFO] 02:41:32:397 FileSystem/(4770:4770): El kernel quiere crear un archivo con el siguiente path: 
+[INFO] 02:41:37:596 FileSystem/(4770:4770): [Buscar frame libre]-Se encontro la posicion 4 en el bitmap libre.
+[INFO] 02:41:40:854 FileSystem/(4770:4770): [Crear Archivo]-Se creo en la ruta: /home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/FileSystem/puntoDeMontaje/Archivos/archivo.bin el archivo con TAMANO=0
+BLOQUES=[4]
+

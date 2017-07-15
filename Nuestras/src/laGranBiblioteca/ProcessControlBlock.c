@@ -599,4 +599,3 @@ void destruirPCB_Puntero(PCB_DATA * pcb){
 	destruirPCB_Local(*pcb);
 	free(pcb);
 }
-

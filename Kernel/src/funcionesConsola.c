@@ -130,8 +130,6 @@ void *rutinaConsola(void * arg)
 				PCB_DATA * pcbNuevo = crearPCB(nuevoPrograma->scriptAnsisop, nuevoPrograma->pid, 0);
 				nuevoPrograma->pcb = pcbNuevo;
 				//**Le doy una tabla para sus archivos abiertos
-				nuevoPrograma->semaforosTomados = list_create();
-
 
 
 				ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO * nuevaEntrada = malloc(sizeof(int)+4);

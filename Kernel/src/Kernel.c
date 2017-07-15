@@ -97,6 +97,7 @@ void newToReady(){
 	log_info(logKernel,"\n\n\nEstamos en la función newToReady a largo plazo!\n\n");
 	//***Tomo el primer elemento de la cola sin sacarlo de ella
 	sem_wait(&mutex_cola_New);
+	sem_wait(&mutex_cola_Ready);
 	PROCESOS* programaAnsisop = queue_peek(cola_New);
 
 	//*** Valido si el programa ya fue finalizado! Si aun no fue finalizado, se procede a valirdar si se puede pasar a ready... En caso de estar finalizado ya se pasa a la cola de terminados
@@ -173,9 +174,8 @@ void newToReady(){
 			programaAnsisop->pcb->contPags_pcb= cant_paginas+getConfigInt("STACK_SIZE");
 
 			//***Añado el pcb a la cola de Ready
-			sem_wait(&mutex_cola_Ready);
+
 			queue_push(cola_Ready,programaAnsisop->pcb);
-			sem_post(&mutex_cola_Ready);
 		}
 		else
 		{
@@ -204,12 +204,14 @@ void newToReady(){
 		//***Como el proceso fue finalizado externamente se lo quita de la cola de new y se lo agrega a la cola de finalizados
 		queue_pop(cola_New);
 
+
 		sem_wait(&mutex_cola_Finished);
 			queue_push(cola_Finished, programaAnsisop);
 		sem_post(&mutex_cola_Finished);
 
 		sem_post(&mutex_cola_New);
 	}
+	sem_post(&mutex_cola_Ready);
 
 	/// Que onda con programaAnsisop? No hay que liberarlo? Yo creo que no, onda perderia todas las referencias a los punteros... o no lo sé
 }
@@ -274,64 +276,15 @@ void * estadoNEW()
 /// **************************** SEGUNDA PARTE - PASAR PROCESOS DE READY A EXEC ****************************///
 /// ********************************************************************************************************///
 
-int cantDeProcesosEnEjecucion(){
-
-	int valor = queue_size(cola_Exec);
-
-	return valor;
-}
-
-int cantDeCpus(){
-	sem_wait(&lista_CPUS);
-	int valor = list_size(lista_CPUS);
-	sem_post(&lista_CPUS);
-	return valor;
-}
-
-void readyToExec2()
-{
-	sem_wait(&mutex_cola_Ready);
-	PCB_DATA* pcb=queue_pop(cola_Ready);
-// .
-		if(pcb != NULL){
-			//***Valido que el proceso haya finalizado
-
-			switch(pcb->estadoDeProceso){
-				case finalizado:{
-					//queue_pop(cola_Ready);
-					//*** si el proceso ya finalizo lo paso a la cola de finished
-					sem_wait(&mutex_cola_Finished);
-						queue_push(cola_Finished,pcb);
-					sem_post(&mutex_cola_Finished);
-				}break;
-				case paraEjecutar:{
-					sem_wait(&mutex_cola_Exec);
-					if( cantDeCpus() > cantDeProcesosEnEjecucion()){
-					//	queue_pop(cola_Ready);
-						queue_push(cola_Exec, pcb);
-					}else{
-						queue_push(cola_Ready, pcb);
-					}
-					sem_post(&mutex_cola_Exec);
-				}break;
-				default:{
-					queue_push(cola_Ready, pcb);
-				}
-			}
-		}
-		sem_post(&mutex_cola_Ready);
-
-}
-
 
 ///*** Quito el primer elemento de la cola de ready, valido que no haya sido finalizado y lo pongo en la cola de exec //**** Esta funcion anda bien,
-void readyToExec()
+PCB_DATA* readyToExec()
 {
 	sem_wait(&mutex_cola_Ready);
 	sem_wait(&mutex_cola_Exec);
 
 	//*** Tomo el primer elemento de la cola de ready y lo quito
-	PCB_DATA* pcb = queue_peek(cola_Ready);
+	PCB_DATA* pcb = queue_pop(cola_Ready);
 
 
 	//*** Valido que el proceso no haya sido terminado ya
@@ -339,7 +292,6 @@ void readyToExec()
 	{
 		//*** Si ya fue finalizado lo paso a la cola de finalizados
 		sem_wait(&mutex_cola_Finished);
-		queue_pop(cola_Ready);
 			queue_push(cola_Finished,pcb);
 		sem_post(&mutex_cola_Finished);
 
@@ -349,22 +301,23 @@ void readyToExec()
 			//*** Si como aun quedan porcesos en la cola de ready vuelvo a llamar a la funcion tomarPCBdeReady
 			sem_post(&mutex_cola_Exec);
 			sem_post(&mutex_cola_Ready);
-			readyToExec();
+			return readyToExec();
 		}
 		else
 		{
 			//** En caso de que ya no haya mas procesos para trabajar, devuelvo null
 			sem_post(&mutex_cola_Exec);
 			sem_post(&mutex_cola_Ready);
+			return NULL;
 		}
-	}
-	else{
-		sem_post(&mutex_cola_Exec);
-		sem_post(&mutex_cola_Ready);
 	}
 
 	//*** Como el proceso que encontre no esta terminado, entonces lo pongo en la cola de excec y lo retorno
+	queue_push(cola_Exec,pcb);
 
+	sem_post(&mutex_cola_Exec);
+	sem_post(&mutex_cola_Ready);
+	return pcb;
 }
 
 
@@ -383,11 +336,13 @@ bool hayCpusDisponibles(){
 
 	//SI LA CPU ESTA ESPERANDO TRABAJO es porque esta disponible y espera un PCB para trabajar
 	int sumaSi(t_CPU* cpu){
-		return	(cpu->esperaTrabajo);
+		if(cpu->esperaTrabajo)
+			return 1;
+		return 0;
 	}
 
 	sem_wait(&mutex_cola_CPUs_libres);
-		bool valor = list_find(lista_CPUS, sumaSi);
+		bool valor = sum(lista_CPUS,sumaSi) > 0;
 	sem_post(&mutex_cola_CPUs_libres);
 
 	return valor;
@@ -405,7 +360,7 @@ void * estadoReady()
 		if(hayCpusDisponibles() && hayProcesosEnReady())
 		{
 			///*** Quito el primer elemento de la cola de ready, valido que no haya sido finalizado y lo pongo en la cola de exec - en caso de no encontrar uno para poder trabajar no hago nada
-			readyToExec2();
+			readyToExec();
 		}
 	}
 	return NULL;
@@ -432,48 +387,27 @@ void * estadoReady()
 void execTo()
 {
 	//**Tomo el primer elemento de la lista,
-	PCB_DATA* pcb=queue_pop(cola_Exec);
+	PCB_DATA* pcb=queue_peek(cola_Exec);
 
 	if(pcb != NULL){
 		//***Valido que el proceso haya finalizado
-		switch(pcb->estadoDeProceso){
-			case finalizado:{
-				//queue_pop(cola_Exec);
-				//*** si el proceso ya finalizo lo paso a la cola de finished
-				sem_wait(&mutex_cola_Finished);
-					queue_push(cola_Finished,pcb);
-				sem_post(&mutex_cola_Finished);
-			}break;
-			case bloqueado:{
-				//queue_pop(cola_Exec);
+		if(pcb->estadoDeProceso == finalizado){
+			queue_pop(cola_Exec);
+			//*** si el proceso ya finalizo lo paso a la cola de finished
+			sem_wait(&mutex_cola_Finished);
+				queue_push(cola_Finished,pcb);
+			sem_post(&mutex_cola_Finished);
+
+		}
+		else{
+			//*** Valido que el proceso este bloqueado, si lo esta lo mando a wait
+			if(pcb->estadoDeProceso == bloqueado){
+				queue_pop(cola_Exec);
 				//*** si el proceso esta  bloqueado lo paso ala cola de bloqueado
 				sem_wait(&mutex_cola_Wait);
 					queue_push(cola_Wait,pcb);
 				sem_post(&mutex_cola_Wait);
-			}break;
-			case moverAReady:{
-				//queue_pop(cola_Exec);
-				pcb->estadoDeProceso = paraEjecutar;
-					queue_push(cola_Ready,pcb);
 
-			}break;
-			case paraEjecutar:{
-				t_CPU* cpu = cpu_buscarCPUDisponible();
-				if (cpu != NULL){
-					queue_push(cola_Exec,pcb);
-					pcb->estadoDeProceso = loEstaUsandoUnaCPU;
-					void* pcbSerializado = serializarPCB(pcb);
-					enviarMensaje(cpu->socketCPU,envioPCB,pcbSerializado,tamanoPCB(pcb));
-					cpu->pcbQueSeLlevo = pcb;
-					free(pcbSerializado);
-					cpu->esperaTrabajo = false;
-				}
-				else{
-					queue_push(cola_Exec,pcb);
-				}
-			}break;
-			default:{
-				queue_push(cola_Exec,pcb);
 			}
 		}
 	}
@@ -495,21 +429,17 @@ void* estadoEXEC(){
 	//*** el booleano finPorConsolaDelKernel esta en false desde el inicio, en el momento en el que el kernel quiera frenar la planificiacion esta variable pasara a true, y se frenara la planificacion
 	while(!finPorConsolaDelKernel)
 	{
-		sem_wait(&mutex_cola_Ready);
 		sem_wait(&mutex_cola_Exec);
 
 		//***Validamos que haya procesos en la cola de exec
 		if(queue_size(cola_Exec)>0){
 
 			//***Llamamos a la funcion excetToReady que pasa los procesos que ya hallan finalizado a la cola de finalizados, y retorna el pid del proceso que acaba de pasar. No haber encotrado ninguno retorna -1
-
 			execTo();
 			sem_post(&mutex_cola_Exec);
-			sem_post(&mutex_cola_Ready);
 		}
 		else{
 			sem_post(&mutex_cola_Exec);
-			sem_post(&mutex_cola_Ready);
 		}
 	}
 	return NULL;
@@ -542,6 +472,7 @@ void* estadoWAIT(){
 	//*** el booleano finPorConsolaDelKernel esta en false desde el inicio, en el momento en el que el kernel quiera frenar la planificiacion esta variable pasara a true, y se frenara la planificacion
 	while(!finPorConsolaDelKernel)
 	{
+		sem_wait(&mutex_listaProcesos);
 		sem_wait(&mutex_cola_Wait);
 
 		//***Validamos que haya procesos en la cola de exec
@@ -573,7 +504,7 @@ void* estadoWAIT(){
 		else{
 			sem_post(&mutex_cola_Wait);
 		}
-
+		sem_post(&mutex_listaProcesos);
 
 	}
 	return NULL;
@@ -630,7 +561,6 @@ void proceso_liberarRecursos(PCB_DATA* pcb){
 	}
 	liberarRecursosArchivo(pcb);
 	enviarMensaje(socketMemoria,finalizarPrograma,&pcb->pid,sizeof(int));
-
 	void* respuesta;
 	recibirMensaje(socketMemoria,&respuesta);
 	free(respuesta);

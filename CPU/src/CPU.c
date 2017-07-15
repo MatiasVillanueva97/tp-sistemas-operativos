@@ -186,8 +186,7 @@ int main(void)
 
 //******************************************************************FUNCIONES PARA MODULARIZAR Y QUEDE UN LINDO CODIGO*********************************************************************\\
 
-void conectarConMemoria()
-{
+void conectarConMemoria(){
 	int rta_conexion;
 	socketMemoria = conexionConServidor(getConfigString("PUERTO_MEMORIA"),getConfigString("IP_MEMORIA")); // Asignación del socket que se conectara con la memoria
 	if (socketMemoria == 1){
@@ -355,4 +354,3 @@ char* pedirInstruccion(){
 	return instruccion;
 
 }
-

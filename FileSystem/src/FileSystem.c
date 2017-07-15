@@ -230,8 +230,8 @@ int cantidadDeElementosDeUnArray (int* array){
 	return i;
 }
 void* obtenerDatos(char* path,int offset, int size){
-	int cantidadDebloques;
-	int *bloques = obtenerBloques(path,&cantidadDebloques);
+	int cantidad;
+	int *bloques = obtenerBloques(path,&cantidad);
 	int bloqueInicial = offset / bloqueSize;
 	if(offset+size > devolverTamano(path)){
 		log_error(logFS,"[Obtener datos]-Se pidio un offset mas grande que el tamano del archivo");
@@ -474,7 +474,7 @@ void* configurarTodo(){
 	fstat(fd, &scriptMap);
 
 	char* bitmap2 = mmap(0, scriptMap.st_size, PROT_WRITE |PROT_READ , MAP_SHARED, fd,  0);
-	bitMap= bitarray_create(bitmap2,cantidadDeBloques);
+	bitMap= bitarray_create(bitmap2, ceil(((double)cantidadDeBloques)/8.0));
 	log_info(logFS,"[Configurar Todo]-Se creo correctamente el bitmap");
 	config_destroy(configuracion);
 }

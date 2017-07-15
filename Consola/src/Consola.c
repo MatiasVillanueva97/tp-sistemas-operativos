@@ -17,6 +17,7 @@
 #include "commons/temporal.h"
 #include "commons/process.h"
 #include "commons/collections/list.h"
+#include "commons/log.h"
 #include <semaphore.h>
 #include <pthread.h>
 
@@ -55,6 +56,7 @@ char* mensajeActual;
 t_list* listaEstadoPrograma;
 bool error;
 bool signal_terminar;
+t_log* logConsola;
 
 
 pthread_mutex_t mutex_lista;
@@ -116,6 +118,7 @@ char * generarScript(char * nombreDeArchivo){
     if ( !(archivo = fopen(nombreDeArchivo, "r")) )
     {
     	perror("Error: el archivo no esta en el directorio o no existe \n");
+    	log_error(logConsola,"Error: el archivo %s no esta en el directorio o no existe ",nombreDeArchivo);
     	return NULL;// Va si o si , en caso de que exista el error sino tira segmentation fault
     }
 	size_t tamano = tamanoArchivo(archivo);
@@ -125,6 +128,7 @@ char * generarScript(char * nombreDeArchivo){
 	char* scriptProcesado = procesarArchivo(script, tamano);
 	free(script);
 	fclose(archivo);
+	log_info(logConsola,"Se creo el script correctamente este dice: %s",scriptProcesado);
 	return scriptProcesado;
 }
 void transformarFechaAInts(char * fecha, int arrayFecha[4]){
@@ -180,17 +184,21 @@ void conectarConKernel(){
 
 		// validacion de un correcto hadnshake
 		if (socketKernel== 1){
+			log_error(logConsola,"Falla en el protocolo de comunicación,en conectarConKernel");
 			perror("Falla en el protocolo de comunicación");
 			exit(1);
 		}
 		if (socketKernel == 2){
-			perror("No se conectado con el FileSystem, asegurese de que este abierto el proceso");
+			log_error(logConsola,"No se ha conecto con Kernel , en conectarConKernel");
+			perror("No se conecto con Kernel");
 			exit(1);
 		}
 		if ( (rta_conexion = handshakeCliente(socketKernel, Consola)) == -1) {
+			log_error(logConsola,"Error en el handshake con el Servidor, en conectarConKernel");
 			perror("Error en el handshake con el Servidor");
 			close(socketKernel);
 		}
+		log_info(logConsola,"Se conecto la Consola y el Kernel");
 		printf("Conexión exitosa con el Servidor(%i)!!\n",rta_conexion);
 }
 
@@ -222,9 +230,11 @@ void matarHiloPrograma(int pid){
 	ret = encontrarElDeIgualPid(pid);
 	if(ret == NULL){
 		perror("Error: el pid no existe o ya ha finalizado el programa");
+		log_error(logConsola,"Error: el pid no existe o ya ha finalizado el programa");
 	}
 	else{
 		ret->estaTerminado=true;
+		log_info(logConsola,"Se cambio el estado del pid %d a terminado",pid);
 	}
 }
 
@@ -235,22 +245,27 @@ void crearHiloDetachPrograma(int* pid){
 	int  res;
 	res = pthread_attr_init(&attr);
 	if (res != 0) {
-	perror("Error en los atributos del hilo");
+		log_error(logConsola,"Error en los atributos del hilo, en crearHiloDetachable");
+		perror("Error en los atributos del hilo");
 
 	}
 	res = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
 	 if (res != 0) {
-	perror("Error en el seteado del estado de detached");
+		 log_error(logConsola,"Error en el seteado del estado de detached, en crearHiloDetachable");
+		 perror("Error en el seteado del estado de detached");
 
 	 }
 
 	res = pthread_create (&hilo ,&attr,rutinaPrograma, (void *) pid);
 	if (res != 0) {
-	perror("Error en la creacion del hilo");
+		log_error(logConsola,"Error en la creacion del hilo, en crearHiloDetachable");
+		perror("Error en la creacion del hilo");
 	}
+	log_info(logConsola,"Se creo un hilo Detachable para el proceso %d",*pid);
 	pthread_attr_destroy(&attr);
 }
 void inicializarSemaforos(){
+	log_info(logConsola,"Se inicializan los semaforos");
 	sem_init(&mutex_lista,0,1);
 	sem_init(&mutex_ordenDeEscritura,0,0);
 	sem_init(&mutex_mensajeActual,0,1);
@@ -258,13 +273,18 @@ void inicializarSemaforos(){
 }
 void sigint_handler(int signal) {
 	printf("Se recibio una SIGINT, se finalizará el proceso\n" );
-	signal_terminar = true;
+	log_warning(logConsola,"Se recibio una SIGINT, se finalizará el proceso");
+	enviarMensaje(socketKernel,desconectarConsola, NULL, 0);
+	list_destroy_and_destroy_elements(listaEstadoPrograma,free);
+	close(socketKernel);
+	exit(-1);
 	return;
 }
 
 
 int main(void)
 {
+	logConsola = log_create("Consola.log","Consola",0,0);
 	printf("Inicializando Consola.....\n\n");
 
 	//char* gensc = generarScript("for");
@@ -294,6 +314,7 @@ int main(void)
 		printf("\nIngrese Comando: \n");
 
 		getline(&mensaje,&len,stdin);
+		log_info(logConsola,"Se escribió un comando en la consola");
 
 		char** comandoConsola = NULL;//Esta variable es para cortar el mensaje en 2.
 		comandoConsola = string_split(mensaje, " "); // separa la entrada en un char**
@@ -304,6 +325,7 @@ int main(void)
 			if (script==NULL){
 				continue;}
 			enviarMensaje(socketKernel,envioScriptAnsisop, script,strlen(script)+1);
+			log_info(logConsola,"Se le envio el script al Kernel que dice : %s", script);
 			liberarArray(nombreDeArchivo);
 			liberarArray(comandoConsola);
 			free(script);
@@ -312,6 +334,7 @@ int main(void)
 		}
 		if(strcmp(comandoConsola[0],"limpiarMensajes\n") == 0){
 			system("clear");
+			log_info(logConsola,"Se limpiaron los mensajes de la consola");
 			liberarArray(comandoConsola);
 			continue;
 		}
@@ -320,12 +343,14 @@ int main(void)
 			int *pid;
 			*pid = atoi(*stream);
 			enviarMensaje(socketKernel,finalizarCiertoScript ,pid, sizeof(int));
+			log_info(logConsola,"Se le envia el pid %d para que Kernel lo finalice",pid);
 
 			continue;
 		}
-		if(strcmp(comandoConsola[0],"desconectarConsola\n") == 0 || signal_terminar){
+		if(strcmp(comandoConsola[0],"desconectarConsola\n") == 0){
 			liberarArray(comandoConsola);
 			enviarMensaje(socketKernel,desconectarConsola, NULL, 0);
+			log_info(logConsola,"Se desconecto a Consola. Se le envio un mensaje al Kernel");
 			break;
 		}
 		if (error){
@@ -340,6 +365,8 @@ int main(void)
 	close(socketKernel);
 	free(mensaje);
 	liberarConfiguracion();
+	log_info(logConsola,"Se liberan los recursos");
+	log_destroy(logConsola);
 	return 0;
 }
 
@@ -356,7 +383,9 @@ void* rutinaPrograma(void* parametro){
 	t_Estado * programaEstado ;
 	agregarAListaEstadoPrograma(pid,false);
 	programaEstado = encontrarElDeIgualPid(pid);
+
 		printf("Numero de pid del proces: %d \n",pid);
+		log_info(logConsola,"Se inicializo rutinaPrograma %d en el tiempo %s",pid,tiempoInicio);
 		sem_post(&mutex_ordenDeEscritura);
 		sem_post(&mutex_espera);
 		while(1){
@@ -364,6 +393,7 @@ void* rutinaPrograma(void* parametro){
 		if(programaEstado->hayParaImprimir){
 			cantImpresiones++;
 			printf("Mensaje del pid %d: %s\n", pid, programaEstado->mensajeAImprimir);
+			log_info(logConsola,"Se imprimio el mensaje del pid %d: %s\n", pid, programaEstado->mensajeAImprimir);
 			programaEstado->hayParaImprimir = false;
 
 		}
@@ -371,16 +401,23 @@ void* rutinaPrograma(void* parametro){
 				break;
 			}
 		}
+
 	char* tiempoFin = temporal_get_string_time();
 	char* diferencia1 = diferencia(tiempoInicio,tiempoFin);
+	log_info(logConsola,"Finalizo el pid: %d", pid);
 	printf("\nAcaba de finalizar el pid: %d\n", pid);
+	log_info(logConsola,"Tiempo de inicio: %s\n",tiempoInicio);
 	printf("Tiempo de inicio: %s\n",tiempoInicio);
+	log_info(logConsola,"Tiempo de Finalización: %s\n",tiempoFin);
 	printf("Tiempo de Finalización: %s\n",tiempoFin);
+	log_info(logConsola,"Tiempo de Ejecución: %s\n",diferencia1);
 	printf("Tiempo de Ejecución: %s\n",diferencia1);
+	log_info(logConsola,"Cantidad de impresiones del programa ansisop: %d\n",cantImpresiones);
 	printf("Cantidad de impresiones del programa ansisop: %d\n",cantImpresiones);
 	free(diferencia1);
 	free(tiempoFin);
 	free(tiempoInicio);
+	log_info(logConsola,"Se liberaron los recursos del hilo detachable asociado al pid %d",pid);
 }
 
 
@@ -413,7 +450,7 @@ void* rutinaEscucharKernel() {
 			int pid;
 			pid = (*(int*) stream);
 			matarHiloPrograma(pid);
-
+			log_info(logConsola,"Se finalizo el pid %d correctamente",pid);
 			break;
 		}
 		case (errorFinalizacionPid): {
@@ -421,11 +458,12 @@ void* rutinaEscucharKernel() {
 			pid = (*(int*) stream);
 
 			matarHiloPrograma(pid);
-
+			log_error(logConsola,"No se ha finalizado correctamente el pid: %d \n", pid);
 			printf("No se ha finalizado correctamente el pid: %d \n", pid);
 			break;
 		}
 		case (0): {
+			log_error(logConsola,"Se desconecto el kernel");
 			printf("Se desconecto el kernel\n");
 			error = true;
 			printf("Ingrese una tecla para salir\n");
@@ -436,10 +474,8 @@ void* rutinaEscucharKernel() {
 			pid = (*(int*) stream);
 
 			matarHiloPrograma(pid);
-
-			printf(
-					"\nNo se ha finalizado correctamente el pid %d por falta de memoria\n",
-					pid);
+			log_error(logConsola,"No se ha finalizado correctamente el pid %d por falta de memoria",pid);
+			printf("\nNo se ha finalizado correctamente el pid %d por falta de memoria\n",pid);
 			break;
 
 		}

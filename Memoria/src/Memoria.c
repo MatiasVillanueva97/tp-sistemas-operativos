@@ -204,9 +204,14 @@ int* almacenarBytesEnPagina(int pid, int pagina, int desplazamiento, int tamano,
 	contenidoDeLaPagina = memoriaTotal+frame*getConfigInt("MARCO_SIZE");
 	memcpy(contenidoDeLaPagina+desplazamiento, buffer,tamano);
 	sem_wait(&mutex_cache);
-	if(buscarEnLaCache(pid,pagina) !=NULL){
-		log_info(logMemoria,"Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache");
-		actualizarPaginaDeLaCache(pid,pagina,tamano,desplazamiento,buffer);
+	if (buscarEnLaCache(pid, pagina) != NULL) {
+		log_info(logMemoria,
+				"Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache");
+		actualizarPaginaDeLaCache(pid, pagina, tamano, desplazamiento, buffer);
+	} else {
+		void* contenido2 = leerMemoriaPosta(pid, pagina);
+		cacheMiss(pid, pagina, contenido2);
+		free(contenido2);
 	}
 	sem_post(&mutex_cache);
 	sem_post(&mutex_Memoria);
@@ -671,7 +676,8 @@ int main(void) {
 	liberarMemoriaHeap(46,pagina);
 
 */
-		logMemoria = log_create("Memoria.log","Memoria",0,0);
+
+	logMemoria = log_create("Memoria.log","Memoria",0,0);
 	printf("Inicializando Memoria.....\n\n");
 	sem_init(&mutex_Memoria,0,1);
 	sem_init(&mutex_TablaDeCantidadDePaginas,0,1);

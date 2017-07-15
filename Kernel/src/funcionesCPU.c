@@ -127,12 +127,6 @@ void agregarPedirPaginaATablaEstadistica(int pid){
 	sem_post(&mutex_tabla_estadistica_de_heap);
 }
 
-t_CPU* cpu_buscarCPUDisponible(){
-	bool busqueda(t_CPU* cpu){
-		return cpu->esperaTrabajo;
-	}
-	return list_find(lista_CPUS,busqueda);
-}
 
 
 void *rutinaCPU(void * arg)
@@ -174,16 +168,11 @@ void *rutinaCPU(void * arg)
 			case pedirPCB:{
 				log_info(logKernel,"[Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- %d!\n", pedirPCB);
 
-				/*pcb = cpu_pedirPCBDeExec();
-
-				free(stream);
+				pcb = cpu_pedirPCBDeExec();
 
 				void* pcbSerializado = serializarPCB(pcb);
 				enviarMensaje(socketCPU,envioPCB,pcbSerializado,tamanoPCB(pcb));
 				free(pcbSerializado);
-				*/
-				estaCPU->esperaTrabajo=true;
-
 				free(stream);
 
 			}break;
@@ -215,8 +204,6 @@ void *rutinaCPU(void * arg)
 				}
 				sem_wait(&mutex_cola_CPUs_libres);
 				   	estaCPU->esperaTrabajo = true;
-					estaCPU->pcbQueSeLlevo = NULL;
-
 				sem_post(&mutex_cola_CPUs_libres);
 				free(stream);
 
@@ -227,12 +214,9 @@ void *rutinaCPU(void * arg)
 				log_info(logKernel,"[Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- %d!\n", enviarPCBaReady);
 				pcb = deserializarPCB(stream);
 				if(pcb->estadoDeProceso != bloqueado){
-					pcb->estadoDeProceso = moverAReady;
+					pcb->estadoDeProceso = paraEjecutar;
 				}
-				sem_wait(&mutex_cola_CPUs_libres);
-				estaCPU->esperaTrabajo = true;
-				estaCPU->pcbQueSeLlevo = NULL;
-				sem_post(&mutex_cola_CPUs_libres);
+
 				sem_wait(&mutex_cola_Exec);
 				 modificarPCB(pcb);
 				 sem_post(&mutex_cola_Exec);
@@ -352,21 +336,12 @@ void *rutinaCPU(void * arg)
 
 				PCB_DATA* pcbRecibido = deserializarPCBYSemaforo(stream, &nombreSemaforo);
 
-
-				sem_wait(&mutex_cola_Exec);
-
-
-
 				//Validar que el proceso no haya sido finalizado, responder siempre a la CPU si
 				PCB_DATA* pcbDelProcesoActual = modificarPCB(pcbRecibido);
 
 				sem_wait(&mutex_semaforos_ANSISOP);
 					bool respuestaParaCPU = SEM_wait(nombreSemaforo, pcbDelProcesoActual);
 				sem_post(&mutex_semaforos_ANSISOP);
-
-
-				sem_post(&mutex_cola_Exec);
-
 
 				free(nombreSemaforo);
 
@@ -378,19 +353,13 @@ void *rutinaCPU(void * arg)
 
 				log_info(logKernel,"[Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- %d!\n", signalSemaforo);
 
-				puts("Entro al signalSemaforo\n");
 				char* nombreSemaforo;
-
-				sem_wait(&mutex_cola_Exec);
-
 				PCB_DATA* pcbRecibido = deserializarPCBYSemaforo(stream, &nombreSemaforo);
 				PCB_DATA* pcbDelProcesoActual = modificarPCB(pcbRecibido);
 
 				sem_wait(&mutex_semaforos_ANSISOP);
 					bool respuestaParaCPU = SEM_signal(nombreSemaforo, pcbDelProcesoActual);
 				sem_post(&mutex_semaforos_ANSISOP);
-
-				sem_post(&mutex_cola_Exec);
 
 				free(nombreSemaforo);
 				enviarMensaje(socketCPU,respuestaBooleanaKernel, &respuestaParaCPU, sizeof(bool));
@@ -495,26 +464,19 @@ void *rutinaCPU(void * arg)
 			//QUE PASA SI SE DESCONECTA LA CPU
 			case 0:{
 				log_info(logKernel,"[Rutina rutinaCPU] - Desconecto la CPU N°: %d\n", socketCPU);
-				sem_wait(&mutex_cola_CPUs_libres);
-				if(estaCPU->pcbQueSeLlevo!=NULL){
-					log_info(logKernel,"La CPU de socket c");
-					sem_wait(&mutex_cola_Ready);
-					queue_push(cola_Ready, pcb);
-					sem_post(&mutex_cola_Ready);
-
-				}
-				cpu_quitarDeLista(socketCPU);
 				todaviaHayTrabajo=false;
-				sem_post(&mutex_cola_CPUs_libres);
+
+
+				cpu_quitarDeLista(socketCPU);
 
 			}break;
 
 			//QUE PASA CUANDO SE MUERTE LA CPU
 			default:{
 				log_info(logKernel,"[Rutina rutinaCPU] - Se recibio una accion que no esta contemplada: %d se cerrara el socket\n",accionCPU);
+				todaviaHayTrabajo=false;
 
 				cpu_quitarDeLista(socketCPU);
-				todaviaHayTrabajo=false;
 			}break;
 		}
 
