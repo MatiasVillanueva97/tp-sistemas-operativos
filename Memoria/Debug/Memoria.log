@@ -13584,3 +13584,1892 @@ m
 [INFO] 05:54:49:571 Memoria/(9143:9145): [Rip Kernel]-Se cerro el kernel
 [INFO] 05:54:49:572 Memoria/(9143:9143): Se finalizo el modulo Memoria.
 [INFO] 05:54:49:573 Memoria/(9143:9143): [Cache Flush]-Se limpia (Flush) la cache
+[INFO] 06:33:23:925 Memoria/(9843:9843): Se inicializo la memoria
+[INFO] 06:33:23:925 Memoria/(9843:9843): La tabla de paginacion invertida ocupa 5 paginas para administracion
+[INFO] 06:33:23:925 Memoria/(9843:9843): Se agrego las paginas administrativas a la tabla de cantidad de paginas
+[INFO] 06:33:23:925 Memoria/(9843:9843): Se le dio formato a la tabla de paginacion invertida
+[INFO] 06:33:23:925 Memoria/(9843:9843): Se inicializo la tabla de paginacion invertida
+[INFO] 06:33:23:925 Memoria/(9843:9843): Se inicio el hilo consola de la memoria
+[INFO] 06:33:23:926 Memoria/(9843:9843): Se bindeo el listener
+[INFO] 06:33:23:926 Memoria/(9843:9843): Se inicio el hilo que atiende al kernel
+[INFO] 06:33:23:926 Memoria/(9843:9843): Se inicio el hilo aceptar conexiones cpu
+[INFO] 06:33:38:305 Memoria/(9843:9845): [Rutina Kernel] - Kernel conectado exitosamente
+
+[INFO] 06:33:38:305 Memoria/(9843:9845): [recibirMensajesMemoria]-Entramos a recibirMensajesMemoria con 5 como socket
+[INFO] 06:33:38:305 Memoria/(9843:9846): [AceptarConexionesCPU] - Ya se ha establecido Conexion con un Kernel, ahora si se pueden conectar CPUs: 
+
+[INFO] 06:33:54:797 Memoria/(9843:9845): [recibirMensajesMemoria]-Llego la operacion 203
+[INFO] 06:33:54:797 Memoria/(9843:9845): [Inicializar Programa] - El kernel quiere iniciar el pid 1 con 3 paginas iniciales
+[INFO] 06:33:54:797 Memoria/(9843:9845): [Asignar Paginas]-El proceso 1 tiene 0 paginas en memoria y pidio 3 paginas nuevas
+[INFO] 06:33:54:797 Memoria/(9843:9845): Se reservo el frame 10 para la pagina 1 del pid 0
+[INFO] 06:33:54:797 Memoria/(9843:9845): Se reservo el frame 11 para la pagina 1 del pid 1
+[INFO] 06:33:54:797 Memoria/(9843:9845): Se reservo el frame 12 para la pagina 1 del pid 2
+[WARNING] 06:33:54:797 Memoria/(9843:9845): [Asignar Paginas]-Hay que crear una nueva entrada a la tabla cantidad de paginas
+[INFO] 06:33:54:797 Memoria/(9843:9845): [Inicializar Programa]-Se acepto asignar las paginas, por lo que se procede a iniciar el proceso
+[INFO] 06:33:54:798 Memoria/(9843:9845): [Inicializar Programa]-Se recibio el contenido de  la pagina numero 0 y se depositara el contenido: begin
+variables f, i, t
+#`i`: Iterador
+i=0
+#`f`: Hasta donde contar
+f=20
+:inicio
+#Incrementar el iterador
+i=i+1
+#Imprimir el contador
+prints n i
+#`t`: Comparador entre `i` y `f`
+t=f-i
+#De no ser iguales, salta a inicio
+jnz t inicio
+end
+
+[INFO] 06:33:54:798 Memoria/(9843:9845): Se devolvio el frame 10 de la busqueda en la tabla
+[INFO] 06:33:54:798 Memoria/(9843:9845): Se escribe el contenido en memoria: begin
+variables f, i, t
+#`i`: Iterador
+i=0
+#`f`: Hasta donde contar
+f=20
+:inicio
+#Incrementar el iterador
+i=i+1
+#Imprimir el contador
+prints n i
+#`t`: Comparador entre `i` y `f`
+t=f-i
+#De no ser iguales, salta a inicio
+jnz t inicio
+end
+
+[INFO] 06:33:54:798 Memoria/(9843:9845): [Inicializar Programa]-Se envio 1 a kernel como respuesta
+[INFO] 06:33:54:804 Memoria/(9843:9845): [Inicializar Programa]-Se recibio el contenido de  la pagina numero 1 y se depositara el contenido:                                                                                                                                                                                                                                                                
+[INFO] 06:33:54:804 Memoria/(9843:9845): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:33:54:804 Memoria/(9843:9845): Se escribe el contenido en memoria:                                                                                                                                                                                                                                                                
+[INFO] 06:33:54:804 Memoria/(9843:9845): [Inicializar Programa]-Se envio 1 a kernel como respuesta
+[INFO] 06:33:54:805 Memoria/(9843:9845): [Inicializar Programa]-Se recibio el contenido de  la pagina numero 2 y se depositara el contenido:                                                                                                                                                                                                                                                                
+[INFO] 06:33:54:805 Memoria/(9843:9845): Se devolvio el frame 12 de la busqueda en la tabla
+[INFO] 06:33:54:805 Memoria/(9843:9845): Se escribe el contenido en memoria:                                                                                                                                                                                                                                                                
+[INFO] 06:33:54:805 Memoria/(9843:9845): [Inicializar Programa]-Se envio 1 a kernel como respuesta
+[INFO] 06:34:07:493 Memoria/(9843:9846): [AceptarConexionesCPU] - Nueva CPU Conectada! Socket CPU: 6
+
+[INFO] 06:34:07:493 Memoria/(9843:9863): [recibirMensajesMemoria]-Entramos a recibirMensajesMemoria con 6 como socket
+[INFO] 06:34:07:576 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:07:576 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[WARNING] 06:34:07:576 Memoria/(9843:9863): La pagina 0 del pid 1 no esta en la cache.
+[INFO] 06:34:07:576 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 no esta en la cache
+[INFO] 06:34:07:576 Memoria/(9843:9863): [Solicitar Bytes]- Se procede a ejecutar el retardo por no estar en cache 500
+[INFO] 06:34:08:77 Memoria/(9843:9863): Se devolvio el frame 10 de la busqueda en la tabla
+[INFO] 06:34:08:77 Memoria/(9843:9863): [Solicitar Bytes]-Se lee toda la pagina 0 del pid &d.
+[INFO] 06:34:08:77 Memoria/(9843:9863): [Solicitar Bytes]-Se encontro el contenido y se procede a ejecutar un cache miss
+[INFO] 06:34:08:77 Memoria/(9843:9863): El proceso 1 tiene 0 paginas en cache
+[INFO] 06:34:08:77 Memoria/(9843:9863): [Solicitar Bytes-Cache  Miss]-El pid 1 tiene menos de 3 paginas.
+[INFO] 06:34:08:77 Memoria/(9843:9863): [Solicitar Bytes-Cache  Miss]-Se agrega esa fila a la cache.
+[INFO] 06:34:08:77 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:08:77 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: variables f, i, t
+acù
+[INFO] 06:34:08:610 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:08:610 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:08:610 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:08:610 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:08:610 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:08:610 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:08:610 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: i=0
+4:08:610	
+[INFO] 06:34:08:611 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:08:611 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:08:611 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:08:611 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[WARNING] 06:34:08:611 Memoria/(9843:9863): La pagina 1 del pid 1 no esta en la cache.
+[INFO] 06:34:08:611 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:08:611 Memoria/(9843:9863): [Solicitar Bytes]-Se lee toda la pagina 1 del pid &d.
+[INFO] 06:34:08:611 Memoria/(9843:9863): El proceso 1 tiene 1 paginas en cache
+[INFO] 06:34:08:611 Memoria/(9843:9863): [Solicitar Bytes-Cache  Miss]-El pid 1 tiene menos de 3 paginas.
+[INFO] 06:34:08:611 Memoria/(9843:9863): [Solicitar Bytes-Cache  Miss]-Se agrega esa fila a la cache.
+[INFO] 06:34:08:611 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:08:611 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:09:112 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:09:112 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:09:112 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:09:112 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:09:112 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:09:112 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:09:112 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: f=20
+ µ6:34
+[INFO] 06:34:09:112 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:09:112 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:09:112 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:09:112 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:09:112 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:09:112 Memoria/(9843:9863): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 06:34:09:112 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:09:112 Memoria/(9843:9863): Se actualizo la pagina 1 del pid 1
+[INFO] 06:34:09:112 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:09:113 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:09:613 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:09:613 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:09:613 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:09:613 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:09:613 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:09:613 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:09:613 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: i=i+1
+ µ:613
+[INFO] 06:34:09:614 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:09:614 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:09:614 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:09:614 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:09:614 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:09:614 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:09:614 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:09:655 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:09:655 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:09:655 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:09:655 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:09:655 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:09:655 Memoria/(9843:9863): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 06:34:09:655 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:09:655 Memoria/(9843:9863): Se actualizo la pagina 1 del pid 1
+[INFO] 06:34:09:655 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:09:655 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:10:195 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:10:195 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:10:195 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:10:195 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:10:195 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:10:195 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:10:195 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: prints n i
+
+[INFO] 06:34:10:195 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:10:195 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:10:195 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:10:195 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:10:195 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:10:195 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:10:195 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:10:741 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:10:741 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:10:741 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:10:741 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:10:741 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:10:741 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:10:741 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: t=f-i
+ µ:741
+[INFO] 06:34:10:742 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:10:742 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:10:742 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:10:742 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:10:742 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:10:742 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:10:742 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:10:794 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:10:794 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:10:794 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:10:794 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:10:794 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:10:794 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:10:794 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:10:835 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:10:835 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:10:835 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:10:835 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:10:835 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:10:835 Memoria/(9843:9863): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 06:34:10:835 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:10:835 Memoria/(9843:9863): Se actualizo la pagina 1 del pid 1
+[INFO] 06:34:10:835 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:10:835 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:11:345 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:11:345 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:11:345 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:11:345 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:11:345 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:11:345 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:11:345 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: jnz t inicio
+
+[INFO] 06:34:11:346 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:11:346 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:11:346 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:11:346 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:11:346 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:11:346 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:11:347 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:11:892 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:11:893 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:11:893 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:11:893 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:11:893 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:11:893 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:11:893 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: i=i+1
+ µ
+[INFO] 06:34:11:893 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:11:893 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:11:893 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:11:893 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:11:893 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:11:893 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:11:893 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:11:931 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:11:931 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:11:931 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:11:931 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:11:931 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:11:931 Memoria/(9843:9863): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 06:34:11:931 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:11:931 Memoria/(9843:9863): Se actualizo la pagina 1 del pid 1
+[INFO] 06:34:11:931 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:11:931 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:12:522 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:12:522 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:12:522 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:12:522 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:12:522 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:12:522 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:12:522 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: prints n i
+
+[INFO] 06:34:12:522 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:12:522 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:12:522 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:12:522 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:12:522 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:12:523 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:12:523 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:13:91 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:13:92 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:13:92 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:13:92 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:13:92 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:13:92 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:13:92 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: t=f-i
+ µ
+[INFO] 06:34:13:92 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:13:92 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:13:92 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:13:92 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:13:92 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:13:92 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:13:92 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:13:131 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:13:131 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:13:131 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:13:131 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:13:131 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:13:131 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:13:131 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:13:171 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:13:171 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:13:171 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:13:171 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:13:171 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:13:171 Memoria/(9843:9863): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 06:34:13:171 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:13:171 Memoria/(9843:9863): Se actualizo la pagina 1 del pid 1
+[INFO] 06:34:13:171 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:13:171 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:13:672 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:13:672 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:13:672 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:13:672 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:13:672 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:13:672 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:13:672 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: jnz t inicio
+
+[INFO] 06:34:13:673 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:13:673 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:13:673 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:13:673 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:13:673 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:13:673 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:13:673 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:14:214 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:14:214 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:14:214 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:14:214 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:14:214 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:14:214 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:14:214 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: i=i+1
+ µ
+[INFO] 06:34:14:215 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:14:215 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:14:215 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:14:215 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:14:215 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:14:215 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:14:215 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:14:255 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:14:255 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:14:255 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:14:255 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:14:255 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:14:255 Memoria/(9843:9863): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 06:34:14:255 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:14:255 Memoria/(9843:9863): Se actualizo la pagina 1 del pid 1
+[INFO] 06:34:14:255 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:14:255 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:14:819 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:14:819 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:14:819 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:14:819 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:14:819 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:14:819 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:14:819 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: prints n i
+
+[INFO] 06:34:14:819 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:14:819 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:14:819 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:14:819 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:14:819 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:14:819 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:14:819 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:15:360 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:15:360 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:15:360 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:15:360 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:15:360 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:15:360 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:15:360 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: t=f-i
+ µ
+[INFO] 06:34:15:361 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:15:361 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:15:361 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:15:361 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:15:361 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:15:361 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:15:361 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:15:399 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:15:399 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:15:399 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:15:399 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:15:399 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:15:399 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:15:399 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:15:438 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:15:438 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:15:438 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:15:438 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:15:438 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:15:438 Memoria/(9843:9863): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 06:34:15:438 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:15:438 Memoria/(9843:9863): Se actualizo la pagina 1 del pid 1
+[INFO] 06:34:15:438 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:15:438 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:15:952 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:15:952 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:15:952 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:15:952 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:15:953 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:15:953 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:15:953 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: jnz t inicio
+
+[INFO] 06:34:15:953 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:15:953 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:15:953 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:15:953 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:15:953 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:15:953 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:15:953 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:16:503 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:16:503 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:16:503 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:16:504 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:16:504 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:16:504 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:16:504 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: i=i+1
+ µ
+[INFO] 06:34:16:504 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:16:505 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:16:505 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:16:505 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:16:505 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:16:514 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:16:520 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:16:542 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:16:542 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:16:542 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:16:542 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:16:542 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:16:542 Memoria/(9843:9863): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 06:34:16:542 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:16:542 Memoria/(9843:9863): Se actualizo la pagina 1 del pid 1
+[INFO] 06:34:16:542 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:16:542 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:17:104 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:17:104 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:17:104 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:17:104 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:17:104 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:17:104 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:17:104 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: prints n i
+
+[INFO] 06:34:17:105 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:17:105 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:17:105 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:17:105 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:17:105 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:17:105 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:17:105 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:17:646 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:17:646 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:17:646 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:17:646 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:17:646 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:17:646 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:17:646 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: t=f-i
+ µ
+[INFO] 06:34:17:649 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:17:650 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:17:650 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:17:650 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:17:650 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:17:651 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:17:651 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:17:692 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:17:692 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:17:692 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:17:692 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:17:692 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:17:692 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:17:692 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:17:731 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:17:731 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:17:731 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:17:731 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:17:731 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:17:731 Memoria/(9843:9863): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 06:34:17:731 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:17:731 Memoria/(9843:9863): Se actualizo la pagina 1 del pid 1
+[INFO] 06:34:17:731 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:17:731 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:18:231 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:18:232 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:18:232 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:18:232 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:18:232 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:18:232 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:18:232 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: jnz t inicio
+
+[INFO] 06:34:18:232 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:18:232 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:18:232 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:18:232 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:18:232 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:18:232 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:18:232 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:18:772 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:18:773 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:18:773 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:18:773 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:18:773 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:18:773 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:18:773 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: i=i+1
+ µ
+[INFO] 06:34:18:773 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:18:773 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:18:773 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:18:773 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:18:773 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:18:773 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:18:773 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:18:812 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:18:812 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:18:812 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:18:812 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:18:812 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:18:812 Memoria/(9843:9863): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 06:34:18:812 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:18:812 Memoria/(9843:9863): Se actualizo la pagina 1 del pid 1
+[INFO] 06:34:18:812 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:18:812 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:19:363 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:19:363 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:19:363 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:19:363 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:19:363 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:19:363 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:19:363 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: prints n i
+
+[INFO] 06:34:19:363 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:19:363 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:19:363 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:19:363 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:19:363 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:19:363 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:19:363 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:19:908 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:19:908 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:19:908 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:19:908 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:19:908 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:19:908 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:19:908 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: t=f-i
+ µ
+[INFO] 06:34:19:908 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:19:908 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:19:909 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:19:909 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:19:909 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:19:909 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:19:909 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:19:947 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:19:947 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:19:947 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:19:947 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:19:947 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:19:947 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:19:947 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:19:986 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:19:986 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:19:986 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:19:986 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:19:986 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:19:986 Memoria/(9843:9863): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 06:34:19:986 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:19:986 Memoria/(9843:9863): Se actualizo la pagina 1 del pid 1
+[INFO] 06:34:19:986 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:19:986 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:20:487 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:20:487 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:20:487 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:20:487 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:20:487 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:20:487 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:20:487 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: jnz t inicio
+
+[INFO] 06:34:20:487 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:20:487 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:20:487 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:20:487 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:20:487 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:20:487 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:20:487 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:21:27 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:21:27 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:21:27 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:21:28 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:21:28 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:21:28 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:21:28 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: i=i+1
+ µ
+[INFO] 06:34:21:28 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:21:28 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:21:28 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:21:28 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:21:28 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:21:28 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:21:28 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:21:71 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:21:71 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:21:71 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:21:71 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:21:71 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:21:71 Memoria/(9843:9863): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 06:34:21:71 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:21:71 Memoria/(9843:9863): Se actualizo la pagina 1 del pid 1
+[INFO] 06:34:21:71 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:21:72 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:21:615 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:21:615 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:21:615 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:21:615 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:21:615 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:21:615 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:21:615 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: prints n i
+
+[INFO] 06:34:21:615 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:21:615 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:21:615 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:21:615 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:21:615 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:21:615 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:21:615 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:22:156 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:22:156 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:22:156 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:22:156 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:22:156 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:22:156 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:22:156 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: t=f-i
+ µ
+[INFO] 06:34:22:156 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:22:156 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:22:156 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:22:156 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:22:156 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:22:156 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:22:156 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:22:202 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:22:202 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:22:202 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:22:202 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:22:202 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:22:202 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:22:202 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:22:249 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:22:249 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:22:249 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:22:249 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:22:249 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:22:249 Memoria/(9843:9863): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 06:34:22:249 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:22:249 Memoria/(9843:9863): Se actualizo la pagina 1 del pid 1
+[INFO] 06:34:22:249 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:22:249 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:22:753 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:22:753 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:22:753 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:22:753 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:22:753 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:22:753 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:22:753 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: jnz t inicio
+
+[INFO] 06:34:22:779 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:22:779 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:22:779 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:22:779 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:22:779 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:22:779 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:22:779 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:23:319 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:23:319 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:23:320 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:23:320 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:23:320 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:23:320 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:23:320 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: i=i+1
+ µ
+[INFO] 06:34:23:320 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:23:320 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:23:320 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:23:320 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:23:320 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:23:320 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:23:320 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:23:361 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:23:361 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:23:361 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:23:361 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:23:361 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:23:361 Memoria/(9843:9863): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 06:34:23:361 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:23:361 Memoria/(9843:9863): Se actualizo la pagina 1 del pid 1
+[INFO] 06:34:23:361 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:23:361 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:24:39 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:24:55 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:24:55 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:24:55 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:24:55 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:24:55 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:24:55 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: prints n i
+
+[INFO] 06:34:24:55 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:24:55 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:24:55 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:24:55 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:24:55 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:24:55 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:24:55 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:24:621 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:24:621 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:24:621 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:24:621 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:24:621 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:24:621 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:24:621 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: t=f-i
+ µ
+[INFO] 06:34:24:622 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:24:622 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:24:622 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:24:622 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:24:622 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:24:622 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:24:622 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:24:659 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:24:659 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:24:659 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:24:659 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:24:659 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:24:659 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:24:659 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:24:700 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:24:701 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:24:701 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:24:701 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:24:701 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:24:701 Memoria/(9843:9863): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 06:34:24:701 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:24:701 Memoria/(9843:9863): Se actualizo la pagina 1 del pid 1
+[INFO] 06:34:24:701 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:24:701 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:25:208 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:25:208 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:25:209 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:25:209 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:25:209 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:25:209 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:25:209 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: jnz t inicio
+
+[INFO] 06:34:25:210 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:25:211 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:25:211 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:25:211 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:25:211 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:25:211 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:25:211 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:25:753 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:25:753 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:25:753 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:25:753 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:25:753 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:25:754 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:25:754 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: i=i+1
+ µ
+[INFO] 06:34:25:754 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:25:754 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:25:754 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:25:754 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:25:754 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:25:754 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:25:754 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:25:793 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:25:793 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:25:793 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:25:793 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:25:793 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:25:793 Memoria/(9843:9863): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 06:34:25:793 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:25:793 Memoria/(9843:9863): Se actualizo la pagina 1 del pid 1
+[INFO] 06:34:25:793 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:25:794 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:26:345 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:26:346 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:26:347 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:26:347 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:26:347 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:26:347 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:26:347 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: prints n i
+
+[INFO] 06:34:26:348 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:26:348 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:26:348 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:26:348 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:26:348 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:26:348 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:26:348 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:26:921 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:26:921 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:26:921 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:26:921 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:26:921 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:26:923 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:26:924 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: t=f-i
+ µ
+[INFO] 06:34:26:924 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:26:924 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:26:924 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:26:924 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:26:924 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:26:924 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:26:924 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:26:962 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:26:962 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:26:962 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:26:962 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:26:962 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:26:962 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:26:962 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:27:26 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:27:27 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:27:27 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:27:27 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:27:27 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:27:27 Memoria/(9843:9863): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 06:34:27:27 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:27:27 Memoria/(9843:9863): Se actualizo la pagina 1 del pid 1
+[INFO] 06:34:27:27 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:27:27 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:27:527 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:27:527 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:27:527 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:27:527 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:27:527 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:27:527 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:27:527 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: jnz t inicio
+
+[INFO] 06:34:27:528 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:27:528 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:27:528 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:27:528 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:27:528 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:27:528 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:27:528 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:28:87 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:28:88 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:28:88 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:28:88 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:28:88 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:28:88 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:28:88 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: i=i+1
+ µ
+[INFO] 06:34:28:90 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:28:90 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:28:90 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:28:90 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:28:90 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:28:90 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:28:90 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:28:130 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:28:130 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:28:131 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:28:131 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:28:131 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:28:131 Memoria/(9843:9863): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 06:34:28:131 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:28:131 Memoria/(9843:9863): Se actualizo la pagina 1 del pid 1
+[INFO] 06:34:28:131 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:28:131 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:28:694 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:28:694 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:28:694 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:28:694 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:28:694 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:28:694 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:28:694 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: prints n i
+
+[INFO] 06:34:28:694 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:28:694 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:28:695 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:28:695 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:28:695 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:28:695 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:28:695 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 	
+[INFO] 06:34:29:241 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:29:241 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:29:241 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:29:241 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:29:241 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:29:241 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:29:241 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: t=f-i
+ µ
+[INFO] 06:34:29:241 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:29:241 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:29:242 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:29:242 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:29:242 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:29:242 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:29:242 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:29:293 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:29:293 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:29:293 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:29:293 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:29:293 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:29:293 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:29:293 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 	
+[INFO] 06:34:29:331 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:29:331 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:29:331 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:29:331 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:29:331 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:29:331 Memoria/(9843:9863): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 06:34:29:331 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:29:331 Memoria/(9843:9863): Se actualizo la pagina 1 del pid 1
+[INFO] 06:34:29:331 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:29:331 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:29:836 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:29:836 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:29:836 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:29:836 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:29:836 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:29:836 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:29:836 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: jnz t inicio
+
+[INFO] 06:34:29:836 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:29:836 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:29:836 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:29:836 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:29:836 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:29:836 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:29:836 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:30:376 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:30:376 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:30:376 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:30:376 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:30:376 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:30:376 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:30:376 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: i=i+1
+ µ
+[INFO] 06:34:30:377 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:30:377 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:30:377 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:30:377 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:30:377 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:30:377 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:30:377 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 	
+[INFO] 06:34:30:415 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:30:415 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:30:415 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:30:415 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:30:415 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:30:415 Memoria/(9843:9863): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 06:34:30:415 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:30:415 Memoria/(9843:9863): Se actualizo la pagina 1 del pid 1
+[INFO] 06:34:30:415 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:30:416 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:30:997 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:30:998 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:30:998 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:30:998 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:30:998 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:30:998 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:30:998 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: prints n i
+
+[INFO] 06:34:30:998 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:30:998 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:30:998 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:30:998 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:30:998 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:30:998 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:30:999 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+
+[INFO] 06:34:31:542 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:31:542 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:31:542 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:31:542 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:31:542 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:31:542 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:31:542 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: t=f-i
+ µ
+[INFO] 06:34:31:547 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:31:549 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:31:549 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:31:549 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:31:549 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:31:549 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:31:549 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:31:588 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:31:588 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:31:588 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:31:588 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:31:588 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:31:588 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:31:588 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+
+[INFO] 06:34:31:626 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:31:626 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:31:626 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:31:626 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:31:626 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:31:626 Memoria/(9843:9863): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 06:34:31:626 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:31:626 Memoria/(9843:9863): Se actualizo la pagina 1 del pid 1
+[INFO] 06:34:31:626 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:31:626 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:32:128 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:32:128 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:32:128 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:32:128 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:32:128 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:32:128 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:32:128 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: jnz t inicio
+
+[INFO] 06:34:32:128 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:32:128 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:32:128 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:32:128 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:32:128 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:32:128 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:32:128 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+
+[INFO] 06:34:32:667 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:32:667 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:32:667 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:32:667 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:32:667 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:32:667 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:32:667 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: i=i+1
+ µ
+[INFO] 06:34:32:667 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:32:667 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:32:667 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:32:667 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:32:667 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:32:667 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:32:667 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+
+[INFO] 06:34:32:707 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:32:707 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:32:707 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:32:707 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:32:707 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:32:707 Memoria/(9843:9863): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 06:34:32:707 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:32:707 Memoria/(9843:9863): Se actualizo la pagina 1 del pid 1
+[INFO] 06:34:32:707 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:32:707 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:33:288 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:33:288 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:33:288 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:33:288 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:33:288 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:33:288 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:33:288 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: prints n i
+
+[INFO] 06:34:33:288 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:33:288 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:33:288 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:33:288 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:33:288 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:33:288 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:33:288 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:33:849 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:33:849 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:33:849 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:33:849 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:33:849 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:33:849 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:33:849 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: t=f-i
+ µ
+[INFO] 06:34:33:851 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:33:851 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:33:851 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:33:851 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:33:851 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:33:851 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:33:851 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:33:893 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:33:893 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:33:893 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:33:893 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:33:893 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:33:893 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:33:893 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:33:930 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:33:930 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:33:930 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:33:930 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:33:931 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:33:931 Memoria/(9843:9863): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 06:34:33:931 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:33:931 Memoria/(9843:9863): Se actualizo la pagina 1 del pid 1
+[INFO] 06:34:33:931 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:33:931 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:34:431 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:34:432 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:34:432 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:34:432 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:34:432 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:34:432 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:34:432 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: jnz t inicio
+
+[INFO] 06:34:34:432 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:34:432 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:34:432 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:34:432 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:34:432 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:34:432 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:34:432 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 	
+[INFO] 06:34:34:972 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:34:972 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:34:972 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:34:972 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:34:972 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:34:988 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:34:988 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: i=i+1
+ µ
+[INFO] 06:34:34:988 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:34:988 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:34:988 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:34:988 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:34:988 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:34:988 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:34:988 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:35:27 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:35:27 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:35:27 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:35:27 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:35:27 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:35:27 Memoria/(9843:9863): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 06:34:35:27 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:35:27 Memoria/(9843:9863): Se actualizo la pagina 1 del pid 1
+[INFO] 06:34:35:27 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:35:27 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:35:583 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:35:583 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:35:583 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:35:583 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:35:583 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:35:583 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:35:583 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: prints n i
+
+[INFO] 06:34:35:583 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:35:583 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:35:583 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:35:583 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:35:583 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:35:583 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:35:583 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:36:138 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:36:138 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:36:138 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:36:138 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:36:138 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:36:138 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:36:138 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: t=f-i
+ µ
+[INFO] 06:34:36:139 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:36:139 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:36:139 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:36:139 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:36:139 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:36:139 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:36:139 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:36:178 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:36:178 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:36:178 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:36:178 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:36:178 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:36:178 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:36:178 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:36:219 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:36:219 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:36:219 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:36:219 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:36:219 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:36:219 Memoria/(9843:9863): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 06:34:36:219 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:36:219 Memoria/(9843:9863): Se actualizo la pagina 1 del pid 1
+[INFO] 06:34:36:219 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:36:219 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:36:724 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:36:724 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:36:724 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:36:724 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:36:724 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:36:724 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:36:724 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: jnz t inicio
+
+[INFO] 06:34:36:726 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:36:726 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:36:726 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:36:726 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:36:726 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:36:726 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:36:726 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:37:263 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:37:263 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:37:263 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:37:263 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:37:263 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:37:263 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:37:263 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: i=i+1
+ µ
+[INFO] 06:34:37:264 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:37:264 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:37:264 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:37:264 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:37:264 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:37:264 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:37:264 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:37:302 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:37:302 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:37:302 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:37:302 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:37:302 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:37:302 Memoria/(9843:9863): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 06:34:37:302 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:37:302 Memoria/(9843:9863): Se actualizo la pagina 1 del pid 1
+[INFO] 06:34:37:302 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:37:302 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:37:853 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:37:853 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:37:853 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:37:853 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:37:853 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:37:853 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:37:853 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: prints n i
+
+[INFO] 06:34:37:853 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:37:853 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:37:853 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:37:853 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:37:853 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:37:853 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:37:853 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:38:393 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:38:393 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:38:393 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:38:393 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:38:393 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:38:393 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:38:393 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: t=f-i
+ µ
+[INFO] 06:34:38:396 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:38:396 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:38:396 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:38:396 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:38:396 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:38:396 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:38:396 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:38:445 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:38:445 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:38:445 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:38:445 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:38:445 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:38:445 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:38:445 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:38:482 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:38:482 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:38:482 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:38:482 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:38:482 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:38:482 Memoria/(9843:9863): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 06:34:38:482 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:38:482 Memoria/(9843:9863): Se actualizo la pagina 1 del pid 1
+[INFO] 06:34:38:482 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:38:482 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:38:987 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:38:987 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:38:987 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:38:987 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:38:987 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:38:987 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:38:987 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: jnz t inicio
+
+[INFO] 06:34:38:988 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:38:988 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:38:988 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:38:988 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:38:988 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:38:988 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:38:988 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:39:527 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:39:527 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:39:527 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:39:527 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:39:527 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:39:527 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:39:527 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: i=i+1
+ µ
+[INFO] 06:34:39:527 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:39:527 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:39:527 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:39:527 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:39:527 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:39:527 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:39:527 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:39:567 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:39:567 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:39:567 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:39:567 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:39:567 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:39:567 Memoria/(9843:9863): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 06:34:39:567 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:39:567 Memoria/(9843:9863): Se actualizo la pagina 1 del pid 1
+[INFO] 06:34:39:567 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:39:567 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:40:172 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:40:172 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:40:172 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:40:172 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:40:172 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:40:172 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:40:172 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: prints n i
+
+[INFO] 06:34:40:172 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:40:172 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:40:173 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:40:173 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:40:173 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:40:173 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:40:173 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:40:720 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:40:720 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:40:720 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:40:720 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:40:720 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:40:720 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:40:720 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: t=f-i
+ µ
+[INFO] 06:34:40:721 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:40:721 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:40:721 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:40:721 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:40:721 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:40:721 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:40:721 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:40:762 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:40:762 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:40:762 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:40:762 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:40:762 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:40:762 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:40:762 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:40:798 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:40:798 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:40:798 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:40:798 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:40:798 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:40:799 Memoria/(9843:9863): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 06:34:40:799 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:40:799 Memoria/(9843:9863): Se actualizo la pagina 1 del pid 1
+[INFO] 06:34:40:799 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:40:799 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:41:299 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:41:299 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:41:299 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:41:300 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:41:300 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:41:300 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:41:300 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: jnz t inicio
+
+[INFO] 06:34:41:300 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:41:300 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:41:300 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:41:300 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:41:300 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:41:300 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:41:300 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:41:860 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:41:860 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:41:860 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:41:860 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:41:860 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:41:860 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:41:860 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: i=i+1
+ µ
+[INFO] 06:34:41:863 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:41:863 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:41:863 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:41:863 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:41:863 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:41:863 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:41:863 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:41:902 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:41:902 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:41:902 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:41:902 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:41:902 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:41:902 Memoria/(9843:9863): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 06:34:41:902 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:41:902 Memoria/(9843:9863): Se actualizo la pagina 1 del pid 1
+[INFO] 06:34:41:902 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:41:902 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:42:551 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:42:551 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:42:551 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:42:551 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:42:551 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:42:551 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:42:551 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: prints n i
+
+[INFO] 06:34:42:552 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:42:552 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:42:552 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:42:552 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:42:552 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:42:552 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:42:552 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:43:119 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:43:119 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:43:119 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:43:119 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:43:119 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:43:138 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:43:138 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: t=f-i
+ µ
+[INFO] 06:34:43:138 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:43:139 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:43:139 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:43:139 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:43:139 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:43:139 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:43:139 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:43:179 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:43:179 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:43:179 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:43:179 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:43:179 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:43:179 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:43:179 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:43:220 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:43:220 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:43:220 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:43:220 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:43:220 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:43:220 Memoria/(9843:9863): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 06:34:43:220 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:43:220 Memoria/(9843:9863): Se actualizo la pagina 1 del pid 1
+[INFO] 06:34:43:220 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:43:220 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:43:730 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:43:730 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:43:730 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:43:730 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:43:730 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:43:730 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:43:730 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: jnz t inicio
+
+[INFO] 06:34:43:739 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:43:739 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:43:739 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:43:739 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:43:739 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:43:739 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:43:739 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:44:294 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:44:294 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:44:294 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:44:294 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:44:294 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:44:294 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:44:294 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: i=i+1
+ µ
+[INFO] 06:34:44:294 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:44:294 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:44:294 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:44:294 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:44:294 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:44:295 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:44:295 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:44:334 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:44:334 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:44:334 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:44:334 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:44:334 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:44:334 Memoria/(9843:9863): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 06:34:44:334 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:44:334 Memoria/(9843:9863): Se actualizo la pagina 1 del pid 1
+[INFO] 06:34:44:335 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:44:335 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:44:910 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:44:910 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:44:910 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:44:910 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:44:910 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:44:910 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:44:910 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: prints n i
+
+[INFO] 06:34:44:911 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:44:911 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:44:911 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:44:911 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:44:911 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:44:911 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:44:911 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:45:460 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:45:460 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:45:460 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:45:460 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:45:460 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:45:461 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:45:461 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: t=f-i
+ µ
+[INFO] 06:34:45:461 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:45:461 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:45:461 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:45:461 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:45:461 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:45:461 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:45:461 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:45:503 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:45:503 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:45:504 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:45:504 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:45:504 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:45:504 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:45:504 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:45:544 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:45:545 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:45:545 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:45:545 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:45:545 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:45:545 Memoria/(9843:9863): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 06:34:45:545 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:45:545 Memoria/(9843:9863): Se actualizo la pagina 1 del pid 1
+[INFO] 06:34:45:545 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:45:545 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:46:46 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:46:46 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:46:46 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:46:46 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:46:46 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:46:46 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:46:46 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: jnz t inicio
+
+[INFO] 06:34:46:47 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:46:47 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:46:47 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:46:47 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:46:47 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:46:47 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:46:47 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:46:587 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:46:587 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:46:587 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:46:587 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:46:587 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:46:587 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:46:587 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: i=i+1
+ µ
+[INFO] 06:34:46:587 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:46:587 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:46:587 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:46:587 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:46:587 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:46:588 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:46:588 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:46:632 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:46:632 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:46:632 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:46:632 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:46:632 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:46:632 Memoria/(9843:9863): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 06:34:46:632 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:46:632 Memoria/(9843:9863): Se actualizo la pagina 1 del pid 1
+[INFO] 06:34:46:632 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:46:632 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:47:184 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:47:189 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:47:189 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:47:189 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:47:189 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:47:189 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:47:190 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: prints n i
+
+[INFO] 06:34:47:190 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:47:190 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:47:190 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:47:190 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:47:190 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:47:214 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:47:214 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:47:729 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:47:729 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:47:729 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:47:729 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:47:729 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:47:729 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:47:729 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: t=f-i
+ µ
+[INFO] 06:34:47:729 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:47:729 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:47:729 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:47:729 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:47:729 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:47:729 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:47:729 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:47:766 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:47:766 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:47:766 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:47:766 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:47:766 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:47:766 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:47:766 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:47:807 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:47:807 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:47:807 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:47:807 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:47:807 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:47:807 Memoria/(9843:9863): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 06:34:47:807 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:47:807 Memoria/(9843:9863): Se actualizo la pagina 1 del pid 1
+[INFO] 06:34:47:807 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:47:807 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:48:312 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:48:312 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:48:312 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:48:312 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:48:312 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:48:312 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:48:312 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: jnz t inicio
+
+[INFO] 06:34:48:312 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:48:312 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:48:312 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:48:312 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:48:312 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:48:312 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:48:312 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:48:851 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:48:852 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:48:852 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:48:852 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:48:852 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:48:852 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:48:852 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: i=i+1
+ µ
+[INFO] 06:34:48:855 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:48:855 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:48:855 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:48:855 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:48:855 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:48:855 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:48:855 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:48:896 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:48:896 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:48:896 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:48:896 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:48:896 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:48:896 Memoria/(9843:9863): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 06:34:48:896 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:48:896 Memoria/(9843:9863): Se actualizo la pagina 1 del pid 1
+[INFO] 06:34:48:896 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:48:896 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:49:541 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:49:541 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:49:541 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:49:541 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:49:541 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:49:541 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:49:541 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: prints n i
+
+[INFO] 06:34:49:544 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:49:544 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:49:544 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:49:544 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:49:544 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:49:544 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:49:544 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:50:102 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:50:112 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:50:112 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:50:112 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:50:112 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:50:112 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:50:113 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: t=f-i
+ µ
+[INFO] 06:34:50:113 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:50:113 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:50:113 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:50:113 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:50:113 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:50:113 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:50:113 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:50:162 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:50:162 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:50:163 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:50:163 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:50:163 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:50:163 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:50:163 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:50:203 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:50:203 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:50:203 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:50:203 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:50:203 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:50:203 Memoria/(9843:9863): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 06:34:50:203 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:50:203 Memoria/(9843:9863): Se actualizo la pagina 1 del pid 1
+[INFO] 06:34:50:203 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:50:203 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:50:704 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:50:704 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:50:704 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:50:704 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:50:704 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:50:705 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:50:705 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: jnz t inicio
+
+[INFO] 06:34:50:705 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:50:705 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:50:705 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:50:705 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:50:705 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:50:705 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:50:705 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:51:248 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:51:248 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:51:248 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:51:248 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:51:248 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:51:248 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:51:248 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: i=i+1
+ µ
+[INFO] 06:34:51:248 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:51:248 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:51:248 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:51:248 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:51:248 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:51:248 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:51:248 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:51:286 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:51:286 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:51:286 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:51:286 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:51:287 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:51:287 Memoria/(9843:9863): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 06:34:51:287 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:51:287 Memoria/(9843:9863): Se actualizo la pagina 1 del pid 1
+[INFO] 06:34:51:287 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:51:287 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:51:954 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:51:954 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:51:954 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:51:954 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:51:954 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:51:954 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:51:954 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: prints n i
+
+[INFO] 06:34:51:954 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:51:954 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:51:954 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:51:954 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:51:955 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:51:955 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:51:955 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:52:502 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:52:502 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:52:502 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:52:502 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:52:502 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:52:502 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:52:502 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: t=f-i
+ µ
+[INFO] 06:34:52:503 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:52:503 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:52:503 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:52:503 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:52:503 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:52:503 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:52:503 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:52:543 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:52:543 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:52:543 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:52:543 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:52:543 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:52:543 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:52:543 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:52:594 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:52:594 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:52:594 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:52:594 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:52:594 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:52:594 Memoria/(9843:9863): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 06:34:52:594 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:52:594 Memoria/(9843:9863): Se actualizo la pagina 1 del pid 1
+[INFO] 06:34:52:594 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:52:594 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:53:95 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:53:95 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:53:95 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:53:95 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:53:95 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:53:95 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:53:95 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: jnz t inicio
+
+[INFO] 06:34:53:95 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:53:95 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:53:95 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:53:95 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:53:95 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:53:96 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:53:96 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:53:637 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:53:637 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:53:637 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:53:637 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:53:637 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:53:638 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:53:638 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: i=i+1
+ µ
+[INFO] 06:34:53:639 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:53:639 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:53:639 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:53:639 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:53:639 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:53:639 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:53:639 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:53:679 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:53:679 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:53:679 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:53:679 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:53:679 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:53:679 Memoria/(9843:9863): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 06:34:53:679 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:53:679 Memoria/(9843:9863): Se actualizo la pagina 1 del pid 1
+[INFO] 06:34:53:679 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:53:679 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:54:319 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:54:319 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:54:319 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:54:319 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:54:319 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:54:319 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:54:319 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: prints n i
+
+[INFO] 06:34:54:319 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:54:319 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:54:319 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:54:319 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:54:319 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:54:319 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:54:319 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:54:876 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:54:877 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:54:877 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:54:877 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:54:877 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:54:877 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:54:877 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: t=f-i
+ µ
+[INFO] 06:34:54:877 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:54:877 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:54:877 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:54:877 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:54:877 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:54:877 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:54:877 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:54:916 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:54:916 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:54:916 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:54:916 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:54:916 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:54:916 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:54:917 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:54:964 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 205
+[INFO] 06:34:54:964 Memoria/(9843:9863): Se devolvio el frame 11 de la busqueda en la tabla
+[INFO] 06:34:54:964 Memoria/(9843:9863): La pagina 1 del pid 1 se corresponde con el frame 11
+[INFO] 06:34:54:964 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:54:964 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:54:964 Memoria/(9843:9863): Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache
+[INFO] 06:34:54:964 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:54:964 Memoria/(9843:9863): Se actualizo la pagina 1 del pid 1
+[INFO] 06:34:54:964 Memoria/(9843:9863): Se devuelve 1 ya que se almaceno correctamente
+[INFO] 06:34:54:964 Memoria/(9843:9863): [Almacenar Bytes]-Se envio  0x0.0000400000001p-1022 kernel como respuesta
+[INFO] 06:34:55:465 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:55:465 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:55:465 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:55:465 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:55:465 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:55:465 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:55:465 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: jnz t inicio
+
+[INFO] 06:34:55:465 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:55:465 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:55:465 Memoria/(9843:9863): La pagina 1 del pid 1 esta en al cache
+[INFO] 06:34:55:465 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 1 esta en la cache, se procede a un cache hit
+[INFO] 06:34:55:465 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:55:465 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:55:465 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: 
+[INFO] 06:34:56:30 Memoria/(9843:9863): [recibirMensajesMemoria]-Llego la operacion 204
+[INFO] 06:34:56:30 Memoria/(9843:9863): La busqueda en la cache dio como resultado %b
+[INFO] 06:34:56:31 Memoria/(9843:9863): La pagina 0 del pid 1 esta en al cache
+[INFO] 06:34:56:31 Memoria/(9843:9863): [Solicitar Bytes]-La pagina 1 del proceso 0 esta en la cache, se procede a un cache hit
+[INFO] 06:34:56:31 Memoria/(9843:9863): [Solicitar Bytes- Cache Hit]-Se actualizo mediante el cacheHit. Es decir, se puso al principio de la lista la linea de cache que produjo el hit.
+[INFO] 06:34:56:31 Memoria/(9843:9863): [Solicitar Bytes]-Se envio %b a kernel como respuesta
+[INFO] 06:34:56:31 Memoria/(9843:9863): [Solicitar Bytes]-Se envio el siguiente contenido a kernel: end
+@
+[INFO] 06:34:56:573 Memoria/(9843:9845): [recibirMensajesMemoria]-Llego la operacion 207
+[INFO] 06:34:56:573 Memoria/(9843:9845): [Finalizar Programa]-Entramos a Finalizar Programa. Pid: 1 
+
+[INFO] 06:34:56:573 Memoria/(9843:9845): [Liberar Pagina]-La funcion de hash aproxima a la posicion 10 de la tabla de paginacion invetida
+[INFO] 06:34:56:573 Memoria/(9843:9845): [Liberar Pagina]-Se libero el frame 10 de la pagina 0 del pid 1
+[INFO] 06:34:56:573 Memoria/(9843:9845): [Liberar Pagina]-La funcion de hash aproxima a la posicion 11 de la tabla de paginacion invetida
+[INFO] 06:34:56:573 Memoria/(9843:9845): [Liberar Pagina]-Se libero el frame 11 de la pagina 1 del pid 1
+[INFO] 06:34:56:573 Memoria/(9843:9845): [Liberar Pagina]-La funcion de hash aproxima a la posicion 12 de la tabla de paginacion invetida
+[INFO] 06:34:56:573 Memoria/(9843:9845): [Liberar Pagina]-Se libero el frame 12 de la pagina 2 del pid 1
+[INFO] 06:34:56:573 Memoria/(9843:9845): [Finalizar Programa]-Se borra de la cache las paginas del proceso.
+[INFO] 06:34:56:573 Memoria/(9843:9845): Se procede a borrar todos las paginas cacheadas del pid 1 ya que fue finalizado.
+[INFO] 06:34:56:573 Memoria/(9843:9845): [Finalizar Programa]-Se envio 1 a kernel como respuesta
+[INFO] 06:35:03:529 Memoria/(9843:9845): [recibirMensajesMemoria]-Llego la operacion 0
+[INFO] 06:35:03:529 Memoria/(9843:9845): [Rip Kernel]-Se cerro el kernel
+[INFO] 06:35:03:529 Memoria/(9843:9843): Se finalizo el modulo Memoria.
+[INFO] 06:35:03:529 Memoria/(9843:9843): [Cache Flush]-Se limpia (Flush) la cache

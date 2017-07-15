@@ -54,6 +54,13 @@ t_semaforo* buscarSemaforo(char* nombreSEM){
 bool SEM_wait(char* nombreSEM, PCB_DATA * pcb){
 	t_semaforo* sem = buscarSemaforo(nombreSEM);
 	if(sem != NULL){
+		sem_wait(&mutex_listaProcesos);
+		bool buscar(PROCESOS* proceso){
+			return proceso->pid == pcb->pid;
+		}
+		PROCESOS* proceso = list_find(avisos, buscar);
+		proceso->semaforoTomado = string_duplicate(nombreSEM);
+		sem_post(&mutex_listaProcesos);
 		if(sem->valor <= 0){
 			pcb->estadoDeProceso = bloqueado;
 			queue_push(sem->cola, pcb);

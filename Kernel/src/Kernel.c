@@ -551,6 +551,17 @@ void proceso_avisarAConsola(){
 
 }
 
+void liberarSemaforo(int pid){
+	sem_wait(&mutex_listaProcesos);
+			bool buscar(PROCESOS* proceso){
+				return proceso->pid == pid;
+			}
+			PROCESOS* proceso = list_find(avisos, buscar);
+			if(proceso->semaforoTomado != NULL)
+				SEM_signal(proceso->semaforoTomado, proceso->pcb);
+			sem_post(&mutex_listaProcesos);
+}
+
 void proceso_liberarRecursos(PCB_DATA* pcb){
 
 	if(liberarRecursosHeap(pcb->pid)== 0){
@@ -560,6 +571,7 @@ void proceso_liberarRecursos(PCB_DATA* pcb){
 		printf("Se liberaron correctamente los recursos del heap del pid %d\n",pcb->pid);
 	}
 	liberarRecursosArchivo(pcb);
+	liberarSemaforo(pcb->pid);//deberian ser varios
 	enviarMensaje(socketMemoria,finalizarPrograma,&pcb->pid,sizeof(int));
 	void* respuesta;
 	recibirMensaje(socketMemoria,&respuesta);
