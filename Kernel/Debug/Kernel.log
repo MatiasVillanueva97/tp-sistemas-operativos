@@ -9927,3 +9927,4757 @@ Socket CPU 12
 
 [INFO] 07:53:40:579 Kernel/(13825:13851): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
 
+[INFO] 07:58:39:681 Kernel/(13901:13904): 
+[Rutina planificadorCortoPlazo] - Entramos al planificador de corto plazo!
+
+[INFO] 07:58:39:695 Kernel/(13901:13903): 
+[rutina estadoNEW] - Entramos al planificador de largo plazo!
+
+[INFO] 07:58:41:830 Kernel/(13901:13909): 
+[rutina aceptarConexiones] - Nueva Consola Conectada!
+Socket Consola 7
+
+
+[INFO] 07:58:41:856 Kernel/(13901:13912): [Rutina rutinaConsola] - Entramos al hilo de la consola: 7!
+
+[INFO] 07:58:53:763 Kernel/(13901:13912): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 07:58:53:764 Kernel/(13901:13912): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 07:58:53:896 Kernel/(13901:13903): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 07:58:53:896 Kernel/(13901:13903): Estructura:--
+Pid: 1
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:7
+
+
+[INFO] 07:58:53:896 Kernel/(13901:13903): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 07:58:53:947 Kernel/(13901:13903): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 07:58:53:951 Kernel/(13901:13903): Envio una pagina: 0
+
+[INFO] 07:58:53:951 Kernel/(13901:13903): La pagina 0, contiene:
+[INFO] 07:58:53:951 Kernel/(13901:13903): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 07:59:00:52 Kernel/(13901:13912): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 07:59:00:53 Kernel/(13901:13912): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 07:59:00:239 Kernel/(13901:13903): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 07:59:00:240 Kernel/(13901:13903): Estructura:--
+Pid: 2
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:7
+
+
+[INFO] 07:59:00:240 Kernel/(13901:13903): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 07:59:00:248 Kernel/(13901:13903): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 07:59:00:312 Kernel/(13901:13903): Envio una pagina: 0
+
+[INFO] 07:59:00:313 Kernel/(13901:13903): La pagina 0, contiene:
+[INFO] 07:59:00:313 Kernel/(13901:13903): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 07:59:09:864 Kernel/(13901:13909): 
+[rutina aceptarConexiones] - Nueva CPU Conectada
+Socket CPU 9
+
+
+[INFO] 07:59:09:905 Kernel/(13901:13919): [Rutina rutinaCPU] - Entramos al hilo de la CPU cuyo socket es: 9.
+
+[INFO] 07:59:09:905 Kernel/(13901:13919): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:59:11:400 Kernel/(13901:13909): 
+[rutina aceptarConexiones] - Nueva CPU Conectada
+Socket CPU 10
+
+
+[INFO] 07:59:11:426 Kernel/(13901:13922): [Rutina rutinaCPU] - Entramos al hilo de la CPU cuyo socket es: 10.
+
+[INFO] 07:59:11:426 Kernel/(13901:13922): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:59:12:639 Kernel/(13901:13909): 
+[rutina aceptarConexiones] - Nueva CPU Conectada
+Socket CPU 11
+
+
+[INFO] 07:59:12:660 Kernel/(13901:13925): [Rutina rutinaCPU] - Entramos al hilo de la CPU cuyo socket es: 11.
+
+[INFO] 07:59:12:660 Kernel/(13901:13925): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:59:23:614 Kernel/(13901:13909): 
+[rutina aceptarConexiones] - Nueva Consola Conectada!
+Socket Consola 12
+
+
+[INFO] 07:59:23:649 Kernel/(13901:13928): [Rutina rutinaConsola] - Entramos al hilo de la consola: 12!
+
+[INFO] 07:59:40:912 Kernel/(13934:13937): 
+[Rutina planificadorCortoPlazo] - Entramos al planificador de corto plazo!
+
+[INFO] 07:59:40:931 Kernel/(13934:13936): 
+[rutina estadoNEW] - Entramos al planificador de largo plazo!
+
+[INFO] 07:59:48:320 Kernel/(13934:13942): 
+[rutina aceptarConexiones] - Nueva Consola Conectada!
+Socket Consola 8
+
+
+[INFO] 07:59:48:372 Kernel/(13934:13944): [Rutina rutinaConsola] - Entramos al hilo de la consola: 8!
+
+[INFO] 07:59:57:904 Kernel/(13934:13944): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 07:59:57:904 Kernel/(13934:13944): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 07:59:57:960 Kernel/(13934:13936): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 07:59:57:960 Kernel/(13934:13936): Estructura:--
+Pid: 1
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:8
+
+
+[INFO] 07:59:57:960 Kernel/(13934:13936): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 07:59:57:984 Kernel/(13934:13936): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 07:59:57:994 Kernel/(13934:13936): Envio una pagina: 0
+
+[INFO] 07:59:58:55 Kernel/(13934:13936): La pagina 0, contiene:
+[INFO] 07:59:58:55 Kernel/(13934:13936): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:00:03:0 Kernel/(13934:13944): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 08:00:03:0 Kernel/(13934:13944): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 08:00:04:79 Kernel/(13934:13936): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 08:00:04:79 Kernel/(13934:13936): Estructura:--
+Pid: 2
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:8
+
+
+[INFO] 08:00:04:79 Kernel/(13934:13936): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:00:04:87 Kernel/(13934:13936): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 08:00:04:87 Kernel/(13934:13936): Envio una pagina: 0
+
+[INFO] 08:00:04:88 Kernel/(13934:13936): La pagina 0, contiene:
+[INFO] 08:00:04:88 Kernel/(13934:13936): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:00:06:279 Kernel/(13934:13942): 
+[rutina aceptarConexiones] - Nueva CPU Conectada
+Socket CPU 9
+
+
+[INFO] 08:00:06:280 Kernel/(13934:13949): [Rutina rutinaCPU] - Entramos al hilo de la CPU cuyo socket es: 9.
+
+[INFO] 08:00:06:328 Kernel/(13934:13949): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:02:03:348 Kernel/(14009:14012): 
+[Rutina planificadorCortoPlazo] - Entramos al planificador de corto plazo!
+
+[INFO] 08:02:03:374 Kernel/(14009:14011): 
+[rutina estadoNEW] - Entramos al planificador de largo plazo!
+
+[INFO] 08:02:06:179 Kernel/(14009:14017): 
+[rutina aceptarConexiones] - Nueva Consola Conectada!
+Socket Consola 8
+
+
+[INFO] 08:02:06:180 Kernel/(14009:14020): [Rutina rutinaConsola] - Entramos al hilo de la consola: 8!
+
+[INFO] 08:02:11:897 Kernel/(14009:14020): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 08:02:11:898 Kernel/(14009:14020): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 08:02:11:907 Kernel/(14009:14011): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 08:02:11:907 Kernel/(14009:14011): Estructura:--
+Pid: 1
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:8
+
+
+[INFO] 08:02:11:907 Kernel/(14009:14011): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:02:11:934 Kernel/(14009:14011): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 08:02:11:951 Kernel/(14009:14011): Envio una pagina: 0
+
+[INFO] 08:02:11:952 Kernel/(14009:14011): La pagina 0, contiene:
+[INFO] 08:02:11:952 Kernel/(14009:14011): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:02:17:643 Kernel/(14009:14020): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 08:02:17:644 Kernel/(14009:14020): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 08:02:17:672 Kernel/(14009:14011): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 08:02:17:673 Kernel/(14009:14011): Estructura:--
+Pid: 2
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:8
+
+
+[INFO] 08:02:17:673 Kernel/(14009:14011): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:02:17:685 Kernel/(14009:14011): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 08:02:17:686 Kernel/(14009:14011): Envio una pagina: 0
+
+[INFO] 08:02:17:686 Kernel/(14009:14011): La pagina 0, contiene:
+[INFO] 08:02:17:686 Kernel/(14009:14011): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:02:20:583 Kernel/(14009:14017): 
+[rutina aceptarConexiones] - Nueva CPU Conectada
+Socket CPU 9
+
+
+[INFO] 08:02:20:603 Kernel/(14009:14024): [Rutina rutinaCPU] - Entramos al hilo de la CPU cuyo socket es: 9.
+
+[INFO] 08:02:20:627 Kernel/(14009:14024): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:02:21:153 Kernel/(14009:14024): 
+dentro de la busqueda
+[INFO] 08:02:21:675 Kernel/(14009:14024): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:02:22:270 Kernel/(14009:14024): 
+dentro de la busqueda
+[INFO] 08:02:22:779 Kernel/(14009:14024): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:02:22:781 Kernel/(14009:14024): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:02:23:295 Kernel/(14009:14024): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:02:23:295 Kernel/(14009:14024): 
+dentro de la busqueda
+[INFO] 08:02:24:315 Kernel/(14009:14024): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:02:24:336 Kernel/(14009:14024): 
+dentro de la busqueda
+[INFO] 08:02:24:373 Kernel/(14009:14024): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:02:24:478 Kernel/(14009:14024): 
+dentro de la busqueda
+[INFO] 08:02:24:987 Kernel/(14009:14024): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:02:25:43 Kernel/(14009:14024): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:02:25:564 Kernel/(14009:14024): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:02:25:564 Kernel/(14009:14024): 
+dentro de la busqueda
+[INFO] 08:02:26:660 Kernel/(14009:14024): 
+dentro de la busqueda
+[INFO] 08:02:27:169 Kernel/(14009:14024): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:02:27:251 Kernel/(14009:14024): 
+dentro de la busqueda
+[INFO] 08:02:27:252 Kernel/(14009:14024): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:02:27:259 Kernel/(14009:14024): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:02:27:261 Kernel/(14009:14024): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:02:27:772 Kernel/(14009:14024): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:02:27:800 Kernel/(14009:14024): 
+dentro de la busqueda
+[INFO] 08:02:28:851 Kernel/(14009:14024): 
+dentro de la busqueda
+[INFO] 08:02:29:364 Kernel/(14009:14024): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:02:29:371 Kernel/(14009:14024): 
+dentro de la busqueda
+[INFO] 08:02:29:411 Kernel/(14009:14024): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:02:29:453 Kernel/(14009:14024): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:02:29:968 Kernel/(14009:14024): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:02:29:968 Kernel/(14009:14024): 
+dentro de la busqueda
+[INFO] 08:02:31:39 Kernel/(14009:14024): 
+dentro de la busqueda
+[INFO] 08:02:31:548 Kernel/(14009:14024): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:02:31:592 Kernel/(14009:14024): 
+dentro de la busqueda
+[INFO] 08:02:31:593 Kernel/(14009:14024): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:02:31:635 Kernel/(14009:14024): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:02:31:654 Kernel/(14009:14024): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:02:32:171 Kernel/(14009:14024): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:02:32:171 Kernel/(14009:14024): 
+dentro de la busqueda
+[INFO] 08:02:33:300 Kernel/(14009:14024): 
+dentro de la busqueda
+[INFO] 08:02:33:820 Kernel/(14009:14024): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:02:33:821 Kernel/(14009:14024): 
+dentro de la busqueda
+[INFO] 08:02:33:821 Kernel/(14009:14024): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:02:33:885 Kernel/(14009:14024): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:02:34:425 Kernel/(14009:14024): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:02:34:458 Kernel/(14009:14024): 
+dentro de la busqueda
+[INFO] 08:02:35:535 Kernel/(14009:14024): 
+dentro de la busqueda
+[INFO] 08:02:36:38 Kernel/(14009:14024): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:02:36:59 Kernel/(14009:14024): 
+dentro de la busqueda
+[INFO] 08:02:36:60 Kernel/(14009:14024): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:02:36:99 Kernel/(14009:14024): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:02:36:131 Kernel/(14009:14024): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:02:36:377 Kernel/(14009:14020): Entramos a finalizar el script, del pid: 1
+
+[INFO] 08:02:36:679 Kernel/(14009:14024): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:02:36:679 Kernel/(14009:14024): 
+dentro de la busqueda
+[INFO] 08:02:37:753 Kernel/(14009:14024): 
+dentro de la busqueda
+[INFO] 08:02:38:264 Kernel/(14009:14024): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:02:38:325 Kernel/(14009:14024): 
+dentro de la busqueda
+[INFO] 08:02:38:329 Kernel/(14009:14024): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:02:39:373 Kernel/(14009:14024): [Rutina rutinaCPU] - Entramos al Caso de que CPU termino la ejecucion de un proceso: accion- 104!
+
+[INFO] 08:03:04:204 Kernel/(14033:14036): 
+[Rutina planificadorCortoPlazo] - Entramos al planificador de corto plazo!
+
+[INFO] 08:03:04:236 Kernel/(14033:14035): 
+[rutina estadoNEW] - Entramos al planificador de largo plazo!
+
+[INFO] 08:03:06:829 Kernel/(14033:14041): 
+[rutina aceptarConexiones] - Nueva CPU Conectada
+Socket CPU 8
+
+
+[INFO] 08:03:06:854 Kernel/(14033:14044): [Rutina rutinaCPU] - Entramos al hilo de la CPU cuyo socket es: 8.
+
+[INFO] 08:03:06:854 Kernel/(14033:14044): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:03:09:820 Kernel/(14033:14041): 
+[rutina aceptarConexiones] - Nueva Consola Conectada!
+Socket Consola 9
+
+
+[INFO] 08:03:09:857 Kernel/(14033:14046): [Rutina rutinaConsola] - Entramos al hilo de la consola: 9!
+
+[INFO] 08:03:17:829 Kernel/(14033:14046): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 08:03:17:829 Kernel/(14033:14046): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 08:03:17:873 Kernel/(14033:14035): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 08:03:17:874 Kernel/(14033:14035): Estructura:--
+Pid: 1
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:9
+
+
+[INFO] 08:03:17:874 Kernel/(14033:14035): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:03:17:919 Kernel/(14033:14035): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 08:03:17:929 Kernel/(14033:14035): Envio una pagina: 0
+
+[INFO] 08:03:17:929 Kernel/(14033:14035): La pagina 0, contiene:
+[INFO] 08:03:17:929 Kernel/(14033:14035): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:03:18:717 Kernel/(14033:14044): 
+dentro de la busqueda
+[INFO] 08:03:19:223 Kernel/(14033:14044): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:03:19:225 Kernel/(14033:14044): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:03:19:728 Kernel/(14033:14044): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:03:19:757 Kernel/(14033:14044): 
+dentro de la busqueda
+[INFO] 08:03:20:767 Kernel/(14033:14044): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:03:20:768 Kernel/(14033:14044): 
+dentro de la busqueda
+[INFO] 08:03:20:811 Kernel/(14033:14044): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:03:20:903 Kernel/(14033:14044): 
+dentro de la busqueda
+[INFO] 08:03:21:406 Kernel/(14033:14044): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:03:22:0 Kernel/(14033:14046): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 08:03:22:0 Kernel/(14033:14046): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 08:03:23:45 Kernel/(14033:14035): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 08:03:23:45 Kernel/(14033:14035): Estructura:--
+Pid: 2
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:9
+
+
+[INFO] 08:03:23:45 Kernel/(14033:14035): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:03:23:70 Kernel/(14033:14035): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 08:03:23:107 Kernel/(14033:14035): Envio una pagina: 0
+
+[INFO] 08:03:23:107 Kernel/(14033:14035): La pagina 0, contiene:
+[INFO] 08:03:23:108 Kernel/(14033:14035): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:03:23:860 Kernel/(14033:14044): 
+dentro de la busqueda
+[INFO] 08:03:24:388 Kernel/(14033:14044): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:03:24:917 Kernel/(14033:14044): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:03:24:922 Kernel/(14033:14044): 
+dentro de la busqueda
+[INFO] 08:03:25:943 Kernel/(14033:14044): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:03:25:977 Kernel/(14033:14044): 
+dentro de la busqueda
+[INFO] 08:03:25:987 Kernel/(14033:14044): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:03:25:0 Kernel/(14033:14044): 
+dentro de la busqueda
+[INFO] 08:03:26:511 Kernel/(14033:14044): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:03:26:516 Kernel/(14033:14044): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:03:26:518 Kernel/(14033:14044): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:03:26:991 Kernel/(14033:14046): Entramos a finalizar el script, del pid: 1
+
+[INFO] 08:03:27:85 Kernel/(14033:14039): Se acaba de mandar a la consola n°: 9, que el proceso 1 acaba de finalizar con exit code: -7
+
+[INFO] 08:03:28:64 Kernel/(14033:14044): [Rutina rutinaCPU] - Entramos al Caso de que CPU termino la ejecucion de un proceso: accion- 104!
+
+[INFO] 08:03:28:66 Kernel/(14033:14044): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:03:33:274 Kernel/(14033:14046): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 08:03:33:277 Kernel/(14033:14046): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 08:03:33:338 Kernel/(14033:14035): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 08:03:33:380 Kernel/(14033:14035): Estructura:--
+Pid: 3
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:9
+
+
+[INFO] 08:03:33:381 Kernel/(14033:14035): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:03:33:387 Kernel/(14033:14035): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 08:03:33:388 Kernel/(14033:14035): Envio una pagina: 0
+
+[INFO] 08:03:33:389 Kernel/(14033:14035): La pagina 0, contiene:
+[INFO] 08:03:33:389 Kernel/(14033:14035): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:04:03:912 Kernel/(14056:14059): 
+[Rutina planificadorCortoPlazo] - Entramos al planificador de corto plazo!
+
+[INFO] 08:04:03:919 Kernel/(14056:14058): 
+[rutina estadoNEW] - Entramos al planificador de largo plazo!
+
+[INFO] 08:04:07:818 Kernel/(14056:14064): 
+[rutina aceptarConexiones] - Nueva Consola Conectada!
+Socket Consola 8
+
+
+[INFO] 08:04:07:841 Kernel/(14056:14067): [Rutina rutinaConsola] - Entramos al hilo de la consola: 8!
+
+[INFO] 08:04:14:297 Kernel/(14056:14067): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 08:04:14:298 Kernel/(14056:14067): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 08:04:14:389 Kernel/(14056:14058): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 08:04:14:389 Kernel/(14056:14058): Estructura:--
+Pid: 1
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:8
+
+
+[INFO] 08:04:14:389 Kernel/(14056:14058): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:04:14:392 Kernel/(14056:14058): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 08:04:14:393 Kernel/(14056:14058): Envio una pagina: 0
+
+[INFO] 08:04:14:393 Kernel/(14056:14058): La pagina 0, contiene:
+[INFO] 08:04:14:394 Kernel/(14056:14058): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:04:20:380 Kernel/(14056:14067): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 08:04:20:380 Kernel/(14056:14067): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 08:04:20:445 Kernel/(14056:14058): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 08:04:20:445 Kernel/(14056:14058): Estructura:--
+Pid: 2
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:8
+
+
+[INFO] 08:04:20:445 Kernel/(14056:14058): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:04:20:459 Kernel/(14056:14058): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 08:04:20:460 Kernel/(14056:14058): Envio una pagina: 0
+
+[INFO] 08:04:20:460 Kernel/(14056:14058): La pagina 0, contiene:
+[INFO] 08:04:20:460 Kernel/(14056:14058): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:04:31:247 Kernel/(14056:14064): 
+[rutina aceptarConexiones] - Nueva CPU Conectada
+Socket CPU 9
+
+
+[INFO] 08:04:31:317 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al hilo de la CPU cuyo socket es: 9.
+
+[INFO] 08:04:31:317 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:04:31:864 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:04:32:379 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:04:32:383 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:04:32:897 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:04:32:897 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:04:33:928 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:04:33:933 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:04:33:970 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:04:34:517 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:04:35:66 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:04:35:583 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:04:35:639 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:04:36:671 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:04:36:709 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:04:36:709 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:04:36:798 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:04:37:313 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:04:37:322 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:04:37:832 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:04:37:833 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:04:38:841 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:04:38:869 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:04:38:887 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:04:38:961 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:04:39:465 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:04:39:673 Kernel/(14056:14067): Entramos a finalizar el script, del pid: 1
+
+[INFO] 08:04:39:760 Kernel/(14056:14062): Se acaba de mandar a la consola n°: 8, que el proceso 1 acaba de finalizar con exit code: -7
+
+[INFO] 08:04:39:979 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:04:39:992 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:04:41:12 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:04:41:13 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:04:41:53 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:04:41:91 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:04:41:604 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:04:47:19 Kernel/(14056:14067): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 08:04:47:20 Kernel/(14056:14067): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 08:04:47:83 Kernel/(14056:14058): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 08:04:47:163 Kernel/(14056:14058): Estructura:--
+Pid: 3
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:8
+
+
+[INFO] 08:04:47:164 Kernel/(14056:14058): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:04:47:168 Kernel/(14056:14058): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 08:04:47:173 Kernel/(14056:14058): Envio una pagina: 0
+
+[INFO] 08:04:47:173 Kernel/(14056:14058): La pagina 0, contiene:
+[INFO] 08:04:47:173 Kernel/(14056:14058): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:04:47:916 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:04:48:424 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:04:48:428 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:04:48:936 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:04:48:936 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:04:49:949 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:04:49:984 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:04:49:987 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:04:49:999 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:04:50:509 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:04:50:511 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:04:51:27 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:04:51:27 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:04:52:33 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:04:52:34 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:04:52:72 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:04:52:83 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:04:52:591 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:04:52:613 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:04:53:703 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:04:54:259 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:04:54:291 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:04:54:291 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:04:54:306 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:04:54:839 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:04:54:840 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:04:55:350 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:04:55:381 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:04:56:394 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:04:56:504 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:04:56:504 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:04:56:529 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:04:57:72 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:04:57:73 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:04:58:97 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:04:58:599 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:04:58:648 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:04:58:648 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:04:58:707 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:04:59:217 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:04:59:228 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:04:59:743 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:04:59:760 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:05:00:767 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:05:00:768 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:05:00:820 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:05:00:860 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:05:01:375 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:05:01:375 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:05:02:451 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:05:02:954 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:05:02:995 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:05:02:995 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:05:03:63 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:05:03:573 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:05:03:580 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:05:04:95 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:05:04:110 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:05:05:137 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:05:05:137 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:05:05:183 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:05:05:192 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:05:05:708 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:05:05:720 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:05:06:823 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:05:07:329 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:05:07:379 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:05:07:379 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:05:07:391 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:05:07:900 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:05:07:902 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:05:08:407 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:05:08:425 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:05:09:448 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:05:09:448 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:05:09:525 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:05:09:575 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:05:10:99 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:05:10:112 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:05:11:176 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:05:11:688 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:05:11:688 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:05:11:731 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:05:11:759 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:05:12:287 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:05:12:289 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:05:12:807 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:05:12:808 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:05:13:824 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:05:13:824 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:05:13:870 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:05:13:924 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:05:14:452 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:05:14:453 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:05:15:536 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:05:16:40 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:05:16:91 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:05:16:92 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:05:16:127 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:05:16:640 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:05:16:643 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:05:17:157 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:05:17:195 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:05:18:213 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:05:18:224 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:05:18:224 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:05:18:233 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:05:18:767 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:05:18:767 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:05:19:820 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:05:20:331 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:05:20:346 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:05:20:375 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:05:20:438 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:05:20:948 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:05:20:958 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:05:21:465 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:05:21:465 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:05:22:488 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:05:22:517 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:05:22:527 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:05:22:534 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:05:23:46 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:05:23:46 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:05:23:799 Kernel/(14056:14067): Entramos a finalizar el script, del pid: 2
+
+[INFO] 08:05:23:911 Kernel/(14056:14062): Se acaba de mandar a la consola n°: 8, que el proceso 2 acaba de finalizar con exit code: -7
+
+[INFO] 08:05:25:59 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU termino la ejecucion de un proceso: accion- 104!
+
+[INFO] 08:05:25:99 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:05:25:146 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:05:25:660 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:05:25:661 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:05:26:178 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:05:26:178 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:05:27:198 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:05:27:227 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:05:27:238 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:05:27:267 Kernel/(14056:14072): 
+dentro de la busqueda
+[INFO] 08:05:27:778 Kernel/(14056:14072): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:05:35:923 Kernel/(14056:14067): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 08:05:35:923 Kernel/(14056:14067): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 08:05:35:0 Kernel/(14056:14058): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 08:05:35:0 Kernel/(14056:14058): Estructura:--
+Pid: 4
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:8
+
+
+[INFO] 08:05:35:1 Kernel/(14056:14058): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:05:35:3 Kernel/(14056:14058): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 08:05:35:4 Kernel/(14056:14058): Envio una pagina: 0
+
+[INFO] 08:05:35:4 Kernel/(14056:14058): La pagina 0, contiene:
+[INFO] 08:05:35:4 Kernel/(14056:14058): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:08:30:528 Kernel/(14281:14283): 
+[rutina estadoNEW] - Entramos al planificador de largo plazo!
+
+[INFO] 08:08:30:553 Kernel/(14281:14284): 
+[Rutina planificadorCortoPlazo] - Entramos al planificador de corto plazo!
+
+[INFO] 08:08:33:982 Kernel/(14281:14289): 
+[rutina aceptarConexiones] - Nueva Consola Conectada!
+Socket Consola 8
+
+
+[INFO] 08:08:33:986 Kernel/(14281:14292): [Rutina rutinaConsola] - Entramos al hilo de la consola: 8!
+
+[INFO] 08:08:41:724 Kernel/(14281:14292): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 08:08:41:725 Kernel/(14281:14292): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 08:08:41:787 Kernel/(14281:14283): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 08:08:41:788 Kernel/(14281:14283): Estructura:--
+Pid: 1
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:8
+
+
+[INFO] 08:08:41:788 Kernel/(14281:14283): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:08:41:820 Kernel/(14281:14283): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 08:08:41:831 Kernel/(14281:14283): Envio una pagina: 0
+
+[INFO] 08:08:41:831 Kernel/(14281:14283): La pagina 0, contiene:
+[INFO] 08:08:41:831 Kernel/(14281:14283): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:08:48:215 Kernel/(14281:14292): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 08:08:48:215 Kernel/(14281:14292): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 08:08:48:222 Kernel/(14281:14283): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 08:08:48:222 Kernel/(14281:14283): Estructura:--
+Pid: 2
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:8
+
+
+[INFO] 08:08:48:222 Kernel/(14281:14283): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:08:48:231 Kernel/(14281:14283): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 08:08:48:232 Kernel/(14281:14283): Envio una pagina: 0
+
+[INFO] 08:08:48:232 Kernel/(14281:14283): La pagina 0, contiene:
+[INFO] 08:08:48:247 Kernel/(14281:14283): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:08:50:174 Kernel/(14281:14289): 
+[rutina aceptarConexiones] - Nueva CPU Conectada
+Socket CPU 9
+
+
+[INFO] 08:08:50:206 Kernel/(14281:14297): [Rutina rutinaCPU] - Entramos al hilo de la CPU cuyo socket es: 9.
+
+[INFO] 08:08:50:228 Kernel/(14281:14297): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:08:50:771 Kernel/(14281:14297): 
+dentro de la busqueda
+[INFO] 08:08:51:273 Kernel/(14281:14297): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:08:51:861 Kernel/(14281:14297): 
+dentro de la busqueda
+[INFO] 08:08:52:371 Kernel/(14281:14297): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:08:52:375 Kernel/(14281:14297): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:08:52:884 Kernel/(14281:14297): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:08:52:885 Kernel/(14281:14297): 
+dentro de la busqueda
+[INFO] 08:08:53:894 Kernel/(14281:14297): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:08:53:895 Kernel/(14281:14297): 
+dentro de la busqueda
+[INFO] 08:08:53:940 Kernel/(14281:14297): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:08:53:961 Kernel/(14281:14297): 
+dentro de la busqueda
+[INFO] 08:08:54:467 Kernel/(14281:14297): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:08:54:473 Kernel/(14281:14297): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:08:54:991 Kernel/(14281:14297): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:08:54:991 Kernel/(14281:14297): 
+dentro de la busqueda
+[INFO] 08:08:56:8 Kernel/(14281:14297): 
+dentro de la busqueda
+[INFO] 08:08:56:510 Kernel/(14281:14297): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:08:56:543 Kernel/(14281:14297): 
+dentro de la busqueda
+[INFO] 08:08:56:556 Kernel/(14281:14297): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:08:56:565 Kernel/(14281:14297): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:08:56:571 Kernel/(14281:14297): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:08:57:80 Kernel/(14281:14297): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:08:57:80 Kernel/(14281:14297): 
+dentro de la busqueda
+[INFO] 08:08:58:116 Kernel/(14281:14297): 
+dentro de la busqueda
+[INFO] 08:08:58:619 Kernel/(14281:14297): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:08:58:643 Kernel/(14281:14297): 
+dentro de la busqueda
+[INFO] 08:08:58:668 Kernel/(14281:14297): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:08:58:677 Kernel/(14281:14297): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:08:59:185 Kernel/(14281:14297): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:08:59:185 Kernel/(14281:14297): 
+dentro de la busqueda
+[INFO] 08:08:59:995 Kernel/(14281:14292): Entramos a finalizar el script, del pid: 1
+
+[INFO] 08:09:00:16 Kernel/(14281:14287): Se acaba de mandar a la consola n°: 8, que el proceso 1 acaba de finalizar con exit code: -7
+
+[INFO] 08:09:01:213 Kernel/(14281:14297): [Rutina rutinaCPU] - Entramos al Caso de que CPU termino la ejecucion de un proceso: accion- 104!
+
+[INFO] 08:09:01:253 Kernel/(14281:14297): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:09:01:264 Kernel/(14281:14297): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:09:01:282 Kernel/(14281:14297): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:09:01:799 Kernel/(14281:14297): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:09:01:837 Kernel/(14281:14297): 
+dentro de la busqueda
+[INFO] 08:09:02:873 Kernel/(14281:14297): 
+dentro de la busqueda
+[INFO] 08:09:03:387 Kernel/(14281:14297): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:09:03:387 Kernel/(14281:14297): 
+dentro de la busqueda
+[INFO] 08:09:03:435 Kernel/(14281:14297): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:09:05:547 Kernel/(14281:14292): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 08:09:05:547 Kernel/(14281:14292): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 08:09:05:561 Kernel/(14281:14283): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 08:09:05:561 Kernel/(14281:14283): Estructura:--
+Pid: 3
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:8
+
+
+[INFO] 08:09:05:562 Kernel/(14281:14283): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:09:05:564 Kernel/(14281:14283): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 08:09:05:564 Kernel/(14281:14283): Envio una pagina: 0
+
+[INFO] 08:09:05:564 Kernel/(14281:14283): La pagina 0, contiene:
+[INFO] 08:09:05:564 Kernel/(14281:14283): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:12:40:512 Kernel/(14417:14420): 
+[Rutina planificadorCortoPlazo] - Entramos al planificador de corto plazo!
+
+[INFO] 08:12:40:516 Kernel/(14417:14419): 
+[rutina estadoNEW] - Entramos al planificador de largo plazo!
+
+[INFO] 08:12:44:152 Kernel/(14417:14425): 
+[rutina aceptarConexiones] - Nueva CPU Conectada
+Socket CPU 8
+
+
+[INFO] 08:12:44:181 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al hilo de la CPU cuyo socket es: 8.
+
+[INFO] 08:12:44:181 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:12:49:283 Kernel/(14417:14425): 
+[rutina aceptarConexiones] - Nueva Consola Conectada!
+Socket Consola 9
+
+
+[INFO] 08:12:49:292 Kernel/(14417:14431): [Rutina rutinaConsola] - Entramos al hilo de la consola: 9!
+
+[INFO] 08:12:54:579 Kernel/(14417:14431): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 08:12:54:580 Kernel/(14417:14431): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 08:12:54:723 Kernel/(14417:14419): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 08:12:54:723 Kernel/(14417:14419): Estructura:--
+Pid: 1
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:9
+
+
+[INFO] 08:12:54:724 Kernel/(14417:14419): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:12:54:731 Kernel/(14417:14419): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 08:12:54:736 Kernel/(14417:14419): Envio una pagina: 0
+
+[INFO] 08:12:54:736 Kernel/(14417:14419): La pagina 0, contiene:
+[INFO] 08:12:54:736 Kernel/(14417:14419): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:12:55:355 Kernel/(14417:14428): 
+dentro de la busqueda
+[INFO] 08:12:55:868 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:13:00:223 Kernel/(14417:14431): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 08:13:00:223 Kernel/(14417:14431): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 08:13:00:263 Kernel/(14417:14419): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 08:13:00:264 Kernel/(14417:14419): Estructura:--
+Pid: 2
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:9
+
+
+[INFO] 08:13:00:264 Kernel/(14417:14419): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:13:00:291 Kernel/(14417:14419): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 08:13:00:292 Kernel/(14417:14419): Envio una pagina: 0
+
+[INFO] 08:13:00:292 Kernel/(14417:14419): La pagina 0, contiene:
+[INFO] 08:13:00:292 Kernel/(14417:14419): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:13:00:881 Kernel/(14417:14428): 
+dentro de la busqueda
+[INFO] 08:13:01:386 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:13:01:389 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:13:01:903 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:13:01:909 Kernel/(14417:14428): 
+dentro de la busqueda
+[INFO] 08:13:02:959 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:13:02:960 Kernel/(14417:14428): 
+dentro de la busqueda
+[INFO] 08:13:03:4 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:13:03:17 Kernel/(14417:14428): 
+dentro de la busqueda
+[INFO] 08:13:03:520 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:13:03:531 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:13:04:47 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:13:04:79 Kernel/(14417:14428): 
+dentro de la busqueda
+[INFO] 08:13:05:149 Kernel/(14417:14428): 
+dentro de la busqueda
+[INFO] 08:13:05:653 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:13:05:653 Kernel/(14417:14428): 
+dentro de la busqueda
+[INFO] 08:13:05:653 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:13:05:671 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:13:05:672 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:13:06:179 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:13:06:203 Kernel/(14417:14428): 
+dentro de la busqueda
+[INFO] 08:13:07:237 Kernel/(14417:14428): 
+dentro de la busqueda
+[INFO] 08:13:07:367 Kernel/(14417:14431): Entramos a finalizar el script, del pid: 1
+
+[INFO] 08:13:07:460 Kernel/(14417:14423): Se acaba de mandar a la consola n°: 9, que el proceso 1 acaba de finalizar con exit code: -7
+
+[INFO] 08:13:07:740 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:13:07:747 Kernel/(14417:14428): 
+dentro de la busqueda
+[INFO] 08:13:07:779 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:13:19:649 Kernel/(14417:14431): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 08:13:19:649 Kernel/(14417:14431): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 08:13:19:727 Kernel/(14417:14419): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 08:13:19:727 Kernel/(14417:14419): Estructura:--
+Pid: 3
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:9
+
+
+[INFO] 08:13:19:727 Kernel/(14417:14419): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:13:19:734 Kernel/(14417:14419): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 08:13:19:746 Kernel/(14417:14419): Envio una pagina: 0
+
+[INFO] 08:13:19:746 Kernel/(14417:14419): La pagina 0, contiene:
+[INFO] 08:13:19:786 Kernel/(14417:14419): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:13:20:408 Kernel/(14417:14428): 
+dentro de la busqueda
+[INFO] 08:13:20:919 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:13:21:437 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:13:21:456 Kernel/(14417:14428): 
+dentro de la busqueda
+[INFO] 08:13:22:465 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:13:22:466 Kernel/(14417:14428): 
+dentro de la busqueda
+[INFO] 08:13:22:511 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:13:22:547 Kernel/(14417:14428): 
+dentro de la busqueda
+[INFO] 08:13:23:52 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:13:23:97 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:13:23:110 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:13:23:613 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:13:23:658 Kernel/(14417:14428): 
+dentro de la busqueda
+[INFO] 08:13:24:679 Kernel/(14417:14428): 
+dentro de la busqueda
+[INFO] 08:13:25:184 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:13:25:185 Kernel/(14417:14428): 
+dentro de la busqueda
+[INFO] 08:13:25:231 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:13:25:237 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:13:25:755 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:13:25:773 Kernel/(14417:14428): 
+dentro de la busqueda
+[INFO] 08:13:26:841 Kernel/(14417:14428): 
+dentro de la busqueda
+[INFO] 08:13:27:344 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:13:27:400 Kernel/(14417:14428): 
+dentro de la busqueda
+[INFO] 08:13:27:400 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:13:27:406 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:13:27:415 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:13:27:921 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:13:27:925 Kernel/(14417:14428): 
+dentro de la busqueda
+[INFO] 08:13:28:947 Kernel/(14417:14428): 
+dentro de la busqueda
+[INFO] 08:13:29:460 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:13:29:460 Kernel/(14417:14428): 
+dentro de la busqueda
+[INFO] 08:13:29:501 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:13:29:526 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:13:30:38 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:13:30:39 Kernel/(14417:14428): 
+dentro de la busqueda
+[INFO] 08:13:31:68 Kernel/(14417:14428): 
+dentro de la busqueda
+[INFO] 08:13:31:581 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:13:31:605 Kernel/(14417:14428): 
+dentro de la busqueda
+[INFO] 08:13:31:631 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:13:31:641 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:13:31:644 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:13:32:151 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:13:32:151 Kernel/(14417:14428): 
+dentro de la busqueda
+[INFO] 08:13:33:173 Kernel/(14417:14428): 
+dentro de la busqueda
+[INFO] 08:13:33:676 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:13:33:684 Kernel/(14417:14428): 
+dentro de la busqueda
+[INFO] 08:13:33:715 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:13:33:726 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:13:34:239 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:13:34:240 Kernel/(14417:14428): 
+dentro de la busqueda
+[INFO] 08:13:35:289 Kernel/(14417:14428): 
+dentro de la busqueda
+[INFO] 08:13:35:800 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:13:35:851 Kernel/(14417:14428): 
+dentro de la busqueda
+[INFO] 08:13:35:851 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:13:35:908 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:13:35:909 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:13:36:419 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:13:36:440 Kernel/(14417:14428): 
+dentro de la busqueda
+[INFO] 08:13:37:499 Kernel/(14417:14428): 
+dentro de la busqueda
+[INFO] 08:13:37:4 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:13:38:20 Kernel/(14417:14428): 
+dentro de la busqueda
+[INFO] 08:13:38:20 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:13:38:38 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:13:38:205 Kernel/(14417:14431): Entramos a finalizar el script, del pid: 3
+
+[INFO] 08:13:38:215 Kernel/(14417:14423): Se acaba de mandar a la consola n°: 9, que el proceso 3 acaba de finalizar con exit code: -7
+
+[INFO] 08:13:39:560 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU termino la ejecucion de un proceso: accion- 104!
+
+[INFO] 08:13:39:603 Kernel/(14417:14428): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:13:47:680 Kernel/(14417:14431): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 08:13:47:680 Kernel/(14417:14431): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 08:13:47:724 Kernel/(14417:14419): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 08:13:47:724 Kernel/(14417:14419): Estructura:--
+Pid: 4
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:9
+
+
+[INFO] 08:13:47:724 Kernel/(14417:14419): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:13:47:755 Kernel/(14417:14419): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 08:13:47:756 Kernel/(14417:14419): Envio una pagina: 0
+
+[INFO] 08:13:47:756 Kernel/(14417:14419): La pagina 0, contiene:
+[INFO] 08:13:47:756 Kernel/(14417:14419): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:14:07:567 Kernel/(14441:14444): 
+[Rutina planificadorCortoPlazo] - Entramos al planificador de corto plazo!
+
+[INFO] 08:14:07:576 Kernel/(14441:14443): 
+[rutina estadoNEW] - Entramos al planificador de largo plazo!
+
+[INFO] 08:14:08:851 Kernel/(14441:14449): 
+[rutina aceptarConexiones] - Nueva Consola Conectada!
+Socket Consola 8
+
+
+[INFO] 08:14:08:867 Kernel/(14441:14452): [Rutina rutinaConsola] - Entramos al hilo de la consola: 8!
+
+[INFO] 08:14:15:517 Kernel/(14441:14452): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 08:14:15:517 Kernel/(14441:14452): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 08:14:15:599 Kernel/(14441:14443): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 08:14:15:599 Kernel/(14441:14443): Estructura:--
+Pid: 1
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:8
+
+
+[INFO] 08:14:15:600 Kernel/(14441:14443): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:14:15:607 Kernel/(14441:14443): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 08:14:15:656 Kernel/(14441:14443): Envio una pagina: 0
+
+[INFO] 08:14:15:657 Kernel/(14441:14443): La pagina 0, contiene:
+[INFO] 08:14:15:657 Kernel/(14441:14443): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:14:21:67 Kernel/(14441:14452): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 08:14:21:67 Kernel/(14441:14452): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 08:14:21:87 Kernel/(14441:14443): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 08:14:21:87 Kernel/(14441:14443): Estructura:--
+Pid: 2
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:8
+
+
+[INFO] 08:14:21:87 Kernel/(14441:14443): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:14:21:128 Kernel/(14441:14443): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 08:14:21:132 Kernel/(14441:14443): Envio una pagina: 0
+
+[INFO] 08:14:21:132 Kernel/(14441:14443): La pagina 0, contiene:
+[INFO] 08:14:21:132 Kernel/(14441:14443): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:14:23:640 Kernel/(14441:14449): 
+[rutina aceptarConexiones] - Nueva CPU Conectada
+Socket CPU 9
+
+
+[INFO] 08:14:23:717 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al hilo de la CPU cuyo socket es: 9.
+
+[INFO] 08:14:23:717 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:14:24:295 Kernel/(14441:14457): 
+dentro de la busqueda
+[INFO] 08:14:24:800 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:14:25:367 Kernel/(14441:14457): 
+dentro de la busqueda
+[INFO] 08:14:25:884 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:14:25:887 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:14:26:396 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:14:26:397 Kernel/(14441:14457): 
+dentro de la busqueda
+[INFO] 08:14:27:409 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:14:27:410 Kernel/(14441:14457): 
+dentro de la busqueda
+[INFO] 08:14:27:458 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:14:27:540 Kernel/(14441:14457): 
+dentro de la busqueda
+[INFO] 08:14:28:47 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:14:28:66 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:14:28:579 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:14:28:598 Kernel/(14441:14457): 
+dentro de la busqueda
+[INFO] 08:14:29:611 Kernel/(14441:14457): 
+dentro de la busqueda
+[INFO] 08:14:30:114 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:14:30:121 Kernel/(14441:14457): 
+dentro de la busqueda
+[INFO] 08:14:30:161 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:14:30:193 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:14:30:199 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:14:30:712 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:14:30:719 Kernel/(14441:14457): 
+dentro de la busqueda
+[INFO] 08:14:31:731 Kernel/(14441:14457): 
+dentro de la busqueda
+[INFO] 08:14:32:233 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:14:32:245 Kernel/(14441:14457): 
+dentro de la busqueda
+[INFO] 08:14:32:287 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:14:32:296 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:14:32:841 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:14:32:873 Kernel/(14441:14457): 
+dentro de la busqueda
+[INFO] 08:14:33:884 Kernel/(14441:14457): 
+dentro de la busqueda
+[INFO] 08:14:34:386 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:14:34:387 Kernel/(14441:14457): 
+dentro de la busqueda
+[INFO] 08:14:34:432 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:14:34:484 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:14:34:486 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:14:35:10 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:14:35:11 Kernel/(14441:14457): 
+dentro de la busqueda
+[INFO] 08:14:36:41 Kernel/(14441:14457): 
+dentro de la busqueda
+[INFO] 08:14:36:551 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:14:36:568 Kernel/(14441:14457): 
+dentro de la busqueda
+[INFO] 08:14:36:588 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:14:36:607 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:14:37:122 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:14:37:167 Kernel/(14441:14457): 
+dentro de la busqueda
+[INFO] 08:14:38:220 Kernel/(14441:14457): 
+dentro de la busqueda
+[INFO] 08:14:38:723 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:14:38:723 Kernel/(14441:14457): 
+dentro de la busqueda
+[INFO] 08:14:38:771 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:14:38:803 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:14:38:807 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:14:39:313 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:14:39:399 Kernel/(14441:14457): 
+dentro de la busqueda
+[INFO] 08:14:40:447 Kernel/(14441:14457): 
+dentro de la busqueda
+[INFO] 08:14:40:950 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:14:40:960 Kernel/(14441:14457): 
+dentro de la busqueda
+[INFO] 08:14:40:960 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:14:40:987 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:14:41:343 Kernel/(14441:14452): Entramos a finalizar el script, del pid: 0
+
+[INFO] 08:14:41:500 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:14:41:500 Kernel/(14441:14457): 
+dentro de la busqueda
+[INFO] 08:14:42:520 Kernel/(14441:14457): 
+dentro de la busqueda
+[INFO] 08:14:43:24 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:14:43:31 Kernel/(14441:14457): 
+dentro de la busqueda
+[INFO] 08:14:43:63 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:14:43:79 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:14:43:101 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:14:43:609 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:14:43:628 Kernel/(14441:14457): 
+dentro de la busqueda
+[INFO] 08:14:44:687 Kernel/(14441:14457): 
+dentro de la busqueda
+[INFO] 08:14:45:197 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:14:45:210 Kernel/(14441:14457): 
+dentro de la busqueda
+[INFO] 08:14:45:211 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:14:45:271 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:14:45:777 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:14:45:812 Kernel/(14441:14457): 
+dentro de la busqueda
+[INFO] 08:14:46:867 Kernel/(14441:14457): 
+dentro de la busqueda
+[INFO] 08:14:47:372 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:14:47:373 Kernel/(14441:14457): 
+dentro de la busqueda
+[INFO] 08:14:47:373 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:14:47:413 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:14:47:419 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:14:47:931 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:14:47:933 Kernel/(14441:14457): 
+dentro de la busqueda
+[INFO] 08:14:48:4 Kernel/(14441:14452): Entramos a finalizar el script, del pid: 1
+
+[INFO] 08:14:49:11 Kernel/(14441:14457): 
+dentro de la busqueda
+[INFO] 08:14:49:75 Kernel/(14441:14447): Se acaba de mandar a la consola n°: 8, que el proceso 1 acaba de finalizar con exit code: -7
+
+[INFO] 08:14:49:519 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:14:49:519 Kernel/(14441:14457): 
+dentro de la busqueda
+[INFO] 08:14:49:519 Kernel/(14441:14457): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:14:54:399 Kernel/(14441:14452): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 08:14:54:399 Kernel/(14441:14452): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 08:14:54:456 Kernel/(14441:14443): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 08:14:54:456 Kernel/(14441:14443): Estructura:--
+Pid: 3
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:8
+
+
+[INFO] 08:14:54:456 Kernel/(14441:14443): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:14:54:475 Kernel/(14441:14443): [Funcion newToReady] - No hubo espacio para guardar en memoria!
+
+[INFO] 08:17:16:305 Kernel/(14524:14527): 
+[Rutina planificadorCortoPlazo] - Entramos al planificador de corto plazo!
+
+[INFO] 08:17:16:331 Kernel/(14524:14526): 
+[rutina estadoNEW] - Entramos al planificador de largo plazo!
+
+[INFO] 08:17:17:610 Kernel/(14524:14532): 
+[rutina aceptarConexiones] - Nueva Consola Conectada!
+Socket Consola 8
+
+
+[INFO] 08:17:17:615 Kernel/(14524:14535): [Rutina rutinaConsola] - Entramos al hilo de la consola: 8!
+
+[INFO] 08:17:28:944 Kernel/(14524:14532): 
+[rutina aceptarConexiones] - Nueva CPU Conectada
+Socket CPU 9
+
+
+[INFO] 08:17:28:982 Kernel/(14524:14538): [Rutina rutinaCPU] - Entramos al hilo de la CPU cuyo socket es: 9.
+
+[INFO] 08:17:28:983 Kernel/(14524:14538): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:17:31:148 Kernel/(14524:14535): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 08:17:31:148 Kernel/(14524:14535): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 08:17:31:248 Kernel/(14524:14526): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 08:17:31:248 Kernel/(14524:14526): Estructura:--
+Pid: 1
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:8
+
+
+[INFO] 08:17:31:248 Kernel/(14524:14526): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:17:31:251 Kernel/(14524:14526): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 08:17:31:252 Kernel/(14524:14526): Envio una pagina: 0
+
+[INFO] 08:17:31:253 Kernel/(14524:14526): La pagina 0, contiene:
+[INFO] 08:17:31:253 Kernel/(14524:14526): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:17:31:928 Kernel/(14524:14538): 
+dentro de la busqueda
+[INFO] 08:17:32:431 Kernel/(14524:14538): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:17:36:324 Kernel/(14524:14535): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 08:17:36:325 Kernel/(14524:14535): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 08:17:36:329 Kernel/(14524:14526): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 08:17:36:329 Kernel/(14524:14526): Estructura:--
+Pid: 2
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:8
+
+
+[INFO] 08:17:36:329 Kernel/(14524:14526): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:17:36:334 Kernel/(14524:14526): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 08:17:36:335 Kernel/(14524:14526): Envio una pagina: 0
+
+[INFO] 08:17:36:335 Kernel/(14524:14526): La pagina 0, contiene:
+[INFO] 08:17:36:335 Kernel/(14524:14526): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:17:37:87 Kernel/(14524:14538): 
+dentro de la busqueda
+[INFO] 08:17:37:592 Kernel/(14524:14538): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:17:37:604 Kernel/(14524:14538): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:17:38:166 Kernel/(14524:14538): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:17:38:219 Kernel/(14524:14538): 
+dentro de la busqueda
+[INFO] 08:17:39:235 Kernel/(14524:14538): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:17:39:263 Kernel/(14524:14538): 
+dentro de la busqueda
+[INFO] 08:17:39:263 Kernel/(14524:14538): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:17:39:270 Kernel/(14524:14538): 
+dentro de la busqueda
+[INFO] 08:17:39:775 Kernel/(14524:14538): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:17:39:839 Kernel/(14524:14538): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:17:40:345 Kernel/(14524:14538): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:17:40:367 Kernel/(14524:14538): 
+dentro de la busqueda
+[INFO] 08:17:41:416 Kernel/(14524:14538): 
+dentro de la busqueda
+[INFO] 08:17:41:936 Kernel/(14524:14538): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:17:41:972 Kernel/(14524:14538): 
+dentro de la busqueda
+[INFO] 08:17:41:985 Kernel/(14524:14538): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:17:41:5 Kernel/(14524:14538): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:17:42:7 Kernel/(14524:14538): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:17:42:514 Kernel/(14524:14538): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:17:42:537 Kernel/(14524:14538): 
+dentro de la busqueda
+[INFO] 08:17:43:602 Kernel/(14524:14538): 
+dentro de la busqueda
+[INFO] 08:17:44:107 Kernel/(14524:14538): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:17:44:122 Kernel/(14524:14538): 
+dentro de la busqueda
+[INFO] 08:17:44:123 Kernel/(14524:14538): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:17:44:132 Kernel/(14524:14538): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:17:44:650 Kernel/(14524:14538): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:17:44:650 Kernel/(14524:14538): 
+dentro de la busqueda
+[INFO] 08:17:45:435 Kernel/(14524:14535): Entramos a finalizar el script, del pid: 1
+
+[INFO] 08:17:45:515 Kernel/(14524:14530): Se acaba de mandar a la consola n°: 8, que el proceso 1 acaba de finalizar con exit code: -7
+
+[INFO] 08:17:46:675 Kernel/(14524:14538): [Rutina rutinaCPU] - Entramos al Caso de que CPU termino la ejecucion de un proceso: accion- 104!
+
+[INFO] 08:17:46:715 Kernel/(14524:14538): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:17:46:751 Kernel/(14524:14538): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:17:46:755 Kernel/(14524:14538): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:17:47:260 Kernel/(14524:14538): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:17:47:261 Kernel/(14524:14538): 
+dentro de la busqueda
+[INFO] 08:17:48:304 Kernel/(14524:14538): 
+dentro de la busqueda
+[INFO] 08:17:48:807 Kernel/(14524:14538): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:17:48:807 Kernel/(14524:14538): 
+dentro de la busqueda
+[INFO] 08:17:48:850 Kernel/(14524:14538): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:17:55:487 Kernel/(14524:14535): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 08:17:55:487 Kernel/(14524:14535): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 08:17:55:495 Kernel/(14524:14526): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 08:17:55:495 Kernel/(14524:14526): Estructura:--
+Pid: 3
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:8
+
+
+[INFO] 08:17:55:495 Kernel/(14524:14526): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:17:55:500 Kernel/(14524:14526): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 08:17:55:500 Kernel/(14524:14526): Envio una pagina: 0
+
+[INFO] 08:17:55:501 Kernel/(14524:14526): La pagina 0, contiene:
+[INFO] 08:17:55:501 Kernel/(14524:14526): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:19:19:301 Kernel/(14524:14535): Murio el proceso: 1
+
+[INFO] 08:20:06:529 Kernel/(14615:14618): 
+[Rutina planificadorCortoPlazo] - Entramos al planificador de corto plazo!
+
+[INFO] 08:20:06:535 Kernel/(14615:14617): 
+[rutina estadoNEW] - Entramos al planificador de largo plazo!
+
+[INFO] 08:20:11:407 Kernel/(14615:14623): 
+[rutina aceptarConexiones] - Nueva CPU Conectada
+Socket CPU 8
+
+
+[INFO] 08:20:11:466 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al hilo de la CPU cuyo socket es: 8.
+
+[INFO] 08:20:11:466 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:20:17:469 Kernel/(14615:14623): 
+[rutina aceptarConexiones] - Nueva Consola Conectada!
+Socket Consola 9
+
+
+[INFO] 08:20:17:488 Kernel/(14615:14629): [Rutina rutinaConsola] - Entramos al hilo de la consola: 9!
+
+[INFO] 08:20:22:760 Kernel/(14615:14629): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 08:20:22:760 Kernel/(14615:14629): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 08:20:22:816 Kernel/(14615:14617): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 08:20:22:816 Kernel/(14615:14617): Estructura:--
+Pid: 1
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:9
+
+
+[INFO] 08:20:22:817 Kernel/(14615:14617): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:20:22:822 Kernel/(14615:14617): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 08:20:22:826 Kernel/(14615:14617): Envio una pagina: 0
+
+[INFO] 08:20:22:827 Kernel/(14615:14617): La pagina 0, contiene:
+[INFO] 08:20:22:827 Kernel/(14615:14617): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:20:23:537 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:20:24:47 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:20:27:414 Kernel/(14615:14629): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 08:20:27:415 Kernel/(14615:14629): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 08:20:27:417 Kernel/(14615:14617): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 08:20:27:443 Kernel/(14615:14617): Estructura:--
+Pid: 2
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:9
+
+
+[INFO] 08:20:27:443 Kernel/(14615:14617): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:20:27:450 Kernel/(14615:14617): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 08:20:27:451 Kernel/(14615:14617): Envio una pagina: 0
+
+[INFO] 08:20:27:452 Kernel/(14615:14617): La pagina 0, contiene:
+[INFO] 08:20:27:452 Kernel/(14615:14617): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:20:28:103 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:20:28:611 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:20:28:612 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:20:29:125 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:20:29:145 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:20:30:187 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:20:30:188 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:20:30:233 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:20:30:284 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:20:30:791 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:20:30:826 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:20:31:336 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:20:31:337 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:20:32:366 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:20:32:874 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:20:32:875 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:20:32:923 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:20:32:971 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:20:32:972 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:20:33:499 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:20:33:551 Kernel/(14615:14629): Entramos a finalizar el script, del pid: 1
+
+[INFO] 08:20:33:555 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:20:33:614 Kernel/(14615:14621): Se acaba de mandar a la consola n°: 9, que el proceso 1 acaba de finalizar con exit code: -7
+
+[INFO] 08:20:34:623 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:20:35:132 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:20:35:135 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:20:35:135 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:20:40:283 Kernel/(14615:14629): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 08:20:40:283 Kernel/(14615:14629): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 08:20:40:306 Kernel/(14615:14617): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 08:20:40:324 Kernel/(14615:14617): Estructura:--
+Pid: 3
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:9
+
+
+[INFO] 08:20:40:325 Kernel/(14615:14617): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:20:40:331 Kernel/(14615:14617): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 08:20:40:335 Kernel/(14615:14617): Envio una pagina: 0
+
+[INFO] 08:20:40:336 Kernel/(14615:14617): La pagina 0, contiene:
+[INFO] 08:20:40:336 Kernel/(14615:14617): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:20:40:914 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:20:41:428 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:20:41:953 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:20:41:953 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:20:42:964 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:20:42:964 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:20:43:4 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:20:43:78 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:20:43:585 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:20:43:632 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:20:43:637 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:20:44:140 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:20:44:183 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:20:45:199 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:20:45:702 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:20:45:711 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:20:45:740 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:20:45:746 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:20:46:275 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:20:46:303 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:20:47:363 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:20:47:478 Kernel/(14615:14629): Entramos a finalizar el script, del pid: 3
+
+[INFO] 08:20:47:871 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:20:47:873 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:20:47:873 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:20:47:907 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:20:47:908 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:20:48:412 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:20:48:414 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:20:49:503 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:20:50:5 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:20:50:46 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:20:50:79 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:21:02:419 Kernel/(14615:14629): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 08:21:02:419 Kernel/(14615:14629): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 08:21:02:495 Kernel/(14615:14617): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 08:21:02:495 Kernel/(14615:14617): Estructura:--
+Pid: 4
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:9
+
+
+[INFO] 08:21:02:495 Kernel/(14615:14617): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:21:02:499 Kernel/(14615:14617): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 08:21:02:527 Kernel/(14615:14617): Envio una pagina: 0
+
+[INFO] 08:21:02:527 Kernel/(14615:14617): La pagina 0, contiene:
+[INFO] 08:21:02:527 Kernel/(14615:14617): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:21:03:181 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:03:690 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:21:04:200 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:21:04:220 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:05:226 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:21:05:235 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:05:275 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:21:05:356 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:05:859 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:21:05:870 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:21:05:882 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:21:06:388 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:21:06:389 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:07:419 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:07:924 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:21:07:924 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:07:972 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:21:07:988 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:21:08:507 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:21:08:507 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:09:544 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:10:11 Kernel/(14615:14629): Entramos a finalizar el script, del pid: 4
+
+[INFO] 08:21:10:52 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:21:10:52 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:10:99 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:21:10:137 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:21:10:138 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:21:10:646 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:21:10:687 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:11:714 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:12:219 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:21:12:244 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:12:268 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:21:16:771 Kernel/(14615:14629): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 08:21:16:771 Kernel/(14615:14629): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 08:21:16:861 Kernel/(14615:14617): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 08:21:16:892 Kernel/(14615:14617): Estructura:--
+Pid: 5
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:9
+
+
+[INFO] 08:21:16:892 Kernel/(14615:14617): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:21:16:899 Kernel/(14615:14617): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 08:21:16:900 Kernel/(14615:14617): Envio una pagina: 0
+
+[INFO] 08:21:16:900 Kernel/(14615:14617): La pagina 0, contiene:
+[INFO] 08:21:16:900 Kernel/(14615:14617): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:21:17:571 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:18:83 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:21:18:595 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:21:18:595 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:19:603 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:21:19:639 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:19:651 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:21:19:679 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:20:181 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:21:20:193 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:21:20:209 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:21:20:715 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:21:20:756 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:21:811 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:22:322 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:21:22:343 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:22:343 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:21:22:357 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:21:22:892 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:21:22:893 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:23:923 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:24:432 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:21:24:444 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:24:472 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:21:24:534 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:21:24:535 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:21:25:45 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:21:25:87 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:26:114 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:26:616 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:21:26:638 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:26:667 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:21:26:671 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:21:27:179 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:21:27:179 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:28:197 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:28:699 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:21:28:732 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:28:739 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:21:28:745 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:21:28:746 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:21:29:251 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:21:29:251 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:30:269 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:30:775 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:21:30:775 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:30:816 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:21:30:839 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:21:31:352 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:21:31:388 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:32:447 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:32:951 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:21:32:984 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:33:3 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:21:33:7 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:21:33:24 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:21:33:528 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:21:33:556 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:34:571 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:35:73 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:21:35:76 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:35:111 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:21:35:143 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:21:35:680 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:21:35:719 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:36:745 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:37:248 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:21:37:254 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:37:288 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:21:37:350 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:21:37:352 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:21:37:876 Kernel/(14615:14626): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:21:37:891 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:38:921 Kernel/(14615:14626): 
+dentro de la busqueda
+[INFO] 08:21:53:597 Kernel/(14641:14644): 
+[Rutina planificadorCortoPlazo] - Entramos al planificador de corto plazo!
+
+[INFO] 08:21:53:603 Kernel/(14641:14643): 
+[rutina estadoNEW] - Entramos al planificador de largo plazo!
+
+[INFO] 08:21:56:609 Kernel/(14641:14649): 
+[rutina aceptarConexiones] - Nueva Consola Conectada!
+Socket Consola 8
+
+
+[INFO] 08:21:56:623 Kernel/(14641:14651): [Rutina rutinaConsola] - Entramos al hilo de la consola: 8!
+
+[INFO] 08:22:02:281 Kernel/(14641:14651): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 08:22:02:281 Kernel/(14641:14651): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 08:22:02:311 Kernel/(14641:14643): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 08:22:02:331 Kernel/(14641:14643): Estructura:--
+Pid: 1
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:8
+
+
+[INFO] 08:22:02:332 Kernel/(14641:14643): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:22:02:335 Kernel/(14641:14643): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 08:22:02:337 Kernel/(14641:14643): Envio una pagina: 0
+
+[INFO] 08:22:02:337 Kernel/(14641:14643): La pagina 0, contiene:
+[INFO] 08:22:02:338 Kernel/(14641:14643): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:22:07:139 Kernel/(14641:14651): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 08:22:07:139 Kernel/(14641:14651): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 08:22:07:199 Kernel/(14641:14643): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 08:22:07:227 Kernel/(14641:14643): Estructura:--
+Pid: 2
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:8
+
+
+[INFO] 08:22:07:227 Kernel/(14641:14643): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:22:07:232 Kernel/(14641:14643): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 08:22:07:236 Kernel/(14641:14643): Envio una pagina: 0
+
+[INFO] 08:22:07:236 Kernel/(14641:14643): La pagina 0, contiene:
+[INFO] 08:22:07:236 Kernel/(14641:14643): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:22:10:688 Kernel/(14641:14649): 
+[rutina aceptarConexiones] - Nueva CPU Conectada
+Socket CPU 9
+
+
+[INFO] 08:22:10:744 Kernel/(14641:14657): [Rutina rutinaCPU] - Entramos al hilo de la CPU cuyo socket es: 9.
+
+[INFO] 08:22:10:803 Kernel/(14641:14657): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:22:11:347 Kernel/(14641:14657): 
+dentro de la busqueda
+[INFO] 08:22:11:859 Kernel/(14641:14657): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:22:11:860 Kernel/(14641:14657): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:22:12:367 Kernel/(14641:14657): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:22:12:404 Kernel/(14641:14657): 
+dentro de la busqueda
+[INFO] 08:22:13:411 Kernel/(14641:14657): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:22:13:420 Kernel/(14641:14657): 
+dentro de la busqueda
+[INFO] 08:22:13:455 Kernel/(14641:14657): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:22:13:976 Kernel/(14641:14657): 
+dentro de la busqueda
+[INFO] 08:22:14:483 Kernel/(14641:14657): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:22:14:997 Kernel/(14641:14657): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:22:14:998 Kernel/(14641:14657): 
+dentro de la busqueda
+[INFO] 08:22:16:29 Kernel/(14641:14657): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:22:16:87 Kernel/(14641:14657): 
+dentro de la busqueda
+[INFO] 08:22:16:87 Kernel/(14641:14657): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:22:16:97 Kernel/(14641:14657): 
+dentro de la busqueda
+[INFO] 08:22:16:606 Kernel/(14641:14657): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:22:16:608 Kernel/(14641:14657): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:22:17:130 Kernel/(14641:14657): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:22:17:137 Kernel/(14641:14657): 
+dentro de la busqueda
+[INFO] 08:22:17:196 Kernel/(14641:14651): Entramos a finalizar el script, del pid: 1
+
+[INFO] 08:22:17:207 Kernel/(14641:14647): Se acaba de mandar a la consola n°: 8, que el proceso 1 acaba de finalizar con exit code: -7
+
+[INFO] 08:22:18:646 Kernel/(14641:14657): [Rutina rutinaCPU] - Entramos al Caso de que CPU termino la ejecucion de un proceso: accion- 104!
+
+[INFO] 08:22:18:699 Kernel/(14641:14657): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:22:18:714 Kernel/(14641:14657): 
+dentro de la busqueda
+[INFO] 08:22:19:224 Kernel/(14641:14657): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:22:19:744 Kernel/(14641:14657): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:22:19:783 Kernel/(14641:14657): 
+dentro de la busqueda
+[INFO] 08:22:20:788 Kernel/(14641:14657): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:22:20:806 Kernel/(14641:14657): 
+dentro de la busqueda
+[INFO] 08:22:20:807 Kernel/(14641:14657): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:22:20:851 Kernel/(14641:14657): 
+dentro de la busqueda
+[INFO] 08:22:21:353 Kernel/(14641:14657): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:22:29:895 Kernel/(14641:14651): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 08:22:29:896 Kernel/(14641:14651): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 08:22:29:995 Kernel/(14641:14643): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 08:22:29:999 Kernel/(14641:14643): Estructura:--
+Pid: 3
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:8
+
+
+[INFO] 08:22:29:999 Kernel/(14641:14643): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:22:29:3 Kernel/(14641:14643): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 08:22:29:3 Kernel/(14641:14643): Envio una pagina: 0
+
+[INFO] 08:22:29:3 Kernel/(14641:14643): La pagina 0, contiene:
+[INFO] 08:22:29:4 Kernel/(14641:14643): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:22:51:716 Kernel/(14667:14669): 
+[rutina estadoNEW] - Entramos al planificador de largo plazo!
+
+[INFO] 08:22:51:710 Kernel/(14667:14670): 
+[Rutina planificadorCortoPlazo] - Entramos al planificador de corto plazo!
+
+[INFO] 08:22:53:465 Kernel/(14667:14675): 
+[rutina aceptarConexiones] - Nueva Consola Conectada!
+Socket Consola 8
+
+
+[INFO] 08:22:53:477 Kernel/(14667:14677): [Rutina rutinaConsola] - Entramos al hilo de la consola: 8!
+
+[INFO] 08:22:57:847 Kernel/(14667:14677): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 08:22:57:848 Kernel/(14667:14677): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 08:22:57:866 Kernel/(14667:14669): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 08:22:57:915 Kernel/(14667:14669): Estructura:--
+Pid: 1
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:8
+
+
+[INFO] 08:22:57:915 Kernel/(14667:14669): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:22:57:923 Kernel/(14667:14669): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 08:22:57:924 Kernel/(14667:14669): Envio una pagina: 0
+
+[INFO] 08:22:57:924 Kernel/(14667:14669): La pagina 0, contiene:
+[INFO] 08:22:57:924 Kernel/(14667:14669): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:23:04:115 Kernel/(14667:14677): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 08:23:04:115 Kernel/(14667:14677): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 08:23:04:119 Kernel/(14667:14669): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 08:23:04:128 Kernel/(14667:14669): Estructura:--
+Pid: 2
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:8
+
+
+[INFO] 08:23:04:128 Kernel/(14667:14669): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:23:04:135 Kernel/(14667:14669): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 08:23:04:167 Kernel/(14667:14669): Envio una pagina: 0
+
+[INFO] 08:23:04:167 Kernel/(14667:14669): La pagina 0, contiene:
+[INFO] 08:23:04:167 Kernel/(14667:14669): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:23:07:62 Kernel/(14667:14675): 
+[rutina aceptarConexiones] - Nueva CPU Conectada
+Socket CPU 9
+
+
+[INFO] 08:23:07:95 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al hilo de la CPU cuyo socket es: 9.
+
+[INFO] 08:23:07:95 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:23:07:711 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:08:219 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:23:08:782 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:09:287 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:23:09:302 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:23:09:815 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:23:09:845 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:10:861 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:23:10:879 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:10:904 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:23:10:956 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:11:467 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:23:11:477 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:23:11:0 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:23:12:18 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:13:55 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:13:559 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:23:13:578 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:13:611 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:23:13:634 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:23:13:639 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:23:14:155 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:23:14:210 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:14:242 Kernel/(14667:14677): Entramos a finalizar el script, del pid: 1
+
+[INFO] 08:23:14:339 Kernel/(14667:14673): Se acaba de mandar a la consola n°: 8, que el proceso 1 acaba de finalizar con exit code: -7
+
+[INFO] 08:23:15:222 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:15:725 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:23:15:726 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:15:763 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:23:21:197 Kernel/(14667:14677): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 08:23:21:197 Kernel/(14667:14677): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 08:23:21:267 Kernel/(14667:14669): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 08:23:21:291 Kernel/(14667:14669): Estructura:--
+Pid: 3
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:8
+
+
+[INFO] 08:23:21:291 Kernel/(14667:14669): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:23:21:293 Kernel/(14667:14669): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 08:23:21:294 Kernel/(14667:14669): Envio una pagina: 0
+
+[INFO] 08:23:21:294 Kernel/(14667:14669): La pagina 0, contiene:
+[INFO] 08:23:21:295 Kernel/(14667:14669): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:23:21:971 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:22:483 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:23:22:988 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:23:23:23 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:24:32 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:23:24:32 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:24:72 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:23:24:123 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:24:625 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:23:24:633 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:23:24:639 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:23:25:145 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:23:25:160 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:26:248 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:26:753 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:23:26:754 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:26:754 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:23:26:773 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:23:27:303 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:23:27:321 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:28:376 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:28:889 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:23:28:915 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:28:928 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:23:28:936 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:23:28:938 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:23:29:443 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:23:29:463 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:30:489 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:30:992 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:23:30:992 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:31:38 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:23:31:51 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:23:31:571 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:23:31:584 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:32:614 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:33:120 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:23:33:151 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:33:181 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:23:33:185 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:23:33:187 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:23:33:695 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:23:33:769 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:34:822 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:35:332 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:23:35:371 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:35:371 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:23:35:381 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:23:35:890 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:23:35:911 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:36:943 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:37:95 Kernel/(14667:14677): Entramos a finalizar el script, del pid: 3
+
+[INFO] 08:23:37:445 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:23:37:471 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:37:490 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:23:37:535 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:23:37:536 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:23:38:63 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:23:38:87 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:39:107 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:39:613 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:23:39:614 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:39:655 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:23:45:504 Kernel/(14667:14677): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 08:23:45:504 Kernel/(14667:14677): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 08:23:45:567 Kernel/(14667:14669): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 08:23:45:591 Kernel/(14667:14669): Estructura:--
+Pid: 4
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:8
+
+
+[INFO] 08:23:45:591 Kernel/(14667:14669): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:23:45:639 Kernel/(14667:14669): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 08:23:45:640 Kernel/(14667:14669): Envio una pagina: 0
+
+[INFO] 08:23:45:640 Kernel/(14667:14669): La pagina 0, contiene:
+[INFO] 08:23:45:640 Kernel/(14667:14669): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:23:46:282 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:46:789 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:23:47:314 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:23:47:355 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:48:364 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:23:48:364 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:48:364 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:23:48:371 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:48:873 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:23:48:897 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:23:48:900 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:23:49:433 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:23:49:433 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:50:512 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:51:21 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:23:51:23 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:51:23 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:23:51:31 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:23:51:553 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:23:51:553 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:52:581 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:53:85 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:23:53:123 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:53:123 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:23:53:159 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:23:53:163 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:23:53:679 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:23:53:740 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:54:754 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:55:257 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:23:55:290 Kernel/(14667:14682): 
+dentro de la busqueda
+[INFO] 08:23:55:299 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:23:55:309 Kernel/(14667:14682): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:24:22:664 Kernel/(14700:14703): 
+[Rutina planificadorCortoPlazo] - Entramos al planificador de corto plazo!
+
+[INFO] 08:24:22:670 Kernel/(14700:14702): 
+[rutina estadoNEW] - Entramos al planificador de largo plazo!
+
+[INFO] 08:24:26:660 Kernel/(14700:14708): 
+[rutina aceptarConexiones] - Nueva CPU Conectada
+Socket CPU 8
+
+
+[INFO] 08:24:26:701 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al hilo de la CPU cuyo socket es: 8.
+
+[INFO] 08:24:26:701 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:24:36:961 Kernel/(14700:14708): 
+[rutina aceptarConexiones] - Nueva Consola Conectada!
+Socket Consola 9
+
+
+[INFO] 08:24:36:976 Kernel/(14700:14716): [Rutina rutinaConsola] - Entramos al hilo de la consola: 9!
+
+[INFO] 08:24:41:901 Kernel/(14700:14716): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 08:24:41:902 Kernel/(14700:14716): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 08:24:41:995 Kernel/(14700:14702): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 08:24:42:19 Kernel/(14700:14702): Estructura:--
+Pid: 1
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:9
+
+
+[INFO] 08:24:42:19 Kernel/(14700:14702): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:24:42:67 Kernel/(14700:14702): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 08:24:42:69 Kernel/(14700:14702): Envio una pagina: 0
+
+[INFO] 08:24:42:70 Kernel/(14700:14702): La pagina 0, contiene:
+[INFO] 08:24:42:70 Kernel/(14700:14702): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:24:42:695 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:24:43:207 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:24:43:208 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:24:43:715 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:24:43:743 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:24:44:755 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:24:44:755 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:24:44:807 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:24:44:853 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:24:45:363 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:24:47:427 Kernel/(14700:14716): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 08:24:47:429 Kernel/(14700:14716): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 08:24:47:450 Kernel/(14700:14702): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 08:24:47:494 Kernel/(14700:14702): Estructura:--
+Pid: 2
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:9
+
+
+[INFO] 08:24:47:494 Kernel/(14700:14702): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:24:47:499 Kernel/(14700:14702): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 08:24:47:507 Kernel/(14700:14702): Envio una pagina: 0
+
+[INFO] 08:24:47:508 Kernel/(14700:14702): La pagina 0, contiene:
+[INFO] 08:24:47:508 Kernel/(14700:14702): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:24:48:132 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:24:48:644 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:24:49:159 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:24:49:159 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:24:50:185 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:24:50:186 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:24:50:223 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:24:50:323 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:24:50:825 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:24:50:832 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:24:50:833 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:24:51:357 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:24:51:391 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:24:52:415 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:24:52:923 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:24:52:939 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:24:52:963 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:24:52:967 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:24:53:474 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:24:53:519 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:24:54:180 Kernel/(14700:14716): Entramos a finalizar el script, del pid: 1
+
+[INFO] 08:24:54:267 Kernel/(14700:14706): Se acaba de mandar a la consola n°: 9, que el proceso 1 acaba de finalizar con exit code: -7
+
+[INFO] 08:24:54:536 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:24:55:47 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:24:55:78 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:24:55:96 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:25:02:963 Kernel/(14700:14716): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 08:25:02:963 Kernel/(14700:14716): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 08:25:03:13 Kernel/(14700:14702): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 08:25:03:20 Kernel/(14700:14702): Estructura:--
+Pid: 3
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:9
+
+
+[INFO] 08:25:03:20 Kernel/(14700:14702): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:25:03:22 Kernel/(14700:14702): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 08:25:03:38 Kernel/(14700:14702): Envio una pagina: 0
+
+[INFO] 08:25:03:39 Kernel/(14700:14702): La pagina 0, contiene:
+[INFO] 08:25:03:39 Kernel/(14700:14702): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 08:25:03:672 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:04:232 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:25:04:235 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:25:04:742 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:25:04:765 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:05:773 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:25:05:773 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:05:823 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:25:05:878 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:06:381 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:25:06:387 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:25:06:907 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:25:06:907 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:07:962 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:08:469 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:25:08:470 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:08:515 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:25:08:536 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:25:08:536 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:25:09:40 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:25:09:40 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:10:55 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:10:561 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:25:10:582 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:10:603 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:25:10:611 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:25:11:123 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:25:11:143 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:12:206 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:12:753 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:25:12:779 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:12:779 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:25:12:792 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:25:12:795 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:25:13:343 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:25:13:347 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:14:379 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:14:884 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:25:14:885 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:14:923 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:25:14:930 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:25:15:441 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:25:15:442 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:16:468 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:16:976 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:25:17:35 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:17:35 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:25:17:43 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:25:17:48 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:25:17:559 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:25:17:577 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:18:609 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:19:115 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:25:19:131 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:19:155 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:25:19:201 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:25:19:722 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:25:19:728 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:20:739 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:21:259 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:25:21:259 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:21:307 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:25:21:345 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:25:21:355 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:25:21:868 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:25:21:868 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:22:903 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:23:405 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:25:23:444 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:23:444 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:25:23:459 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:25:23:991 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:25:24:7 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:25:63 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:25:569 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:25:25:575 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:25:576 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:25:25:596 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:25:25:637 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:25:26:153 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:25:26:217 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:27:264 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:27:769 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:25:27:803 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:27:820 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:25:27:824 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:25:28:336 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:25:28:337 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:29:357 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:29:868 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:25:29:902 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:29:912 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:25:29:917 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:25:29:927 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 08:25:30:446 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:25:30:470 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:31:495 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:32:11 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:25:32:35 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:32:55 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:25:32:99 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:25:32:613 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 08:25:32:687 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:33:727 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:34:237 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 08:25:34:243 Kernel/(14700:14711): 
+dentro de la busqueda
+[INFO] 08:25:34:287 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 08:25:34:313 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 08:25:34:351 Kernel/(14700:14711): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+

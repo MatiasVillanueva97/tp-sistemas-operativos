@@ -95,6 +95,7 @@ void newToReady(){
 	printf("\n\n\nEstamos en la función newToReady a largo plazo!\n\n");
 	log_info(logKernel,"\n\n\nEstamos en la función newToReady a largo plazo!\n\n");
 	//***Tomo el primer elemento de la cola sin sacarlo de ella
+	sem_wait(&mutex_listaProcesos);
 	sem_wait(&mutex_cola_New);
 	sem_wait(&mutex_cola_Ready);
 	PROCESOS* programaAnsisop = queue_peek(cola_New);
@@ -211,7 +212,7 @@ void newToReady(){
 		sem_post(&mutex_cola_New);
 	}
 	sem_post(&mutex_cola_Ready);
-
+	sem_post(&mutex_listaProcesos);
 	/// Que onda con programaAnsisop? No hay que liberarlo? Yo creo que no, onda perderia todas las referencias a los punteros... o no lo sé
 }
 
@@ -556,9 +557,9 @@ void liberarSemaforo(int pid){
 				return proceso->pid == pid;
 			}
 			PROCESOS* proceso = list_find(avisos, buscar);
-
 			if(proceso->semaforoTomado != NULL){
 				SEM_signal(proceso->semaforoTomado, proceso->pcb);
+
 			}
 
 			sem_post(&mutex_listaProcesos);
@@ -573,7 +574,6 @@ void proceso_liberarRecursos(PCB_DATA* pcb){
 		printf("Se liberaron correctamente los recursos del heap del pid %d\n",pcb->pid);
 	}
 	liberarRecursosArchivo(pcb);
-
 	liberarSemaforo(pcb->pid);
 	enviarMensaje(socketMemoria,finalizarPrograma,&pcb->pid,sizeof(int));
 	void* respuesta;
