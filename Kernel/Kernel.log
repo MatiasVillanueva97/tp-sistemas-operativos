@@ -731,3 +731,1449 @@ end
 
 [Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok--146426353
 
+[INFO] 07:02:42:388 Kernel/(11941:11947): 
+[rutina estadoNEW] - Entramos al planificador de largo plazo!
+
+[INFO] 07:02:42:457 Kernel/(11941:11949): 
+[Rutina planificadorCortoPlazo] - Entramos al planificador de corto plazo!
+
+[INFO] 07:02:45:292 Kernel/(11941:11954): 
+[rutina aceptarConexiones] - Nueva Consola Conectada!
+Socket Consola 8
+
+
+[INFO] 07:02:45:431 Kernel/(11941:11957): [Rutina rutinaConsola] - Entramos al hilo de la consola: 8!
+
+[INFO] 07:02:51:941 Kernel/(11941:11957): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 07:02:51:941 Kernel/(11941:11957): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 07:02:52:30 Kernel/(11941:11947): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 07:02:52:55 Kernel/(11941:11947): Estructura:--
+Pid: 1
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:8
+
+
+[INFO] 07:02:52:56 Kernel/(11941:11947): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 07:02:52:87 Kernel/(11941:11947): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 07:02:52:115 Kernel/(11941:11947): Envio una pagina: 0
+
+[INFO] 07:02:52:116 Kernel/(11941:11947): La pagina 0, contiene:
+[INFO] 07:02:52:116 Kernel/(11941:11947): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 07:02:54:34 Kernel/(11941:11954): 
+[rutina aceptarConexiones] - Nueva CPU Conectada
+Socket CPU 9
+
+
+[INFO] 07:02:54:229 Kernel/(11941:11961): [Rutina rutinaCPU] - Entramos al hilo de la CPU cuyo socket es: 9.
+
+[INFO] 07:02:54:230 Kernel/(11941:11961): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:02:54:751 Kernel/(11941:11961): 
+dentro de la busqueda
+[INFO] 07:02:55:253 Kernel/(11941:11961): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:03:00:546 Kernel/(11941:11957): Entramos a finalizar el script, del pid: 1
+
+[INFO] 07:03:00:587 Kernel/(11941:11952): Se acaba de mandar a la consola n°: 8, que el proceso 1 acaba de finalizar con exit code: -7
+
+[INFO] 07:10:56:998 Kernel/(12227:12239): 
+[rutina estadoNEW] - Entramos al planificador de largo plazo!
+
+[INFO] 07:10:57:53 Kernel/(12227:12240): 
+[Rutina planificadorCortoPlazo] - Entramos al planificador de corto plazo!
+
+[INFO] 07:11:00:984 Kernel/(12227:12247): 
+[rutina aceptarConexiones] - Nueva Consola Conectada!
+Socket Consola 8
+
+
+[INFO] 07:11:01:167 Kernel/(12227:12250): [Rutina rutinaConsola] - Entramos al hilo de la consola: 8!
+
+[INFO] 07:11:07:83 Kernel/(12227:12250): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 07:11:07:84 Kernel/(12227:12250): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 07:11:07:124 Kernel/(12227:12239): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 07:11:07:125 Kernel/(12227:12239): Estructura:--
+Pid: 1
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:8
+
+
+[INFO] 07:11:07:125 Kernel/(12227:12239): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 07:11:07:153 Kernel/(12227:12239): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 07:11:07:154 Kernel/(12227:12239): Envio una pagina: 0
+
+[INFO] 07:11:07:155 Kernel/(12227:12239): La pagina 0, contiene:
+[INFO] 07:11:07:155 Kernel/(12227:12239): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 07:11:08:924 Kernel/(12227:12247): 
+[rutina aceptarConexiones] - Nueva CPU Conectada
+Socket CPU 9
+
+
+[INFO] 07:11:09:176 Kernel/(12227:12255): [Rutina rutinaCPU] - Entramos al hilo de la CPU cuyo socket es: 9.
+
+[INFO] 07:11:09:184 Kernel/(12227:12255): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:11:09:795 Kernel/(12227:12255): 
+dentro de la busqueda
+[INFO] 07:11:10:304 Kernel/(12227:12255): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:11:14:843 Kernel/(12227:12250): Entramos a finalizar el script, del pid: 1
+
+[INFO] 07:11:28:810 Kernel/(12227:12255): [Rutina rutinaCPU] - Entramos al Caso de que CPU termino la ejecucion de un proceso: accion- 104!
+
+[INFO] 07:11:54:897 Kernel/(12306:12317): 
+[rutina estadoNEW] - Entramos al planificador de largo plazo!
+
+[INFO] 07:11:54:958 Kernel/(12306:12318): 
+[Rutina planificadorCortoPlazo] - Entramos al planificador de corto plazo!
+
+[INFO] 07:12:01:395 Kernel/(12306:12324): 
+[rutina aceptarConexiones] - Nueva Consola Conectada!
+Socket Consola 8
+
+
+[INFO] 07:12:01:607 Kernel/(12306:12327): [Rutina rutinaConsola] - Entramos al hilo de la consola: 8!
+
+[INFO] 07:12:06:508 Kernel/(12306:12327): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 07:12:06:511 Kernel/(12306:12327): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 07:12:06:568 Kernel/(12306:12317): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 07:12:06:572 Kernel/(12306:12317): Estructura:--
+Pid: 1
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:8
+
+
+[INFO] 07:12:06:573 Kernel/(12306:12317): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 07:12:06:603 Kernel/(12306:12317): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 07:12:06:609 Kernel/(12306:12317): Envio una pagina: 0
+
+[INFO] 07:12:06:609 Kernel/(12306:12317): La pagina 0, contiene:
+[INFO] 07:12:06:622 Kernel/(12306:12317): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 07:12:10:459 Kernel/(12306:12324): 
+[rutina aceptarConexiones] - Nueva CPU Conectada
+Socket CPU 9
+
+
+[INFO] 07:12:10:641 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al hilo de la CPU cuyo socket es: 9.
+
+[INFO] 07:12:10:641 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:12:11:239 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:12:11:740 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:12:25:965 Kernel/(12306:12327): Entramos a finalizar el script, del pid: 1
+
+[INFO] 07:12:26:16 Kernel/(12306:12322): Se acaba de mandar a la consola n°: 8, que el proceso 1 acaba de finalizar con exit code: -7
+
+[INFO] 07:13:50:90 Kernel/(12306:12327): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 07:13:50:91 Kernel/(12306:12327): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 07:13:50:167 Kernel/(12306:12317): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 07:13:50:167 Kernel/(12306:12317): Estructura:--
+Pid: 2
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:8
+
+
+[INFO] 07:13:50:168 Kernel/(12306:12317): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 07:13:50:173 Kernel/(12306:12317): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 07:13:50:177 Kernel/(12306:12317): Envio una pagina: 0
+
+[INFO] 07:13:50:177 Kernel/(12306:12317): La pagina 0, contiene:
+[INFO] 07:13:50:178 Kernel/(12306:12317): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 07:13:50:808 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:13:51:321 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:13:51:333 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 07:13:51:840 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:13:51:840 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:13:52:865 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:13:52:929 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:13:52:929 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:13:52:966 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:13:53:501 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:13:56:364 Kernel/(12306:12327): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 07:13:56:364 Kernel/(12306:12327): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 07:13:56:404 Kernel/(12306:12317): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 07:13:56:405 Kernel/(12306:12317): Estructura:--
+Pid: 3
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:8
+
+
+[INFO] 07:13:56:408 Kernel/(12306:12317): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 07:13:56:434 Kernel/(12306:12317): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 07:13:56:440 Kernel/(12306:12317): Envio una pagina: 0
+
+[INFO] 07:13:56:440 Kernel/(12306:12317): La pagina 0, contiene:
+[INFO] 07:13:56:441 Kernel/(12306:12317): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 07:13:57:40 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:13:57:548 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:13:58:79 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:13:58:79 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:13:59:85 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:13:59:86 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:13:59:130 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:13:59:174 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:13:59:677 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:13:59:693 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:13:59:707 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 07:14:00:212 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:14:00:243 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:01:277 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:01:783 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:14:01:786 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:01:824 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:14:01:836 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:14:02:347 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:14:02:347 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:03:382 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:03:884 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:14:03:884 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:03:933 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:14:03:949 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:14:03:952 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 07:14:04:474 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:14:04:475 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:05:493 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:06:14 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:14:06:70 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:06:70 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:14:06:149 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:14:06:665 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:14:06:720 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:07:751 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:08:27 Kernel/(12306:12327): Entramos a finalizar el script, del pid: 2
+
+[INFO] 07:14:11:13 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:14:11:35 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:11:35 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:14:11:49 Kernel/(12306:12322): Se acaba de mandar a la consola n°: 8, que el proceso 2 acaba de finalizar con exit code: -7
+
+[INFO] 07:14:26:809 Kernel/(12306:12327): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 07:14:26:838 Kernel/(12306:12327): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 07:14:26:981 Kernel/(12306:12317): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 07:14:26:982 Kernel/(12306:12317): Estructura:--
+Pid: 4
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:8
+
+
+[INFO] 07:14:26:989 Kernel/(12306:12317): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 07:14:26:998 Kernel/(12306:12317): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 07:14:26:3 Kernel/(12306:12317): Envio una pagina: 0
+
+[INFO] 07:14:26:4 Kernel/(12306:12317): La pagina 0, contiene:
+[INFO] 07:14:26:4 Kernel/(12306:12317): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 07:14:27:650 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:28:165 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:14:28:176 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 07:14:28:684 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:14:28:697 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:29:709 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:14:29:713 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:29:751 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:14:29:770 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:30:283 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:14:30:301 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:14:30:847 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:14:30:896 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:31:916 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:32:432 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:14:32:447 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:32:472 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:14:32:497 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:14:32:500 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 07:14:32:6 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:14:33:31 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:34:45 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:34:559 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:14:34:612 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:34:612 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:14:34:640 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:14:35:152 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:14:35:187 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:36:222 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:36:724 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:14:36:725 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:36:767 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:14:36:803 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:14:36:807 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 07:14:37:318 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:14:37:318 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:38:332 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:38:835 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:14:38:836 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:38:884 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:14:38:939 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:14:39:449 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:14:39:449 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:40:479 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:40:982 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:14:41:39 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:41:40 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:14:41:56 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:14:41:66 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 07:14:41:581 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:14:41:621 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:42:641 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:43:147 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:14:43:180 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:43:188 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:14:43:202 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:14:43:728 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:14:43:761 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:44:839 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:45:344 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:14:45:346 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:45:346 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:14:45:360 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:14:45:383 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 07:14:45:913 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:14:45:914 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:46:936 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:47:438 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:14:47:483 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:47:483 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:14:47:519 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:14:48:26 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:14:48:35 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:49:50 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:49:555 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:14:49:591 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:49:596 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:14:49:606 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:14:49:611 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 07:14:50:117 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:14:50:117 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:51:144 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:51:647 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:14:51:703 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:51:703 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:14:51:760 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:14:52:281 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:14:52:303 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:53:322 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:53:861 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:14:53:900 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:53:901 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:14:53:935 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:14:53:936 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 07:14:54:451 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:14:54:463 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:55:500 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:56:13 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:14:56:41 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:56:51 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:14:56:76 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:14:56:591 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:14:56:653 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:57:679 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:58:181 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:14:58:182 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:58:221 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:14:58:271 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:14:58:275 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 07:14:58:789 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:14:58:856 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:14:59:922 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:00:433 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:15:00:442 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:00:442 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:15:00:460 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:15:00:974 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:15:00:995 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:02:39 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:02:583 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:15:02:595 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:02:631 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:15:02:638 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:15:02:640 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 07:15:03:149 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:15:03:150 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:04:244 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:04:752 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:15:04:783 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:04:784 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:15:04:811 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:15:05:325 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:15:05:337 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:06:381 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:06:903 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:15:06:904 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:06:938 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:15:06:957 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:15:06:960 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 07:15:07:470 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:15:07:506 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:08:574 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:09:91 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:15:09:148 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:09:148 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:15:09:167 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:15:09:675 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:15:09:723 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:10:771 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:11:275 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:15:11:291 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:11:291 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:15:11:315 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:15:11:319 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 07:15:11:828 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:15:11:828 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:12:839 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:13:350 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:15:13:374 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:13:391 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:15:13:421 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:15:13:940 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:15:13:957 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:14:988 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:15:492 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:15:15:493 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:15:543 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:15:15:568 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:15:15:572 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 07:15:16:95 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:15:16:151 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:17:166 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:17:671 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:15:17:712 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:17:712 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:15:17:721 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:15:18:247 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:15:18:284 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:19:299 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:19:805 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:15:19:875 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:19:875 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:15:19:890 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:15:19:913 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 07:15:20:438 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:15:20:509 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:21:531 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:22:33 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:15:22:80 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:22:80 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:15:22:93 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:15:22:627 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:15:22:648 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:23:687 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:24:188 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:15:24:205 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:24:238 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:15:24:263 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:15:24:273 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 07:15:24:779 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:15:24:822 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:25:896 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:26:404 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:15:26:419 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:26:420 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:15:26:435 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:15:26:960 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:15:27:19 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:28:53 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:28:559 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:15:28:575 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:28:596 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:15:28:616 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:15:28:632 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 07:15:29:139 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:15:29:139 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:30:160 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:30:662 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:15:30:708 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:30:709 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:15:30:730 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:15:31:249 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:15:31:259 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:32:301 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:32:811 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:15:32:811 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:32:861 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:15:32:891 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:15:32:895 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 07:15:33:415 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:15:33:445 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:34:475 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:34:979 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:15:35:27 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:35:27 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:15:35:56 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:15:35:586 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:15:35:590 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:36:650 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:37:158 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:15:37:161 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:37:162 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:15:37:187 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:15:37:191 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 07:15:37:702 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:15:37:703 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:38:722 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:39:235 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:15:39:253 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:39:277 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:15:39:287 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:15:39:797 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:15:39:825 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:40:835 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:41:342 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:15:41:383 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:41:383 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:15:41:394 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:15:41:396 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 07:15:41:908 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:15:41:953 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:43:52 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:43:595 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:15:43:596 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:43:596 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:15:43:617 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:15:44:147 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:15:44:147 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:45:179 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:45:685 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:15:45:688 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:45:732 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:15:45:747 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:15:45:749 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 07:15:46:271 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:15:46:275 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:47:319 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:47:822 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:15:47:842 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:47:871 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:15:47:923 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:15:48:437 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:15:48:491 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:49:507 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:50:890 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:15:50:931 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:50:931 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:15:50:972 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:15:50:976 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 07:15:51:884 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:15:51:895 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:52:983 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:53:486 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:15:53:487 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:53:488 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:15:53:507 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:15:54:25 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:15:54:55 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:55:128 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:55:632 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:15:55:639 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:55:639 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:15:55:651 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:15:55:655 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 07:15:56:173 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:15:56:178 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:57:189 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:57:690 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:15:57:785 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:57:786 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:15:57:832 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:15:58:75 Kernel/(12306:12331): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:15:58:76 Kernel/(12306:12331): 
+dentro de la busqueda
+[INFO] 07:15:58:76 Kernel/(12306:12331): [Rutina rutinaCPU] - Desconecto la CPU N°: 9
+
+[INFO] 07:17:46:610 Kernel/(12515:12530): 
+[rutina estadoNEW] - Entramos al planificador de largo plazo!
+
+[INFO] 07:17:46:753 Kernel/(12515:12531): 
+[Rutina planificadorCortoPlazo] - Entramos al planificador de corto plazo!
+
+[INFO] 07:17:53:644 Kernel/(12515:12537): 
+[rutina aceptarConexiones] - Nueva Consola Conectada!
+Socket Consola 8
+
+
+[INFO] 07:17:53:832 Kernel/(12515:12539): [Rutina rutinaConsola] - Entramos al hilo de la consola: 8!
+
+[INFO] 07:17:58:970 Kernel/(12515:12539): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 07:17:58:976 Kernel/(12515:12539): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 07:17:59:83 Kernel/(12515:12530): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 07:17:59:84 Kernel/(12515:12530): Estructura:--
+Pid: 1
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:8
+
+
+[INFO] 07:17:59:84 Kernel/(12515:12530): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 07:17:59:107 Kernel/(12515:12530): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 07:17:59:127 Kernel/(12515:12530): Envio una pagina: 0
+
+[INFO] 07:17:59:128 Kernel/(12515:12530): La pagina 0, contiene:
+[INFO] 07:17:59:128 Kernel/(12515:12530): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 07:18:05:511 Kernel/(12515:12539): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 07:18:05:511 Kernel/(12515:12539): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 07:18:05:654 Kernel/(12515:12530): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 07:18:05:665 Kernel/(12515:12530): Estructura:--
+Pid: 2
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:8
+
+
+[INFO] 07:18:05:691 Kernel/(12515:12530): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 07:18:05:695 Kernel/(12515:12530): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 07:18:05:719 Kernel/(12515:12530): Envio una pagina: 0
+
+[INFO] 07:18:05:720 Kernel/(12515:12530): La pagina 0, contiene:
+[INFO] 07:18:05:723 Kernel/(12515:12530): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait b
+!colas = !colas +1
+signal c
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 07:18:13:821 Kernel/(12515:12537): 
+[rutina aceptarConexiones] - Nueva CPU Conectada
+Socket CPU 9
+
+
+[INFO] 07:18:14:88 Kernel/(12515:12545): [Rutina rutinaCPU] - Entramos al hilo de la CPU cuyo socket es: 9.
+
+[INFO] 07:18:14:88 Kernel/(12515:12545): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:18:14:657 Kernel/(12515:12545): 
+dentro de la busqueda
+[INFO] 07:18:15:164 Kernel/(12515:12545): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:18:15:723 Kernel/(12515:12545): 
+dentro de la busqueda
+[INFO] 07:18:16:230 Kernel/(12515:12545): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:18:16:233 Kernel/(12515:12545): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 07:18:16:741 Kernel/(12515:12545): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:18:16:741 Kernel/(12515:12545): 
+dentro de la busqueda
+[INFO] 07:18:17:758 Kernel/(12515:12545): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:18:17:787 Kernel/(12515:12545): 
+dentro de la busqueda
+[INFO] 07:18:17:795 Kernel/(12515:12545): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:18:17:802 Kernel/(12515:12545): 
+dentro de la busqueda
+[INFO] 07:18:18:315 Kernel/(12515:12545): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:18:18:337 Kernel/(12515:12545): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:18:18:857 Kernel/(12515:12545): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:18:18:863 Kernel/(12515:12545): 
+dentro de la busqueda
+[INFO] 07:18:19:963 Kernel/(12515:12545): 
+dentro de la busqueda
+[INFO] 07:18:20:468 Kernel/(12515:12545): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:18:20:468 Kernel/(12515:12545): 
+dentro de la busqueda
+[INFO] 07:18:20:469 Kernel/(12515:12545): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:18:20:490 Kernel/(12515:12545): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:18:20:527 Kernel/(12515:12545): [Rutina rutinaCPU] - Entramos al Caso de que CPU asigna valor a una variable compartida: accion- 109!
+
+[INFO] 07:18:21:70 Kernel/(12515:12545): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- 108!
+
+[INFO] 07:18:21:102 Kernel/(12515:12545): 
+dentro de la busqueda
+[INFO] 07:18:22:116 Kernel/(12515:12545): 
+dentro de la busqueda
+[INFO] 07:18:22:628 Kernel/(12515:12545): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 07:18:22:642 Kernel/(12515:12545): 
+dentro de la busqueda
+[INFO] 07:18:22:667 Kernel/(12515:12545): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:18:22:671 Kernel/(12515:12545): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide el valor de una variable compartida: accion- 110!
+
+[INFO] 07:18:23:122 Kernel/(12515:12539): Entramos a finalizar el script, del pid: 1
+
+[INFO] 07:18:27:496 Kernel/(12515:12545): [Rutina rutinaCPU] - Entramos al Caso de que CPU termino la ejecucion de un proceso: accion- 104!
+
+[INFO] 07:18:27:506 Kernel/(12515:12534): Se acaba de mandar a la consola n°: 8, que el proceso 1 acaba de finalizar con exit code: -7
+
+[INFO] 07:18:27:644 Kernel/(12515:12545): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 07:19:28:368 Kernel/(12515:12539): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 07:19:28:368 Kernel/(12515:12539): El stream es : #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+ /n
+[INFO] 07:19:28:408 Kernel/(12515:12530): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 07:19:28:409 Kernel/(12515:12530): Estructura:--
+Pid: 3
+Script: #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+SocketConsola:8
+
+
+[INFO] 07:19:28:409 Kernel/(12515:12530): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
+[INFO] 07:19:28:437 Kernel/(12515:12530): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 07:19:28:516 Kernel/(12515:12530): Envio una pagina: 0
+
+[INFO] 07:19:28:524 Kernel/(12515:12530): La pagina 0, contiene:
+[INFO] 07:19:28:525 Kernel/(12515:12530): #!/usr/bin/ansisop
+begin
+:etiqueta
+wait c
+prints n !colas
+signal b
+#Ciclar indefinidamente
+goto etiqueta
+end
+
