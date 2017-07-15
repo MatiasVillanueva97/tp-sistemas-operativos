@@ -86,7 +86,7 @@ int main(void)
 
  	log_info(logCPU,"Configuracion Inicial: \n");
 
- 	configuracionInicial("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/CPU/cpu.config\n");
+ 	configuracionInicial("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/CPU/cpu.config");
 
  	imprimirConfiguracion();
 
@@ -239,7 +239,7 @@ void sigusr1_handler(int signal) {
 	signal_SIGUSR1 = true;
 
 	if(terminoPrograma && !hayPCB){ //si NO esta ejecutando
-			log_warning(logCPU,"Se recibio una SIGUSR1, se desconecta esta CPU\n");
+			log_info(logCPU,"Se recibio una SIGUSR1, se desconecta esta CPU\n");
 			close(socketKernel);
 			liberarConfiguracion();
 			log_destroy(logCPU);
@@ -248,7 +248,7 @@ void sigusr1_handler(int signal) {
 
 	}
 
-	log_warning(logCPU,"Se recibio una SIGUSR1, la CPU se desconectara luego de terminada la rafaga\n");
+	log_info(logCPU,"Se recibio una SIGUSR1, la CPU se desconectara luego de terminada la rafaga\n");
 	return;
 }
 
@@ -257,7 +257,7 @@ void sigint_handler(int signal) {
 	signal_sigint = true;
 
 	if(terminoPrograma && !hayPCB){ //si NO esta ejecutando
-		log_warning(logCPU,"Se recibio una SIGINT, se desconecta esta CPU\n");
+		log_info(logCPU,"Se recibio una SIGINT, se desconecta esta CPU\n");
 		//close(socketKernel);
 		liberarConfiguracion();
 		log_destroy(logCPU);
@@ -265,7 +265,7 @@ void sigint_handler(int signal) {
 		exit(-1);
 		return;
 	}
-	log_warning(logCPU,"Se recibio una SIGINT, la CPU se desconectara luego de terminada la instruccion\n");
+	log_info(logCPU,"Se recibio una SIGINT, la CPU se desconectara luego de terminada la instruccion\n");
 	return;
 }
 

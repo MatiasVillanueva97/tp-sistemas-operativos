@@ -1,7 +1,0 @@
-begin
-:declaro
-variables a
-:asigno
-a=1
-:termino
-end

@@ -92,7 +92,6 @@ bool proceso_finalizacionExterna(int pid, int exitCode)
 //***Funciones de Planificador a largo plazo - Esta funcion te pasa los procesos, (que no hayan finalizado), a la cola de ready; - anda bien
 void newToReady(){
 
-	printf("\n\n\nEstamos en la función newToReady a largo plazo!\n\n");
 	log_info(logKernel,"\n\n\nEstamos en la función newToReady a largo plazo!\n\n");
 	//***Tomo el primer elemento de la cola sin sacarlo de ella
 	sem_wait(&mutex_listaProcesos);
@@ -152,7 +151,7 @@ void newToReady(){
 			{
 				free(ok);
 				enviarMensaje(socketMemoria,envioCantidadPaginas,paginasParaElStack,size_pagina);
-				printf("Envio una pagina: %d\n", i+cant_paginas);
+				//printf("Envio una pagina: %d\n", i+cant_paginas);
 
 				recibirMensaje(socketMemoria,&ok);
 			}
@@ -194,7 +193,7 @@ void newToReady(){
 			sem_post(&mutex_cola_Finished);
 
 
-			printf("[Funcion newToReady] - No hubo espacio para guardar en memoria!\n");
+			//printf("[Funcion newToReady] - No hubo espacio para guardar en memoria!\n");
 			log_info(logKernel,"[Funcion newToReady] - No hubo espacio para guardar en memoria!\n");
 		free(ok);
 		}
@@ -246,7 +245,7 @@ bool hayProgramasEnNew()
 //*** Rutina que te pasa los procesos de new a ready - anda bien
 void * estadoNEW()
 {
-	printf("\n[rutina estadoNEW] - Entramos al planificador de largo plazo!\n");
+	//printf("\n[rutina estadoNEW] - Entramos al planificador de largo plazo!\n");
 	log_info(logKernel,"\n[rutina estadoNEW] - Entramos al planificador de largo plazo!\n");
 	//*** el booleano finPorConsolaDelKernel esta en false desde el inicio, en el momento en el que el kernel quiera frenar la planificiacion esta variable pasara a true, y se frenara la planificacion
 	while(!finPorConsolaDelKernel)
@@ -352,7 +351,7 @@ bool hayCpusDisponibles(){
 //*** pasar procesos de ready a exec
 void * estadoReady()
 {
-	printf("\n[Rutina planificadorCortoPlazo] - Entramos al planificador de corto plazo!\n");
+//	printf("\n[Rutina planificadorCortoPlazo] - Entramos al planificador de corto plazo!\n");
 	log_info(logKernel,"\n[Rutina planificadorCortoPlazo] - Entramos al planificador de corto plazo!\n");
 	//*** el booleano finPorConsolaDelKernel esta en false desde el inicio, en el momento en el que el kernel quiera frenar la planificiacion esta variable pasara a true, y se frenara la planificacion
 	while(!finPorConsolaDelKernel)
@@ -543,7 +542,7 @@ void proceso_avisarAConsola(){
 		//proceso_liberarRecursos(procesoFinalizado->pcb);
 		enviarMensaje(procesoFinalizado->socketConsola, pidFinalizado, &procesoFinalizado->pid, sizeof(int));
 		log_info(logKernel,"Se acaba de mandar a la consola n°: %d, que el proceso %d acaba de finalizar con exit code: %d\n", procesoFinalizado->socketConsola, procesoFinalizado->pid, procesoFinalizado->pcb->exitCode);
-		printf("Se acaba de mandar a la consola n°: %d, que el proceso %d acaba de finalizar con exit code: %d\n", procesoFinalizado->socketConsola, procesoFinalizado->pid, procesoFinalizado->pcb->exitCode);
+	//	printf("Se acaba de mandar a la consola n°: %d, que el proceso %d acaba de finalizar con exit code: %d\n", procesoFinalizado->socketConsola, procesoFinalizado->pid, procesoFinalizado->pcb->exitCode);
 
 		// y ahora pongo que el este proceso ya le aviso a su consola
 		procesoFinalizado->avisoAConsola=true;
@@ -568,10 +567,10 @@ void proceso_liberarRecursos(PCB_DATA* pcb){
 
 
 	if(liberarRecursosHeap(pcb->pid)== 0){
-		printf("No se liberaron los recursos del heap correctamenete del pid %d\n", pcb->pid);
+		log_info(logKernel,"No se liberaron los recursos del heap correctamenete del pid %d\n", pcb->pid);
 	}
 	else{
-		printf("Se liberaron correctamente los recursos del heap del pid %d\n",pcb->pid);
+		log_info(logKernel,"Se liberaron correctamente los recursos del heap del pid %d\n",pcb->pid);
 	}
 	liberarRecursosArchivo(pcb);
 	liberarSemaforo(pcb->pid);
@@ -710,7 +709,7 @@ int main(void) {
 
 
 	//---CONECTANDO CON FILESYSTEM Y MEMORIA
-	printf("\n\n\nEsperando conexiones:\n-FileSystem\n-Memoria\n");
+		log_info(logKernel,"\n\n\nEsperando conexiones:\n-FileSystem\n-Memoria\n");
 	conectarConMemoria();
 	conectarConFS();
 	///----------------------///
@@ -763,11 +762,6 @@ int main(void) {
 	pthread_join(hilo_consolaKernel, NULL);
 
 	log_destroy(logKernel);
-	while(1)
-	{
-		printf("Hola hago tiempo!\n");
-		sleep(5);
-	}
 
 	///-----LIBERO LA CONFIGURACION
 	liberarConfiguracion();
@@ -830,14 +824,14 @@ void conectarConMemoria()
 			exit(-1);
 		}
 		else{
-			printf("Conexión exitosa con el Memoria(%i)!!\n",rta_conexion);
+			log_info(logKernel,"Conexión exitosa con el Memoria(%i)!!\n",rta_conexion);
 
 			int* sizePag;
 			recibirMensaje(socketMemoria, &sizePag);
 
 			size_pagina = *sizePag;
 
-			printf("[Conexion con Memoria] - El Size pag es: %d", size_pagina);
+			log_info(logKernel,"[Conexion con Memoria] - El Size pag es: %d", size_pagina);
 
 			free(sizePag);
 
@@ -862,7 +856,7 @@ void conectarConFS()
 		perror("Error en el handshake con FileSystem");
 		close(socketFS);
 	}
-	printf("Conexión exitosa con el FileSystem(%i)!!\n",rta_conexion);
+	log_info(logKernel,"Conexión exitosa con el FileSystem(%i)!!\n",rta_conexion);
 }
 
 ///---- FIN FUNCIONES DE CONEXIONES------////

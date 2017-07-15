@@ -18,7 +18,7 @@ void imprimirTodosLosProcesosEnColas(){
 	{
 		printf("Pid: %d\n", aviso->pid);
 
-		imprimirPCB(aviso->pcb);
+	//	imprimirPCB(aviso->pcb);
 
 		if(aviso->pcb->exitCode == 53)
 			printf("Estado: en procesamiento\n");
@@ -39,7 +39,7 @@ void imprimirProcesosdeCola(t_queue* unaCola)
 	}
 
 	int a=queue_size(unaCola);
-	printf("kiusaiz: %d\n",a);//,(char*)unaCola->elements->head->data);
+	//printf("kiusaiz: %d\n",a);//,(char*)unaCola->elements->head->data);
 
 	if(a>0 )
 		list_iterate(unaCola->elements, imprimir);
@@ -87,7 +87,7 @@ void imprimirTablaGlobaldeArchivos(){
 
 void imprimirSemaforos(){
 	void imprimir(t_semaforo* sem){
-		printf("El semaforo %s vale: %d", sem->nombre,sem->valor);
+		printf("El semaforo %s vale: %d\n", sem->nombre,sem->valor);
 	}
 	list_iterate(listaDeSemaforos, imprimir);
 }
@@ -105,8 +105,8 @@ void * consolaKernel()
 			"5- Finalizar un proceso.\n"
 			"6- Detener la planificación.\n"
 			"7- Ver cuantas CPUs hay.\n"
-			"8- Imprimir de nuevo el menu.\n\n"
-			"9- Imprimir semaforos \n"
+			"8- Imprimir de nuevo el menu.\n"
+			"9- Imprimir semaforos.\n\n"
 			"Elija el numero de su opcion: ");
 	sem_post(&sem_ConsolaKernelLenvantada);
 	scanf("%d", &opcion);

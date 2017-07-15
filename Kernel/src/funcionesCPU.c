@@ -30,17 +30,17 @@ void cpu_crearHiloDetach(int nuevoSocket){
 	int  res;
 	res = pthread_attr_init(&attr);
 	if (res != 0) {
-		perror("Error en los atributos del hilo");
+		log_info(logKernel,"Error en los atributos del hilo");
 	}
 
 	res = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
 	if (res != 0) {
-		perror("Error en el seteado del estado de detached");
+		log_info(logKernel,"Error en el seteado del estado de detached");
 	}
 
 	res = pthread_create (&hilo_rutinaCPU ,&attr,rutinaCPU, (void *)nuevoSocket);
 	if (res != 0) {
-		perror("Error en la creacion del hilo");
+		log_info(logKernel,"Error en la creacion del hilo");
 	}
 
 	pthread_attr_destroy(&attr);
@@ -329,9 +329,9 @@ void *rutinaCPU(void * arg)
 
 			//TE MANDO UN NOMBRE DE UN SEMAFORO Y QUIERO QUE HAGAS UN WAIT, ME DEBERIAS DECIR SI ME BLOQUEO O NO
 			case waitSemaforo:{
-				printf("[Rutina rutinaCPU] - Entramos al Caso de que CPU pide wait de un semaforo: accion- %d!\n", waitSemaforo);
+			//	printf("[Rutina rutinaCPU] - Entramos al Caso de que CPU pide wait de un semaforo: accion- %d!\n", waitSemaforo);
 
-				puts("Entro al waitSemaforo\n");
+				//puts("Entro al waitSemaforo\n");
 				char* nombreSemaforo;
 
 				PCB_DATA* pcbRecibido = deserializarPCBYSemaforo(stream, &nombreSemaforo);

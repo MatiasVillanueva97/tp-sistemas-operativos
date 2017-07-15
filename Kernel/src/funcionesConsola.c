@@ -6,7 +6,7 @@
  */
 
 #include "funcionesConsola.h"
-
+#include "commons/log.h"
 
 
 ///-----FUNCIONES CONSOLA-------//
@@ -32,8 +32,10 @@ int consola_buscarSocketConsola(int pid){
 /// *** Falta probar! Necesitamos que ande el enviar mensajes
 ///*** Esta funcion le avisa a la consola que un cierto proceso (pid) ya termino
 void consola_enviarAvisoDeFinalizacion(int socketConsola, int pid){
-	printf("[Función consola_enviarAvisoDeFinalizacion] - Se Envía a Consola el pid: %d, porque ha finalizado!\n", pid);
+	//printf("[Función consola_enviarAvisoDeFinalizacion] - Se Envía a Consola el pid: %d, porque ha finalizado!\n", pid);
+	log_info(logKernel,"[Función consola_enviarAvisoDeFinalizacion] - Se Envía a Consola el pid: %d, porque ha finalizado!\n", pid);
 	enviarMensaje(socketConsola,envioDelPidEnSeco,&pid,sizeof(int));
+
 }
 
 
@@ -75,17 +77,22 @@ void consola_crearHiloDetach(int nuevoSocket){
 	int  res;
 	res = pthread_attr_init(&attr);
 	if (res != 0) {
-		perror("Error en los atributos del hilo");
+	//	perror("Error en los atributos del hilo\n");
+		log_info(logKernel,"Error en los atributos del hilo\n");
 	}
 
 	res = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
 	if (res != 0) {
-		perror("Error en el seteado del estado de detached");
+
+		log_info(logKernel,"Error en el seteado del estado de detached");
+			//perror("Error en el seteado del estado de detached");
 	}
 
 	res = pthread_create (&hilo_M ,&attr,rutinaConsola, (void *)nuevoSocket);
 	if (res != 0) {
-		perror("Error en la creacion del hilo");
+	//	perror("Error en la creacion del hilo");
+		log_info(logKernel,"Error en la creacion del hilo");
+
 	}
 
 	pthread_attr_destroy(&attr);
@@ -183,11 +190,15 @@ void *rutinaConsola(void * arg)
 					//***Memoria me avisa si no encontro el pid
 					recibirMensaje(socketMemoria, &respuesta);
 					if(!respuesta){
-						errorEn(respuesta, "[Rutina rutinaConsola] - La Memoria no pudo finalizar el proceso\n");
+					//	errorEn(respuesta, "[Rutina rutinaConsola] - La Memoria no pudo finalizar el proceso\n");
+						log_info(logKernel,"[Rutina rutinaConsola] - La Memoria no pudo finalizar el proceso\n");
+
 					}
 				}
 				else{
-					errorEn(respuesta, "[Rutina rutinaConsola] - No existe el pid\n");
+					//errorEn(respuesta, "[Rutina rutinaConsola] - No existe el pid\n");
+					log_info(logKernel,"[Rutina rutinaConsola] - No existe el pid\n");
+
 					enviarMensaje(socketConsola,errorFinalizacionPid, &pid,sizeof(int));
 				}
 
@@ -202,11 +213,14 @@ void *rutinaConsola(void * arg)
 				todaviaHayTrabajo = false;
 
 				consola_finalizarTodosLosProcesos(socketConsola);
+				log_info(logKernel,"[Rutina rutinaConsola] - Se desconecto la consola de socket: %d\n", socketConsola);
 
 			}break;
 			case 0:{
-				printf("[Rutina rutinaConsola] - La consola ha perecido\n");
-						todaviaHayTrabajo=false;
+				//printf("[Rutina rutinaConsola] - La consola ha perecido\n");
+
+				log_info(logKernel,"[Rutina rutinaConsola] - Se desconecto la consola de socket: %d\n", socketConsola);
+				todaviaHayTrabajo=false;
 			}break;
 			default:{
 				printf("[Rutina rutinaConsola] - Se recibio una accion que no esta contemplada:%d se cerrara el socket\n",a);
@@ -214,7 +228,9 @@ void *rutinaConsola(void * arg)
 			}break;
 		}
 	}
-	printf("Se decontecta a la consola socket: %d\n", socketConsola);
+	//printf("Se decontecta a la consola socket: %d\n", socketConsola);
+	log_info(logKernel,"Se decontecta a la consola socket: %d\n", socketConsola);
+
 	close(socketConsola);
 }
 

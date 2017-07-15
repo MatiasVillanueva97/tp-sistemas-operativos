@@ -1,5 +1,0 @@
-begin
-variables a
-a = 4
-prints l "puto el que lee"
-end

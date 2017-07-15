@@ -41,7 +41,7 @@ t_puntero AnSISOP_definirVariable(t_nombre_variable identificador_variable) {
 	variable->direccion = direccion;
 
 	if (direccion.page >= pcb->contPags_pcb) {
-		log_warning(logCPU,"STACK OVERFLOW page: %d , offset: %d , size: %d \n",direccion.page, direccion.offset, direccion.size);
+		log_info(logCPU,"STACK OVERFLOW page: %d , offset: %d , size: %d \n",direccion.page, direccion.offset, direccion.size);
 		terminoPrograma = true;
 		pcb->exitCode = -5;
 		return -1;
@@ -373,7 +373,7 @@ t_puntero AnSISOP_reservar(t_valor_variable espacio) {
 		offset = *(int*) stream;
 		free(stream);
 		if (offset == 0) {
-			log_warning(logCPU,"No se pudo asignar otra pagina al proceso\n");
+			log_info(logCPU,"No se pudo asignar otra pagina al proceso\n");
 			terminoPrograma = true;
 			pcb->exitCode = -9;
 		} else {
@@ -381,7 +381,7 @@ t_puntero AnSISOP_reservar(t_valor_variable espacio) {
 		}
 	}break;
 	case pedidoRechazadoPorPedirMas: { // en caso de que se pida alocar mas que el tamanio de una pagina
-		log_warning(logCPU,"Se intentó reservar más memoria que el tamaño de una página\n");
+		log_info(logCPU,"Se intentó reservar más memoria que el tamaño de una página\n");
 		terminoPrograma = true;
 		pcb->exitCode = -8;
 	}break;
@@ -413,7 +413,7 @@ void AnSISOP_liberar(t_puntero puntero) {
 	} else {
 		int entero = leerInt(stream);
 		if (entero == 0) {
-			log_warning(logCPU,"Algo salio mal al liberar la variable\n");
+			log_info(logCPU,"Algo salio mal al liberar la variable\n");
 			bloqueado = true;
 			pcb->exitCode = -42;
 		}else{
@@ -458,7 +458,7 @@ t_descriptor_archivo AnSISOP_abrir(t_direccion_archivo direccion,t_banderas flag
 		}break;
 		case respuestaBooleanaKernel: {
 			free(stream);
-			log_warning(logCPU,"Algo salio mal con el archivo, se termina el programa\n");
+			log_info(logCPU,"Algo salio mal con el archivo, se termina el programa\n");
 			bloqueado = true;
 		}break;
 		default: {
@@ -488,7 +488,7 @@ void AnSISOP_borrar(t_descriptor_archivo direccion) {
 		int rtaKernel = *(int*) stream;
 		free(stream);
 		if (rtaKernel == 0) {
-			log_warning(logCPU,"Quiere borrar un archivo que nunca abrio\n");
+			log_info(logCPU,"Quiere borrar un archivo que nunca abrio\n");
 			terminoPrograma = true;
 			pcb->exitCode = -13;
 		} else {
@@ -520,7 +520,7 @@ void AnSISOP_cerrar(t_descriptor_archivo descriptor_archivo) {
 		int rtaKernel = *(int*) stream;
 		free(stream);
 		if (rtaKernel == 0) {
-			log_warning(logCPU,"Quiere cerrar un archivo que nunca abrio\n");
+			log_info(logCPU,"Quiere cerrar un archivo que nunca abrio\n");
 			terminoPrograma = true;
 			pcb->exitCode = -13;
 		} else {
@@ -553,7 +553,7 @@ void AnSISOP_moverCursor(t_descriptor_archivo descriptor_archivo,t_valor_variabl
 		int rtaKernel = *(int*) stream;
 		free(stream);
 		if (rtaKernel == 0) {
-			log_warning(logCPU,"Quiere mover el cursor de un archivo que nunca abrio\n");
+			log_info(logCPU,"Quiere mover el cursor de un archivo que nunca abrio\n");
 			terminoPrograma = true;
 			pcb->exitCode = -13;
 		} else {
@@ -593,7 +593,7 @@ void AnSISOP_escribir(t_descriptor_archivo descriptor_archivo,void* informacion,
 		if(rtaKernel){
 			log_info(logCPU,"La escritura fue exitosa\n");
 		}else{
-			log_warning(logCPU,"Quiere escribir un archivo que nunca abrio\n");
+			log_info(logCPU,"Quiere escribir un archivo que nunca abrio\n");
 			terminoPrograma = true;
 			pcb->exitCode = -13;
 		}
@@ -619,7 +619,7 @@ void AnSISOP_leer(t_descriptor_archivo descriptor_archivo,t_puntero informacion,
 	switch (recibirMensajeSeguro(socketKernel, &stream)) {
 		case respuestaBooleanaKernel: {
 			/*si nunca habia abierto el archivo*/
-			log_warning(logCPU,"Se produjo un error al intentar leer el archivo\n");
+			log_info(logCPU,"Se produjo un error al intentar leer el archivo\n");
 			terminoPrograma = true;
 		}break;
 		case respuestaLectura: {
@@ -973,9 +973,9 @@ int recibirMensajeSeguro(int socket, void ** stream){
 	int valor = recibirMensaje(socket, stream);
 	if(valor == 0){
 		if(socket==socketKernel)
-			log_warning(logCPU,"El Kernel se ha desconectado, se finalizara esta CPU\n");
+			log_info(logCPU,"El Kernel se ha desconectado, se finalizara esta CPU\n");
 		else
-			log_warning(logCPU,"La Memoria se ha desconectado, se finalizara esta CPU\n");
+			log_info(logCPU,"La Memoria se ha desconectado, se finalizara esta CPU\n");
 		close(socketKernel);
 		close(socketMemoria);
 		liberarConfiguracion();

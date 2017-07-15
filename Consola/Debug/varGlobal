@@ -1,5 +1,0 @@
-begin
-prints n !Global
-!Global = 42
-prints n !Global
-end
