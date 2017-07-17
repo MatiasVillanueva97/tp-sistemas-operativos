@@ -2177,3 +2177,351 @@ signal b
 goto etiqueta
 end
 
+[INFO] 20:30:39:961 Kernel/(5044:5044): 
+
+
+Esperando conexiones:
+-FileSystem
+-Memoria
+
+[INFO] 20:30:39:968 Kernel/(5044:5044): Conexión exitosa con el Memoria(2)!!
+
+[INFO] 20:30:39:968 Kernel/(5044:5044): [Conexion con Memoria] - El Size pag es: 256
+[INFO] 20:30:39:969 Kernel/(5044:5044): Conexión exitosa con el FileSystem(4)!!
+
+[INFO] 20:30:40:60 Kernel/(5044:5058): 
+[rutina estadoNEW] - Entramos al planificador de largo plazo!
+
+[INFO] 20:30:40:127 Kernel/(5044:5059): 
+[Rutina planificadorCortoPlazo] - Entramos al planificador de corto plazo!
+
+[INFO] 20:30:51:316 Kernel/(5044:5064): 
+[rutina aceptarConexiones] - Nueva CPU Conectada
+Socket CPU 8
+
+
+[INFO] 20:30:51:464 Kernel/(5044:5067): [Rutina rutinaCPU] - Entramos al hilo de la CPU cuyo socket es: 8.
+
+[INFO] 20:30:51:464 Kernel/(5044:5067): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 20:30:56:306 Kernel/(5044:5064): 
+[rutina aceptarConexiones] - Nueva Consola Conectada!
+Socket Consola 9
+
+
+[INFO] 20:30:56:400 Kernel/(5044:5070): [Rutina rutinaConsola] - Entramos al hilo de la consola: 9!
+
+[INFO] 20:31:04:241 Kernel/(5044:5070): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 20:31:04:241 Kernel/(5044:5070): El stream es : begin
+variables f, i, t
+#`i`: Iterador
+i=0
+#`f`: Hasta donde contar
+f=20
+:inicio
+#Incrementar el iterador
+i=i+1
+#Imprimir el contador
+prints n i
+#`t`: Comparador entre `i` y `f`
+t=f-i
+#De no ser iguales, salta a inicio
+jnz t inicio
+end
+ /n
+[INFO] 20:31:04:286 Kernel/(5044:5058): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 20:31:04:287 Kernel/(5044:5058): Estructura:--
+Pid: 1
+Script: begin
+variables f, i, t
+#`i`: Iterador
+i=0
+#`f`: Hasta donde contar
+f=20
+:inicio
+#Incrementar el iterador
+i=i+1
+#Imprimir el contador
+prints n i
+#`t`: Comparador entre `i` y `f`
+t=f-i
+#De no ser iguales, salta a inicio
+jnz t inicio
+end
+
+SocketConsola:9
+
+
+[INFO] 20:31:04:287 Kernel/(5044:5058): [memoria_dividirScriptEnPaginas] - begin
+variables f, i, t
+#`i`: Iterador
+i=0
+#`f`: Hasta donde contar
+f=20
+:inicio
+#Incrementar el iterador
+i=i+1
+#Imprimir el contador
+prints n i
+#`t`: Comparador entre `i` y `f`
+t=f-i
+#De no ser iguales, salta a inicio
+jnz t inicio
+end
+
+[INFO] 20:31:04:298 Kernel/(5044:5058): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 20:31:04:299 Kernel/(5044:5058): Envio una pagina: 0
+
+[INFO] 20:31:04:299 Kernel/(5044:5058): La pagina 0, contiene:
+[INFO] 20:31:04:300 Kernel/(5044:5058): begin
+variables f, i, t
+#`i`: Iterador
+i=0
+#`f`: Hasta donde contar
+f=20
+:inicio
+#Incrementar el iterador
+i=i+1
+#Imprimir el contador
+prints n i
+#`t`: Comparador entre `i` y `f`
+t=f-i
+#De no ser iguales, salta a inicio
+jnz t inicio
+end
+
+[INFO] 20:31:18:382 Kernel/(5044:5070): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 20:31:18:383 Kernel/(5044:5070): El stream es : begin
+variables f, i, t
+#`i`: Iterador
+i=0
+#`f`: Hasta donde contar
+f=20
+:inicio
+#Incrementar el iterador
+i=i+1
+#Imprimir el contador
+prints n i
+#`t`: Comparador entre `i` y `f`
+t=f-i
+#De no ser iguales, salta a inicio
+jnz t inicio
+end
+ /n
+[INFO] 20:31:18:388 Kernel/(5044:5058): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 20:31:18:406 Kernel/(5044:5058): Estructura:--
+Pid: 2
+Script: begin
+variables f, i, t
+#`i`: Iterador
+i=0
+#`f`: Hasta donde contar
+f=20
+:inicio
+#Incrementar el iterador
+i=i+1
+#Imprimir el contador
+prints n i
+#`t`: Comparador entre `i` y `f`
+t=f-i
+#De no ser iguales, salta a inicio
+jnz t inicio
+end
+
+SocketConsola:9
+
+
+[INFO] 20:31:18:406 Kernel/(5044:5058): [memoria_dividirScriptEnPaginas] - begin
+variables f, i, t
+#`i`: Iterador
+i=0
+#`f`: Hasta donde contar
+f=20
+:inicio
+#Incrementar el iterador
+i=i+1
+#Imprimir el contador
+prints n i
+#`t`: Comparador entre `i` y `f`
+t=f-i
+#De no ser iguales, salta a inicio
+jnz t inicio
+end
+
+[INFO] 20:31:18:408 Kernel/(5044:5058): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 20:31:18:411 Kernel/(5044:5058): Envio una pagina: 0
+
+[INFO] 20:31:18:411 Kernel/(5044:5058): La pagina 0, contiene:
+[INFO] 20:31:18:411 Kernel/(5044:5058): begin
+variables f, i, t
+#`i`: Iterador
+i=0
+#`f`: Hasta donde contar
+f=20
+:inicio
+#Incrementar el iterador
+i=i+1
+#Imprimir el contador
+prints n i
+#`t`: Comparador entre `i` y `f`
+t=f-i
+#De no ser iguales, salta a inicio
+jnz t inicio
+end
+
+[INFO] 20:31:32:78 Kernel/(5044:5070): Entramos a finalizar el script, del pid: 2
+
+[INFO] 20:33:03:79 Kernel/(5112:5112): 
+
+
+Esperando conexiones:
+-FileSystem
+-Memoria
+
+[INFO] 20:33:03:83 Kernel/(5112:5112): Conexión exitosa con el Memoria(2)!!
+
+[INFO] 20:33:03:83 Kernel/(5112:5112): [Conexion con Memoria] - El Size pag es: 256
+[INFO] 20:33:03:84 Kernel/(5112:5112): Conexión exitosa con el FileSystem(4)!!
+
+[INFO] 20:33:35:875 Kernel/(5112:5127): 
+[rutina estadoNEW] - Entramos al planificador de largo plazo!
+
+[INFO] 20:33:35:933 Kernel/(5112:5129): 
+[Rutina planificadorCortoPlazo] - Entramos al planificador de corto plazo!
+
+[INFO] 20:33:36:232 Kernel/(5112:5134): 
+[rutina aceptarConexiones] - Nueva Consola Conectada!
+Socket Consola 8
+
+
+[INFO] 20:33:36:286 Kernel/(5112:5134): 
+[rutina aceptarConexiones] - Nueva CPU Conectada
+Socket CPU 9
+
+
+[INFO] 20:33:36:286 Kernel/(5112:5136): [Rutina rutinaConsola] - Entramos al hilo de la consola: 8!
+
+[INFO] 20:33:36:286 Kernel/(5112:5136): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 20:33:36:286 Kernel/(5112:5136): El stream es : begin
+variables f, i, t
+#`i`: Iterador
+i=0
+#`f`: Hasta donde contar
+f=20
+:inicio
+#Incrementar el iterador
+i=i+1
+#Imprimir el contador
+prints n i
+#`t`: Comparador entre `i` y `f`
+t=f-i
+#De no ser iguales, salta a inicio
+jnz t inicio
+end
+ /n
+[INFO] 20:33:36:343 Kernel/(5112:5127): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 20:33:36:365 Kernel/(5112:5127): Estructura:--
+Pid: 1
+Script: begin
+variables f, i, t
+#`i`: Iterador
+i=0
+#`f`: Hasta donde contar
+f=20
+:inicio
+#Incrementar el iterador
+i=i+1
+#Imprimir el contador
+prints n i
+#`t`: Comparador entre `i` y `f`
+t=f-i
+#De no ser iguales, salta a inicio
+jnz t inicio
+end
+
+SocketConsola:8
+
+
+[INFO] 20:33:36:365 Kernel/(5112:5127): [memoria_dividirScriptEnPaginas] - begin
+variables f, i, t
+#`i`: Iterador
+i=0
+#`f`: Hasta donde contar
+f=20
+:inicio
+#Incrementar el iterador
+i=i+1
+#Imprimir el contador
+prints n i
+#`t`: Comparador entre `i` y `f`
+t=f-i
+#De no ser iguales, salta a inicio
+jnz t inicio
+end
+
+[INFO] 20:33:36:367 Kernel/(5112:5127): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 20:33:36:367 Kernel/(5112:5127): Envio una pagina: 0
+
+[INFO] 20:33:36:367 Kernel/(5112:5127): La pagina 0, contiene:
+[INFO] 20:33:36:367 Kernel/(5112:5127): begin
+variables f, i, t
+#`i`: Iterador
+i=0
+#`f`: Hasta donde contar
+f=20
+:inicio
+#Incrementar el iterador
+i=i+1
+#Imprimir el contador
+prints n i
+#`t`: Comparador entre `i` y `f`
+t=f-i
+#De no ser iguales, salta a inicio
+jnz t inicio
+end
+
+[INFO] 20:33:36:461 Kernel/(5112:5139): [Rutina rutinaCPU] - Entramos al hilo de la CPU cuyo socket es: 9.
+
+[INFO] 20:33:36:525 Kernel/(5112:5139): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 20:34:23:477 Kernel/(5112:5139): [Rutina rutinaCPU] - Entramos al Caso de que CPU termino la ejecucion de un proceso: accion- 104!
+
+[INFO] 20:34:23:477 Kernel/(5112:5139): Se liberaron correctamente los recursos del heap del pid 1
+
+[INFO] 20:34:23:477 Kernel/(5112:5139): 
+dentro de la busqueda
+[INFO] 20:34:23:523 Kernel/(5112:5139): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 20:34:31:24 Kernel/(5112:5136): Murio el proceso: 1
+
+[INFO] 20:34:31:24 Kernel/(5112:5136): [Rutina rutinaConsola] - Se desconecto la consola de socket: 8
+
+[INFO] 20:34:31:24 Kernel/(5112:5136): Se decontecta a la consola socket: 8
+

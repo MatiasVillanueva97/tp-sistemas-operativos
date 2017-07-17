@@ -90,15 +90,6 @@ PCB_DATA * cpu_pedirPCBDeExec(){
 	return pcb;
 }
 
-
-bool proceso_EstaFinalizado(int pid)
-{
-	bool busqueda(PROCESOS * aviso){
-	  return aviso->pid == pid;
-	 }
-	 PCB_DATA* pcb = ((PROCESOS*)list_find(avisos, busqueda))->pcb;
-	 return pcb->estadoDeProceso == finalizado;
-}
 void agregarATablaEstadistica(int pid,int tamano,bool esAlocar){
 	bool encontrarPorPid(filaEstadisticaDeHeap* fila2){
 		return fila2->pid == pid;
@@ -192,16 +183,26 @@ void *rutinaCPU(void * arg)
 
 				pcb = deserializarPCB(stream);
 
-				// aca como que deberiamos validar que no haya sido finalizado ya este procesito
+				// TODO aca algo pasa con el pcb que esta llegando cualquier cosa
+
+				printf("CPU - Se manda a finalizar este pid: %d\n", pcb->pid);
+
 				if(!proceso_EstaFinalizado(pcb->pid)){
+
 					if(pcb->exitCode<0){
-						finalizarPid(pcb,pcb->exitCode);
+						//finalizarPid(pcb,pcb->exitCode);
+						proceso_Finalizar(pcb->pid, pcb->exitCode);
 					}
 					else{
-						finalizarPid(pcb,0);
+						printf("CPU - salio todo bien pid:%d\n", pcb->pid);
+						proceso_Finalizar(pcb->pid, pcb->exitCode);
+
 					}
+
 				    modificarPCB(pcb);
 				}
+
+
 				sem_wait(&mutex_cola_CPUs_libres);
 				   	estaCPU->esperaTrabajo = true;
 				sem_post(&mutex_cola_CPUs_libres);
@@ -220,17 +221,6 @@ void *rutinaCPU(void * arg)
 				sem_wait(&mutex_cola_Exec);
 				 modificarPCB(pcb);
 				 sem_post(&mutex_cola_Exec);
-/*
-
-				sem_wait(&mutex_cola_Exec);
-					queue_pop(cola_Exec);
-				sem_post(&mutex_cola_Exec);
-
-				sem_wait(&mutex_cola_Ready);
-					queue_push(cola_Ready, modificarPCB(pcb));
-				sem_post(&mutex_cola_Ready);
-*/
-				/// Revisar esto - y poner semaforos
 
 				 free(stream);
 

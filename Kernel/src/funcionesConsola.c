@@ -162,12 +162,8 @@ void *rutinaConsola(void * arg)
 					list_add(avisos,nuevoPrograma);
 				sem_post(&mutex_listaProcesos);
 
-				/* Cuando un consola envia un pid para finalizar, lo que vamos a hacer es una funci+on que cambie el estado de ese proceso a finalizado,
-				 * de modo que en el mommento en que un proceso pase de cola en cola se valide como esta su estado, de estar en finalizado externamente
-				 *  se pasa automaticamente ala cola de finalizados ---
-				 *  Asi que se elimina la estructura de avisos de finalizacion y se agrega el elemento "finalizadoExternamente" a todos las estructuras
-				 *  Tambien, cabe destacar que hay una sola estructura procesos
-				 */
+				st_ANew=st_ANew+1;
+
 				break;
 			}
 
@@ -179,26 +175,9 @@ void *rutinaConsola(void * arg)
 
 				log_info(logKernel,"Entramos a finalizar el script, del pid: %d\n", pid);
 
-				//***Le digo a memoria que mate a este programa
-				enviarMensaje(socketMemoria,finalizarPrograma, &pid,sizeof(int));//CAMBIAR
-
 				//***Esta función actualizará el estado de finalizacion de un proceso
-				if(proceso_finalizacionExterna(pid, -7) )
-				{
-					enviarMensaje(socketConsola,pidFinalizado, &pid,sizeof(int));
-
-					//***Memoria me avisa si no encontro el pid
-					recibirMensaje(socketMemoria, &respuesta);
-					if(!respuesta){
-					//	errorEn(respuesta, "[Rutina rutinaConsola] - La Memoria no pudo finalizar el proceso\n");
-						log_info(logKernel,"[Rutina rutinaConsola] - La Memoria no pudo finalizar el proceso\n");
-
-					}
-				}
-				else{
-					//errorEn(respuesta, "[Rutina rutinaConsola] - No existe el pid\n");
+				if(!proceso_Finalizar(pid, -7)) {
 					log_info(logKernel,"[Rutina rutinaConsola] - No existe el pid\n");
-
 					enviarMensaje(socketConsola,errorFinalizacionPid, &pid,sizeof(int));
 				}
 

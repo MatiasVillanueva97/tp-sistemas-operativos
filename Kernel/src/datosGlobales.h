@@ -37,6 +37,15 @@ int quantumSleep;
 bool finPorConsolaDelKernel;
 t_log* logKernel;
 
+
+
+
+int st_ANew;
+int st_AReady;
+int st_AWait;
+int st_ABloq;
+int st_AFinished;
+
 ///------ESTRUCTURAS AUXILIARES ADMNISTRATIVAS------///
 
 

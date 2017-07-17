@@ -47,14 +47,21 @@ void conectarConFS();
 ///----FIN SEMAFOROS----///
 
 
+int st_ANew = 0;
+int st_AReady = 0;
+int st_AWait = 0;
+int st_ABloq = 0;
+int st_AFinished = 0;
+
+
+
 ///---FUNCIONES DEL KERNEL----//
 
 
 ///***Esta función tiene que buscar en todas las colas y fijarse donde esta el procesos y cambiar su estado a estado finalizado
-bool proceso_finalizacionExterna(int pid, int exitCode)
+bool proceso_Finalizar(int pid, int exitCode)
 {
 	bool flag=false;
-	sem_wait(&mutex_listaProcesos);
 
 	bool busqueda(PROCESOS * aviso)
 	{
@@ -63,18 +70,73 @@ bool proceso_finalizacionExterna(int pid, int exitCode)
 
 		return false;
 	}
+
+
+	sem_wait(&mutex_listaProcesos);
 	PROCESOS* procesoAFianalizar =(PROCESOS*)list_find(avisos, busqueda);
 
-	sem_post(&mutex_listaProcesos);
-	if( procesoAFianalizar != NULL){
-		finalizarPid(procesoAFianalizar->pcb,exitCode);
+	if(procesoAFianalizar != NULL && procesoAFianalizar->pcb->estadoDeProceso != finalizado){
+
+
+		procesoAFianalizar->pcb->exitCode = exitCode;
+		procesoAFianalizar->pcb->estadoDeProceso = finalizado;
+
+		int socketConsola = procesoAFianalizar->socketConsola;
+
+		// proceso_liberarRecursos(procesoAFianalizar->pcb); --- TODO hacer bien esta funcion
+
+		sem_post(&mutex_listaProcesos);
+
+		enviarMensaje(socketMemoria,finalizarPrograma,&pid,sizeof(int));
+		void* respuesta;
+		recibirMensaje(socketMemoria,&respuesta);
+		free(respuesta);
+
+		puts("5\n");
+
+		proceso_avisarAConsola(socketConsola, pid, exitCode);
+
+
 		flag=true;
 	}
+	else{
+		sem_post(&mutex_listaProcesos);
 
+		log_error(logKernel,"[proceso_Finalizar] - Hubo un error al finalizar el pid: %d", pid);
+	}
 
 	return flag;
 }
 
+
+void proceso_avisarAConsola(int socketConsola, int pid, int exitCode){
+		enviarMensaje(socketConsola, pidFinalizado, &pid, sizeof(int));
+		log_info(logKernel,"Se acaba de mandar a la consola n°: %d, que el proceso %d acaba de finalizar con exit code: %d\n", socketConsola, pid, exitCode);
+}
+
+void proceso_liberarRecursos(PCB_DATA* pcb){
+
+	if(liberarRecursosHeap(pcb->pid)== 0){
+		log_info(logKernel,"No se liberaron los recursos del heap correctamenete del pid %d\n", pcb->pid);
+	}
+	else{
+		log_info(logKernel,"Se liberaron correctamente los recursos del heap del pid %d\n",pcb->pid);
+	}
+
+	liberarRecursosArchivo(pcb);
+
+	liberarSemaforo(pcb->pid);
+
+}
+
+bool proceso_EstaFinalizado(int pid)
+{
+	bool busqueda(PROCESOS * aviso){
+	  return aviso->pid == pid;
+	 }
+	 PCB_DATA* pcb = ((PROCESOS*)list_find(avisos, busqueda))->pcb;
+	 return pcb->estadoDeProceso == finalizado;
+}
 
 ///---FIN FUNCIONES DEL KERNEL----//
 
@@ -219,15 +281,10 @@ void newToReady(){
 //***Esta Función lo que hace es sumar el size de todas las colas que determinan el grado de multiplicacion y devuelve la suma ///***Esta Función esta Probada y anda (falta meterle tres semaforos mutex)
 int cantidadProgramasEnProcesamiento()
 {
-	sem_wait(&mutex_cola_Ready);
-	sem_wait(&mutex_cola_Exec);
-	sem_wait(&mutex_cola_Wait);
-		int cantidadProcesosEnLasColas = queue_size(cola_Ready)+queue_size(cola_Wait)+queue_size(cola_Exec);
-	sem_post(&mutex_cola_Wait);
-	sem_post(&mutex_cola_Exec);
-	sem_post(&mutex_cola_Ready);
 
-	return cantidadProcesosEnLasColas;
+		int cantidadProcesosEnLasColas = queue_size(cola_Ready)+queue_size(cola_Wait)+queue_size(cola_Exec);
+
+		return cantidadProcesosEnLasColas;
 }
 
 
@@ -524,31 +581,6 @@ void* estadoWAIT(){
 /// **************************** QUINTA PARTE - TRABAJAR PROCESOS EN FINISHED ******************************///
 /// ********************************************************************************************************///
 
-void proceso_avisarAConsola(){
-
-	bool busqueda(PROCESOS * process)	{
-		return (process->pcb->estadoDeProceso == finalizado && !process->avisoAConsola);
-	}
-
-	sem_wait(&mutex_listaProcesos);
-
-	// Si la consola no habia sido avisada le envio el mensaje del pid que acaba de finalizar
-	PROCESOS* procesoFinalizado = list_find(avisos, busqueda);
-
-	sem_post(&mutex_listaProcesos);
-
-	if(procesoFinalizado != NULL)
-	{
-		//proceso_liberarRecursos(procesoFinalizado->pcb);
-		enviarMensaje(procesoFinalizado->socketConsola, pidFinalizado, &procesoFinalizado->pid, sizeof(int));
-		log_info(logKernel,"Se acaba de mandar a la consola n°: %d, que el proceso %d acaba de finalizar con exit code: %d\n", procesoFinalizado->socketConsola, procesoFinalizado->pid, procesoFinalizado->pcb->exitCode);
-	//	printf("Se acaba de mandar a la consola n°: %d, que el proceso %d acaba de finalizar con exit code: %d\n", procesoFinalizado->socketConsola, procesoFinalizado->pid, procesoFinalizado->pcb->exitCode);
-
-		// y ahora pongo que el este proceso ya le aviso a su consola
-		procesoFinalizado->avisoAConsola=true;
-	}
-
-}
 
 void liberarSemaforo(int pid){
 	sem_wait(&mutex_listaProcesos);
@@ -563,38 +595,8 @@ void liberarSemaforo(int pid){
 
 			sem_post(&mutex_listaProcesos);
 }
-void proceso_liberarRecursos(PCB_DATA* pcb){
-
-
-	if(liberarRecursosHeap(pcb->pid)== 0){
-		log_info(logKernel,"No se liberaron los recursos del heap correctamenete del pid %d\n", pcb->pid);
-	}
-	else{
-		log_info(logKernel,"Se liberaron correctamente los recursos del heap del pid %d\n",pcb->pid);
-	}
-	liberarRecursosArchivo(pcb);
-	liberarSemaforo(pcb->pid);
-	enviarMensaje(socketMemoria,finalizarPrograma,&pcb->pid,sizeof(int));
-	void* respuesta;
-	recibirMensaje(socketMemoria,&respuesta);
-	free(respuesta);
-
-}
 
 ///avisa a al consola que un proceso termino
-void * estadoFINISHED()
-{
-
-
-	//*** el booleano finPorConsolaDelKernel esta en false desde el inicio, en el momento en el que el kernel quiera frenar la planificiacion esta variable pasara a true, y se frenara la planificacion
-	while(!finPorConsolaDelKernel)
-	{
-		///***Reviso si algun proceso que esta en finalizado aun no le aviso a su consola que ya finalizo
-		proceso_avisarAConsola();
-
-	}
-	return NULL;
-}
 
 
 /// ********************************************************************************************************///
@@ -667,6 +669,12 @@ void * aceptarConexiones_Cpu_o_Consola( void *arg ){
 
 int main(void) {
 	printf("Inicializando Kernel.....\n\n");
+
+	st_ANew = 0;
+	st_AReady = 0;
+	st_AWait = 0;
+	st_ABloq = 0;
+	st_AFinished = 0;
 
 	logKernel= log_create("Kernel.log","Kernel",0,0);
 	///------INICIALIZO TO.DO-------------///
@@ -743,9 +751,6 @@ int main(void) {
 	pthread_create(&hilo_estadoWAIT, NULL, estadoWAIT, NULL);
 
 
-	pthread_t hilo_estadoFINISHED;
-	pthread_create(&hilo_estadoFINISHED, NULL, estadoFINISHED, NULL);
-
 	pthread_t hilo_Inotify;
 	pthread_create(&hilo_Inotify, NULL,INotify, NULL);
 	//----ME PONGO A ESCUCHAR CONEXIONES---//
@@ -758,7 +763,6 @@ int main(void) {
 	pthread_join(hilo_estadoNEW, NULL);
 	pthread_join(hilo_estadoEXEC, NULL);
 	pthread_join(hilo_estadoWAIT, NULL);
-	pthread_join(hilo_estadoFINISHED,NULL);
 	pthread_join(hilo_consolaKernel, NULL);
 
 	log_destroy(logKernel);

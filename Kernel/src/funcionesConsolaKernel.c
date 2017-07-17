@@ -297,7 +297,7 @@ void * consolaKernel()
 				printf("\nIngrese pid del proceso a finalizar: ");
 				scanf("%d",&pid);
 
-				if(proceso_finalizacionExterna(pid,  -50681)) //cambiar el numero del exit code, por el que sea el correcto
+				if(proceso_Finalizar(pid,  -50681)) //cambiar el numero del exit code, por el que sea el correcto
 					printf("\nFinalizacion exitosa.\n");
 				else
 					printf("\nEl Pid %d es Incorrecto! Reeintente con un nuevo pid.\n",pid);
