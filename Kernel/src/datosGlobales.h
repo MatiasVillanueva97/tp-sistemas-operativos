@@ -40,12 +40,6 @@ t_log* logKernel;
 
 
 
-int st_ANew;
-int st_AReady;
-int st_AWait;
-int st_ABloq;
-int st_AFinished;
-
 ///------ESTRUCTURAS AUXILIARES ADMNISTRATIVAS------///
 
 
@@ -198,6 +192,12 @@ pthread_mutex_t mutex_tabla_estadistica_de_heap;
 
 
 sem_t sem_ConsolaKernelLenvantada;
+
+sem_t aNew;
+sem_t aReady;
+sem_t aWait;
+sem_t aBloq;
+sem_t aFinished;
 
 
 //***Estra esttructura me la manda la cpu cuando quiere escribir algo, ya sea por pantalla o en filesystem

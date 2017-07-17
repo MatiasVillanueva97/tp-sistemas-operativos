@@ -307,6 +307,11 @@ void * estadoNEW()
 	//*** el booleano finPorConsolaDelKernel esta en false desde el inicio, en el momento en el que el kernel quiera frenar la planificiacion esta variable pasara a true, y se frenara la planificacion
 	while(!finPorConsolaDelKernel)
 	{
+
+		printf("Espera sem aNew\n");
+		sem_wait(&aNew);
+		printf("YA NO Espera sem aNew\n");
+
 		//*** Validamos que haya programas en alguna de la cola de new y que la cantidad de procesos que haya entre las colas de ready-excec-bloq sea menor al grado de multiprogramacion permitida
 		if(cantidadProgramasEnProcesamiento() <  getConfigInt("GRADO_MULTIPROG") && hayProgramasEnNew())
 		{
@@ -413,6 +418,7 @@ void * estadoReady()
 	//*** el booleano finPorConsolaDelKernel esta en false desde el inicio, en el momento en el que el kernel quiera frenar la planificiacion esta variable pasara a true, y se frenara la planificacion
 	while(!finPorConsolaDelKernel)
 	{
+
 		if(hayCpusDisponibles() && hayProcesosEnReady())
 		{
 			///*** Quito el primer elemento de la cola de ready, valido que no haya sido finalizado y lo pongo en la cola de exec - en caso de no encontrar uno para poder trabajar no hago nada
@@ -670,11 +676,6 @@ void * aceptarConexiones_Cpu_o_Consola( void *arg ){
 int main(void) {
 	printf("Inicializando Kernel.....\n\n");
 
-	st_ANew = 0;
-	st_AReady = 0;
-	st_AWait = 0;
-	st_ABloq = 0;
-	st_AFinished = 0;
 
 	logKernel= log_create("Kernel.log","Kernel",0,0);
 	///------INICIALIZO TO.DO-------------///
@@ -797,6 +798,13 @@ void inicializarSemaforo(){
 	sem_init(&mutex_variables_compartidas,0,1);
 	sem_init(&mutex_Quantum_Sleep,0,1);
 	sem_init(&mutex_tabla_estadistica_de_heap,0,1);
+
+
+	sem_init(&aNew,0,0);
+	sem_init(&aReady,0,0);
+	sem_init(&aWait,0,0);
+	sem_init(&aBloq,0,0);
+	sem_init(&aFinished,0,0);
 
 
 	sem_init(&sem_ConsolaKernelLenvantada,0,0);

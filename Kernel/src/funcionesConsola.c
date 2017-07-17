@@ -120,7 +120,6 @@ void *rutinaConsola(void * arg)
 				log_info(logKernel,"[Rutina rutinaConsola] - Nuevo script recibido!\n");
 
 				char* scripAnsisop = (char *)stream;
-				log_info(logKernel,"El stream es : %s /n",scripAnsisop);
 
 				PROCESOS * nuevoPrograma = malloc(sizeof(PROCESOS));
 
@@ -162,7 +161,7 @@ void *rutinaConsola(void * arg)
 					list_add(avisos,nuevoPrograma);
 				sem_post(&mutex_listaProcesos);
 
-				st_ANew=st_ANew+1;
+				sem_post(&aNew);//
 
 				break;
 			}
