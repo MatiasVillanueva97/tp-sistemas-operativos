@@ -202,10 +202,14 @@ void *rutinaCPU(void * arg)
 				    modificarPCB(pcb);
 				}
 
-
 				sem_wait(&mutex_cola_CPUs_libres);
 				   	estaCPU->esperaTrabajo = true;
 				sem_post(&mutex_cola_CPUs_libres);
+
+				sem_post(&aReady);
+				sem_post(&aNew);
+				sem_post(&cpuDisponible);
+
 				free(stream);
 
 			}break;
@@ -220,11 +224,11 @@ void *rutinaCPU(void * arg)
 
 				sem_wait(&mutex_cola_Exec);
 				 modificarPCB(pcb);
-				 sem_post(&mutex_cola_Exec);
-
-				 free(stream);
+				sem_post(&mutex_cola_Exec);
 
 
+
+				free(stream);
 			}break;
 
 			//TE MANDO UNA ESTRUCTURA CON {PID, DESCRIPTOR, MENSAJE(CHAR*)} PARA QUE:  iF(DESCRIPTOR == 1) ESCRIBE EN LA CONSOLA QUE LE CORRESPONDE ; ELSE ESCRIBE EN EL ARCHIVO ASOCIADO A ESE DESCRIPTOR

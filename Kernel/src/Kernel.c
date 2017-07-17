@@ -92,10 +92,7 @@ bool proceso_Finalizar(int pid, int exitCode)
 		recibirMensaje(socketMemoria,&respuesta);
 		free(respuesta);
 
-		puts("5\n");
-
 		proceso_avisarAConsola(socketConsola, pid, exitCode);
-
 
 		flag=true;
 	}
@@ -156,10 +153,11 @@ void newToReady(){
 
 	log_info(logKernel,"\n\n\nEstamos en la función newToReady a largo plazo!\n\n");
 	//***Tomo el primer elemento de la cola sin sacarlo de ella
-	sem_wait(&mutex_listaProcesos);
+
+	//***Quito el script de la cola de new
 	sem_wait(&mutex_cola_New);
-	sem_wait(&mutex_cola_Ready);
-	PROCESOS* programaAnsisop = queue_peek(cola_New);
+		PROCESOS* programaAnsisop = queue_pop(cola_New);
+	sem_post(&mutex_cola_New);
 
 	//*** Valido si el programa ya fue finalizado! Si aun no fue finalizado, se procede a valirdar si se puede pasar a ready... En caso de estar finalizado ya se pasa a la cola de terminados
 	if(programaAnsisop->pcb->estadoDeProceso == paraEjecutar)
@@ -182,22 +180,14 @@ void newToReady(){
 		{
 			log_info(logKernel,"\n\n[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-%d\n", *ok);
 
-			//***Quito el script de la cola de new
-			queue_pop(cola_New);
-			sem_post(&mutex_cola_New);
 
 			//*** Divido el script en la cantidad de paginas necesarias
-
-
 			//***Le envio a memoria tiodo el scrip pagina a pagina
 			int i;
 
 			for(i=0; i<cant_paginas ; i++)
 			{
 				enviarMensaje(socketMemoria,envioCantidadPaginas,scriptEnPaginas[i],size_pagina);
-				log_info(logKernel,"Envio una pagina: %d\n", i);
-				log_info(logKernel,"La pagina %d, contiene:",i);
-				log_info(logKernel,scriptEnPaginas[i]);
 				free(ok);
 				recibirMensaje(socketMemoria,&ok);
 				free(scriptEnPaginas[i]);
@@ -206,7 +196,6 @@ void newToReady(){
 
 			//***Le envio a memoria las paginas del stack
 			char * paginasParaElStack;
-			// puto el que lee
 			paginasParaElStack = string_repeat(' ',size_pagina);
 			paginasParaElStack[size_pagina-1]='\0';
 			for(i=0; i<getConfigInt("STACK_SIZE")&&*ok;i++)
@@ -235,55 +224,39 @@ void newToReady(){
 			programaAnsisop->pcb->contPags_pcb= cant_paginas+getConfigInt("STACK_SIZE");
 
 			//***Añado el pcb a la cola de Ready
+			sem_wait(&mutex_cola_Ready);
+				queue_push(cola_Ready,programaAnsisop->pcb);
+			sem_post(&mutex_cola_Ready);
 
-			queue_push(cola_Ready,programaAnsisop->pcb);
+			sem_post(&aExec);
 		}
 		else
 		{
-			//***Como memoria no me puede guardar el programa, finalizo este proceso- Lo saco de la cola de new y lo mando a la cola de finished
-			queue_pop(cola_New);
-			programaAnsisop->pcb->exitCode=-1; // exit code por falta de memoria
-
-			//***Le aviso a consola que se termino su programa por falta de memoria
-			enviarMensaje(programaAnsisop->socketConsola,pidFinalizadoPorFaltaDeMemoria,&programaAnsisop->pid,sizeof(int));
-			programaAnsisop->avisoAConsola=true;
-
-			sem_post(&mutex_cola_New);
+			//***Como memoria no me puede guardar el programa, finalizo este proceso
+			proceso_Finalizar(programaAnsisop->pid, pidFinalizadoPorFaltaDeMemoria);
 
 			sem_wait(&mutex_cola_Finished);
 				queue_push(cola_Finished, programaAnsisop);
 			sem_post(&mutex_cola_Finished);
 
-
-			//printf("[Funcion newToReady] - No hubo espacio para guardar en memoria!\n");
-			log_info(logKernel,"[Funcion newToReady] - No hubo espacio para guardar en memoria!\n");
-		free(ok);
+			log_info(logKernel,"[Funcion newToReady] - No hubo espacio para guardar en memoria el proceso pid: %d\n", programaAnsisop->pid);
+			free(ok);
 		}
 	}
 	else
 	{
-		//***Como el proceso fue finalizado externamente se lo quita de la cola de new y se lo agrega a la cola de finalizados
-		queue_pop(cola_New);
-
-
+		//***Como el proceso fue finalizado externamente se lo agrega a la cola de finalizados
 		sem_wait(&mutex_cola_Finished);
 			queue_push(cola_Finished, programaAnsisop);
 		sem_post(&mutex_cola_Finished);
-
-		sem_post(&mutex_cola_New);
 	}
-	sem_post(&mutex_cola_Ready);
-	sem_post(&mutex_listaProcesos);
-	/// Que onda con programaAnsisop? No hay que liberarlo? Yo creo que no, onda perderia todas las referencias a los punteros... o no lo sé
 }
 
 
 //***Esta Función lo que hace es sumar el size de todas las colas que determinan el grado de multiplicacion y devuelve la suma ///***Esta Función esta Probada y anda (falta meterle tres semaforos mutex)
 int cantidadProgramasEnProcesamiento()
 {
-
 		int cantidadProcesosEnLasColas = queue_size(cola_Ready)+queue_size(cola_Wait)+queue_size(cola_Exec);
-
 		return cantidadProcesosEnLasColas;
 }
 
@@ -307,10 +280,7 @@ void * estadoNEW()
 	//*** el booleano finPorConsolaDelKernel esta en false desde el inicio, en el momento en el que el kernel quiera frenar la planificiacion esta variable pasara a true, y se frenara la planificacion
 	while(!finPorConsolaDelKernel)
 	{
-
-		printf("Espera sem aNew\n");
-		sem_wait(&aNew);
-		printf("YA NO Espera sem aNew\n");
+		sem_wait(&aReady);
 
 		//*** Validamos que haya programas en alguna de la cola de new y que la cantidad de procesos que haya entre las colas de ready-excec-bloq sea menor al grado de multiprogramacion permitida
 		if(cantidadProgramasEnProcesamiento() <  getConfigInt("GRADO_MULTIPROG") && hayProgramasEnNew())
@@ -339,7 +309,7 @@ void * estadoNEW()
 
 
 ///*** Quito el primer elemento de la cola de ready, valido que no haya sido finalizado y lo pongo en la cola de exec //**** Esta funcion anda bien,
-PCB_DATA* readyToExec()
+void readyToExec()
 {
 	sem_wait(&mutex_cola_Ready);
 	sem_wait(&mutex_cola_Exec);
@@ -362,23 +332,22 @@ PCB_DATA* readyToExec()
 			//*** Si como aun quedan porcesos en la cola de ready vuelvo a llamar a la funcion tomarPCBdeReady
 			sem_post(&mutex_cola_Exec);
 			sem_post(&mutex_cola_Ready);
-			return readyToExec();
+			readyToExec();
 		}
 		else
 		{
 			//** En caso de que ya no haya mas procesos para trabajar, devuelvo null
 			sem_post(&mutex_cola_Exec);
 			sem_post(&mutex_cola_Ready);
-			return NULL;
 		}
 	}
 
 	//*** Como el proceso que encontre no esta terminado, entonces lo pongo en la cola de excec y lo retorno
 	queue_push(cola_Exec,pcb);
 
+
 	sem_post(&mutex_cola_Exec);
 	sem_post(&mutex_cola_Ready);
-	return pcb;
 }
 
 
@@ -418,6 +387,10 @@ void * estadoReady()
 	//*** el booleano finPorConsolaDelKernel esta en false desde el inicio, en el momento en el que el kernel quiera frenar la planificiacion esta variable pasara a true, y se frenara la planificacion
 	while(!finPorConsolaDelKernel)
 	{
+		puts("Esperan ready");
+		sem_wait(&aExec);
+		sem_wait(&cpuDisponible);
+		puts("Ya en ready");
 
 		if(hayCpusDisponibles() && hayProcesosEnReady())
 		{
@@ -660,6 +633,8 @@ void * aceptarConexiones_Cpu_o_Consola( void *arg ){
 					list_add(lista_CPUS,nuevaCPU);
 				sem_post(&mutex_cola_CPUs_libres);
 
+				sem_post(&cpuDisponible);
+
 				pthread_t hilo_rutinaCPU;
 				cpu_crearHiloDetach(nuevaCPU->socketCPU);
 			}break;
@@ -804,8 +779,9 @@ void inicializarSemaforo(){
 	sem_init(&aReady,0,0);
 	sem_init(&aWait,0,0);
 	sem_init(&aBloq,0,0);
-	sem_init(&aFinished,0,0);
+	sem_init(&aExec,0,0);
 
+	sem_init(&cpuDisponible,0,0);
 
 	sem_init(&sem_ConsolaKernelLenvantada,0,0);
 }

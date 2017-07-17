@@ -161,7 +161,7 @@ void *rutinaConsola(void * arg)
 					list_add(avisos,nuevoPrograma);
 				sem_post(&mutex_listaProcesos);
 
-				sem_post(&aNew);//
+				sem_post(&aReady);//
 
 				break;
 			}

@@ -193,11 +193,15 @@ pthread_mutex_t mutex_tabla_estadistica_de_heap;
 
 sem_t sem_ConsolaKernelLenvantada;
 
+sem_t cpuDisponible;
+
 sem_t aNew;
 sem_t aReady;
 sem_t aWait;
 sem_t aBloq;
-sem_t aFinished;
+sem_t aExec;
+
+
 
 
 //***Estra esttructura me la manda la cpu cuando quiere escribir algo, ya sea por pantalla o en filesystem
