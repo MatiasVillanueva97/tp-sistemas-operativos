@@ -85,7 +85,8 @@ enum nuevosEstadosxd{
 	exec = 3,
 	Wait=4,
 	finish=5,
-	enCPU = 6
+	enCPU = 6,
+	aFinalizar = 7
 };
 
 //ESTRUCTURA PARA MANEJAR LAS CPUS

@@ -151,8 +151,11 @@ bool proceso_Finalizar(int pid, int exitCode)
 
 	//sem_wait(&mutex_listaProcesos);
 	PROCESOS* procesoAFianalizar = list_find(avisos, busqueda);
+	if(procesoAFianalizar != NULL && procesoAFianalizar->pcb->estadoDeProceso == enCPU ){
+		procesoAFianalizar->pcb->estadoDeProceso = aFinalizar;
+	}
 
-	if(procesoAFianalizar != NULL && procesoAFianalizar->pcb->estadoDeProceso != finish){
+	else  if(procesoAFianalizar != NULL && procesoAFianalizar->pcb->estadoDeProceso != finish){
 
 
 		procesoAFianalizar->pcb->exitCode = exitCode;
@@ -209,7 +212,7 @@ bool proceso_EstaFinalizado(int pid)
 	  return aviso->pid == pid;
 	 }
 	 PCB_DATA* pcb = ((PROCESOS*)list_find(avisos, busqueda))->pcb;
-	 return pcb->estadoDeProceso == finalizado;
+	 return pcb->estadoDeProceso == finish;
 }
 
 ///---FIN FUNCIONES DEL KERNEL----//
@@ -654,7 +657,7 @@ void * aceptarConexiones_Cpu_o_Consola( void *arg ){
 					list_add(lista_CPUS,nuevaCPU);
 				sem_post(&mutex_cola_CPUs_libres);
 
-				sem_post(&cpuDisponible);
+
 
 				pthread_t hilo_rutinaCPU;
 				cpu_crearHiloDetach(nuevaCPU->socketCPU);

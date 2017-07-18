@@ -176,7 +176,8 @@ void *rutinaCPU(void * arg)
 
 				sem_wait(&mutex_listaProcesos);
 				if(!proceso_EstaFinalizado(pcb->pid)){
-
+					PROCESOS* proceso = buscarProceso(pcb->pid);
+					proceso->pcb->estadoDeProceso = exec;
 					if(pcb->exitCode<0){
 						//finalizarPid(pcb,pcb->exitCode);
 						proceso_Finalizar(pcb->pid, pcb->exitCode);
@@ -205,11 +206,17 @@ void *rutinaCPU(void * arg)
 				pcb = deserializarPCB(stream);
 
 				sem_wait(&mutex_listaProcesos);
+				PROCESOS* proceso = buscarProceso(pcb->pid);
+				if(proceso->pcb->estadoDeProceso != aFinalizar){
+					pcb = modificarPCB(pcb);
 
-				pcb = modificarPCB(pcb);
-				moverA(pcb->pid, aReady);
-				sem_post(&cantidadDeProgramasEnReady);
-				sem_post(&cpuDisponible);
+					moverA(pcb->pid, aReady);
+					sem_post(&cantidadDeProgramasEnReady);
+				}
+				else{
+					proceso->pcb->estadoDeProceso = exec;
+					proceso_Finalizar(pcb->pid,finalizacionDesdeConsola);
+				}
 
 				sem_post(&mutex_listaProcesos);
 
