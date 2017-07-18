@@ -123,11 +123,15 @@ void *rutinaCPU(void * arg)
 			//*** La CPU me pide un PCB para poder trabajar
 			case pedirPCB:{
 				log_info(logKernel,"[Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- %d!\n", pedirPCB);
+				pcb = NULL;
+				while(pcb == NULL){
 				sem_post(&cpuDisponible);
-				sem_wait(&cantidadDeProgramasEnExec);
-				sem_wait(&mutex_listaProcesos);
-				pcb = cpu_pedirPCBDeExec();
+					sem_wait(&cantidadDeProgramasEnExec);
+					pcb = cpu_pedirPCBDeExec();
 
+				}
+
+					sem_wait(&mutex_listaProcesos);
 
 				if(pcb == NULL){
 					//Segun santi, aca va un while asqueroso

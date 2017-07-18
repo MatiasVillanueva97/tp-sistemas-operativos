@@ -47,22 +47,10 @@ void consola_finalizarTodosLosProcesos(int socketConsola){
 	void cambiar(PROCESOS * process){
 		if(process->socketConsola==socketConsola)
 		{
-			process->pcb->exitCode=-6;
-			process->avisoAConsola=true;
-
-			enviarMensaje(socketMemoria,finalizarPrograma,&process->pid,sizeof(int));
-
-
-			int* joaquin;
-			recibirMensaje(socketMemoria,&joaquin);
-			free(joaquin);
+			proceso_Finalizar_conAviso(process->pid,-6, false);
 
 			log_info(logKernel,"Murio el proceso: %d\n", process->pid);
 		}
-	}
-
-	bool busqueda(PROCESOS * process)	{
-		return process->socketConsola==socketConsola;
 	}
 
 	list_iterate(avisos, cambiar);
@@ -189,7 +177,10 @@ void *rutinaConsola(void * arg)
 				//***Ya no hay mas nada que hacer, entonces cambio el bool de todaviahaytrabajo a false, asi salgo del while
 				todaviaHayTrabajo = false;
 
+				sem_wait(&mutex_listaProcesos);
 				consola_finalizarTodosLosProcesos(socketConsola);
+				sem_post(&mutex_listaProcesos);
+
 				log_info(logKernel,"[Rutina rutinaConsola] - Se desconecto la consola de socket: %d\n", socketConsola);
 
 			}break;

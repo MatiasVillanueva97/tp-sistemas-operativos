@@ -54,10 +54,7 @@ void conectarConFS();
 //Juli cambiale el nombre al semaforo aReady y aNew sino no va andar una mierda
 
 PROCESOS* buscarProceso(int pid){
-	bool buscar(PROCESOS*proceso){
-		return proceso->pid==pid;
-	}
-	return list_find(avisos,buscar);
+	return list_get(avisos,pid - 1);
 }
 
 PCB_DATA* quitarPCBDeCola(t_queue* cola, int pid){
@@ -115,7 +112,7 @@ bool moverA(int pid, int movimientoACola){
 		}break;
 
 		case aWait:{
-			proceso->pcb->estadoDeProceso=wait;
+			proceso->pcb->estadoDeProceso=Wait;
 			queue_push(cola_Wait, proceso->pcb);
 		}break;
 		case aReady:{
@@ -138,8 +135,10 @@ bool moverA(int pid, int movimientoACola){
 
 }
 
+
+
 ///***Esta función tiene que buscar en todas las colas y fijarse donde esta el procesos y cambiar su estado a estado finalizado
-bool proceso_Finalizar(int pid, int exitCode)
+bool proceso_Finalizar_conAviso(int pid, int exitCode, bool conAvisoAConsola)
 {
 	bool flag=false;
 
@@ -157,6 +156,9 @@ bool proceso_Finalizar(int pid, int exitCode)
 
 	else  if(procesoAFianalizar != NULL && procesoAFianalizar->pcb->estadoDeProceso != finish){
 
+		if(procesoAFianalizar->pcb->estadoDeProceso != new){
+			sem_post(&gradoDeMultiprogramacion);
+		}
 
 		procesoAFianalizar->pcb->exitCode = exitCode;
 		moverA(procesoAFianalizar->pid,aFinished);
@@ -171,8 +173,9 @@ bool proceso_Finalizar(int pid, int exitCode)
 		void* respuesta;
 		recibirMensaje(socketMemoria,&respuesta);
 		free(respuesta);
-
-		proceso_avisarAConsola(socketConsola, pid, exitCode);
+		if(conAvisoAConsola){
+			proceso_avisarAConsola(socketConsola, pid, exitCode);
+		}
 
 		flag=true;
 	}
@@ -185,6 +188,9 @@ bool proceso_Finalizar(int pid, int exitCode)
 	return flag;
 }
 
+bool proceso_Finalizar(int pid, int exitCode){
+	return proceso_Finalizar_conAviso( pid, exitCode, true);
+}
 
 void proceso_avisarAConsola(int socketConsola, int pid, int exitCode){
 		enviarMensaje(socketConsola, pidFinalizado, &pid, sizeof(int));
@@ -238,89 +244,95 @@ void newToReady(){
 	sem_wait(&mutex_listaProcesos);
 		PROCESOS* programaAnsisop = queue_peek(cola_New);
 	//*** Valido si el programa ya fue finalizado! Si aun no fue finalizado, se procede a valirdar si se puede pasar a ready... En caso de estar finalizado ya se pasa a la cola de terminados
-	if(programaAnsisop->pcb->estadoDeProceso == new)
-	{
-		log_info(logKernel,"Estructura:--\nPid: %d\nScript: %s\nSocketConsola:%d\n\n",programaAnsisop->pid,programaAnsisop->scriptAnsisop,programaAnsisop->socketConsola);
-
-		//***Calculo cuantas paginas necesitara la memoria para este script
-		int cant_paginas = memoria_CalcularCantidadPaginas(programaAnsisop->scriptAnsisop);
-		char** scriptEnPaginas = memoria_dividirScriptEnPaginas(cant_paginas,programaAnsisop->scriptAnsisop);
-		INICIALIZAR_PROGRAMA dataParaMemoria;
-		dataParaMemoria.cantPags=cant_paginas+getConfigInt("STACK_SIZE");
-		dataParaMemoria.pid=programaAnsisop->pid;
-
-		//***Le Enviamos a memoria el pid con el que vamos a trabajar - Junto a la accion que vamos a realizar - Le envio a memeoria la cantidad de paginas que necesitaré reservar
-		enviarMensaje(socketMemoria,inicializarPrograma, &dataParaMemoria, sizeof(int)*2); // Enviamos el pid a memoria
-
-		int* ok;
-		recibirMensaje(socketMemoria, &ok); // Esperamos a que memoria me indique si puede guardar o no el stream
-		if(*ok)
+	if(programaAnsisop != NULL){
+		if(programaAnsisop->pcb->estadoDeProceso == new)
 		{
-			log_info(logKernel,"\n\n[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-%d\n", *ok);
+			log_info(logKernel,"Estructura:--\nPid: %d\nScript: %s\nSocketConsola:%d\n\n",programaAnsisop->pid,programaAnsisop->scriptAnsisop,programaAnsisop->socketConsola);
 
+			//***Calculo cuantas paginas necesitara la memoria para este script
+			int cant_paginas = memoria_CalcularCantidadPaginas(programaAnsisop->scriptAnsisop);
+			char** scriptEnPaginas = memoria_dividirScriptEnPaginas(cant_paginas,programaAnsisop->scriptAnsisop);
+			INICIALIZAR_PROGRAMA dataParaMemoria;
+			dataParaMemoria.cantPags=cant_paginas+getConfigInt("STACK_SIZE");
+			dataParaMemoria.pid=programaAnsisop->pid;
 
-			//*** Divido el script en la cantidad de paginas necesarias
-			programaAnsisop->pcb->contPags_pcb= cant_paginas+getConfigInt("STACK_SIZE");
+			//***Le Enviamos a memoria el pid con el que vamos a trabajar - Junto a la accion que vamos a realizar - Le envio a memeoria la cantidad de paginas que necesitaré reservar
+			enviarMensaje(socketMemoria,inicializarPrograma, &dataParaMemoria, sizeof(int)*2); // Enviamos el pid a memoria
 
-			//***Añado el pcb a la cola de Ready
-			moverA(programaAnsisop->pid,aReady);
-			sem_post(&mutex_listaProcesos);
-			//***Le envio a memoria tiodo el scrip pagina a pagina
-			int i;
-
-			for(i=0; i<cant_paginas ; i++)
+			int* ok;
+			recibirMensaje(socketMemoria, &ok); // Esperamos a que memoria me indique si puede guardar o no el stream
+			if(*ok)
 			{
-				enviarMensaje(socketMemoria,envioCantidadPaginas,scriptEnPaginas[i],size_pagina);
-				free(ok);
-				recibirMensaje(socketMemoria,&ok);
-				free(scriptEnPaginas[i]);
-			}
-			free(scriptEnPaginas);
+				log_info(logKernel,"\n\n[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-%d\n", *ok);
 
-			//***Le envio a memoria las paginas del stack
-			char * paginasParaElStack;
-			paginasParaElStack = string_repeat(' ',size_pagina);
-			paginasParaElStack[size_pagina-1]='\0';
-			for(i=0; i<getConfigInt("STACK_SIZE")&&*ok;i++)
+
+				//*** Divido el script en la cantidad de paginas necesarias
+				programaAnsisop->pcb->contPags_pcb= cant_paginas+getConfigInt("STACK_SIZE");
+
+				//***Añado el pcb a la cola de Ready
+				moverA(programaAnsisop->pid,aReady);
+				sem_post(&mutex_listaProcesos);
+				//***Le envio a memoria tiodo el scrip pagina a pagina
+				int i;
+
+				for(i=0; i<cant_paginas ; i++)
+				{
+					enviarMensaje(socketMemoria,envioCantidadPaginas,scriptEnPaginas[i],size_pagina);
+					free(ok);
+					recibirMensaje(socketMemoria,&ok);
+					free(scriptEnPaginas[i]);
+				}
+				free(scriptEnPaginas);
+
+				//***Le envio a memoria las paginas del stack
+				char * paginasParaElStack;
+				paginasParaElStack = string_repeat(' ',size_pagina);
+				paginasParaElStack[size_pagina-1]='\0';
+				for(i=0; i<getConfigInt("STACK_SIZE")&&*ok;i++)
+				{
+					free(ok);
+					enviarMensaje(socketMemoria,envioCantidadPaginas,paginasParaElStack,size_pagina);
+					//printf("Envio una pagina: %d\n", i+cant_paginas);
+
+					recibirMensaje(socketMemoria,&ok);
+				}
+				free(ok);
+				free(paginasParaElStack);
+				//***Termino de completar el PCB
+
+				filaEstadisticaDeHeap* fila = malloc(sizeof(filaEstadisticaDeHeap));
+				fila->pid = programaAnsisop->pid;
+				fila->tamanoAlocadoEnBytes = 0;
+				fila->tamanoAlocadoEnOperaciones = 0;
+				fila->tamanoLiberadoEnBytes = 0;
+				fila->tamanoAlocadoEnOperaciones = 0;
+				fila->cantidadDePaginasHistoricasPedidas =0;
+
+				sem_wait(&mutex_tabla_estadistica_de_heap);
+				list_add(tablaEstadisticaDeHeap,fila);
+				sem_post(&mutex_tabla_estadistica_de_heap);
+				sem_post(&cantidadDeProgramasEnReady);
+			}
+			else
 			{
+				//***Como memoria no me puede guardar el programa, finalizo este proceso
+				proceso_Finalizar(programaAnsisop->pid, pidFinalizadoPorFaltaDeMemoria);
+
+				sem_post(&mutex_listaProcesos);
+				log_info(logKernel,"[Funcion newToReady] - No hubo espacio para guardar en memoria el proceso pid: %d\n", programaAnsisop->pid);
 				free(ok);
-				enviarMensaje(socketMemoria,envioCantidadPaginas,paginasParaElStack,size_pagina);
-				//printf("Envio una pagina: %d\n", i+cant_paginas);
-
-				recibirMensaje(socketMemoria,&ok);
 			}
-			free(ok);
-			free(paginasParaElStack);
-			//***Termino de completar el PCB
-
-			filaEstadisticaDeHeap* fila = malloc(sizeof(filaEstadisticaDeHeap));
-			fila->pid = programaAnsisop->pid;
-			fila->tamanoAlocadoEnBytes = 0;
-			fila->tamanoAlocadoEnOperaciones = 0;
-			fila->tamanoLiberadoEnBytes = 0;
-			fila->tamanoAlocadoEnOperaciones = 0;
-			fila->cantidadDePaginasHistoricasPedidas =0;
-
-			sem_wait(&mutex_tabla_estadistica_de_heap);
-			list_add(tablaEstadisticaDeHeap,fila);
-			sem_post(&mutex_tabla_estadistica_de_heap);
-			sem_post(&cantidadDeProgramasEnReady);
 		}
 		else
 		{
-			//***Como memoria no me puede guardar el programa, finalizo este proceso
-			proceso_Finalizar(programaAnsisop->pid, pidFinalizadoPorFaltaDeMemoria);
-
+			//***Como el proceso fue finalizado externamente se lo agrega a la cola de finalizados
+			moverA(programaAnsisop->pid,aFinished);
 			sem_post(&mutex_listaProcesos);
-			log_info(logKernel,"[Funcion newToReady] - No hubo espacio para guardar en memoria el proceso pid: %d\n", programaAnsisop->pid);
-			free(ok);
 		}
 	}
-	else
-	{
-		//***Como el proceso fue finalizado externamente se lo agrega a la cola de finalizados
-		moverA(programaAnsisop->pid,aFinished);
+	else{
 		sem_post(&mutex_listaProcesos);
+		sem_post(&gradoDeMultiprogramacion);
 	}
 }
 
@@ -370,7 +382,8 @@ void readyToExec()
 	//*** Tomo el primer elemento de la cola de ready y lo quito
 	sem_wait(&mutex_listaProcesos);
 		PCB_DATA* pcb = queue_peek(cola_Ready);
-		moverA(pcb->pid, aExec);
+		if(pcb != NULL)
+			moverA(pcb->pid, aExec);
 	sem_post(&cantidadDeProgramasEnExec);
 		sem_post(&mutex_listaProcesos);
 
@@ -443,66 +456,11 @@ void * estadoReady()
 
 
 //*** Esta funcion pasa todos los procesos que esten finalizados dentro de la cola de exec a la cola de Finished, y retorna el pid del proceso que se acaba de mover de cola, sino encontro ninguno retorna -1
-void execTo()
-{
-	//**Tomo el primer elemento de la lista,
-	PCB_DATA* pcb=queue_peek(cola_Exec);
 
-	if(pcb != NULL){
-		//***Valido que el proceso haya finalizado
-		if(pcb->estadoDeProceso == finalizado){
-			queue_pop(cola_Exec);
-			//*** si el proceso ya finalizo lo paso a la cola de finished
-			sem_wait(&mutex_cola_Finished);
-				queue_push(cola_Finished,pcb);
-			sem_post(&mutex_cola_Finished);
-
-		}
-		else{
-			//*** Valido que el proceso este bloqueado, si lo esta lo mando a wait
-			if(pcb->estadoDeProceso == bloqueado){
-				queue_pop(cola_Exec);
-				//*** si el proceso esta  bloqueado lo paso ala cola de bloqueado
-				sem_wait(&mutex_cola_Wait);
-					queue_push(cola_Wait,pcb);
-				sem_post(&mutex_cola_Wait);
-
-			}
-		}
-	}
-}
 
 
 //*** esta funcion te pasa las cosas de excet a finshed, sea el caso que sea y te manda el mensaje a cnsola de cada cosa que acaba de mover -- Aunque esta accion de enviar a consola las cosas terminadas no deberia estar aca.. este hilo va a cambiar muchisimo
-void* estadoEXEC(){
-	int pidParaAvisar;
 
-	bool busqueda(PROCESOS * aviso)
-	{
-		if(aviso->pid == pidParaAvisar)
-			return true;
-
-		return false;
-	}
-
-	//*** el booleano finPorConsolaDelKernel esta en false desde el inicio, en el momento en el que el kernel quiera frenar la planificiacion esta variable pasara a true, y se frenara la planificacion
-	while(!finPorConsolaDelKernel)
-	{
-		sem_wait(&mutex_cola_Exec);
-
-		//***Validamos que haya procesos en la cola de exec
-		if(queue_size(cola_Exec)>0){
-
-			//***Llamamos a la funcion excetToReady que pasa los procesos que ya hallan finalizado a la cola de finalizados, y retorna el pid del proceso que acaba de pasar. No haber encotrado ninguno retorna -1
-			execTo();
-			sem_post(&mutex_cola_Exec);
-		}
-		else{
-			sem_post(&mutex_cola_Exec);
-		}
-	}
-	return NULL;
-}
 
 
 /// ********************************************************************************************************///
@@ -742,8 +700,6 @@ int main(void) {
 	pthread_create(&hilo_estadoReady, NULL, estadoReady, NULL);
 
 
-	pthread_t hilo_estadoEXEC;
-	pthread_create(&hilo_estadoEXEC, NULL, estadoEXEC, NULL);
 /*
 
 

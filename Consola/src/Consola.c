@@ -465,8 +465,9 @@ void* rutinaEscucharKernel() {
 		case (0): {
 			log_error(logConsola,"Se desconecto el kernel");
 			printf("Se desconecto el kernel\n");
+			list_destroy_and_destroy_elements(listaEstadoPrograma,free);
 			error = true;
-			printf("Ingrese una tecla para salir\n");
+			exit(-1);
 			break;
 		}
 		case (pidFinalizadoPorFaltaDeMemoria): {
