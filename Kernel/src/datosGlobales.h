@@ -71,6 +71,23 @@ enum estadosProcesos{
 	moverAReady = 42
 };
 
+enum movimientosAColas{
+	aReady = 1,
+	aWait=2,
+	aNew = 3,
+	aExec = 4,
+	aFinished = 6
+};
+
+enum nuevosEstadosxd{
+	new = 1,
+	ready = 2,
+	exec = 3,
+	Wait=4,
+	finish=5,
+	enCPU = 6
+};
+
 //ESTRUCTURA PARA MANEJAR LAS CPUS
 
 typedef struct{
@@ -195,11 +212,10 @@ sem_t sem_ConsolaKernelLenvantada;
 
 sem_t cpuDisponible;
 
-sem_t aNew;
-sem_t aReady;
-sem_t aWait;
-sem_t aBloq;
-sem_t aExec;
+sem_t programasEnNew;
+sem_t gradoDeMultiprogramacion;
+sem_t cantidadDeProgramasEnReady;
+sem_t cantidadDeProgramasEnExec;
 
 
 

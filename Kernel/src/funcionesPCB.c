@@ -14,7 +14,7 @@ PCB_DATA* crearPCB(char * scriptAnsisop, int pid, int contPags){
 		pcb->cantidadDeEtiquetas = metadata->cantidad_de_etiquetas + metadata->cantidad_de_funciones;
 		pcb->indiceStack = NULL;
 		pcb->sizeEtiquetas = metadata->etiquetas_size;
-		pcb->estadoDeProceso = 53;
+		pcb->estadoDeProceso = 0;
 		pcb->cantidadDeEntradas = 0;
 		pcb->cantidadDeInstrucciones = metadata->instrucciones_size;
 		pcb->programCounter = metadata->instruccion_inicio;
@@ -43,7 +43,7 @@ PCB_DATA* modificarPCB(PCB_DATA * pcbNuevo){
 
 		return false;
 	}
-	sem_wait(&mutex_listaProcesos);
+//	sem_wait(&mutex_listaProcesos);
 
 	PCB_DATA * pcbViejo = ((PROCESOS*)list_find(avisos, busqueda))->pcb;
 
@@ -66,6 +66,6 @@ PCB_DATA* modificarPCB(PCB_DATA * pcbNuevo){
 	//****Esta linea no se si va
 	free(pcbNuevo);
 
-	sem_post(&mutex_listaProcesos);
+//	sem_post(&mutex_listaProcesos);
 	return pcbViejo;
 }

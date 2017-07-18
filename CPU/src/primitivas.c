@@ -589,7 +589,7 @@ void AnSISOP_escribir(t_descriptor_archivo descriptor_archivo,void* informacion,
 	void* stream;
 
 	if(recibirMensajeSeguro(socketKernel, &stream) == respuestaBooleanaKernel) {
-		bool rtaKernel = *(bool*)stream;
+		int  rtaKernel = *(int*)stream;
 		if(rtaKernel){
 			log_info(logCPU,"La escritura fue exitosa\n");
 		}else{

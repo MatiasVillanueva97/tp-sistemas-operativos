@@ -75,6 +75,7 @@ int main(void)
 	signal_SIGUSR1 = false;
 	signal_sigint = false;
 	hayPCB = false;
+	quantumSleep = 0;
 
 	signal(SIGUSR1, sigusr1_handler);
 	signal(SIGINT, sigint_handler);
@@ -276,6 +277,7 @@ void pedidoPCB(){
 	if(recibirMensajeSeguro(socketKernel,&pcbSerializado) != envioPCB){
 		log_error(logCPU,"Error en el protocolo de comunicacion\n");
 	}else{
+		enviarMensaje(socketKernel,respuestaBooleanaKernel,&quantumSleep,sizeof(int));
 		hayPCB = true;
 		pcb=deserializarPCB(pcbSerializado);
 		free(pcbSerializado);

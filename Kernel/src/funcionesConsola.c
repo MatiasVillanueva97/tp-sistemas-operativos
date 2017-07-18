@@ -147,21 +147,20 @@ void *rutinaConsola(void * arg)
 				agregarATablaDeProceso(0," ",nuevaEntrada->tablaProceso);
 				agregarATablaDeProceso(0," ",nuevaEntrada->tablaProceso);
 
+				sem_wait(&mutex_tablaGlobalDeArchivosDeProcesos);
 				list_add(tablaGlobalDeArchivosDeProcesos,nuevaEntrada);
+				sem_post(&mutex_tablaGlobalDeArchivosDeProcesos);
 
-				//***Lo Agrego a la Cola de New
-				sem_wait(&mutex_cola_New);
-					queue_push(cola_New,nuevoPrograma);
-				sem_post(&mutex_cola_New);
 
 				//***Le envio a consola el pid del script que me acaba de enviar
 				enviarMensaje(socketConsola,envioDelPidEnSeco,&nuevoPrograma->pid,sizeof(int));
 
 				sem_wait(&mutex_listaProcesos);
-					list_add(avisos,nuevoPrograma);
+				list_add(avisos,nuevoPrograma);
+				moverA(nuevoPrograma->pid,aNew);
 				sem_post(&mutex_listaProcesos);
 
-				sem_post(&aReady);//
+				sem_post(&programasEnNew);//
 
 				break;
 			}

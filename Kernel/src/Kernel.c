@@ -47,16 +47,96 @@ void conectarConFS();
 ///----FIN SEMAFOROS----///
 
 
-int st_ANew = 0;
-int st_AReady = 0;
-int st_AWait = 0;
-int st_ABloq = 0;
-int st_AFinished = 0;
 
 
 
 ///---FUNCIONES DEL KERNEL----//
+//Juli cambiale el nombre al semaforo aReady y aNew sino no va andar una mierda
 
+PROCESOS* buscarProceso(int pid){
+	bool buscar(PROCESOS*proceso){
+		return proceso->pid==pid;
+	}
+	return list_find(avisos,buscar);
+}
+
+PCB_DATA* quitarPCBDeCola(t_queue* cola, int pid){
+	bool busqueda(PCB_DATA* pcb){
+		return pcb->pid == pid;
+	}
+	return list_remove_by_condition(cola->elements, busqueda);
+}
+
+
+PCB_DATA* quitarPCBDeDondeEste(PCB_DATA* pcb){
+	switch(pcb->estadoDeProceso){
+	case 0:{
+			PROCESOS* proceso = list_get(avisos, pcb->pid - 1);
+			return proceso->pcb;
+		}break;
+	case new:{
+		bool busqueda(PROCESOS* proceso){
+				return proceso->pid == pcb->pid;
+			}
+			return list_remove_by_condition(cola_New->elements, busqueda);
+		}break;
+	case ready:{
+			return quitarPCBDeCola(cola_Ready,pcb->pid);
+		}break;
+	case enCPU:
+	case exec:{
+			return quitarPCBDeCola(cola_Exec,pcb->pid);
+		}break;
+	case Wait:{
+			return quitarPCBDeCola(cola_Wait,pcb->pid);
+		}break;
+	//por el finish no hace nada, no se saca xdxdxd
+	default: return NULL; break;
+	}
+}
+
+bool moverA(int pid, int movimientoACola){
+
+	PROCESOS * proceso = buscarProceso(pid);
+	if(proceso == NULL)
+		return false;
+	if(proceso->pcb->estadoDeProceso == finish)
+		return false;
+
+
+	quitarPCBDeDondeEste(proceso->pcb);
+
+	switch(movimientoACola)
+	{
+		case aNew:{
+			proceso->pcb->estadoDeProceso=new;
+			queue_push(cola_New,proceso);
+
+		}break;
+
+		case aWait:{
+			proceso->pcb->estadoDeProceso=wait;
+			queue_push(cola_Wait, proceso->pcb);
+		}break;
+		case aReady:{
+			proceso->pcb->estadoDeProceso=ready;
+			queue_push(cola_Ready, proceso->pcb);
+		}break;
+		case aExec:{
+			proceso->pcb->estadoDeProceso=exec;
+			queue_push(cola_Exec, proceso->pcb);
+		}break;
+		case aFinished:{
+			proceso->pcb->estadoDeProceso=finish;
+			queue_push(cola_Finished, proceso->pcb);
+		}break;
+		default:{
+			log_warning(logKernel, "[MoverA]: se quiere hacer un movimiento a un estado inexistente");
+		}break;
+	}
+	return true;
+
+}
 
 ///***Esta función tiene que buscar en todas las colas y fijarse donde esta el procesos y cambiar su estado a estado finalizado
 bool proceso_Finalizar(int pid, int exitCode)
@@ -65,27 +145,24 @@ bool proceso_Finalizar(int pid, int exitCode)
 
 	bool busqueda(PROCESOS * aviso)
 	{
-		if(aviso->pid == pid)
-			return true;
-
-		return false;
+		return aviso->pid == pid;
 	}
 
 
-	sem_wait(&mutex_listaProcesos);
-	PROCESOS* procesoAFianalizar =(PROCESOS*)list_find(avisos, busqueda);
+	//sem_wait(&mutex_listaProcesos);
+	PROCESOS* procesoAFianalizar = list_find(avisos, busqueda);
 
-	if(procesoAFianalizar != NULL && procesoAFianalizar->pcb->estadoDeProceso != finalizado){
+	if(procesoAFianalizar != NULL && procesoAFianalizar->pcb->estadoDeProceso != finish){
 
 
 		procesoAFianalizar->pcb->exitCode = exitCode;
-		procesoAFianalizar->pcb->estadoDeProceso = finalizado;
+		moverA(procesoAFianalizar->pid,aFinished);
 
 		int socketConsola = procesoAFianalizar->socketConsola;
 
 		// proceso_liberarRecursos(procesoAFianalizar->pcb); --- TODO hacer bien esta funcion
 
-		sem_post(&mutex_listaProcesos);
+	//	sem_post(&mutex_listaProcesos);
 
 		enviarMensaje(socketMemoria,finalizarPrograma,&pid,sizeof(int));
 		void* respuesta;
@@ -97,7 +174,7 @@ bool proceso_Finalizar(int pid, int exitCode)
 		flag=true;
 	}
 	else{
-		sem_post(&mutex_listaProcesos);
+//		sem_post(&mutex_listaProcesos);
 
 		log_error(logKernel,"[proceso_Finalizar] - Hubo un error al finalizar el pid: %d", pid);
 	}
@@ -155,12 +232,10 @@ void newToReady(){
 	//***Tomo el primer elemento de la cola sin sacarlo de ella
 
 	//***Quito el script de la cola de new
-	sem_wait(&mutex_cola_New);
-		PROCESOS* programaAnsisop = queue_pop(cola_New);
-	sem_post(&mutex_cola_New);
-
+	sem_wait(&mutex_listaProcesos);
+		PROCESOS* programaAnsisop = queue_peek(cola_New);
 	//*** Valido si el programa ya fue finalizado! Si aun no fue finalizado, se procede a valirdar si se puede pasar a ready... En caso de estar finalizado ya se pasa a la cola de terminados
-	if(programaAnsisop->pcb->estadoDeProceso == paraEjecutar)
+	if(programaAnsisop->pcb->estadoDeProceso == new)
 	{
 		log_info(logKernel,"Estructura:--\nPid: %d\nScript: %s\nSocketConsola:%d\n\n",programaAnsisop->pid,programaAnsisop->scriptAnsisop,programaAnsisop->socketConsola);
 
@@ -182,6 +257,11 @@ void newToReady(){
 
 
 			//*** Divido el script en la cantidad de paginas necesarias
+			programaAnsisop->pcb->contPags_pcb= cant_paginas+getConfigInt("STACK_SIZE");
+
+			//***Añado el pcb a la cola de Ready
+			moverA(programaAnsisop->pid,aReady);
+			sem_post(&mutex_listaProcesos);
 			//***Le envio a memoria tiodo el scrip pagina a pagina
 			int i;
 
@@ -221,24 +301,14 @@ void newToReady(){
 			sem_wait(&mutex_tabla_estadistica_de_heap);
 			list_add(tablaEstadisticaDeHeap,fila);
 			sem_post(&mutex_tabla_estadistica_de_heap);
-			programaAnsisop->pcb->contPags_pcb= cant_paginas+getConfigInt("STACK_SIZE");
-
-			//***Añado el pcb a la cola de Ready
-			sem_wait(&mutex_cola_Ready);
-				queue_push(cola_Ready,programaAnsisop->pcb);
-			sem_post(&mutex_cola_Ready);
-
-			sem_post(&aExec);
+			sem_post(&cantidadDeProgramasEnReady);
 		}
 		else
 		{
 			//***Como memoria no me puede guardar el programa, finalizo este proceso
 			proceso_Finalizar(programaAnsisop->pid, pidFinalizadoPorFaltaDeMemoria);
 
-			sem_wait(&mutex_cola_Finished);
-				queue_push(cola_Finished, programaAnsisop);
-			sem_post(&mutex_cola_Finished);
-
+			sem_post(&mutex_listaProcesos);
 			log_info(logKernel,"[Funcion newToReady] - No hubo espacio para guardar en memoria el proceso pid: %d\n", programaAnsisop->pid);
 			free(ok);
 		}
@@ -246,30 +316,14 @@ void newToReady(){
 	else
 	{
 		//***Como el proceso fue finalizado externamente se lo agrega a la cola de finalizados
-		sem_wait(&mutex_cola_Finished);
-			queue_push(cola_Finished, programaAnsisop);
-		sem_post(&mutex_cola_Finished);
+		moverA(programaAnsisop->pid,aFinished);
+		sem_post(&mutex_listaProcesos);
 	}
 }
 
 
 //***Esta Función lo que hace es sumar el size de todas las colas que determinan el grado de multiplicacion y devuelve la suma ///***Esta Función esta Probada y anda (falta meterle tres semaforos mutex)
-int cantidadProgramasEnProcesamiento()
-{
-		int cantidadProcesosEnLasColas = queue_size(cola_Ready)+queue_size(cola_Wait)+queue_size(cola_Exec);
-		return cantidadProcesosEnLasColas;
-}
 
-
-//*** Esta función te dice si hay programas en new - anda bien
-bool hayProgramasEnNew()
-{
-	sem_wait(&mutex_cola_New);
-		bool valor = queue_size(cola_New) > 0;
-	sem_post(&mutex_cola_New);
-
-	return valor;
-}
 
 
 //*** Rutina que te pasa los procesos de new a ready - anda bien
@@ -280,13 +334,11 @@ void * estadoNEW()
 	//*** el booleano finPorConsolaDelKernel esta en false desde el inicio, en el momento en el que el kernel quiera frenar la planificiacion esta variable pasara a true, y se frenara la planificacion
 	while(!finPorConsolaDelKernel)
 	{
-		sem_wait(&aReady);
+		sem_wait(&programasEnNew);
+		sem_wait(&gradoDeMultiprogramacion);
 
 		//*** Validamos que haya programas en alguna de la cola de new y que la cantidad de procesos que haya entre las colas de ready-excec-bloq sea menor al grado de multiprogramacion permitida
-		if(cantidadProgramasEnProcesamiento() <  getConfigInt("GRADO_MULTIPROG") && hayProgramasEnNew())
-		{
 			newToReady();
-		}
 	}
 
 	return NULL;
@@ -311,43 +363,15 @@ void * estadoNEW()
 ///*** Quito el primer elemento de la cola de ready, valido que no haya sido finalizado y lo pongo en la cola de exec //**** Esta funcion anda bien,
 void readyToExec()
 {
-	sem_wait(&mutex_cola_Ready);
-	sem_wait(&mutex_cola_Exec);
 
 	//*** Tomo el primer elemento de la cola de ready y lo quito
-	PCB_DATA* pcb = queue_pop(cola_Ready);
+	sem_wait(&mutex_listaProcesos);
+		PCB_DATA* pcb = queue_peek(cola_Ready);
+		moverA(pcb->pid, aExec);
+	sem_post(&cantidadDeProgramasEnExec);
+		sem_post(&mutex_listaProcesos);
 
 
-	//*** Valido que el proceso no haya sido terminado ya
-	if(pcb->estadoDeProceso == finalizado)
-	{
-		//*** Si ya fue finalizado lo paso a la cola de finalizados
-		sem_wait(&mutex_cola_Finished);
-			queue_push(cola_Finished,pcb);
-		sem_post(&mutex_cola_Finished);
-
-		//*** valido si aun quedan procesos en la cola de ready para seguir buscando un pcb para trabajar
-		if(queue_size(cola_Ready)>0){
-
-			//*** Si como aun quedan porcesos en la cola de ready vuelvo a llamar a la funcion tomarPCBdeReady
-			sem_post(&mutex_cola_Exec);
-			sem_post(&mutex_cola_Ready);
-			readyToExec();
-		}
-		else
-		{
-			//** En caso de que ya no haya mas procesos para trabajar, devuelvo null
-			sem_post(&mutex_cola_Exec);
-			sem_post(&mutex_cola_Ready);
-		}
-	}
-
-	//*** Como el proceso que encontre no esta terminado, entonces lo pongo en la cola de excec y lo retorno
-	queue_push(cola_Exec,pcb);
-
-
-	sem_post(&mutex_cola_Exec);
-	sem_post(&mutex_cola_Ready);
 }
 
 
@@ -388,15 +412,12 @@ void * estadoReady()
 	while(!finPorConsolaDelKernel)
 	{
 		puts("Esperan ready");
-		sem_wait(&aExec);
+		sem_wait(&cantidadDeProgramasEnReady);
 		sem_wait(&cpuDisponible);
 		puts("Ya en ready");
 
-		if(hayCpusDisponibles() && hayProcesosEnReady())
-		{
 			///*** Quito el primer elemento de la cola de ready, valido que no haya sido finalizado y lo pongo en la cola de exec - en caso de no encontrar uno para poder trabajar no hago nada
 			readyToExec();
-		}
 	}
 	return NULL;
 }
@@ -676,11 +697,11 @@ int main(void) {
 
 
 		//***Inicializo los semaforos
-		inicializarSemaforo();
 
 		//***Lectura e impresion de los archivos de configuracion
 		printf("Configuracion Inicial: \n");
 		configuracionInicial("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Kernel/kernel.config");
+		inicializarSemaforo();
 		imprimirConfiguracion();
 		cargarSemaforosDesdeConfig();
 		cargarVariablesGlobalesDesdeConfig();
@@ -714,18 +735,18 @@ int main(void) {
 	pthread_t hilo_estadoNEW;
 	pthread_create(&hilo_estadoNEW, NULL, estadoNEW, NULL);
 
-
 	pthread_t hilo_estadoReady;
 	pthread_create(&hilo_estadoReady, NULL, estadoReady, NULL);
 
 
 	pthread_t hilo_estadoEXEC;
 	pthread_create(&hilo_estadoEXEC, NULL, estadoEXEC, NULL);
+/*
 
 
 	pthread_t hilo_estadoWAIT;
 	pthread_create(&hilo_estadoWAIT, NULL, estadoWAIT, NULL);
-
+*/
 
 	pthread_t hilo_Inotify;
 	pthread_create(&hilo_Inotify, NULL,INotify, NULL);
@@ -735,10 +756,10 @@ int main(void) {
 
 
 	pthread_join(hilo_aceptarConexiones_Cpu_o_Consola, NULL);
-	pthread_join(hilo_estadoReady, NULL);
+	//pthread_join(hilo_estadoReady, NULL);
 	pthread_join(hilo_estadoNEW, NULL);
-	pthread_join(hilo_estadoEXEC, NULL);
-	pthread_join(hilo_estadoWAIT, NULL);
+	//pthread_join(hilo_estadoEXEC, NULL);
+	//pthread_join(hilo_estadoWAIT, NULL);
 	pthread_join(hilo_consolaKernel, NULL);
 
 	log_destroy(logKernel);
@@ -775,11 +796,11 @@ void inicializarSemaforo(){
 	sem_init(&mutex_tabla_estadistica_de_heap,0,1);
 
 
-	sem_init(&aNew,0,0);
-	sem_init(&aReady,0,0);
-	sem_init(&aWait,0,0);
-	sem_init(&aBloq,0,0);
-	sem_init(&aExec,0,0);
+	sem_init(&programasEnNew,0,0);
+	sem_init(&gradoDeMultiprogramacion,0,getConfigInt("GRADO_MULTIPROG"));
+	sem_init(&cantidadDeProgramasEnExec,0,0);
+	sem_init(&cantidadDeProgramasEnReady,0,0);
+
 
 	sem_init(&cpuDisponible,0,0);
 

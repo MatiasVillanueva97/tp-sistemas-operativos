@@ -49,45 +49,10 @@ void cpu_crearHiloDetach(int nuevoSocket){
 
 //***Esa funcion devuelve un un PCB que este listo para mandarse a ejecutar , en caso de que ninguno este listo retorna null
 PCB_DATA * cpu_pedirPCBDeExec(){
-
-	bool encontroPCB = false;
-	PCB_DATA* pcb;
-	int i, cantidadProcesos=0;
-
-	//***Voy a estar buscando en la cola de exec hasta que encuentre alguno
-	while(!encontroPCB)
-	{
-		sem_wait(&mutex_cola_Exec);
-		//***Me fijo la cantidad de procesos que hay en la cola de exec
-		cantidadProcesos = queue_size(cola_Exec);
-
-		//***Voy a iterar tantas veces como elementos tenga en la cola de exec
-		for(i=0; i < cantidadProcesos; i++)
-		{
-			//***Tomo el primer pcb de la cola
-			pcb = queue_pop(cola_Exec);
-
-			//*** Valido si el pcb se puede mandar a ejecutar
-			if(pcb->estadoDeProceso == paraEjecutar)
-			{
-				//***Esta listo para ejecutar, le cambio el exitcode
-				pcb->estadoDeProceso = loEstaUsandoUnaCPU;
-
-				//***Lo agrego al final de la cola de exec
-				queue_push(cola_Exec, pcb);
-
-				//***Cambio el booleano a true, porque acabo de encontrar un pcb y asi cortar el while y hago el break del for
-				encontroPCB=true;
-				break;
-			}
-			else{
-				queue_push(cola_Exec, pcb);
-			}
-		}
-		sem_post(&mutex_cola_Exec);
+	bool condicion(PCB_DATA* pcb){
+		return pcb->estadoDeProceso == exec;
 	}
-
-	return pcb;
+	return list_find(cola_Exec->elements, condicion);
 }
 
 void agregarATablaEstadistica(int pid,int tamano,bool esAlocar){
@@ -158,14 +123,36 @@ void *rutinaCPU(void * arg)
 			//*** La CPU me pide un PCB para poder trabajar
 			case pedirPCB:{
 				log_info(logKernel,"[Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- %d!\n", pedirPCB);
-
+				sem_post(&cpuDisponible);
+				sem_wait(&cantidadDeProgramasEnExec);
+				sem_wait(&mutex_listaProcesos);
 				pcb = cpu_pedirPCBDeExec();
 
+
+				if(pcb == NULL){
+					//Segun santi, aca va un while asqueroso
+					printf("Se rompio muy feo en rutina CPU, el pcb aparecio como NULL, se cierra el Kernel");
+					exit(-1);
+				}
+
+				pcb->estadoDeProceso = enCPU;
+
 				void* pcbSerializado = serializarPCB(pcb);
+
+
 				enviarMensaje(socketCPU,envioPCB,pcbSerializado,tamanoPCB(pcb));
-				free(pcbSerializado);
+
 				free(stream);
 
+				if(recibirMensaje(socketCPU, &stream)!= respuestaBooleanaKernel){
+					moverA(pcb->pid,aReady);
+					sem_post(&cantidadDeProgramasEnReady);
+				}else{
+					free(stream);
+				}
+				free(pcbSerializado);
+
+				sem_post(&mutex_listaProcesos);
 			}break;
 
 			case dameQuantumSleep:{
@@ -187,6 +174,7 @@ void *rutinaCPU(void * arg)
 
 				printf("CPU - Se manda a finalizar este pid: %d\n", pcb->pid);
 
+				sem_wait(&mutex_listaProcesos);
 				if(!proceso_EstaFinalizado(pcb->pid)){
 
 					if(pcb->exitCode<0){
@@ -201,15 +189,12 @@ void *rutinaCPU(void * arg)
 
 				    modificarPCB(pcb);
 				}
+				sem_post(&mutex_listaProcesos);
 
 				sem_wait(&mutex_cola_CPUs_libres);
 				   	estaCPU->esperaTrabajo = true;
 				sem_post(&mutex_cola_CPUs_libres);
-
-				sem_post(&aReady);
-				sem_post(&aNew);
-				sem_post(&cpuDisponible);
-
+				sem_post(&gradoDeMultiprogramacion);
 				free(stream);
 
 			}break;
@@ -218,14 +203,15 @@ void *rutinaCPU(void * arg)
 			case enviarPCBaReady:{
 				log_info(logKernel,"[Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- %d!\n", enviarPCBaReady);
 				pcb = deserializarPCB(stream);
-				if(pcb->estadoDeProceso != bloqueado){
-					pcb->estadoDeProceso = paraEjecutar;
-				}
 
-				sem_wait(&mutex_cola_Exec);
-				 modificarPCB(pcb);
-				sem_post(&mutex_cola_Exec);
+				sem_wait(&mutex_listaProcesos);
 
+				pcb = modificarPCB(pcb);
+				moverA(pcb->pid, aReady);
+				sem_post(&cantidadDeProgramasEnReady);
+				sem_post(&cpuDisponible);
+
+				sem_post(&mutex_listaProcesos);
 
 
 				free(stream);
@@ -238,7 +224,7 @@ void *rutinaCPU(void * arg)
 				t_mensajeDeProceso msj = deserializarMensajeAEscribir(stream);
 
 					int tamanoDelBuffer =  msj.tamanio + sizeof(int)*3;
-					bool respuestaACPU = false;
+					int respuestaACPU = false;
 
 				//***Si el fileDescriptro es 1, se imprime por consola
 				if(msj.descriptorArchivo == 1){
@@ -249,7 +235,7 @@ void *rutinaCPU(void * arg)
 
 					respuestaACPU = true;
 					free(stream2);
-					enviarMensaje(socketCPU,respuestaBooleanaKernel,&respuestaACPU,sizeof(bool));
+					enviarMensaje(socketCPU,respuestaBooleanaKernel,&respuestaACPU,sizeof(int));
 
 				}
 				else{
