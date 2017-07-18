@@ -2525,3 +2525,39 @@ dentro de la busqueda
 
 [INFO] 20:34:31:24 Kernel/(5112:5136): Se decontecta a la consola socket: 8
 
+[INFO] 17:17:01:926 Kernel/(3982:3982): 
+
+
+Esperando conexiones:
+-FileSystem
+-Memoria
+
+[INFO] 17:17:01:928 Kernel/(3982:3982): Conexión exitosa con el Memoria(2)!!
+
+[INFO] 17:17:01:928 Kernel/(3982:3982): [Conexion con Memoria] - El Size pag es: 256
+[INFO] 17:17:01:929 Kernel/(3982:3982): Conexión exitosa con el FileSystem(4)!!
+
+[INFO] 17:17:01:969 Kernel/(3982:3999): 
+[rutina estadoNEW] - Entramos al planificador de largo plazo!
+
+[INFO] 17:17:01:977 Kernel/(3982:4000): 
+[Rutina planificadorCortoPlazo] - Entramos al planificador de corto plazo!
+
+[INFO] 17:20:46:541 Kernel/(4441:4441): 
+
+
+Esperando conexiones:
+-FileSystem
+-Memoria
+
+[INFO] 17:20:46:542 Kernel/(4441:4441): Conexión exitosa con el Memoria(2)!!
+
+[INFO] 17:20:46:542 Kernel/(4441:4441): [Conexion con Memoria] - El Size pag es: 256
+[INFO] 17:20:46:542 Kernel/(4441:4441): Conexión exitosa con el FileSystem(4)!!
+
+[INFO] 17:20:46:567 Kernel/(4441:4453): 
+[rutina estadoNEW] - Entramos al planificador de largo plazo!
+
+[INFO] 17:20:46:573 Kernel/(4441:4454): 
+[Rutina planificadorCortoPlazo] - Entramos al planificador de corto plazo!
+

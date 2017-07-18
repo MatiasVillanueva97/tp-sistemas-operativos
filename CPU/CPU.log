@@ -1,0 +1,446 @@
+[INFO] 19:29:09:176 CPU/(18498:18498): Inicializando CPU.....
+
+
+[INFO] 19:29:09:176 CPU/(18498:18498): Configuracion Inicial: 
+
+[INFO] 19:29:09:187 CPU/(18498:18498): Conexión exitosa con el Kernel(0)!!
+
+[INFO] 19:29:09:188 CPU/(18498:18498): Conexión exitosa con el Memoria(2)!!
+
+[INFO] 19:29:09:199 CPU/(18498:18498): Datos recibidos de Kernel:
+size_pag-256
+quantum--1
+size_stack-2
+
+[INFO] 19:29:09:199 CPU/(18498:18498): esperando pcb
+
+[INFO] 19:29:09:199 CPU/(18498:18498): PCB recibido
+
+[INFO] 19:29:09:739 CPU/(18498:18498): 
+Instruccion leida:   variables a, f
+
+
+[INFO] 19:29:09:739 CPU/(18498:18498): AnSISOP_definirVariable
+
+[INFO] 19:29:09:739 CPU/(18498:18498): Defini a le asigne la direccion: 1 0 4 
+
+[INFO] 19:29:09:739 CPU/(18498:18498): AnSISOP_definirVariable
+
+[INFO] 19:29:09:739 CPU/(18498:18498): Defini f le asigne la direccion: 1 4 4 
+
+[INFO] 19:29:10:240 CPU/(18498:18498): 
+Instruccion leida:   alocar a 100
+
+
+[INFO] 19:29:10:241 CPU/(18498:18498): AnSISOP_reservar
+
+[INFO] 19:29:10:241 CPU/(18498:18498): AnSISOP_obtenerPosicionVariable
+
+[INFO] 19:29:10:241 CPU/(18498:18498): Obtuve la posicion de a esta es: 256 
+
+[INFO] 19:29:10:241 CPU/(18498:18498): AnSISOP_asignar
+
+[INFO] 19:29:10:241 CPU/(18498:18498): Se escribio el valor 773 en la direccion de memoria: 1 0 4 
+
+[INFO] 19:29:10:242 CPU/(18498:18498): Asigne a la direccion 1 0 4 el valor es 773 
+
+[INFO] 19:29:10:742 CPU/(18498:18498): 
+Instruccion leida:   abrir f LEC /smallFile.bin
+
+
+[INFO] 19:29:10:742 CPU/(18498:18498): AnSISOP_abrir
+
+[INFO] 19:29:11:851 CPU/(18498:18498): El FD del archivo pedido es: 3 
+
+[INFO] 19:29:11:851 CPU/(18498:18498): AnSISOP_obtenerPosicionVariable
+
+[INFO] 19:29:11:851 CPU/(18498:18498): Obtuve la posicion de f esta es: 260 
+
+[INFO] 19:29:11:851 CPU/(18498:18498): AnSISOP_asignar
+
+[INFO] 19:29:11:851 CPU/(18498:18498): Se escribio el valor 3 en la direccion de memoria: 1 4 4 
+
+[INFO] 19:29:11:852 CPU/(18498:18498): Asigne a la direccion 1 4 4 el valor es 3 
+
+[INFO] 19:29:12:353 CPU/(18498:18498): 
+Instruccion leida:   *a=88
+
+
+[INFO] 19:29:12:353 CPU/(18498:18498): AnSISOP_obtenerPosicionVariable
+
+[INFO] 19:29:12:353 CPU/(18498:18498): Obtuve la posicion de a esta es: 256 
+
+[INFO] 19:29:12:353 CPU/(18498:18498): AnSISOP_dereferenciar
+
+[INFO] 19:29:12:353 CPU/(18498:18498): Se pide el valor de la variable en la direccion de memoria: 1 0 4 
+
+[INFO] 19:29:12:391 CPU/(18498:18498): Desreferencie la direccion 1 0 4 y el valor es 773 
+
+[INFO] 19:29:12:391 CPU/(18498:18498): AnSISOP_asignar
+
+[INFO] 19:29:12:391 CPU/(18498:18498): Se escribio el valor 88 en la direccion de memoria: 3 5 4 
+
+[INFO] 19:29:12:391 CPU/(18498:18498): Asigne a la direccion 3 5 4 el valor es 88 
+
+[INFO] 19:29:12:892 CPU/(18498:18498): 
+Instruccion leida:   escribir f a 10
+
+
+[INFO] 19:29:12:892 CPU/(18498:18498): AnSISOP_obtenerPosicionVariable
+
+[INFO] 19:29:12:892 CPU/(18498:18498): Obtuve la posicion de a esta es: 256 
+
+[INFO] 19:29:12:892 CPU/(18498:18498): AnSISOP_dereferenciar
+
+[INFO] 19:29:12:892 CPU/(18498:18498): Se pide el valor de la variable en la direccion de memoria: 1 0 4 
+
+[INFO] 19:29:12:931 CPU/(18498:18498): Desreferencie la direccion 1 0 4 y el valor es 773 
+
+[INFO] 19:29:12:931 CPU/(18498:18498): AnSISOP_dereferenciar
+
+[INFO] 19:29:12:931 CPU/(18498:18498): Se pide el valor de la variable en la direccion de memoria: 3 5 4 
+
+[INFO] 19:29:12:971 CPU/(18498:18498): Desreferencie la direccion 3 5 4 y el valor es 88 
+
+[INFO] 19:29:12:971 CPU/(18498:18498): AnSISOP_dereferenciar
+
+[INFO] 19:29:12:971 CPU/(18498:18498): Se pide el valor de la variable en la direccion de memoria: 3 6 4 
+
+[INFO] 19:29:13:11 CPU/(18498:18498): Desreferencie la direccion 3 6 4 y el valor es 0 
+
+[INFO] 19:29:13:11 CPU/(18498:18498): AnSISOP_dereferenciar
+
+[INFO] 19:29:13:11 CPU/(18498:18498): Se pide el valor de la variable en la direccion de memoria: 3 7 4 
+
+[INFO] 19:29:13:55 CPU/(18498:18498): Desreferencie la direccion 3 7 4 y el valor es 0 
+
+[INFO] 19:29:13:55 CPU/(18498:18498): AnSISOP_dereferenciar
+
+[INFO] 19:29:13:55 CPU/(18498:18498): Se pide el valor de la variable en la direccion de memoria: 3 8 4 
+
+[INFO] 19:29:13:95 CPU/(18498:18498): Desreferencie la direccion 3 8 4 y el valor es 0 
+
+[INFO] 19:29:13:95 CPU/(18498:18498): AnSISOP_dereferenciar
+
+[INFO] 19:29:13:95 CPU/(18498:18498): Se pide el valor de la variable en la direccion de memoria: 3 9 4 
+
+[INFO] 19:29:13:135 CPU/(18498:18498): Desreferencie la direccion 3 9 4 y el valor es 0 
+
+[INFO] 19:29:13:135 CPU/(18498:18498): AnSISOP_dereferenciar
+
+[INFO] 19:29:13:135 CPU/(18498:18498): Se pide el valor de la variable en la direccion de memoria: 3 10 4 
+
+[INFO] 19:29:13:175 CPU/(18498:18498): Desreferencie la direccion 3 10 4 y el valor es 0 
+
+[INFO] 19:29:13:175 CPU/(18498:18498): AnSISOP_dereferenciar
+
+[INFO] 19:29:13:175 CPU/(18498:18498): Se pide el valor de la variable en la direccion de memoria: 3 11 4 
+
+[INFO] 19:29:13:215 CPU/(18498:18498): Desreferencie la direccion 3 11 4 y el valor es 0 
+
+[INFO] 19:29:13:215 CPU/(18498:18498): AnSISOP_dereferenciar
+
+[INFO] 19:29:13:215 CPU/(18498:18498): Se pide el valor de la variable en la direccion de memoria: 3 12 4 
+
+[INFO] 19:29:13:255 CPU/(18498:18498): Desreferencie la direccion 3 12 4 y el valor es 0 
+
+[INFO] 19:29:13:255 CPU/(18498:18498): AnSISOP_dereferenciar
+
+[INFO] 19:29:13:255 CPU/(18498:18498): Se pide el valor de la variable en la direccion de memoria: 3 13 4 
+
+[INFO] 19:29:13:295 CPU/(18498:18498): Desreferencie la direccion 3 13 4 y el valor es 0 
+
+[INFO] 19:29:13:295 CPU/(18498:18498): AnSISOP_dereferenciar
+
+[INFO] 19:29:13:295 CPU/(18498:18498): Se pide el valor de la variable en la direccion de memoria: 3 14 4 
+
+[INFO] 19:29:13:335 CPU/(18498:18498): Desreferencie la direccion 3 14 4 y el valor es 0 
+
+[INFO] 19:29:13:335 CPU/(18498:18498): AnSISOP_dereferenciar
+
+[INFO] 19:29:13:335 CPU/(18498:18498): Se pide el valor de la variable en la direccion de memoria: 3 15 4 
+
+[INFO] 19:29:13:375 CPU/(18498:18498): Desreferencie la direccion 3 15 4 y el valor es 0 
+
+[INFO] 19:29:13:375 CPU/(18498:18498): AnSISOP_obtenerPosicionVariable
+
+[INFO] 19:29:13:375 CPU/(18498:18498): Obtuve la posicion de f esta es: 260 
+
+[INFO] 19:29:13:375 CPU/(18498:18498): AnSISOP_dereferenciar
+
+[INFO] 19:29:13:375 CPU/(18498:18498): Se pide el valor de la variable en la direccion de memoria: 1 4 4 
+
+[INFO] 19:29:13:415 CPU/(18498:18498): Desreferencie la direccion 1 4 4 y el valor es 3 
+
+[INFO] 19:29:13:415 CPU/(18498:18498): AnSISOP_escribir
+
+[INFO] 19:29:13:427 CPU/(18498:18498): Quiere escribir un archivo que nunca abrio
+
+[INFO] 19:29:13:927 CPU/(18498:18498): Envie el PCB al Kernel
+
+[INFO] 19:29:13:927 CPU/(18498:18498): esperando pcb
+
+[INFO] 19:32:48:857 CPU/(18619:18619): Inicializando CPU.....
+
+
+[INFO] 19:32:48:858 CPU/(18619:18619): Configuracion Inicial: 
+
+[INFO] 19:32:48:865 CPU/(18619:18619): Conexión exitosa con el Kernel(0)!!
+
+[INFO] 19:32:48:865 CPU/(18619:18619): Conexión exitosa con el Memoria(2)!!
+
+[INFO] 19:32:48:874 CPU/(18619:18619): Datos recibidos de Kernel:
+size_pag-256
+quantum--1
+size_stack-2
+
+[INFO] 19:32:48:874 CPU/(18619:18619): esperando pcb
+
+[INFO] 19:32:48:874 CPU/(18619:18619): PCB recibido
+
+[INFO] 19:32:49:415 CPU/(18619:18619): 
+Instruccion leida:   variables a, f
+
+
+[INFO] 19:32:49:415 CPU/(18619:18619): AnSISOP_definirVariable
+
+[INFO] 19:32:49:415 CPU/(18619:18619): Defini a le asigne la direccion: 1 0 4 
+
+[INFO] 19:32:49:415 CPU/(18619:18619): AnSISOP_definirVariable
+
+[INFO] 19:32:49:415 CPU/(18619:18619): Defini f le asigne la direccion: 1 4 4 
+
+[INFO] 19:32:49:915 CPU/(18619:18619): 
+Instruccion leida:   alocar a 100
+
+
+[INFO] 19:32:49:916 CPU/(18619:18619): AnSISOP_reservar
+
+[INFO] 19:32:49:922 CPU/(18619:18619): AnSISOP_obtenerPosicionVariable
+
+[INFO] 19:32:49:922 CPU/(18619:18619): Obtuve la posicion de a esta es: 256 
+
+[INFO] 19:32:49:922 CPU/(18619:18619): AnSISOP_asignar
+
+[INFO] 19:32:49:922 CPU/(18619:18619): Se escribio el valor 773 en la direccion de memoria: 1 0 4 
+
+[INFO] 19:32:49:922 CPU/(18619:18619): Asigne a la direccion 1 0 4 el valor es 773 
+
+[INFO] 19:32:50:423 CPU/(18619:18619): 
+Instruccion leida:   abrir f LEC /smallFile.bin
+
+
+[INFO] 19:32:50:424 CPU/(18619:18619): AnSISOP_abrir
+
+[INFO] 19:32:50:431 CPU/(18619:18619): El FD del archivo pedido es: 3 
+
+[INFO] 19:32:50:431 CPU/(18619:18619): AnSISOP_obtenerPosicionVariable
+
+[INFO] 19:32:50:431 CPU/(18619:18619): Obtuve la posicion de f esta es: 260 
+
+[INFO] 19:32:50:431 CPU/(18619:18619): AnSISOP_asignar
+
+[INFO] 19:32:50:431 CPU/(18619:18619): Se escribio el valor 3 en la direccion de memoria: 1 4 4 
+
+[INFO] 19:32:50:431 CPU/(18619:18619): Asigne a la direccion 1 4 4 el valor es 3 
+
+[INFO] 19:32:50:932 CPU/(18619:18619): 
+Instruccion leida:   *a=88
+
+
+[INFO] 19:32:50:932 CPU/(18619:18619): AnSISOP_obtenerPosicionVariable
+
+[INFO] 19:32:50:932 CPU/(18619:18619): Obtuve la posicion de a esta es: 256 
+
+[INFO] 19:32:50:932 CPU/(18619:18619): AnSISOP_dereferenciar
+
+[INFO] 19:32:50:932 CPU/(18619:18619): Se pide el valor de la variable en la direccion de memoria: 1 0 4 
+
+[INFO] 19:32:50:971 CPU/(18619:18619): Desreferencie la direccion 1 0 4 y el valor es 773 
+
+[INFO] 19:32:50:971 CPU/(18619:18619): AnSISOP_asignar
+
+[INFO] 19:32:50:971 CPU/(18619:18619): Se escribio el valor 88 en la direccion de memoria: 3 5 4 
+
+[INFO] 19:32:50:971 CPU/(18619:18619): Asigne a la direccion 3 5 4 el valor es 88 
+
+[INFO] 19:32:51:472 CPU/(18619:18619): 
+Instruccion leida:   escribir f a 10
+
+
+[INFO] 19:32:51:472 CPU/(18619:18619): AnSISOP_obtenerPosicionVariable
+
+[INFO] 19:32:51:472 CPU/(18619:18619): Obtuve la posicion de a esta es: 256 
+
+[INFO] 19:32:51:472 CPU/(18619:18619): AnSISOP_dereferenciar
+
+[INFO] 19:32:51:472 CPU/(18619:18619): Se pide el valor de la variable en la direccion de memoria: 1 0 4 
+
+[INFO] 19:32:51:511 CPU/(18619:18619): Desreferencie la direccion 1 0 4 y el valor es 773 
+
+[INFO] 19:32:51:511 CPU/(18619:18619): AnSISOP_dereferenciar
+
+[INFO] 19:32:51:511 CPU/(18619:18619): Se pide el valor de la variable en la direccion de memoria: 3 5 4 
+
+[INFO] 19:32:51:551 CPU/(18619:18619): Desreferencie la direccion 3 5 4 y el valor es 88 
+
+[INFO] 19:32:51:551 CPU/(18619:18619): AnSISOP_dereferenciar
+
+[INFO] 19:32:51:551 CPU/(18619:18619): Se pide el valor de la variable en la direccion de memoria: 3 6 4 
+
+[INFO] 19:32:51:591 CPU/(18619:18619): Desreferencie la direccion 3 6 4 y el valor es 0 
+
+[INFO] 19:32:51:591 CPU/(18619:18619): AnSISOP_dereferenciar
+
+[INFO] 19:32:51:591 CPU/(18619:18619): Se pide el valor de la variable en la direccion de memoria: 3 7 4 
+
+[INFO] 19:32:51:631 CPU/(18619:18619): Desreferencie la direccion 3 7 4 y el valor es 0 
+
+[INFO] 19:32:51:631 CPU/(18619:18619): AnSISOP_dereferenciar
+
+[INFO] 19:32:51:631 CPU/(18619:18619): Se pide el valor de la variable en la direccion de memoria: 3 8 4 
+
+[INFO] 19:32:51:671 CPU/(18619:18619): Desreferencie la direccion 3 8 4 y el valor es 0 
+
+[INFO] 19:32:51:671 CPU/(18619:18619): AnSISOP_dereferenciar
+
+[INFO] 19:32:51:671 CPU/(18619:18619): Se pide el valor de la variable en la direccion de memoria: 3 9 4 
+
+[INFO] 19:32:51:711 CPU/(18619:18619): Desreferencie la direccion 3 9 4 y el valor es 0 
+
+[INFO] 19:32:51:711 CPU/(18619:18619): AnSISOP_dereferenciar
+
+[INFO] 19:32:51:711 CPU/(18619:18619): Se pide el valor de la variable en la direccion de memoria: 3 10 4 
+
+[INFO] 19:32:51:751 CPU/(18619:18619): Desreferencie la direccion 3 10 4 y el valor es 0 
+
+[INFO] 19:32:51:751 CPU/(18619:18619): AnSISOP_dereferenciar
+
+[INFO] 19:32:51:751 CPU/(18619:18619): Se pide el valor de la variable en la direccion de memoria: 3 11 4 
+
+[INFO] 19:32:51:791 CPU/(18619:18619): Desreferencie la direccion 3 11 4 y el valor es 0 
+
+[INFO] 19:32:51:791 CPU/(18619:18619): AnSISOP_dereferenciar
+
+[INFO] 19:32:51:791 CPU/(18619:18619): Se pide el valor de la variable en la direccion de memoria: 3 12 4 
+
+[INFO] 19:32:51:831 CPU/(18619:18619): Desreferencie la direccion 3 12 4 y el valor es 0 
+
+[INFO] 19:32:51:831 CPU/(18619:18619): AnSISOP_dereferenciar
+
+[INFO] 19:32:51:831 CPU/(18619:18619): Se pide el valor de la variable en la direccion de memoria: 3 13 4 
+
+[INFO] 19:32:51:871 CPU/(18619:18619): Desreferencie la direccion 3 13 4 y el valor es 0 
+
+[INFO] 19:32:51:871 CPU/(18619:18619): AnSISOP_dereferenciar
+
+[INFO] 19:32:51:871 CPU/(18619:18619): Se pide el valor de la variable en la direccion de memoria: 3 14 4 
+
+[INFO] 19:32:51:911 CPU/(18619:18619): Desreferencie la direccion 3 14 4 y el valor es 0 
+
+[INFO] 19:32:51:911 CPU/(18619:18619): AnSISOP_dereferenciar
+
+[INFO] 19:32:51:911 CPU/(18619:18619): Se pide el valor de la variable en la direccion de memoria: 3 15 4 
+
+[INFO] 19:32:51:951 CPU/(18619:18619): Desreferencie la direccion 3 15 4 y el valor es 0 
+
+[INFO] 19:32:51:951 CPU/(18619:18619): AnSISOP_obtenerPosicionVariable
+
+[INFO] 19:32:51:952 CPU/(18619:18619): Obtuve la posicion de f esta es: 260 
+
+[INFO] 19:32:51:952 CPU/(18619:18619): AnSISOP_dereferenciar
+
+[INFO] 19:32:51:952 CPU/(18619:18619): Se pide el valor de la variable en la direccion de memoria: 1 4 4 
+
+[INFO] 19:32:51:991 CPU/(18619:18619): Desreferencie la direccion 1 4 4 y el valor es 3 
+
+[INFO] 19:32:51:991 CPU/(18619:18619): AnSISOP_escribir
+
+[INFO] 03:22:17:100 CPU/(26693:26693): Inicializando CPU.....
+
+
+[INFO] 03:22:17:101 CPU/(26693:26693): Configuracion Inicial: 
+
+[INFO] 03:22:17:104 CPU/(26693:26693): Conexión exitosa con el Kernel(0)!!
+
+[INFO] 03:22:17:104 CPU/(26693:26693): Conexión exitosa con el Memoria(2)!!
+
+[INFO] 03:22:17:118 CPU/(26693:26693): Datos recibidos de Kernel:
+size_pag-256
+quantum-4
+size_stack-2
+
+[INFO] 03:22:17:118 CPU/(26693:26693): esperando pcb
+
+[INFO] 03:22:17:118 CPU/(26693:26693): PCB recibido
+
+[INFO] 03:22:17:664 CPU/(26693:26693): 
+Instruccion leida: variables f, i, t
+
+
+[INFO] 03:22:17:664 CPU/(26693:26693): AnSISOP_definirVariable
+
+[INFO] 03:22:17:664 CPU/(26693:26693): Defini f le asigne la direccion: 1 0 4 
+
+[INFO] 03:22:17:664 CPU/(26693:26693): AnSISOP_definirVariable
+
+[INFO] 03:22:17:664 CPU/(26693:26693): Defini i le asigne la direccion: 1 4 4 
+
+[INFO] 03:22:17:664 CPU/(26693:26693): AnSISOP_definirVariable
+
+[INFO] 03:22:17:664 CPU/(26693:26693): Defini t le asigne la direccion: 1 8 4 
+
+[INFO] 03:22:18:165 CPU/(26693:26693): 
+Instruccion leida: i=0
+
+
+[INFO] 03:22:18:165 CPU/(26693:26693): AnSISOP_obtenerPosicionVariable
+
+[INFO] 03:22:18:165 CPU/(26693:26693): Obtuve la posicion de i esta es: 260 
+
+[INFO] 03:22:18:165 CPU/(26693:26693): AnSISOP_asignar
+
+[INFO] 03:22:18:167 CPU/(26693:26693): Se escribio el valor 0 en la direccion de memoria: 1 4 4 
+
+[INFO] 03:22:18:168 CPU/(26693:26693): Asigne a la direccion 1 4 4 el valor es 0 
+
+[INFO] 03:22:18:669 CPU/(26693:26693): 
+Instruccion leida: f=20
+
+
+[INFO] 03:22:18:669 CPU/(26693:26693): AnSISOP_obtenerPosicionVariable
+
+[INFO] 03:22:18:669 CPU/(26693:26693): Obtuve la posicion de f esta es: 256 
+
+[INFO] 03:22:18:669 CPU/(26693:26693): AnSISOP_asignar
+
+[INFO] 03:22:18:669 CPU/(26693:26693): Se escribio el valor 20 en la direccion de memoria: 1 0 4 
+
+[INFO] 03:22:18:673 CPU/(26693:26693): Asigne a la direccion 1 0 4 el valor es 20 
+
+[INFO] 03:22:19:178 CPU/(26693:26693): 
+Instruccion leida: i=i+1
+
+
+[INFO] 03:22:19:178 CPU/(26693:26693): AnSISOP_obtenerPosicionVariable
+
+[INFO] 03:22:19:178 CPU/(26693:26693): Obtuve la posicion de i esta es: 260 
+
+[INFO] 03:22:19:178 CPU/(26693:26693): AnSISOP_dereferenciar
+
+[INFO] 03:22:19:178 CPU/(26693:26693): Se pide el valor de la variable en la direccion de memoria: 1 4 4 
+
+[INFO] 03:22:19:217 CPU/(26693:26693): Desreferencie la direccion 1 4 4 y el valor es 0 
+
+[INFO] 03:22:19:217 CPU/(26693:26693): AnSISOP_obtenerPosicionVariable
+
+[INFO] 03:22:19:217 CPU/(26693:26693): Obtuve la posicion de i esta es: 260 
+
+[INFO] 03:22:19:217 CPU/(26693:26693): AnSISOP_asignar
+
+[INFO] 03:22:19:217 CPU/(26693:26693): Se escribio el valor 1 en la direccion de memoria: 1 4 4 
+
+[INFO] 03:22:19:217 CPU/(26693:26693): Asigne a la direccion 1 4 4 el valor es 1 
+
+[INFO] 03:22:42:359 CPU/(26693:26693): Envie el PCB al Kernel porque me quede sin quantum
+

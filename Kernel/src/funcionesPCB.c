@@ -18,6 +18,8 @@ PCB_DATA* crearPCB(char * scriptAnsisop, int pid, int contPags){
 		pcb->cantidadDeEntradas = 0;
 		pcb->cantidadDeInstrucciones = metadata->instrucciones_size;
 		pcb->programCounter = metadata->instruccion_inicio;
+		pcb->cantDeRafagasEjecutadas = 0;
+		pcb->cantDeInstPrivilegiadas = 0;
 
 	return pcb;
 }

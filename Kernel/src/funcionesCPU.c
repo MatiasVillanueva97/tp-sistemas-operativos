@@ -199,7 +199,7 @@ void *rutinaCPU(void * arg)
 				sem_wait(&mutex_cola_CPUs_libres);
 				   	estaCPU->esperaTrabajo = true;
 				sem_post(&mutex_cola_CPUs_libres);
-				sem_post(&gradoDeMultiprogramacion);
+				//sem_post(&gradoDeMultiprogramacion);
 				free(stream);
 
 			}break;
