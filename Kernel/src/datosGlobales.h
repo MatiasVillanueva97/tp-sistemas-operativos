@@ -34,6 +34,7 @@ int historico_pid;
 int size_pagina;
 int quantumRR;
 int quantumSleep;
+int numeroGradoDeMultiprogramacion;
 bool finPorConsolaDelKernel;
 t_log* logKernel;
 
@@ -207,6 +208,8 @@ pthread_mutex_t mutex_variables_compartidas;
 pthread_mutex_t mutex_tablaDeHeap;
 pthread_mutex_t mutex_Quantum_Sleep;
 pthread_mutex_t mutex_tabla_estadistica_de_heap;
+
+pthread_mutex_t mutex_gradoDeMultiprogramacion;
 
 
 sem_t sem_ConsolaKernelLenvantada;

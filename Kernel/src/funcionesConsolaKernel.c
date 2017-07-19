@@ -289,16 +289,15 @@ void * consolaKernel()
 				printf("\nIngrese nuevo Grado de multiprogramacion: ");
 				scanf("%d",&gradoNuevo);
 				int i;
-				if(gradoNuevo < getConfigInt("GRADO_MULTIPROG")){
-					for(i=0;i< getConfigInt("GRADO_MULTIPROG")-gradoNuevo;i++){
-						sem_wait(&gradoDeMultiprogramacion);
-					}
-				}
-				else{
-					for(i=0;i< gradoNuevo-getConfigInt("GRADO_MULTIPROG");i++){
+				sem_wait(&mutex_gradoDeMultiprogramacion);
+				numeroGradoDeMultiprogramacion+=gradoNuevo-getConfigInt("GRADO_MULTIPROG");
+				sem_post(&mutex_gradoDeMultiprogramacion);
+				if(gradoNuevo > getConfigInt("GRADO_MULTIPROG")){
+					for(i=0;i<gradoNuevo-getConfigInt("GRADO_MULTIPROG");i++){
 						sem_post(&gradoDeMultiprogramacion);
 					}
 				}
+
 				//probablemente tengamos qeu poner un semaforo para la variable global de grado multiprogramacion
 				setConfigInt("GRADO_MULTIPROG", gradoNuevo);
 			}break;

@@ -157,6 +157,10 @@ bool proceso_Finalizar_conAviso(int pid, int exitCode, bool conAvisoAConsola)
 
 		if(procesoAFianalizar->pcb->estadoDeProceso != new){
 			sem_post(&gradoDeMultiprogramacion);
+
+			sem_wait(&mutex_gradoDeMultiprogramacion);
+			numeroGradoDeMultiprogramacion++;
+			sem_post(&mutex_gradoDeMultiprogramacion);
 		}
 
 		int socketConsola = procesoAFianalizar->socketConsola;
@@ -291,6 +295,9 @@ void newToReady(){
 				//***Añado el pcb a la cola de Ready
 				moverA(programaAnsisop->pid,aReady);
 				sem_post(&mutex_listaProcesos);
+				sem_wait(&mutex_gradoDeMultiprogramacion);
+				numeroGradoDeMultiprogramacion--;
+				sem_post(&mutex_gradoDeMultiprogramacion);
 				//***Le envio a memoria tiodo el scrip pagina a pagina
 				int i;
 
@@ -330,6 +337,7 @@ void newToReady(){
 				sem_wait(&mutex_tabla_estadistica_de_heap);
 				list_add(tablaEstadisticaDeHeap,fila);
 				sem_post(&mutex_tabla_estadistica_de_heap);
+
 				sem_post(&cantidadDeProgramasEnReady);
 			}
 			else
@@ -351,6 +359,9 @@ void newToReady(){
 	}
 	else{
 		sem_post(&mutex_listaProcesos);
+		sem_wait(&mutex_gradoDeMultiprogramacion);
+		numeroGradoDeMultiprogramacion++;
+		sem_post(&mutex_gradoDeMultiprogramacion);
 		sem_post(&gradoDeMultiprogramacion);
 	}
 }
@@ -370,9 +381,18 @@ void * estadoNEW()
 	{
 		sem_wait(&programasEnNew);
 		sem_wait(&gradoDeMultiprogramacion);
+		sem_wait(&mutex_gradoDeMultiprogramacion);
 
-		//*** Validamos que haya programas en alguna de la cola de new y que la cantidad de procesos que haya entre las colas de ready-excec-bloq sea menor al grado de multiprogramacion permitida
+		if(numeroGradoDeMultiprogramacion>0){
+			sem_post(&mutex_gradoDeMultiprogramacion);
+
 			newToReady();
+		}
+		else{
+			sem_post(&mutex_gradoDeMultiprogramacion);
+			sem_post(&programasEnNew);
+		}
+		//*** Validamos que haya programas en alguna de la cola de new y que la cantidad de procesos que haya entre las colas de ready-excec-bloq sea menor al grado de multiprogramacion permitida
 	}
 
 	return NULL;
@@ -673,7 +693,7 @@ int main(void) {
 
 		quantumRR = (strcmp("FIFO",getConfigString("ALGORITMO")) == 0)? -1 : getConfigInt("QUANTUM");
 		quantumSleep = getConfigInt("QUANTUM_SLEEP");
-
+		numeroGradoDeMultiprogramacion = getConfigInt("GRADO_MULTIPROG");
 	///-----------------------------////
 
 
@@ -764,7 +784,7 @@ void inicializarSemaforo(){
 	sem_init(&cantidadDeProgramasEnExec,0,0);
 	sem_init(&cantidadDeProgramasEnReady,0,0);
 
-
+	sem_init(&mutex_gradoDeMultiprogramacion,0,1);
 	sem_init(&cpuDisponible,0,0);
 
 	sem_init(&sem_ConsolaKernelLenvantada,0,0);
