@@ -224,7 +224,6 @@ void *rutinaCPU(void * arg)
 
 				sem_post(&mutex_listaProcesos);
 
-
 				free(stream);
 			}break;
 
@@ -327,15 +326,30 @@ void *rutinaCPU(void * arg)
 
 				PCB_DATA* pcbRecibido = deserializarPCBYSemaforo(stream, &nombreSemaforo);
 
+
+				// con ese id buscamos el valor del semaforo y le restamos 1
+
+				// tenemos que ver cuanto vale el semaforo , si es  menor a 0, tenemos que
+				// agregamos el pid a la "cola" de espera de este semaforo
+
+				// ahora si valia mas de 0 inclusive , no pasa una}
+
+				// le avisamos a la cpu que paso, si se tiene que trabar o si uede continuar
+
+
+
 				//Validar que el proceso no haya sido finalizado, responder siempre a la CPU si
+				sem_wait(&mutex_listaProcesos);
 				PCB_DATA* pcbDelProcesoActual = modificarPCB(pcbRecibido);
 
-				sem_wait(&mutex_semaforos_ANSISOP);
+					sem_wait(&mutex_semaforos_ANSISOP);
 					bool respuestaParaCPU = SEM_wait(nombreSemaforo, pcbDelProcesoActual);
-				sem_post(&mutex_semaforos_ANSISOP);
+					sem_post(&mutex_semaforos_ANSISOP);
+				sem_post(&mutex_listaProcesos);
 
 				free(nombreSemaforo);
 
+				puts("enviamos a cpu algo si esta bloquedo o no");
 				enviarMensaje(socketCPU,respuestaBooleanaKernel, &respuestaParaCPU, sizeof(bool));
 			}break;
 

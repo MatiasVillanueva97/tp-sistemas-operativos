@@ -1,5 +1,9 @@
 begin
-prints n !Global
-!Global = 42
-prints n !Global
+prints n !pasadas
+prints n !colas
+!pasadas = 42
+!colas = 19
+variables s
+s = !pasadas - !colas 
+prints n s
 end

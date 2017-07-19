@@ -50,37 +50,44 @@ t_semaforo* buscarSemaforo(char* nombreSEM){
 //La idea es que la CPU me pase el PCB siempre que quiera hace un wait o signal, en base a eso yo puedo decidir que hacer
 
 //Si encuentra el semaforo pedido hace lo que haria un wait normal.
-//Si no lo encuentra termina el proceso.
+//Si no lo encuentra  termina el proceso.
 bool SEM_wait(char* nombreSEM, PCB_DATA * pcb){
+
 	t_semaforo* sem = buscarSemaforo(nombreSEM);
-	if(sem != NULL){
-		sem_wait(&mutex_listaProcesos);
-		bool buscar(PROCESOS* proceso){
-			return proceso->pid == pcb->pid;
-		}
-		PROCESOS* proceso = list_find(avisos, buscar);
-		proceso->semaforoTomado = string_duplicate(nombreSEM);
-		sem_post(&mutex_listaProcesos);
-		if(sem->valor <= 0){
-			sem_wait(&mutex_cola_Exec);
-			pcb->estadoDeProceso = bloqueado;
-			sem_post(&mutex_cola_Exec);
-			queue_push(sem->cola, pcb);
-		}
-		sem->valor--;
+
+	if(sem == NULL){
+		log_error(logKernel,"Se intento acceder a un semaforo inexistente (el semaforo %s). Se finaliza el proceso: %d", nombreSEM, pcb->pid);
+
+		pcb->estadoDeProceso=aFinalizar;
+		proceso_Finalizar(pcb->pid, intentoAccederAUnSemaforoInexistente);
+
+		return false;
 	}
-	else{
-		pcb->estadoDeProceso = finalizado;
-		pcb->exitCode = intentoAccederAUnSemaforoInexistente;
+
+	sem->valor--;
+
+	if(sem->valor < 0){
+		PROCESOS* proceso = list_get(avisos, pcb->pid-1);
+
+		list_add(proceso->semaforosTomado, nombreSEM);
+
+		puts("antes de mover a");
+		moverA(pcb->pid,aWait);
+
+		puts("despues de mover a");
+		queue_push(sem->cola, pcb->pid);
+
+		return false;
 	}
-	return (sem != NULL) && (sem->valor >= 0);//Si se cumplen estas 2 condiciones, la CPU puede seguir ejecutando el PCB
+
+	return true;
 }
 
 void despertarProceso(t_semaforo * sem){
 	PCB_DATA* procesoADespertar;
-	int i = 0;
-	int f = queue_size(sem->cola);
-	for(i;i<f; i++){
+	int i;
+	int kiusais = queue_size(sem->cola);
+	for(i=0;i<kiusais; i++){
 		procesoADespertar = queue_pop(sem->cola);
 		if(procesoADespertar->estadoDeProceso == bloqueado){
 			procesoADespertar->estadoDeProceso = paraEjecutar;

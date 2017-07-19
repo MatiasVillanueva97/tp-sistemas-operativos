@@ -328,9 +328,13 @@ void AnSISOP_wait(t_nombre_semaforo identificador_semaforo) {
 		terminoPrograma = true;
 		log_error(logCPU,"Error en el protocolo de comunicacion\n");
 	}
+
 	if (!respuestaDeKernel){
 		bloqueado = true;
 		pcb->estadoDeProceso = 2; //Esto significa bloqueado
+		log_info(logCPU,"Se bloqueo el proceso\n");
+	}else{
+		log_info(logCPU,"No Se bloqueo el proceso\n");
 	}
 
 }

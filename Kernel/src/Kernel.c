@@ -549,8 +549,8 @@ void liberarSemaforo(int pid){
 				return proceso->pid == pid;
 			}
 			PROCESOS* proceso = list_find(avisos, buscar);
-			if(proceso->semaforoTomado != NULL){
-				SEM_signal(proceso->semaforoTomado, proceso->pcb);
+			if(proceso->semaforosTomado != NULL){
+				SEM_signal(proceso->semaforosTomado, proceso->pcb);
 
 			}
 
