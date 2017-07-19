@@ -325,13 +325,16 @@ void *rutinaCPU(void * arg)
 
 				PCB_DATA* pcbRecibido = deserializarPCBYSemaforo(stream, &nombreSemaforo);
 
-				//Validar que el proceso no haya sido finalizado, responder siempre a la CPU si
+				//Validar que el proceso no haya sido finalizado, responder siempre a la CPU
+
 				sem_wait(&mutex_listaProcesos);
 				PCB_DATA* pcbDelProcesoActual = modificarPCB(pcbRecibido);
 
+				PROCESOS* proceso = buscarProceso(pcbDelProcesoActual->pid);
 					sem_wait(&mutex_semaforos_ANSISOP);
-					bool respuestaParaCPU = SEM_wait(nombreSemaforo, pcbDelProcesoActual);
+					bool respuestaParaCPU = (proceso->pcb->estadoDeProceso == finish) ? false : SEM_wait(nombreSemaforo, pcbDelProcesoActual);
 					sem_post(&mutex_semaforos_ANSISOP);
+
 				sem_post(&mutex_listaProcesos);
 
 				free(nombreSemaforo);
@@ -352,10 +355,6 @@ void *rutinaCPU(void * arg)
 
 				sem_wait(&mutex_listaProcesos);
 				PCB_DATA* pcbDelProcesoActual = modificarPCB(pcbRecibido);
-
-				// compobamos que el semafor exista
-				// se suma el valor del semaforo
-				// si es 0 o menor, un proceso puede ser despertado
 
 				sem_wait(&mutex_semaforos_ANSISOP);
 					bool respuestaParaCPU = SEM_signal(nombreSemaforo, pcbDelProcesoActual);

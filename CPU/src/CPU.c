@@ -130,7 +130,7 @@ int main(void)
 
  		confirmarQuantumSleep();
 
-		while(!terminoPrograma && quantumRestante != 0 && !bloqueado && !signal_sigint){
+		while(!terminoPrograma && quantumRestante != 0 && !bloqueado){
 
 			char* instruccion = pedirInstruccion();
 
@@ -149,29 +149,21 @@ int main(void)
 		}
 
 		//ACA AVISARLE A KERNEL QUE TERMINE QUE CON ESTE PROCESO
-		if(terminoPrograma){
-			log_info(logCPU,"Envie el PCB al Kernel\n");
-			void* pcbSerializado = serializarPCB(pcb);
-			enviarMensaje(socketKernel,enviarPCBaTerminado,pcbSerializado,tamanoPCB(pcb));
-			free(pcbSerializado);
-		}
-
-		else{
-			if(quantumRestante == 0){
+		if(!bloqueado){
+			if(terminoPrograma){
+				log_info(logCPU,"Envie el PCB al Kernel\n");
+				void* pcbSerializado = serializarPCB(pcb);
+				enviarMensaje(socketKernel,enviarPCBaTerminado,pcbSerializado,tamanoPCB(pcb));
+				free(pcbSerializado);
+			}
+			else{
 				log_info(logCPU,"Envie el PCB al Kernel porque me quede sin quantum\n");
 				void* pcbSerializado = serializarPCB(pcb);
 				enviarMensaje(socketKernel,enviarPCBaReady,pcbSerializado,tamanoPCB(pcb));
 				free(pcbSerializado);
 			}
-			else{
-				if(signal_sigint){
-					log_info(logCPU,"Envie el PCB al Kernel porque me desconectaron bruscamente\n");
-					void* pcbSerializado = serializarPCB(pcb);
-					enviarMensaje(socketKernel,enviarPCBaReady,pcbSerializado,tamanoPCB(pcb));
-					free(pcbSerializado);
-				}
-			}
 		}
+
 
 		//libera la memoria malloqueada por el PCB
 		destruirPCB_Puntero(pcb);

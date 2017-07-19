@@ -67,10 +67,13 @@ bool SEM_wait(char* nombreSEM, PCB_DATA * pcb){
 	sem->valor--;
 
 	PROCESOS* proceso = list_get(avisos, pcb->pid-1);
-	list_add(proceso->semaforosTomado, nombreSEM);
 
 	if(sem->valor < 0){
-		moverA(pcb->pid,aWait);
+		if(pcb->estadoDeProceso != Wait){
+			moverA(pcb->pid,aWait);
+		}
+
+		proceso->semBloqueante = string_duplicate(nombreSEM);
 
 		int* pid=malloc(sizeof(int));
 		*pid=pcb->pid;
@@ -86,8 +89,13 @@ void despertarProceso(t_semaforo * sem){
 
 	int* elTortu = queue_pop(sem->cola);
 
+	PROCESOS* proceso = buscarProceso(*elTortu);
+
+	free(proceso->semBloqueante);
+	proceso->semBloqueante = NULL;
 	moverA(*elTortu,aReady);
 
+	sem_post(&cantidadDeProgramasEnReady);
 	free(elTortu);
 }
 

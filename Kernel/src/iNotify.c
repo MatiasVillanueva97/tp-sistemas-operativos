@@ -77,7 +77,13 @@ void INotify(){
 
 						} else {
 							t_config* c =config_create("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Kernel/kernel.config");
+							int i;
+							for(i=0;i<42 && config_has_property(c,"QUANTUM_SLEEP");i++){
+								config_destroy(c);
+								c =config_create("/home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Kernel/kernel.config");
+							}
 							int aux = config_get_int_value(c,"QUANTUM_SLEEP");
+
 							if (quantumSleep != aux){
 								sem_wait(&mutex_Quantum_Sleep);
 								quantumSleep = aux;

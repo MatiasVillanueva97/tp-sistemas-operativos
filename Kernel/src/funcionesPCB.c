@@ -33,21 +33,9 @@ PCB_DATA * buscarPCB (int pid){
 
 PCB_DATA* modificarPCB(PCB_DATA * pcbNuevo){
 
-	bool busqueda(PROCESOS * aviso)
-	{
-		if(aviso->pid == pcbNuevo->pid)
-		{
-			log_info(logKernel,"\ndentro de la busqueda");
-			//imprimirPCB(aviso->pcb);
-			return true;
-		}
-
-
-		return false;
-	}
 //	sem_wait(&mutex_listaProcesos);
 
-	PCB_DATA * pcbViejo = ((PROCESOS*)list_find(avisos, busqueda))->pcb;
+	PCB_DATA * pcbViejo = ((PROCESOS*)list_get(avisos,pcbNuevo->pid - 1))->pcb;
 
 	if(pcbViejo != NULL){
 		if(pcbViejo->estadoDeProceso != finalizado){

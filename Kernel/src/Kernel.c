@@ -148,7 +148,6 @@ bool proceso_Finalizar_conAviso(int pid, int exitCode, bool conAvisoAConsola)
 	}
 
 
-	//sem_wait(&mutex_listaProcesos);
 	PROCESOS* procesoAFianalizar = list_find(avisos, busqueda);
 	if(procesoAFianalizar != NULL && procesoAFianalizar->pcb->estadoDeProceso == enCPU ){
 		procesoAFianalizar->pcb->estadoDeProceso = aFinalizar;
@@ -160,19 +159,18 @@ bool proceso_Finalizar_conAviso(int pid, int exitCode, bool conAvisoAConsola)
 			sem_post(&gradoDeMultiprogramacion);
 		}
 
-		procesoAFianalizar->pcb->exitCode = exitCode;
-		moverA(procesoAFianalizar->pid,aFinished);
-
 		int socketConsola = procesoAFianalizar->socketConsola;
 
-		// proceso_liberarRecursos(procesoAFianalizar->pcb); --- TODO hacer bien esta funcion
+		proceso_liberarRecursos(procesoAFianalizar);
 
-	//	sem_post(&mutex_listaProcesos);
+		procesoAFianalizar->pcb->exitCode = exitCode;
+		moverA(procesoAFianalizar->pid,aFinished);
 
 		enviarMensaje(socketMemoria,finalizarPrograma,&pid,sizeof(int));
 		void* respuesta;
 		recibirMensaje(socketMemoria,&respuesta);
 		free(respuesta);
+
 		if(conAvisoAConsola){
 			proceso_avisarAConsola(socketConsola, pid, exitCode);
 		}
@@ -180,8 +178,6 @@ bool proceso_Finalizar_conAviso(int pid, int exitCode, bool conAvisoAConsola)
 		flag=true;
 	}
 	else{
-//		sem_post(&mutex_listaProcesos);
-
 		log_error(logKernel,"[proceso_Finalizar] - Hubo un error al finalizar el pid: %d", pid);
 	}
 
@@ -197,19 +193,42 @@ void proceso_avisarAConsola(int socketConsola, int pid, int exitCode){
 		log_info(logKernel,"Se acaba de mandar a la consola n°: %d, que el proceso %d acaba de finalizar con exit code: %d\n", socketConsola, pid, exitCode);
 }
 
-void proceso_liberarRecursos(PCB_DATA* pcb){
 
-	if(liberarRecursosHeap(pcb->pid)== 0){
-		log_info(logKernel,"No se liberaron los recursos del heap correctamenete del pid %d\n", pcb->pid);
+
+
+bool liberarSemaforo(PROCESOS* proceso){
+	sem_wait(&mutex_semaforos_ANSISOP);
+	if(proceso->semBloqueante != NULL){
+		SEM_signal(proceso->semBloqueante,proceso->pcb);
+	}
+	sem_post(&mutex_semaforos_ANSISOP);
+
+	return false;
+}
+
+
+void proceso_liberarRecursos(PROCESOS* proceso){
+
+	if(liberarRecursosHeap(proceso->pid)== 0){
+		log_info(logKernel,"No se liberaron los recursos del heap correctamenete del pid %d\n", proceso->pid);
 	}
 	else{
-		log_info(logKernel,"Se liberaron correctamente los recursos del heap del pid %d\n",pcb->pid);
+		log_info(logKernel,"Se liberaron correctamente los recursos del heap del pid %d\n",proceso->pid);
 	}
 
-	liberarRecursosArchivo(pcb);
+	//(liberarRecursosArchivo(proceso->pcb)){
+	//	log_info(logKernel,"No se liberaron los recursos del de los archivos correctamenete del pid %d\n", proceso->pid);
+	//}
+	//else{
+	//	log_info(logKernel,"Se liberaron correctamente de los archivos del heap del pid %d\n",proceso->pid);
+	//}
 
-	liberarSemaforo(pcb->pid);
-
+	if(liberarSemaforo(proceso)){
+		log_info(logKernel,"No se liberaron los recursos d correctamenete del pid %d\n", proceso->pid);
+	}
+	else{
+		log_info(logKernel,"Se liberaron correctamente los recursos de los semaforos del pid %d\n", proceso->pid);
+	}
 }
 
 bool proceso_EstaFinalizado(int pid)
@@ -541,21 +560,6 @@ void* estadoWAIT(){
 /// ********************************************************************************************************///
 /// **************************** QUINTA PARTE - TRABAJAR PROCESOS EN FINISHED ******************************///
 /// ********************************************************************************************************///
-
-
-void liberarSemaforo(int pid){
-	sem_wait(&mutex_listaProcesos);
-			bool buscar(PROCESOS* proceso){
-				return proceso->pid == pid;
-			}
-			PROCESOS* proceso = list_find(avisos, buscar);
-			if(proceso->semaforosTomado != NULL){
-				SEM_signal(proceso->semaforosTomado, proceso->pcb);
-
-			}
-
-			sem_post(&mutex_listaProcesos);
-}
 
 ///avisa a al consola que un proceso termino
 

@@ -163,7 +163,7 @@ void liberarEntradaTablaGlobalDeArchivosDeProceso(
 	free(entrada);
 }
 
-void liberarRecursosArchivo(PCB_DATA* pcb) {
+bool liberarRecursosArchivo(PCB_DATA* pcb) {
 	ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* entrada_a_eliminar =
 			encontrarElDeIgualPid(pcb->pid);
 	int i;
@@ -192,6 +192,7 @@ void liberarRecursosArchivo(PCB_DATA* pcb) {
 	list_remove_and_destroy_element(tablaGlobalDeArchivosDeProcesos, posicion,
 			liberarEntradaTablaGlobalDeArchivosDeProceso);
 	sem_post(&mutex_tablaGlobalDeArchivosDeProcesos);
+	return true;
 }
 
 int borrarArchivoPermanente(t_archivo estructura) {
