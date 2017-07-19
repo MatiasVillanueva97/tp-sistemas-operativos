@@ -66,16 +66,15 @@ bool SEM_wait(char* nombreSEM, PCB_DATA * pcb){
 
 	sem->valor--;
 
+	PROCESOS* proceso = list_get(avisos, pcb->pid-1);
+	list_add(proceso->semaforosTomado, nombreSEM);
+
 	if(sem->valor < 0){
-		PROCESOS* proceso = list_get(avisos, pcb->pid-1);
-
-		list_add(proceso->semaforosTomado, nombreSEM);
-
-		puts("antes de mover a");
 		moverA(pcb->pid,aWait);
 
-		puts("despues de mover a");
-		queue_push(sem->cola, pcb->pid);
+		int* pid=malloc(sizeof(int));
+		*pid=pcb->pid;
+		queue_push(sem->cola,pid);
 
 		return false;
 	}
@@ -84,33 +83,29 @@ bool SEM_wait(char* nombreSEM, PCB_DATA * pcb){
 }
 
 void despertarProceso(t_semaforo * sem){
-	PCB_DATA* procesoADespertar;
-	int i;
-	int kiusais = queue_size(sem->cola);
-	for(i=0;i<kiusais; i++){
-		procesoADespertar = queue_pop(sem->cola);
-		if(procesoADespertar->estadoDeProceso == bloqueado){
-			procesoADespertar->estadoDeProceso = paraEjecutar;
-			break;
-		}
-	}
 
+	int* elTortu = queue_pop(sem->cola);
+
+	moverA(*elTortu,aReady);
+
+	free(elTortu);
 }
 
 bool SEM_signal(char* nombreSEM, PCB_DATA* pcb){
+
 	t_semaforo* sem = buscarSemaforo(nombreSEM);
-	if(sem != NULL){
-		sem->valor++;
-		if(queue_size(sem->cola) > 0){
-			sem_wait(&mutex_cola_Wait);
-			despertarProceso(sem);
-			sem_post(&mutex_cola_Wait);
-		}
+
+	if(sem == NULL){
+		pcb->estadoDeProceso=aFinalizar;
+		proceso_Finalizar(pcb->pid,intentoAccederAUnSemaforoInexistente);
+		return false;
 	}
-	else{
-		pcb->estadoDeProceso = finalizado;
-		pcb->exitCode = intentoAccederAUnSemaforoInexistente;
-	}
-	return (sem != NULL);//Retorna si el semaforo existe, le permite o no a la CPU seguir ejecutando
+
+	sem->valor++;
+
+	if(sem->valor <= 0)
+		despertarProceso(sem);
+
+	return true;
 }
 

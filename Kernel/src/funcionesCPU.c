@@ -321,22 +321,9 @@ void *rutinaCPU(void * arg)
 			case waitSemaforo:{
 			//	printf("[Rutina rutinaCPU] - Entramos al Caso de que CPU pide wait de un semaforo: accion- %d!\n", waitSemaforo);
 
-				//puts("Entro al waitSemaforo\n");
 				char* nombreSemaforo;
 
 				PCB_DATA* pcbRecibido = deserializarPCBYSemaforo(stream, &nombreSemaforo);
-
-
-				// con ese id buscamos el valor del semaforo y le restamos 1
-
-				// tenemos que ver cuanto vale el semaforo , si es  menor a 0, tenemos que
-				// agregamos el pid a la "cola" de espera de este semaforo
-
-				// ahora si valia mas de 0 inclusive , no pasa una}
-
-				// le avisamos a la cpu que paso, si se tiene que trabar o si uede continuar
-
-
 
 				//Validar que el proceso no haya sido finalizado, responder siempre a la CPU si
 				sem_wait(&mutex_listaProcesos);
@@ -358,13 +345,23 @@ void *rutinaCPU(void * arg)
 
 				log_info(logKernel,"[Rutina rutinaCPU] - Entramos al Caso de que CPU pide signal de un semaforo: accion- %d!\n", signalSemaforo);
 
+
+
 				char* nombreSemaforo;
 				PCB_DATA* pcbRecibido = deserializarPCBYSemaforo(stream, &nombreSemaforo);
+
+				sem_wait(&mutex_listaProcesos);
 				PCB_DATA* pcbDelProcesoActual = modificarPCB(pcbRecibido);
+
+				// compobamos que el semafor exista
+				// se suma el valor del semaforo
+				// si es 0 o menor, un proceso puede ser despertado
 
 				sem_wait(&mutex_semaforos_ANSISOP);
 					bool respuestaParaCPU = SEM_signal(nombreSemaforo, pcbDelProcesoActual);
 				sem_post(&mutex_semaforos_ANSISOP);
+
+				sem_post(&mutex_listaProcesos);
 
 				free(nombreSemaforo);
 				enviarMensaje(socketCPU,respuestaBooleanaKernel, &respuestaParaCPU, sizeof(bool));
