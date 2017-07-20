@@ -427,7 +427,7 @@ void* configurarTodo(){
 		log_info(logFS,"[Configurar Todo]-Creacion del directorio de Archivos");
 	}
 	else{
-		closedir(rutaDeDirectorioArchivos);
+		closedir(directorio2);
 	}
 	free(rutaDeDirectorioArchivos);
 

@@ -130,38 +130,38 @@ void * consolaKernel()
 					case 1:{
 						printf("\nProcesos de la cola de New:\n");
 
-						sem_wait(&mutex_cola_New);
+						sem_wait(&mutex_listaProcesos);
 							imprimirProcesosdeCola(cola_New);
-						sem_post(&mutex_cola_New);
+						sem_post(&mutex_listaProcesos);
 					}break;
 					case 2:{
 						printf("\nProcesos de la cola de Ready:\n");
 
-						sem_wait(&mutex_cola_Ready);
+						sem_wait(&mutex_listaProcesos);
 							imprimirProcesosdeCola(cola_Ready);
-						sem_post(&mutex_cola_Ready);
+						sem_post(&mutex_listaProcesos);
 
 					}break;
 					case 3:{
 						printf("\nProcesos de la cola de Exec:\n");
 
-						sem_wait(&mutex_cola_Exec);
+						sem_wait(&mutex_listaProcesos);
 							imprimirProcesosdeCola(cola_Exec);
-						sem_post(&mutex_cola_Exec);
+						sem_post(&mutex_listaProcesos);
 					}break;
 					case 4:{
 						printf("\nProcesos de la cola de Bloq:\n");
 
-						sem_wait(&mutex_cola_Wait);
+						sem_wait(&mutex_listaProcesos);
 							imprimirProcesosdeCola(cola_Wait);
-						sem_post(&mutex_cola_Wait);
+						sem_post(&mutex_listaProcesos);
 					}break;
 					case 5:{
 						printf("\nProcesos de la cola de Finish:\n");
 
-						sem_wait(&mutex_cola_Finished);
+						sem_wait(&mutex_listaProcesos);
 							imprimirProcesosdeCola(cola_Finished);
-						sem_post(&mutex_cola_Finished);
+						sem_post(&mutex_listaProcesos);
 					}break;
 					case 6:{
 						printf("\nEstos son todos los procesos:\n");
@@ -203,7 +203,15 @@ void * consolaKernel()
 									bool busqueda(PROCESOS* proceso){
 										return pid == proceso->pid;
 									}
-								PCB_DATA* pcb = ((PROCESOS*)list_find(avisos, busqueda))->pcb;
+									PROCESOS* proceso =  (PROCESOS*)list_find(avisos, busqueda);
+									PCB_DATA* pcb;
+								if(proceso == NULL){
+									opcion = -1;
+								}
+								else{
+									pcb = proceso->pcb;
+								}
+
 								sem_post(&mutex_listaProcesos);
 				switch (opcion) {
 				case 1: {
@@ -264,6 +272,11 @@ void * consolaKernel()
 					sem_post(&mutex_tabla_estadistica_de_heap);
 				}
 					break;
+				case -1:{
+					printf("\nPid invalido! Intente nuevamente.\n");
+					break;
+				}
+
 				default: {
 					printf("\nOpcion invalida! Intente nuevamente.\n");
 				}

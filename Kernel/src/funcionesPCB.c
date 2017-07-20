@@ -50,6 +50,11 @@ PCB_DATA* modificarPCB(PCB_DATA * pcbNuevo){
 			pcbViejo->indiceStack = pcbNuevo->indiceStack;
 			pcbViejo->estadoDeProceso = pcbNuevo->estadoDeProceso;
 			pcbViejo->programCounter = pcbNuevo->programCounter;
+			pcbViejo->cantDeInstPrivilegiadas = pcbNuevo->cantDeInstPrivilegiadas;
+			pcbViejo->cantDeRafagasEjecutadas=pcbNuevo->cantDeRafagasEjecutadas;
+			pcbViejo->cantPaginasDeCodigo = pcbNuevo->cantPaginasDeCodigo;
+
+
 		}
 	}
 
