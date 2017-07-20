@@ -291,6 +291,7 @@ void newToReady(){
 
 				//*** Divido el script en la cantidad de paginas necesarias
 				programaAnsisop->pcb->contPags_pcb= cant_paginas+getConfigInt("STACK_SIZE");
+				programaAnsisop->pcb->cantPaginasDeCodigo = cant_paginas;
 
 				//***Añado el pcb a la cola de Ready
 				moverA(programaAnsisop->pid,aReady);

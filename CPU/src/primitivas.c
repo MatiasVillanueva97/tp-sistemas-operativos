@@ -30,6 +30,8 @@ void* serializarArchivo(t_crearArchivo archivo);
 
 void escribirEnLaVariable(t_puntero informacion, void* stream, int tamanio);
 
+bool esDeHeap(int pagina);
+
 t_puntero AnSISOP_definirVariable(t_nombre_variable identificador_variable) {
 	log_info(logCPU,"AnSISOP_definirVariable\n");
 	t_direccion direccion;
@@ -40,7 +42,7 @@ t_puntero AnSISOP_definirVariable(t_nombre_variable identificador_variable) {
 	variable->ID = identificador_variable;
 	variable->direccion = direccion;
 
-	if (direccion.page >= pcb->contPags_pcb) {
+	if (esDeHeap(direccion.page)) {
 		log_info(logCPU,"STACK OVERFLOW page: %d , offset: %d , size: %d \n",direccion.page, direccion.offset, direccion.size);
 		terminoPrograma = true;
 		pcb->exitCode = -5;
@@ -103,6 +105,11 @@ t_valor_variable AnSISOP_dereferenciar(t_puntero direccion_variable) {
 
 	//Se busca la direccion
 	t_direccion direccion = calcularDireccion(direccion_variable);
+
+	//if(direccion.page == 3) direccion.size = 1;
+	if(esDeHeap(direccion.page)){
+		direccion.size = 1;
+	}
 
 	//Se pide el valor a memoria
 	t_valor_variable valorVariable = pedirValorAMemoria(direccion);
@@ -874,7 +881,7 @@ void asignarDireccionRespectoA(int contexto, t_direccion* direccion) {
 
 //Devuelve la pagina donde comienza en el stack
 int paginaInicio() {
-	return pcb->contPags_pcb - datosIniciales->size_stack;
+	return pcb->cantPaginasDeCodigo;
 }
 
 char* generarStringFlags(t_banderas flags) {
@@ -989,4 +996,8 @@ int recibirMensajeSeguro(int socket, void ** stream){
 		exit(-1);
 	}
 	return valor;
+}
+
+bool esDeHeap(int pagina){
+	return pagina >= (pcb->cantPaginasDeCodigo + datosIniciales->size_stack);
 }
