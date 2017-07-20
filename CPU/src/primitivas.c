@@ -501,7 +501,6 @@ void AnSISOP_borrar(t_descriptor_archivo direccion) {
 		if (rtaKernel == 0) {
 			log_info(logCPU,"Quiere borrar un archivo que nunca abrio\n");
 			terminoPrograma = true;
-			pcb->exitCode = -13;
 		} else {
 			log_info(logCPU,"Archivo borrado con exito\n");
 		}
@@ -533,7 +532,6 @@ void AnSISOP_cerrar(t_descriptor_archivo descriptor_archivo) {
 		if (rtaKernel == 0) {
 			log_info(logCPU,"Quiere cerrar un archivo que nunca abrio\n");
 			terminoPrograma = true;
-			pcb->exitCode = -13;
 		} else {
 			log_info(logCPU,"Archivo cerrado con exito\n");
 		}
@@ -566,7 +564,6 @@ void AnSISOP_moverCursor(t_descriptor_archivo descriptor_archivo,t_valor_variabl
 		if (rtaKernel == 0) {
 			log_info(logCPU,"Quiere mover el cursor de un archivo que nunca abrio\n");
 			terminoPrograma = true;
-			pcb->exitCode = -13;
 		} else {
 			log_info(logCPU,"Cursor movido con exito\n");
 		}
@@ -606,7 +603,6 @@ void AnSISOP_escribir(t_descriptor_archivo descriptor_archivo,void* informacion,
 		}else{
 			log_info(logCPU,"Quiere escribir un archivo que nunca abrio\n");
 			terminoPrograma = true;
-			pcb->exitCode = -13;
 		}
 	}else{
 		log_error(logCPU,"Error en el protocolo de comunicacion\n");

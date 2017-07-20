@@ -40,7 +40,7 @@ void* serializarEscribirMemoria(int size, int offset,char* path, char* buffer);
 
 void* serializarPedidoFs(int size, int offset,char* path);
 
-void finalizarPid(PCB_DATA* pcb,int exitCode);
+void finalizarPid(int pid, int exitCode);
 
 void liberarEntradaDeTablaProceso(ENTRADA_DE_TABLA_DE_PROCESO* entrada);
 
@@ -48,7 +48,7 @@ void liberarEntradaTablaGlobalDeArchivos(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* en
 
 void liberarEntradaTablaDeArchivosDeProceso(ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO * entrada);
 
-bool liberarRecursosArchivo(PCB_DATA* pcb);
+bool liberarRecursosArchivo(int pid);
 
 
 int borrarArchivoPermanente(t_archivo estructura);
@@ -60,6 +60,8 @@ int moverUnCursor(t_moverCursor estructura);
 void abrirArchivoPermanente(bool existeArchivo, t_crearArchivo estructura, int socketCPU);
 
 void leerEnUnArchivo(t_lectura estructura, int socketCPU);
+
+int escribirEnUnArchivo(t_mensajeDeProceso msj);
 
 
 #endif /* FUNCIONESCAPAFS_H_ */

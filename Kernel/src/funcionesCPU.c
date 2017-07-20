@@ -249,7 +249,7 @@ void *rutinaCPU(void * arg)
 
 				}
 				else{
-					respuestaACPU = escribirEnUnArchivo(msj,msj.tamanio);
+					respuestaACPU = escribirEnUnArchivo(msj);
 					enviarMensaje(socketCPU,respuestaBooleanaKernel,&respuestaACPU,sizeof(bool));
 				}
 				free(msj.mensaje);

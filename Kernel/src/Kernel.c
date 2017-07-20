@@ -220,7 +220,7 @@ void proceso_liberarRecursos(PROCESOS* proceso){
 		log_info(logKernel,"Se liberaron correctamente los recursos del heap del pid %d\n",proceso->pid);
 	}
 
-	//(liberarRecursosArchivo(proceso->pcb)){
+	//(liberarRecursosArchivo(pcb->pid)){
 	//	log_info(logKernel,"No se liberaron los recursos del de los archivos correctamenete del pid %d\n", proceso->pid);
 	//}
 	//else{

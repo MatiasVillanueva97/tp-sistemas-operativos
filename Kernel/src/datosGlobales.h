@@ -61,7 +61,10 @@ enum exitCode{
 	lecturaDenegadaPorFileSystem = -13,
 	escrituraDenegadaPorFileSystem = -14,
 	noSeCreoElArchivoPorFileSystem = -15,
-	falloEnElFileDescriptor = -16
+	falloEnElFileDescriptor = -16,
+	borradoFallidoOtroProcesoLoEstaUtilizando = -17,
+	borradoFallidoPorFileSystem = -18
+
 };
 
 enum estadosProcesos{
