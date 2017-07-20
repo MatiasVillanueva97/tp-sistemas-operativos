@@ -244,6 +244,7 @@ void* solicitarBytesDeUnaPagina(int pid, int pagina, int desplazamiento, int tam
 		if ((int)contenidoDeLaPagina == 0){
 			log_error(logMemoria,"[Solicitar Bytes]-La solicutd de la pagina %d del pid %d es invalida!",pagina,pid);
 			free(contenidoDeLaPagina);
+			sem_post(&mutex_Memoria);
 			return 0;
 		}
 		log_info(logMemoria,"[Solicitar Bytes]-Se encontro el contenido y se procede a ejecutar un cache miss");

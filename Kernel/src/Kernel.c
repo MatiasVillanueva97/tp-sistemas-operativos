@@ -156,11 +156,11 @@ bool proceso_Finalizar_conAviso(int pid, int exitCode, bool conAvisoAConsola)
 	else  if(procesoAFianalizar != NULL && procesoAFianalizar->pcb->estadoDeProceso != finish){
 
 		if(procesoAFianalizar->pcb->estadoDeProceso != new){
-			sem_post(&gradoDeMultiprogramacion);
 
 			sem_wait(&mutex_gradoDeMultiprogramacion);
 			numeroGradoDeMultiprogramacion++;
 			sem_post(&mutex_gradoDeMultiprogramacion);
+			sem_post(&gradoDeMultiprogramacion);
 		}
 
 		int socketConsola = procesoAFianalizar->socketConsola;

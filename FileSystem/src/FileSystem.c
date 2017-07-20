@@ -421,13 +421,13 @@ void* configurarTodo(){
 	free(rutaDeDirectorioBloques);
 	char* rutaDeDirectorioArchivos = string_duplicate(getConfigString("PUNTO_MONTAJE"));
 	string_append(&rutaDeDirectorioArchivos,"/Archivos");
-	DIR* directorioDeBloques = opendir(rutaDeDirectorioBloques);
-	if(directorioDeBloques==NULL){
-		mkdir(rutaDeDirectorioBloques,0700);
+	DIR* directorio2 = opendir(rutaDeDirectorioArchivos);
+	if(directorio2==NULL){
+		mkdir(rutaDeDirectorioArchivos,0700);
 		log_info(logFS,"[Configurar Todo]-Creacion del directorio de Archivos");
 	}
 	else{
-		closedir(directorioDeBloques);
+		closedir(rutaDeDirectorioArchivos);
 	}
 	free(rutaDeDirectorioArchivos);
 
