@@ -170,7 +170,7 @@ int borrarUnArchivo(char* path){
 	int i;
 	for(i = 0;*(bloques+i)!=NULL;i++){
 		int x = atoi(*(bloques+i));
-		bitarray_clean_bit(bitMap,x-1);
+		bitarray_clean_bit(bitMap,x);
 		log_info(logFS,"[Borrar Archivo]-Se desligo el bloque numero: %d ", x);
 	}
 	if (remove(ruta)==0){

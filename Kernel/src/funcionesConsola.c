@@ -47,13 +47,14 @@ void consola_finalizarTodosLosProcesos(int socketConsola){
 	void cambiar(PROCESOS * process){
 		if(process->socketConsola==socketConsola)
 		{
+			if(process->pcb->estadoDeProceso == enCPU) process->pcb->estadoDeProceso = exec;
 			proceso_Finalizar_conAviso(process->pid,-6, false);
 
 			log_info(logKernel,"Murio el proceso: %d\n", process->pid);
 		}
 	}
 
-	list_iterate(avisos, cambiar);
+	list_forEach(avisos, cambiar);
 }
 
 
@@ -161,12 +162,18 @@ void *rutinaConsola(void * arg)
 
 				log_info(logKernel,"Entramos a finalizar el script, del pid: %d\n", pid);
 
+				sem_wait(&mutex_listaProcesos);
 				//***Esta función actualizará el estado de finalizacion de un proceso
+
+				PROCESOS* process = buscarProceso(pid);
+
+				if(process->pcb->estadoDeProceso == enCPU) process->pcb->estadoDeProceso = exec;
+
 				if(!proceso_Finalizar(pid, -7)) {
 					log_info(logKernel,"[Rutina rutinaConsola] - No existe el pid\n");
 					enviarMensaje(socketConsola,errorFinalizacionPid, &pid,sizeof(int));
 				}
-
+				sem_post(&mutex_listaProcesos);
 
 				free(respuesta);
 			}break;

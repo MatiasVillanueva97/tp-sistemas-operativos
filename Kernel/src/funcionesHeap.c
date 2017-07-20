@@ -202,13 +202,13 @@ int manejarPedidoDeMemoria(int pid,int tamano){
 						w.id = pid;
 						w.direccion.page = fila->pagina;
 						w.direccion.offset = x.offset-sizeof(HeapMetadata);
-						w.direccion.size = tamano; // creo que va sizeof(HeapMetadata)
+						w.direccion.size = tamano + sizeof(HeapMetadata) * 2;
 						log_info(logKernel,"Se escribe el metadata Heap necesario");
 
 						enviarMensaje(socketMemoria,almacenarBytes,serializarAlmacenarBytes2(w),sizeof(int)*4+w.direccion.size); // esto esta mal, el size es otro
 						void* stream2;
 						recibirMensaje(socketMemoria,&stream2);
-						fila->tamanoDisponible -= tamano-tamanoHeader;
+						fila->tamanoDisponible -= tamano+tamanoHeader;
 						log_info(logKernel,"Se cambia el tamano disponible, dejandolo en %d", fila->tamanoDisponible);
 						list_destroy(listaFiltrada);
 						return x.offset +fila->pagina*size_pagina;

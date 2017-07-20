@@ -110,6 +110,7 @@ void* buscarEnLaCache(int pid,int pagina){
 
 void cacheMiss(int pid, int pagina,void* contenido){
 	int cantidadDeEntradas= getConfigInt("ENTRADAS_CACHE");
+	if(getConfigInt("CACHE_X_PROC") == 0) return;
 	if(tieneMenosDeNProcesos(pid)){
 		log_info(logMemoria,"[Solicitar Bytes-Cache  Miss]-El pid %d tiene menos de %d paginas.",pid,getConfigInt("CACHE_X_PROC"));
 		int cantidadDeElementos = list_size(tablaDeEntradasDeCache);

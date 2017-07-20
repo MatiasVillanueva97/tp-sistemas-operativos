@@ -198,12 +198,29 @@ void proceso_avisarAConsola(int socketConsola, int pid, int exitCode){
 }
 
 
+void liberarProcesoDeSemaforo(char* nombreSEM, PCB_DATA* pcb){
 
+	t_semaforo* sem = buscarSemaforo(nombreSEM);
+
+	if(sem == NULL){
+		pcb->estadoDeProceso=exec;
+		proceso_Finalizar(pcb->pid,intentoAccederAUnSemaforoInexistente);
+	}
+
+	sem->valor++;
+
+	bool busqueda(int* pid){
+		return *pid == pcb->pid;
+	}
+
+	list_remove_and_destroy_by_condition(sem->cola->elements,busqueda,free);
+
+}
 
 bool liberarSemaforo(PROCESOS* proceso){
 	sem_wait(&mutex_semaforos_ANSISOP);
 	if(proceso->semBloqueante != NULL){
-		SEM_signal(proceso->semBloqueante,proceso->pcb);
+		liberarProcesoDeSemaforo(proceso->semBloqueante,proceso->pcb);
 	}
 	sem_post(&mutex_semaforos_ANSISOP);
 
