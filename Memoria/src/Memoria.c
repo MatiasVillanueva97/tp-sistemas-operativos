@@ -693,6 +693,10 @@ int main(void) {
 	retardo = getConfigInt("RETARDO_MEMORIA");
 	sizeOfPaginas=getConfigInt("MARCO_SIZE");
 	cantidadDeMarcos = getConfigInt("MARCOS");
+	if(getConfigInt("MARCO_SIZE") < sizeof(int)*3 || getConfigInt("MARCOS") == 0){
+		puts("Esta mal la configuración, se procede a cerrar memoria");
+		exit(-1);
+	}
 	memoriaTotal = malloc(sizeOfPaginas*cantidadDeMarcos);
 	int i;
 	char* joaco;

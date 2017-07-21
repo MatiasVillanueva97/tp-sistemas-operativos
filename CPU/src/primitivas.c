@@ -122,13 +122,20 @@ t_valor_variable AnSISOP_dereferenciar(t_puntero direccion_variable) {
 void AnSISOP_asignar(t_puntero direccion_variable, t_valor_variable valor) {
 	log_info(logCPU,"AnSISOP_asignar\n");
 
-	//Calculo la direccion en memoria de la variable
-	t_direccion direccion = calcularDireccion(direccion_variable);
+	if(direccion_variable == (t_puntero)(-1)) {
+		terminoPrograma = true;
+		pcb->exitCode = -19;
+		log_info(logCPU,"se quiso utilizar una variable inexistente");
+	}else{
+		//Calculo la direccion en memoria de la variable
+		t_direccion direccion = calcularDireccion(direccion_variable);
 
-	//Se escribe en Memoria sabiendo la posicion de memoria y el valor a escribir
-	escribirValorEnMemoria(direccion, valor);
+		//Se escribe en Memoria sabiendo la posicion de memoria y el valor a escribir
+		escribirValorEnMemoria(direccion, valor);
 
-	log_info(logCPU,"Asigne a la direccion %d %d %d el valor es %d \n", direccion.page,direccion.offset, direccion.size, valor);
+		log_info(logCPU,"Asigne a la direccion %d %d %d el valor es %d \n", direccion.page,direccion.offset, direccion.size, valor);
+	}
+
 }
 
 t_valor_variable AnSISOP_obtenerValorCompartida(t_nombre_compartida variable) {

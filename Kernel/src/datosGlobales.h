@@ -63,7 +63,8 @@ enum exitCode{
 	noSeCreoElArchivoPorFileSystem = -15,
 	falloEnElFileDescriptor = -16,
 	borradoFallidoOtroProcesoLoEstaUtilizando = -17,
-	borradoFallidoPorFileSystem = -18
+	borradoFallidoPorFileSystem = -18,
+	seQuiereUtilizarUnaVariableNoDeclarada = -19
 
 };
 
