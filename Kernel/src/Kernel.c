@@ -101,6 +101,7 @@ bool moverA(int pid, int movimientoACola){
 		return false;
 
 
+
 	quitarPCBDeDondeEste(proceso->pcb);
 
 	switch(movimientoACola)
@@ -328,6 +329,7 @@ void newToReady(){
 				}
 				free(scriptEnPaginas);
 
+
 				//***Le envio a memoria las paginas del stack
 				char * paginasParaElStack;
 				paginasParaElStack = string_repeat(' ',size_pagina);
@@ -348,10 +350,9 @@ void newToReady(){
 				fila->pid = programaAnsisop->pid;
 				fila->tamanoAlocadoEnBytes = 0;
 				fila->tamanoAlocadoEnOperaciones = 0;
-				fila->tamanoLiberadoEnBytes = 0;
-				fila->tamanoAlocadoEnOperaciones = 0;
 				fila->cantidadDePaginasHistoricasPedidas =0;
-
+				fila->tamanoLiberadoEnBytes = 0;
+				fila->tamanoLiberadoEnOperaciones = 0;
 				sem_wait(&mutex_tabla_estadistica_de_heap);
 				list_add(tablaEstadisticaDeHeap,fila);
 				sem_post(&mutex_tabla_estadistica_de_heap);

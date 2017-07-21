@@ -45,12 +45,13 @@ void consola_enviarAvisoDeFinalizacion(int socketConsola, int pid){
 void consola_finalizarTodosLosProcesos(int socketConsola){
 
 	void cambiar(PROCESOS * process){
-		if(process->socketConsola==socketConsola)
-		{
-			if(process->pcb->estadoDeProceso == enCPU) process->pcb->estadoDeProceso = exec;
-			proceso_Finalizar_conAviso(process->pid,-6, false);
+		if (process->socketConsola == socketConsola) {
+				if (process->pcb->estadoDeProceso == enCPU)
+					process->pcb->estadoDeProceso = exec;
+					proceso_Finalizar_conAviso(process->pid, -6, false);
 
-			log_info(logKernel,"Murio el proceso: %d\n", process->pid);
+					log_info(logKernel, "Murio el proceso: %d\n", process->pid);
+
 		}
 	}
 

@@ -63,6 +63,8 @@ pthread_mutex_t mutex_lista;
 pthread_mutex_t mutex_ordenDeEscritura;
 pthread_mutex_t mutex_mensajeActual;
 pthread_mutex_t mutex_espera;
+pthread_mutex_t hayQueEscribir;
+pthread_mutex_t yaSeEscribio;
 
 
 size_t tamanoArchivo(FILE * archivo){
@@ -233,7 +235,11 @@ void matarHiloPrograma(int pid){
 		log_error(logConsola,"Error: el pid no existe o ya ha finalizado el programa");
 	}
 	else{
+		sem_wait(&mutex_lista);
 		ret->estaTerminado=true;
+		sem_post(&mutex_lista);
+		sem_post(&hayQueEscribir);
+		sem_wait(&yaSeEscribio);
 		log_info(logConsola,"Se cambio el estado del pid %d a terminado",pid);
 	}
 }
@@ -270,12 +276,20 @@ void inicializarSemaforos(){
 	sem_init(&mutex_ordenDeEscritura,0,0);
 	sem_init(&mutex_mensajeActual,0,1);
 	sem_init(&mutex_espera,0,0);
+	sem_init(&hayQueEscribir,0,0);
+	sem_init(&yaSeEscribio,0,0);
+}
+void liberarNodoListaEstado(t_Estado* nodo){
+	free(nodo->mensajeAImprimir);
+	free(nodo);
 }
 void sigint_handler(int signal) {
 	printf("Se recibio una SIGINT, se finalizará el proceso\n" );
 	log_warning(logConsola,"Se recibio una SIGINT, se finalizará el proceso");
 	enviarMensaje(socketKernel,desconectarConsola, NULL, 0);
-	list_destroy_and_destroy_elements(listaEstadoPrograma,free);
+
+	list_destroy_and_destroy_elements(listaEstadoPrograma,liberarNodoListaEstado);
+
 	close(socketKernel);
 	exit(-1);
 	return;
@@ -361,7 +375,9 @@ int main(void)
 	}
 
 	pthread_join(hiloMaster,NULL);
-	list_destroy_and_destroy_elements(listaEstadoPrograma,free);
+	sem_wait(&mutex_lista);
+	list_destroy_and_destroy_elements(listaEstadoPrograma,liberarNodoListaEstado);
+	sem_post(&mutex_lista);
 	close(socketKernel);
 	free(mensaje);
 	liberarConfiguracion();
@@ -388,18 +404,26 @@ void* rutinaPrograma(void* parametro){
 		log_info(logConsola,"Se inicializo rutinaPrograma %d en el tiempo %s",pid,tiempoInicio);
 		sem_post(&mutex_ordenDeEscritura);
 		sem_post(&mutex_espera);
+
 		while(1){
+			sem_wait(&hayQueEscribir);
+			sem_wait(&mutex_lista);
 
 		if(programaEstado->hayParaImprimir){
 			cantImpresiones++;
 			printf("Mensaje del pid %d: %s\n", pid, programaEstado->mensajeAImprimir);
 			log_info(logConsola,"Se imprimio el mensaje del pid %d: %s\n", pid, programaEstado->mensajeAImprimir);
 			programaEstado->hayParaImprimir = false;
+			sem_post(&yaSeEscribio);
 
-		}
-			if(programaEstado->estaTerminado){
+		}else if(programaEstado->estaTerminado){
+				sem_post(&yaSeEscribio);
+				sem_post(&mutex_lista);
 				break;
-			}
+		}else{
+			sem_post(&hayQueEscribir);
+		}
+			sem_post(&mutex_lista);
 		}
 
 	char* tiempoFin = temporal_get_string_time();
@@ -418,6 +442,13 @@ void* rutinaPrograma(void* parametro){
 	free(tiempoFin);
 	free(tiempoInicio);
 	log_info(logConsola,"Se liberaron los recursos del hilo detachable asociado al pid %d",pid);
+
+	bool sonIguales(t_Estado * elementos){
+				return  elementos->pid == pid;
+			}
+	sem_wait(&mutex_lista);
+	list_remove_and_destroy_by_condition(listaEstadoPrograma,sonIguales,liberarNodoListaEstado);
+	sem_post(&mutex_lista);
 }
 
 
@@ -441,9 +472,14 @@ void* rutinaEscucharKernel() {
 			t_mensajeDeProceso aux = deserializarMensajeAEscribir(stream);
 			t_Estado* programaEstado;
 			programaEstado = encontrarElDeIgualPid(aux.pid);
+			sem_wait(&mutex_lista);
 			programaEstado->mensajeAImprimir = string_duplicate(aux.mensaje);
 			programaEstado->hayParaImprimir = true;
+			sem_post(&mutex_lista);
+			sem_post(&hayQueEscribir);
+			sem_wait(&yaSeEscribio);
 			free(aux.mensaje);
+
 			break;
 		}
 		case (pidFinalizado): {
@@ -456,7 +492,6 @@ void* rutinaEscucharKernel() {
 		case (errorFinalizacionPid): {
 			int pid;
 			pid = (*(int*) stream);
-
 			matarHiloPrograma(pid);
 			log_error(logConsola,"No se ha finalizado correctamente el pid: %d \n", pid);
 			printf("No se ha finalizado correctamente el pid: %d \n", pid);
@@ -465,7 +500,9 @@ void* rutinaEscucharKernel() {
 		case (0): {
 			log_error(logConsola,"Se desconecto el kernel");
 			printf("Se desconecto el kernel\n");
-			list_destroy_and_destroy_elements(listaEstadoPrograma,free);
+			sem_wait(&mutex_lista);
+			list_destroy_and_destroy_elements(listaEstadoPrograma,liberarNodoListaEstado);
+			sem_post(&mutex_lista);
 			error = true;
 			exit(-1);
 			break;
