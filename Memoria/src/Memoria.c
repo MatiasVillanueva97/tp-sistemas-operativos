@@ -183,12 +183,10 @@ bool hayEspacio(int pid,int pagina){
 */
 //Funciones Principales
 
-int* almacenarBytesEnPagina(int pid, int pagina, int desplazamiento, int tamano,void* buffer){
-	int* prueba=malloc(sizeof(int));
-	*prueba= 0;
+int almacenarBytesEnPagina(int pid, int pagina, int desplazamiento, int tamano,void* buffer){
 	if(desplazamiento + tamano > sizeOfPaginas){
 		log_error(logMemoria,"Almacenamiento invalido!");
-		return prueba;
+		return 0;
 	}
 	void *contenidoDeLaPagina;
 
@@ -196,7 +194,7 @@ int* almacenarBytesEnPagina(int pid, int pagina, int desplazamiento, int tamano,
 	int frame = buscarFrameCorrespondiente(pid,pagina);
 	sem_post(&mutex_TablaDePaginasInvertida);
 	if(frame ==-1){
-		return prueba;
+		return 0;
 	}
 	log_info(logMemoria,"La pagina %d del pid %d se corresponde con el frame %d",pagina,pid,frame);
 
@@ -215,10 +213,9 @@ int* almacenarBytesEnPagina(int pid, int pagina, int desplazamiento, int tamano,
 	}
 	sem_post(&mutex_cache);
 	sem_post(&mutex_Memoria);
-	*prueba = 1;
-	log_info(logMemoria,"Se devuelve %d ya que se almaceno correctamente",*prueba);
+	log_info(logMemoria,"Se devuelve 1 ya que se almaceno correctamente");
 
-	return prueba;
+	return 1;
 }
 void* solicitarBytesDeUnaPagina(int pid, int pagina, int desplazamiento, int tamano){
 	void* contenidoDeLaPagina;

@@ -726,7 +726,7 @@ void escribirValorEnMemoria(t_direccion direccion, t_valor_variable valor) {
 		}
 	}
 
-	if (*respuesta != 1) {
+	if (*respuesta == 0) {
 		terminoPrograma = true;
 		pcb->exitCode = -5;
 	}

@@ -420,7 +420,7 @@ void *rutinaCPU(void * arg)
 				if(offset == 0){
 					PCB_DATA* pcb = buscarPCB(pid);
 					if(pcb != NULL){
-						finalizarPid(pcb,-9);
+						finalizarPid(pid,-9);
 					}
 					else{
 						liberarRecursosHeap(pid);
@@ -430,7 +430,7 @@ void *rutinaCPU(void * arg)
 					PCB_DATA* pcb = buscarPCB(pid);
 					offset= 0;
 					if(pcb != NULL){
-						finalizarPid(pcb,-8);
+						finalizarPid(pid,-8);
 					}
 					else{
 						liberarRecursosHeap(pid);
@@ -453,7 +453,7 @@ void *rutinaCPU(void * arg)
 					PCB_DATA* pcb = buscarPCB(pid);
 					offset= 0;
 					if(pcb != NULL){
-						finalizarPid(pcb,-7);
+						finalizarPid(pid,-7);
 					}
 					else{
 						liberarRecursosHeap(pid);
