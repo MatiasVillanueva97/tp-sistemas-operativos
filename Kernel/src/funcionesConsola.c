@@ -207,7 +207,7 @@ void *rutinaConsola(void * arg)
 	//printf("Se decontecta a la consola socket: %d\n", socketConsola);
 	log_info(logKernel,"Se decontecta a la consola socket: %d\n", socketConsola);
 
-	close(socketConsola);
+//	close(socketConsola);
 }
 
 

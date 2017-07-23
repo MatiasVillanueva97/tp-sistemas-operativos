@@ -196,11 +196,6 @@ t_queue * cola_CPUs_libres;
 pthread_mutex_t mutex_HistoricoPcb; // deberia ser historico pid
 pthread_mutex_t mutex_listaProcesos;
 pthread_mutex_t mutex_cola_CPUs_libres;
-pthread_mutex_t mutex_cola_New;
-pthread_mutex_t mutex_cola_Ready;
-pthread_mutex_t mutex_cola_Wait;
-pthread_mutex_t mutex_cola_Exec;
-pthread_mutex_t mutex_cola_Finished;
 pthread_mutex_t mutex_tablaGlobalDeArchivos;
 pthread_mutex_t mutex_tablaGlobalDeArchivosDeProcesos;
 

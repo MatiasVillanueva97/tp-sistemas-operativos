@@ -100,8 +100,6 @@ bool moverA(int pid, int movimientoACola){
 	if(proceso->pcb->estadoDeProceso == finish)
 		return false;
 
-
-
 	quitarPCBDeDondeEste(proceso->pcb);
 
 	switch(movimientoACola)
@@ -133,9 +131,7 @@ bool moverA(int pid, int movimientoACola){
 		}break;
 	}
 	return true;
-
 }
-
 
 
 ///***Esta función tiene que buscar en todas las colas y fijarse donde esta el procesos y cambiar su estado a estado finalizado
@@ -215,7 +211,6 @@ void liberarProcesoDeSemaforo(char* nombreSEM, PCB_DATA* pcb){
 	}
 
 	list_remove_and_destroy_by_condition(sem->cola->elements,busqueda,free);
-
 }
 
 bool liberarSemaforo(PROCESOS* proceso){
@@ -436,44 +431,16 @@ void * estadoNEW()
 ///*** Quito el primer elemento de la cola de ready, valido que no haya sido finalizado y lo pongo en la cola de exec //**** Esta funcion anda bien,
 void readyToExec()
 {
-
 	//*** Tomo el primer elemento de la cola de ready y lo quito
 	sem_wait(&mutex_listaProcesos);
-		PCB_DATA* pcb = queue_peek(cola_Ready);
-		if(pcb != NULL)
+
+	PCB_DATA* pcb = queue_peek(cola_Ready);
+
+	if(pcb != NULL)
 			moverA(pcb->pid, aExec);
 	sem_post(&cantidadDeProgramasEnExec);
-		sem_post(&mutex_listaProcesos);
 
-
-}
-
-
-//*** Esta funcion te dice si hay programas en ready
-bool hayProcesosEnReady(){
- sem_wait(&mutex_cola_Ready);
-  bool valor = queue_size(cola_Ready) > 0;
- sem_post(&mutex_cola_Ready);
-
- return valor;
-}
-
-
-//*** Esta funcion te dice si hay cpus disponibles
-bool hayCpusDisponibles(){
-
-	//SI LA CPU ESTA ESPERANDO TRABAJO es porque esta disponible y espera un PCB para trabajar
-	int sumaSi(t_CPU* cpu){
-		if(cpu->esperaTrabajo)
-			return 1;
-		return 0;
-	}
-
-	sem_wait(&mutex_cola_CPUs_libres);
-		bool valor = sum(lista_CPUS,sumaSi) > 0;
-	sem_post(&mutex_cola_CPUs_libres);
-
-	return valor;
+	sem_post(&mutex_listaProcesos);
 }
 
 
@@ -485,13 +452,12 @@ void * estadoReady()
 	//*** el booleano finPorConsolaDelKernel esta en false desde el inicio, en el momento en el que el kernel quiera frenar la planificiacion esta variable pasara a true, y se frenara la planificacion
 	while(!finPorConsolaDelKernel)
 	{
-		puts("Esperan ready");
+
 		sem_wait(&cantidadDeProgramasEnReady);
 		sem_wait(&cpuDisponible);
-		puts("Ya en ready");
 
-			///*** Quito el primer elemento de la cola de ready, valido que no haya sido finalizado y lo pongo en la cola de exec - en caso de no encontrar uno para poder trabajar no hago nada
-			readyToExec();
+		///*** Quito el primer elemento de la cola de ready, valido que no haya sido finalizado y lo pongo en la cola de exec - en caso de no encontrar uno para poder trabajar no hago nada
+		readyToExec();
 	}
 	return NULL;
 }
@@ -500,118 +466,6 @@ void * estadoReady()
 /// ********************************************************************************************************///
 /// ***************************************** FIN SEGUNDA PARTE ********************************************///
 /// ********************************************************************************************************///
-
-
-
-
-
-
-
-
-/// ********************************************************************************************************///
-/// *********************** TERCERA PARTE - PASAR PROCESOS DE EXEC A FINISHED O BLOQ ***********************///
-/// ********************************************************************************************************///
-
-
-//*** Esta funcion pasa todos los procesos que esten finalizados dentro de la cola de exec a la cola de Finished, y retorna el pid del proceso que se acaba de mover de cola, sino encontro ninguno retorna -1
-
-
-
-//*** esta funcion te pasa las cosas de excet a finshed, sea el caso que sea y te manda el mensaje a cnsola de cada cosa que acaba de mover -- Aunque esta accion de enviar a consola las cosas terminadas no deberia estar aca.. este hilo va a cambiar muchisimo
-
-
-
-/// ********************************************************************************************************///
-/// ***************************************** FIN TERCERA PARTE ********************************************///
-/// ********************************************************************************************************///
-
-
-
-
-
-/// ********************************************************************************************************///
-/// **************************** CUARTA PARTE - PASAR PROCESOS DE WAIT A READY *****************************///
-/// ********************************************************************************************************///
-
-void* estadoWAIT(){
-	int pidParaAvisar;
-
-	bool busqueda(PROCESOS * aviso)
-	{
-		if(aviso->pid == pidParaAvisar)
-			return true;
-
-		return false;
-	}
-
-	//*** el booleano finPorConsolaDelKernel esta en false desde el inicio, en el momento en el que el kernel quiera frenar la planificiacion esta variable pasara a true, y se frenara la planificacion
-	while(!finPorConsolaDelKernel)
-	{
-		sem_wait(&mutex_listaProcesos);
-		sem_wait(&mutex_cola_Wait);
-
-		//***Validamos que haya procesos en la cola de exec
-		if(queue_size(cola_Wait)>0){
-
-			PCB_DATA* pcbDeWait = queue_pop(cola_Wait);
-
-			sem_post(&mutex_cola_Wait);
-
-			if(pcbDeWait->estadoDeProceso == paraEjecutar)
-			{
-				sem_wait(&mutex_cola_Ready);
-					queue_push(cola_Ready, pcbDeWait);
-				sem_post(&mutex_cola_Ready);
-			}
-			else{
-				if(pcbDeWait->estadoDeProceso == finalizado){
-					sem_wait(&mutex_cola_Finished);
-						queue_push(cola_Finished,pcbDeWait);
-					sem_post(&mutex_cola_Finished);
-				}
-				else{
-					sem_wait(&mutex_cola_Wait);
-						queue_push(cola_Wait, pcbDeWait);
-					sem_post(&mutex_cola_Wait);
-				}
-			}
-		}
-		else{
-			sem_post(&mutex_cola_Wait);
-		}
-		sem_post(&mutex_listaProcesos);
-
-	}
-	return NULL;
-}
-
-
-/// ********************************************************************************************************///
-/// ***************************************** FIN CUARTA PARTE ********************************************///
-/// ********************************************************************************************************///
-
-
-
-
-
-
-
-/// ********************************************************************************************************///
-/// **************************** QUINTA PARTE - TRABAJAR PROCESOS EN FINISHED ******************************///
-/// ********************************************************************************************************///
-
-///avisa a al consola que un proceso termino
-
-
-/// ********************************************************************************************************///
-/// ***************************************** FIN QUINTA PARTE ********************************************///
-/// ********************************************************************************************************///
-
-
-
-
-
-
 
 
 ///---- FIN FUNCIONES DE PLANIFICACION ----///
@@ -718,7 +572,8 @@ int main(void) {
 
 
 	//---CONECTANDO CON FILESYSTEM Y MEMORIA
-		log_info(logKernel,"\n\n\nEsperando conexiones:\n-FileSystem\n-Memoria\n");
+	log_info(logKernel,"\n\n\nEsperando conexiones:\n-FileSystem\n-Memoria\n");
+
 	conectarConMemoria();
 	conectarConFS();
 	///----------------------///
@@ -735,7 +590,6 @@ int main(void) {
 	sem_wait(&sem_ConsolaKernelLenvantada);
 
 
-
 	pthread_t hilo_estadoNEW;
 	pthread_create(&hilo_estadoNEW, NULL, estadoNEW, NULL);
 
@@ -743,25 +597,19 @@ int main(void) {
 	pthread_create(&hilo_estadoReady, NULL, estadoReady, NULL);
 
 
-/*
-
-
-	pthread_t hilo_estadoWAIT;
-	pthread_create(&hilo_estadoWAIT, NULL, estadoWAIT, NULL);
-*/
-
 	pthread_t hilo_Inotify;
 	pthread_create(&hilo_Inotify, NULL,INotify, NULL);
+
+
 	//----ME PONGO A ESCUCHAR CONEXIONES---//
 	pthread_t hilo_aceptarConexiones_Cpu_o_Consola;
 	pthread_create(&hilo_aceptarConexiones_Cpu_o_Consola, NULL, aceptarConexiones_Cpu_o_Consola, (void*)listener);
 
 
 	pthread_join(hilo_aceptarConexiones_Cpu_o_Consola, NULL);
-	//pthread_join(hilo_estadoReady, NULL);
+
 	pthread_join(hilo_estadoNEW, NULL);
-	//pthread_join(hilo_estadoEXEC, NULL);
-	//pthread_join(hilo_estadoWAIT, NULL);
+
 	pthread_join(hilo_consolaKernel, NULL);
 
 	log_destroy(logKernel);
@@ -782,11 +630,7 @@ void inicializarSemaforo(){
 	sem_init(&mutex_HistoricoPcb,0,1);
 	sem_init(&mutex_listaProcesos,0,1);
 	sem_init(&mutex_cola_CPUs_libres,0,1);
-	sem_init(&mutex_cola_New,0,1);
-	sem_init(&mutex_cola_Ready,0,1);
-	sem_init(&mutex_cola_Wait,0,1);
-	sem_init(&mutex_cola_Exec,0,1);
-	sem_init(&mutex_cola_Finished,0,1);
+
 	sem_init(&mutex_tablaDeHeap,0,1);
 
 	sem_init(&mutex_tablaGlobalDeArchivos,0,1);

@@ -1,0 +1,23 @@
+[INFO] 22:49:23:344 FileSystem/(4354:4354): Inicializando FileSystem.....
+
+
+[INFO] 22:49:23:344 FileSystem/(4354:4354): Configuracion Inicial: 
+
+[INFO] 22:49:23:346 FileSystem/(4354:4354): Se cargo el archivo Metadata.bin
+[INFO] 22:49:23:347 FileSystem/(4354:4354): [Configurar Todo]-Tamaño de bloque: 64
+[INFO] 22:49:23:347 FileSystem/(4354:4354): [Configurar Todo]-Cantidad de bloques: 24
+[INFO] 22:49:23:347 FileSystem/(4354:4354): Se cargo el bitmap al FileSystem
+[INFO] 22:49:23:347 FileSystem/(4354:4354): [Configurar Todo]-Se creo correctamente el bitmap
+[INFO] 23:03:02:560 FileSystem/(5083:5083): Inicializando FileSystem.....
+
+
+[INFO] 23:03:02:560 FileSystem/(5083:5083): Configuracion Inicial: 
+
+[INFO] 23:03:02:562 FileSystem/(5083:5083): Se cargo el archivo Metadata.bin
+[INFO] 23:03:02:563 FileSystem/(5083:5083): [Configurar Todo]-Tamaño de bloque: 64
+[INFO] 23:03:02:563 FileSystem/(5083:5083): [Configurar Todo]-Cantidad de bloques: 24
+[INFO] 23:03:02:563 FileSystem/(5083:5083): [Configurar Todo]-Creacion del directorio de Archivos
+[INFO] 23:03:02:563 FileSystem/(5083:5083): Se cargo el bitmap al FileSystem
+[INFO] 23:03:02:563 FileSystem/(5083:5083): [Configurar Todo]-Se creo correctamente el bitmap
+[INFO] 23:08:04:691 FileSystem/(5083:5083): [Tramitar Peticiones Del Kernel]-Llego un mensaje del kernel con operacion 0
+[INFO] 23:08:04:692 FileSystem/(5083:5083): Se cerro el kernel y se procede a cerrar el socket
