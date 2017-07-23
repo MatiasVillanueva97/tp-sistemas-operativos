@@ -202,12 +202,14 @@ int almacenarBytesEnPagina(int pid, int pagina, int desplazamiento, int tamano,v
 	contenidoDeLaPagina = memoriaTotal+frame*getConfigInt("MARCO_SIZE");
 	memcpy(contenidoDeLaPagina+desplazamiento, buffer,tamano);
 	sem_wait(&mutex_cache);
-	if (buscarEnLaCache(pid, pagina) != NULL) {
+	void* contenido2 = buscarEnLaCache(pid, pagina);
+	if (contenido2 != NULL) {
+		free(contenido2);
 		log_info(logMemoria,
 				"Se procede a actualizar la cache ya que la pagina modificada se encuentra en la cache");
 		actualizarPaginaDeLaCache(pid, pagina, tamano, desplazamiento, buffer);
 	} else {
-		void* contenido2 = leerMemoriaPosta(pid, pagina);
+		contenido2 = leerMemoriaPosta(pid, pagina);
 		cacheMiss(pid, pagina, contenido2);
 		free(contenido2);
 	}

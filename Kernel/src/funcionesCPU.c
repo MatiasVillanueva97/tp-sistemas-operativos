@@ -377,7 +377,8 @@ void *rutinaCPU(void * arg)
 				if(varGlob == NULL){
 					free(stream);
 					sem_post(&mutex_variables_compartidas);
-					enviarMensaje(socketCPU,noExisteVarCompartida,NULL,sizeof(NULL));
+					int cosaRandom = 12345;
+					enviarMensaje(socketCPU,noExisteVarCompartida,&cosaRandom,sizeof(int));
 				}else{
 					enviarMensaje(socketCPU,envioValorCompartida,&(varGlob->valor),sizeof(int));
 					free(stream);

@@ -141,7 +141,7 @@ int crearElArchivo(char* path){
 		dirp = opendir(rutaTotal);
 	 if (dirp == NULL){
 		 mkdir(rutaTotal,0700);
-			log_info(logFS,"[Crear Archivo]-Se creo el directorio *(directorios+i)");
+			log_info(logFS,"[Crear Archivo]-Se creo el directorio %s",*(directorios+i));
 	}
 	string_append(&rutaTotal,"/");
 	}
@@ -158,6 +158,7 @@ int crearElArchivo(char* path){
 	log_info(logFS,"[Crear Archivo]-Se creo en la ruta: %s el archivo con TAMANO=0\nBLOQUES=[%d]\n", rutaTotal ,posicionDelBitMap);
 	fclose(archivo);
 	free(rutaTotal);
+	liberarArray(directorios);
 	return 1;
 	//falta la parte de escribir el archivo con el tamano de archivo(Seria 0) y asignarle el bloque en el archivo
 }
@@ -293,6 +294,8 @@ void escribirBloque(int bloque,int offset,int size, void* buffer ){
 	fseek(archivo,offset,SEEK_SET);
 	fwrite(buffer,size,1,archivo);
 	log_info(logFS,"[Escribir Bloque]-Se escribio en el archivo: %s",(char*)buffer);
+	free(ruta);
+	free(x);
 	fclose(archivo);
 }
 char* crearStringBloques(int* bloques,int cantidad){
@@ -453,6 +456,14 @@ void* configurarTodo(){
 		perror("Ingreso mal el punto de montaje");
 		exit(-2);
 	}
+	int opcion;
+	printf("Ingrese 1 si quiere crear de 0 el bitmap. Sino, ingrese 0:\n");
+	scanf("%d",opcion);
+	if(opcion == 1){
+		char* rutaDelArchivoDeBitmap2 = obtenerRutaTotal("Bitmap.bin","Metadata");
+		remove(rutaDelArchivoDeBitmap2);
+		free(rutaDelArchivoDeBitmap2);
+	}
 	char* rutaDelArchivoDeBitmap = obtenerRutaTotal("Bitmap.bin","Metadata");
 	FILE* archivoDeBitmap = fopen(rutaDelArchivoDeBitmap,"r+");
 	if(archivoDeBitmap == NULL){
@@ -552,6 +563,8 @@ void tramitarPeticionesDelKernel(int socketKernel){
 						int respuesta= guardarDatos(escritura.path,escritura.offset,escritura.size,escritura.buffer);
 						log_info(logFS,"[Guardar datos de Archivo]-Se envia al kernel: %d", respuesta);
 						enviarMensaje(socketKernel,respuestaBooleanaDeFs,&respuesta,sizeof(respuesta));
+						free(escritura.buffer);
+						free(escritura.path);
 						break;
 					}
 
@@ -593,9 +606,12 @@ int main(void) {
 		exit(-1);
 	}
 	tramitarPeticionesDelKernel(socketKernel);
+
 	liberarConfiguracion();
 	close(socketKernel);
 	close(fd);
+	free(bitMap->bitarray);
+	bitarray_destroy(bitMap);
 
 /*
 	crearElArchivo("passwords/hola.bin");
