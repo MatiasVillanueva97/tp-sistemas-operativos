@@ -316,7 +316,6 @@ void *rutinaCPU(void * arg)
 
 		}break;
 
-
 			//TE MANDO UN NOMBRE DE UN SEMAFORO Y QUIERO QUE HAGAS UN WAIT, ME DEBERIAS DECIR SI ME BLOQUEO O NO
 			case waitSemaforo:{
 			//	printf("[Rutina rutinaCPU] - Entramos al Caso de que CPU pide wait de un semaforo: accion- %d!\n", waitSemaforo);
@@ -339,7 +338,6 @@ void *rutinaCPU(void * arg)
 
 				free(nombreSemaforo);
 
-				puts("enviamos a cpu algo si esta bloquedo o no");
 				enviarMensaje(socketCPU,respuestaBooleanaKernel, &respuestaParaCPU, sizeof(bool));
 			}break;
 
@@ -400,19 +398,22 @@ void *rutinaCPU(void * arg)
 				sem_wait(&mutex_variables_compartidas);
 				
 				t_variableGlobal* varGlob = buscarVariableGlobal(nombreVarGlob);
-				if(varGlob == NULL){
-					int y = 4;
-					enviarMensaje(socketCPU,noExisteVarCompartida,&y,sizeof(int));
-				}else{
+
+				if(varGlob == NULL)
+					enviarMensaje(socketCPU,noExisteVarCompartida,NULL,0);
+				else
 					enviarMensaje(socketCPU,envioValorCompartida,&(varGlob->valor),sizeof(int));
-				}
 				
+
 				sem_post(&mutex_variables_compartidas);
 				free(stream);
 
 			}break;
 
 			case reservarVariable:{
+				log_info(logKernel,"[Rutina rutinaCPU] - Entramos al Caso de que CPU pide reservar una variable compartida: accion- %d!\n", reservarVariable);
+
+
 				int tamano = *(int*) stream;
 				int pid =  *(int*) (stream+4);
 				free(stream);
@@ -445,6 +446,8 @@ void *rutinaCPU(void * arg)
 				}
 			}break;
 			case liberarVariable:{
+				log_info(logKernel,"[Rutina rutinaCPU] - Entramos al Caso de que CPU pide liberar una variable compartida: accion- %d!\n", liberarVariable);
+
 				int offset = *(int*) stream;
 				int pid = *(int*) (stream+4);
 				free(stream);
@@ -471,6 +474,7 @@ void *rutinaCPU(void * arg)
 
 
 				cpu_quitarDeLista(socketCPU);
+				log_info(logKernel,"[Rutina rutinaCPU] - Entramos al Caso de que CPU pide liberar una variable compartida: accion- %d!\n", liberarVariable);
 
 			}break;
 

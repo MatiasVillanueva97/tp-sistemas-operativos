@@ -166,8 +166,7 @@ void liberarEntradaTablaGlobalDeArchivosDeProceso(
 }
 
 bool liberarRecursosArchivo(int pid) {
-	ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* entrada_a_eliminar =
-			encontrarElDeIgualPid(pid);
+	ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* entrada_a_eliminar =	encontrarElDeIgualPid(pid);
 	int i;
 	int tamanoTabla = list_size(entrada_a_eliminar->tablaProceso);
 
