@@ -401,7 +401,8 @@ void *rutinaCPU(void * arg)
 				
 				t_variableGlobal* varGlob = buscarVariableGlobal(nombreVarGlob);
 				if(varGlob == NULL){
-					enviarMensaje(socketCPU,noExisteVarCompartida,NULL,sizeof(NULL));
+					int y = 4;
+					enviarMensaje(socketCPU,noExisteVarCompartida,&y,sizeof(int));
 				}else{
 					enviarMensaje(socketCPU,envioValorCompartida,&(varGlob->valor),sizeof(int));
 				}
