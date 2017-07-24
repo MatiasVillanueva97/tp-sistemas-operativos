@@ -190,7 +190,12 @@ bool proceso_Finalizar(int pid, int exitCode){
 }
 
 void proceso_avisarAConsola(int socketConsola, int pid, int exitCode){
+	if (exitCode == 0){
 		enviarMensaje(socketConsola, pidFinalizado, &pid, sizeof(int));
+	}else{
+		int dosEnteros[] = {pid, exitCode};
+		enviarMensaje(socketConsola,errorFinalizacionPid,dosEnteros, sizeof(int)*2);
+	}
 		log_info(logKernel,"Se acaba de mandar a la consola n°: %d, que el proceso %d acaba de finalizar con exit code: %d\n", socketConsola, pid, exitCode);
 }
 
@@ -233,9 +238,9 @@ void proceso_liberarRecursos(PROCESOS* proceso){
 		log_info(logKernel,"Se liberaron correctamente los recursos del heap del pid %d\n",proceso->pid);
 	}
 
-	//(liberarRecursosArchivo(proceso->pcb->pid)){
-	//	log_info(logKernel,"No se liberaron los recursos del de los archivos correctamenete del pid %d\n", proceso->pid);
-	//}
+	if(liberarRecursosArchivo(proceso->pcb->pid)){
+		log_info(logKernel,"No se liberaron los recursos del de los archivos correctamenete del pid %d\n", proceso->pid);
+	}
 	//else{
 	//	log_info(logKernel,"Se liberaron correctamente de los archivos del heap del pid %d\n",proceso->pid);
 	//}

@@ -294,6 +294,68 @@ void sigint_handler(int signal) {
 	exit(-1);
 	return;
 }
+void switchManejoError(int exitCode){
+	switch(exitCode){
+		case noSePudoReservarRecursos :{
+			printf("Se finalizó porque no se pudo reservar recursos.\n");
+			}break;
+		case archivoInexistente :{
+			printf("Se finalizó porque el archivo es inexistente.\n");
+			}break;
+		case lecturaDenegadaPorFaltaDePermisos :{
+			printf("Se finalizó porque no se tienen permisos de lectura para el archivo.\n");
+				}break;
+		case escrituraDenegadaPorFaltaDePermisos :{
+			printf("Se finalizó porque no se tienen permisos de escritura para el archivo.\n");
+				}break;
+		case excepcionMemoria :{
+			printf("Se finalizó porque se lanzo una excepción de memoria.\n");
+				}break;
+
+		case finalizacionDesdeConsola :{
+			printf("Se finalizó porque se utilizo el comando de finalizacion por consola.\n");
+				}break;
+		case reservarMasMemoriaQueTamanoPagina:{
+			printf("Se finalizó porque se reservó más memoria que tamanio de pagina.\n");
+				}break;
+		case noSePuedenAsignarMasPaginas :{
+			printf("Se finalizó porque no se pueden asignar mas páginas.\n");
+				}break;
+		case finalizacionDesdeKenel :{
+			printf("Se finalizó porque se utilizo el comando de finalizacion por consola del Kernel.\n");
+				}break;
+		case intentoAccederAUnSemaforoInexistente:{
+			printf("Se finalizó porque se intento acceder a un semaforo inexistente.\n");
+				}break;
+		case intentoAccederAUnaVariableCompartidaInexistente:{
+			printf("Se finalizó porque se intento acceder a una variable compartida inexistente.\n");
+				}break;
+		case lecturaDenegadaPorFileSystem:{
+			printf("Se finalizó porque se denego la lectura por el FileSystem.\n");
+				}break;
+		case escrituraDenegadaPorFileSystem:{
+			printf("Se finalizó porque se denego el escritura por el FileSystem.\n");
+				}break;
+
+		case noSeCreoElArchivoPorFileSystem:{
+			printf("Se finalizó porque se denego la creacion por el FileSystem.\n");
+				}break;
+		case falloEnElFileDescriptor:{
+			printf("Se finalizó porque ocurrio un fallo en el File Descriptor.\n");
+				}break;
+		case borradoFallidoOtroProcesoLoEstaUtilizando:{
+			printf("Se finalizó porque no se pudo borrar el archivo debido a que otro proceso lo esta utilizando.\n");
+				}break;
+		case borradoFallidoPorFileSystem:{
+			printf("Se finalizó porque se denego el borrado por FileSystem.\n");
+				}break;
+		case seQuiereUtilizarUnaVariableNoDeclarada:{
+			printf("Se finalizó porque se quiso utilizar una variable no declarado.\n");
+				}break;
+		default:{
+		}
+	}
+}
 
 
 int main(void)
@@ -489,15 +551,20 @@ void* rutinaEscucharKernel() {
 			log_info(logConsola,"Se finalizo el pid %d correctamente",pid);
 			break;
 		}
+
 		case (errorFinalizacionPid): {
 			int pid;
+			int exitCode;
 			pid = (*(int*) stream);
+			exitCode = (*(int*) (stream+4));
 			matarHiloPrograma(pid);
-			log_error(logConsola,"No se ha finalizado correctamente el pid: %d \n", pid);
+			log_warning(logConsola,"No se ha finalizado correctamente el pid: %d \n", pid,exitCode);
 			printf("No se ha finalizado correctamente el pid: %d \n", pid);
+			switchManejoError(exitCode);
 			break;
 		}
-		case (0): {
+
+		case (0):{
 			log_error(logConsola,"Se desconecto el kernel");
 			printf("Se desconecto el kernel\n");
 			sem_wait(&mutex_lista);
@@ -507,6 +574,7 @@ void* rutinaEscucharKernel() {
 			exit(-1);
 			break;
 		}
+
 		case (pidFinalizadoPorFaltaDeMemoria): {
 			int pid;
 			pid = (*(int*) stream);
@@ -517,12 +585,14 @@ void* rutinaEscucharKernel() {
 			break;
 
 		}
+
 		default: {
 			perror("Error: no se pudo obtener mensaje \n");
 		}
-		}
+	}
+
 		if (operacion != 0)
 			free(stream);
 
-}
+	}
 }

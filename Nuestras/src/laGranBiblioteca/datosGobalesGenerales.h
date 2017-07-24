@@ -170,5 +170,29 @@ enum tipos_de_Acciones{
 		respuestaConContenidoDeFs = 408
 };
 
+enum exitCode{
+	finalizadoCorrectamente =0,
+	noSePudoReservarRecursos = -1,
+	archivoInexistente = -2,
+	lecturaDenegadaPorFaltaDePermisos = -3,
+	escrituraDenegadaPorFaltaDePermisos = -4,
+	excepcionMemoria = -5,
+	deconexionConsola = -6,
+	finalizacionDesdeConsola = -7,
+	reservarMasMemoriaQueTamanoPagina = -8,
+	noSePuedenAsignarMasPaginas = -9,
+	finalizacionDesdeKenel = -10,
+	intentoAccederAUnSemaforoInexistente = -11,
+	intentoAccederAUnaVariableCompartidaInexistente = -12,
+	lecturaDenegadaPorFileSystem = -13,
+	escrituraDenegadaPorFileSystem = -14,
+	noSeCreoElArchivoPorFileSystem = -15,
+	falloEnElFileDescriptor = -16,
+	borradoFallidoOtroProcesoLoEstaUtilizando = -17,
+	borradoFallidoPorFileSystem = -18,
+	seQuiereUtilizarUnaVariableNoDeclarada = -19
+
+}; //Spisso was here
+
 
 #endif /* DATOSGOBALESGENERALES_H_ */
