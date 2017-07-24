@@ -104,13 +104,13 @@ void * consolaKernel()
 			"4- Modificar el grado de multiprogramación del sistema.\n"
 			"5- Finalizar un proceso.\n"
 			"6- Detener la planificación.\n"
-			"7- Ver cuantas CPUs hay.\n"
-			"8- Imprimir de nuevo el menu.\n"
-			"9- Imprimir semaforos.\n\n"
+			"7- Imprimir de nuevo el menu.\n"
 			"Elija el numero de su opcion: ");
 	sem_post(&sem_ConsolaKernelLenvantada);
+
 	scanf("%d", &opcion);
 
+	// Esta entrando por el default
 
 	while(1)
 	{
@@ -279,24 +279,19 @@ void * consolaKernel()
 
 				default: {
 					printf("\nOpcion invalida! Intente nuevamente.\n");
-				}
+
+					}
 					break;
 				}
-/*
-				2. Obtener para un proceso dado:
-				a. La cantidad de rafagas ejecutadas.
-				b. La cantidad de operaciones privilegiadas que ejecutó.
-				c. Obtener la tabla de archivos abiertos por el proceso.
-				d. La cantidad de páginas de Heap utilizadas
-				i. Cantidad de acciones alocar realizadas en cantidad de operaciones y en
-				bytes
-				ii. Cantidad de acciones liberar realizadas en cantidad de operaciones y en
-				bytes
-				e. Cantidad de syscalls ejecutadas*/
+				opcion = NULL;
+
 			}break;
+			// Aca termina el Case 2, el de tirar estadisticas de un pid dado
+
 			case 3:{
 				 imprimirTablaGlobaldeArchivos();
 			}break;
+
 			case 4:{
 				int gradoNuevo;
 				printf("\nIngrese nuevo Grado de multiprogramacion: ");
@@ -314,6 +309,7 @@ void * consolaKernel()
 				//probablemente tengamos qeu poner un semaforo para la variable global de grado multiprogramacion
 				setConfigInt("GRADO_MULTIPROG", gradoNuevo);
 			}break;
+
 			case 5:{
 				int pid;
 				printf("\nIngrese pid del proceso a finalizar: ");
@@ -329,29 +325,16 @@ void * consolaKernel()
 				finPorConsolaDelKernel=true;
 				printf("\nPlanificacion detenida.\n");
 			}break;
-			case 7:{
 
-				int a= list_size(lista_CPUS);
-				printf("Pc en lista: %d", a);
-			}break;
-			case 8:{
-				printf("\n\nHola Bienvenido al Kernel!\n\n"
-						"Aca esta el menu de todas las opciones que tiene para hacer:\n"
-						"1- Obtener el listado de procesos del sistema.\n"
-						"2- Obtener datos sobre un proceso.\n"
-						"3- Obtener la tabla global de archivos.\n"
-						"4- Modificar el grado de multiprogramación del sistema.\n"
-						"5- Finalizar un proceso.\n"
-						"6- Detener la planificación.\n"
-						"7- Imprimir de nuevo el menu.\n\n");
-			}break;
-			case 9:{
+	/*		case 9:{
 				imprimirSemaforos();
-			}
+			}break;
+		*/
 			default:{
-
+				printf("Comando invalido! \n");
 			}break;
 		}
+			opcion = NULL;
 
 		printf("\n\nAca esta el menu de todas las opciones que tiene para hacer:\n"
 			"1- Obtener el listado de procesos del sistema de alguna cola.\n"

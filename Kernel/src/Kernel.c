@@ -502,20 +502,9 @@ void * aceptarConexiones_Cpu_o_Consola( void *arg ){
 			{
 				log_info(logKernel,"\n[rutina aceptarConexiones] - Nueva CPU Conectada\nSocket CPU %d\n\n", nuevoSocket);
 
-				t_CPU* nuevaCPU = malloc(sizeof(t_CPU));
-
-				nuevaCPU->socketCPU = nuevoSocket;
-				nuevaCPU->esperaTrabajo = true;
-
-
-				sem_wait(&mutex_cola_CPUs_libres);
-					list_add(lista_CPUS,nuevaCPU);
-				sem_post(&mutex_cola_CPUs_libres);
-
-
-
 				pthread_t hilo_rutinaCPU;
-				cpu_crearHiloDetach(nuevaCPU->socketCPU);
+
+				cpu_crearHiloDetach(nuevoSocket);
 			}break;
 
 			default:
@@ -538,7 +527,7 @@ int main(void) {
 
 		//***Inicializo las listas
 		avisos = list_create();
-		lista_CPUS = list_create();
+
 		//listaDeEsperaSemaforos = list_create();
 		tablaDeHeapMemoria = list_create();
 		tablaGlobalDeArchivos = list_create();
@@ -629,7 +618,6 @@ int main(void) {
 void inicializarSemaforo(){
 	sem_init(&mutex_HistoricoPcb,0,1);
 	sem_init(&mutex_listaProcesos,0,1);
-	sem_init(&mutex_cola_CPUs_libres,0,1);
 
 	sem_init(&mutex_tablaDeHeap,0,1);
 

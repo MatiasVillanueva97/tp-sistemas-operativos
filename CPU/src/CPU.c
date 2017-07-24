@@ -163,11 +163,14 @@ int main(void)
 				free(pcbSerializado);
 			}
 		}
+		terminoPrograma = true;
+		hayPCB = false;
+
+
 
 
 		//libera la memoria malloqueada por el PCB
 		destruirPCB_Puntero(pcb);
-		hayPCB = false;
 	}
 
 
@@ -258,7 +261,7 @@ void sigint_handler(int signal) {
 		exit(-1);
 		return;
 	}
-	log_info(logCPU,"Se recibio una SIGINT, la CPU se desconectara luego de terminada la instruccion\n");
+	log_info(logCPU,"Se recibio una SIGINT, la CPU se desconectara luego de terminada la rafaga\n");
 	return;
 }
 

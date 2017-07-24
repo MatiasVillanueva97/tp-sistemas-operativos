@@ -66,7 +66,7 @@ enum exitCode{
 	borradoFallidoPorFileSystem = -18,
 	seQuiereUtilizarUnaVariableNoDeclarada = -19
 
-};
+}; //Spisso was here
 
 enum estadosProcesos{
 	finalizado = 0,
@@ -94,17 +94,9 @@ enum nuevosEstadosxd{
 	aFinalizar = 7
 };
 
-//ESTRUCTURA PARA MANEJAR LAS CPUS
-
-typedef struct{
-	int socketCPU;
-	bool esperaTrabajo;
-	PCB_DATA* pcbQueSeLlevo;
-}t_CPU;
-
-t_list* lista_CPUS;
 t_list* tablaDeHeapMemoria;
 t_list* tablaEstadisticaDeHeap;
+
 typedef struct{
 	int pid;
 	int tamanoAlocadoEnOperaciones;
@@ -113,15 +105,13 @@ typedef struct{
 	int tamanoLiberadoEnBytes;
 	int cantidadDePaginasHistoricasPedidas;
 }filaEstadisticaDeHeap;
+
 typedef struct{
 	int pid;
 	int pagina;
 	int tamanoDisponible;
 
 }filaTablaDeHeapMemoria;
-
-/// Estructura para manejar los semaforos
-
 
 //*** Esta lista es porque una consola puede tener una serie de procesos --- Igual creo que esto tiene que morir
 t_list * avisos;
@@ -141,6 +131,7 @@ typedef struct{
 } PROCESOS;
 
 //***Tabla de archivos para cada proceso
+
 
 //*** Tabla global de procesos
 typedef struct {
@@ -195,7 +186,7 @@ t_queue * cola_CPUs_libres;
 ///----INICIO SEMAFOROS----///
 pthread_mutex_t mutex_HistoricoPcb; // deberia ser historico pid
 pthread_mutex_t mutex_listaProcesos;
-pthread_mutex_t mutex_cola_CPUs_libres;
+
 pthread_mutex_t mutex_tablaGlobalDeArchivos;
 pthread_mutex_t mutex_tablaGlobalDeArchivosDeProcesos;
 

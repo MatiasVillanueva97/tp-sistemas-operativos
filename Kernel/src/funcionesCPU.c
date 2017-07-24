@@ -12,16 +12,6 @@
 t_mensajeDeProceso deserializarMensajeAEscribir(void* stream);
 
 
-void cpu_quitarDeLista(socketCPU){
-
-	bool busqueda(t_CPU* nodo)
-	{
-		return nodo->socketCPU == socketCPU;
-	}
-
-	list_remove_and_destroy_by_condition(lista_CPUS,busqueda,free);
-}
-
 void cpu_crearHiloDetach(int nuevoSocket){
 	pthread_attr_t attr;
 	pthread_t hilo_rutinaCPU ;
@@ -104,15 +94,6 @@ void *rutinaCPU(void * arg)
 
 	log_info(logKernel,"[Rutina rutinaCPU] - Entramos al hilo de la CPU cuyo socket es: %d.\n", socketCPU);
 
-	bool busqueda(t_CPU* cpu){
-		return cpu->socketCPU == socketCPU;
-	}
-
-	sem_wait(&mutex_cola_CPUs_libres);
-			t_CPU* estaCPU = list_find(lista_CPUS,busqueda);
-	sem_post(&mutex_cola_CPUs_libres);
-
-
 	//*** Voy a trabajar con esta CPU hasta que se deconecte
 	while(todaviaHayTrabajo){
 
@@ -174,8 +155,6 @@ void *rutinaCPU(void * arg)
 
 				pcb = deserializarPCB(stream);
 
-				// TODO aca algo pasa con el pcb que esta llegando cualquier cosa
-
 				printf("CPU - Se manda a finalizar este pid: %d\n", pcb->pid);
 
 				sem_wait(&mutex_listaProcesos);
@@ -196,9 +175,6 @@ void *rutinaCPU(void * arg)
 				}
 				sem_post(&mutex_listaProcesos);
 
-				sem_wait(&mutex_cola_CPUs_libres);
-				   	estaCPU->esperaTrabajo = true;
-				sem_post(&mutex_cola_CPUs_libres);
 				//sem_post(&gradoDeMultiprogramacion);
 				free(stream);
 
@@ -472,10 +448,6 @@ void *rutinaCPU(void * arg)
 				log_info(logKernel,"[Rutina rutinaCPU] - Desconecto la CPU N°: %d\n", socketCPU);
 				todaviaHayTrabajo=false;
 
-
-				cpu_quitarDeLista(socketCPU);
-				log_info(logKernel,"[Rutina rutinaCPU] - Entramos al Caso de que CPU pide liberar una variable compartida: accion- %d!\n", liberarVariable);
-
 			}break;
 
 			//QUE PASA CUANDO SE MUERTE LA CPU
@@ -483,7 +455,6 @@ void *rutinaCPU(void * arg)
 				log_info(logKernel,"[Rutina rutinaCPU] - Se recibio una accion que no esta contemplada: %d se cerrara el socket\n",accionCPU);
 				todaviaHayTrabajo=false;
 
-				cpu_quitarDeLista(socketCPU);
 			}break;
 		}
 
