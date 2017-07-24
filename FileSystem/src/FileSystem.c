@@ -610,7 +610,6 @@ int main(void) {
 	liberarConfiguracion();
 	close(socketKernel);
 	close(fd);
-	free(bitMap->bitarray);
 	bitarray_destroy(bitMap);
 
 /*
