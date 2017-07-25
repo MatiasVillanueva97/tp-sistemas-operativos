@@ -108,7 +108,9 @@ void * consolaKernel()
 			"Elija el numero de su opcion: ");
 	sem_post(&sem_ConsolaKernelLenvantada);
 
-	scanf("%d", &opcion);
+	char buffer[256];
+	fgets(buffer,256,stdin);
+	opcion = atoi(buffer);
 
 	// Esta entrando por el default
 
@@ -124,7 +126,8 @@ void * consolaKernel()
 						"5- Cola de Finish.\n"
 						"6- Todas las colas.\n"
 						"Elija el numero de su opcion: ");
-						scanf("%d", &opcion);
+					fgets(buffer,256,stdin);
+					opcion = atoi(buffer);
 
 				switch(opcion){
 					case 1:{
@@ -189,7 +192,9 @@ void * consolaKernel()
 				*/
 				int pid;
 				printf("\Ingrese pid:\n");
-				scanf("%d", &pid);
+
+				fgets(buffer,256,stdin);
+				pid = atoi(buffer);
 				printf("\nSelecione opcion para pid:\n"
 								"1- Cantidad de rafagas ejecutadas.\n"
 								"2- Cantidad de operaciones privilegiadas que ejecuto\n"
@@ -198,7 +203,9 @@ void * consolaKernel()
 								"5- Cantidad de acciones alocar realizadas en bytes y en operaciones\n"
 								"6- Cantidad de acciones liberar realizadas en bytes y en operaciones\n\n"
 								"Elija el numero de su opcion: ");
-								scanf("%d", &opcion);
+
+								fgets(buffer,256,stdin);
+								opcion = atoi(buffer);
 								sem_wait(&mutex_listaProcesos);
 									bool busqueda(PROCESOS* proceso){
 										return pid == proceso->pid;
@@ -295,14 +302,20 @@ void * consolaKernel()
 			case 4:{
 				int gradoNuevo;
 				printf("\nIngrese nuevo Grado de multiprogramacion: ");
-				scanf("%d",&gradoNuevo);
+				char buffer[256];
+				fgets(buffer,256,stdin);
+				gradoNuevo = atoi(buffer);
 				int i;
-				sem_wait(&mutex_gradoDeMultiprogramacion);
-				numeroGradoDeMultiprogramacion+=gradoNuevo-getConfigInt("GRADO_MULTIPROG");
-				sem_post(&mutex_gradoDeMultiprogramacion);
-				if(gradoNuevo > getConfigInt("GRADO_MULTIPROG")){
-					for(i=0;i<gradoNuevo-getConfigInt("GRADO_MULTIPROG");i++){
-						sem_post(&gradoDeMultiprogramacion);
+				if (gradoNuevo>0){
+					sem_wait(&mutex_gradoDeMultiprogramacion);
+					numeroGradoDeMultiprogramacion+=gradoNuevo-getConfigInt("GRADO_MULTIPROG");
+					sem_post(&mutex_gradoDeMultiprogramacion);
+					if(gradoNuevo > getConfigInt("GRADO_MULTIPROG")){
+						for(i=0;i<gradoNuevo-getConfigInt("GRADO_MULTIPROG");i++){
+							sem_post(&gradoDeMultiprogramacion);
+						}
+					}else{
+						printf("Comando invalido! \n");
 					}
 				}
 
@@ -313,8 +326,9 @@ void * consolaKernel()
 			case 5:{
 				int pid;
 				printf("\nIngrese pid del proceso a finalizar: ");
-				scanf("%d",&pid);
 
+				fgets(buffer,256,stdin);
+				pid = atoi(buffer);
 				sem_wait(&mutex_listaProcesos);
 				if(proceso_Finalizar(pid,  finalizacionDesdeKenel)) //cambiar el numero del exit code, por el que sea el correcto
 					printf("\nFinalizacion exitosa.\n");
@@ -327,6 +341,11 @@ void * consolaKernel()
 				finPorConsolaDelKernel=true;
 				printf("\nPlanificacion detenida.\n");
 			}break;
+
+			case 7:
+
+			break;
+
 
 	/*		case 9:{
 				imprimirSemaforos();
@@ -345,10 +364,10 @@ void * consolaKernel()
 			"4- Modificar el grado de multiprogramación del sistema.\n"
 			"5- Finalizar un proceso.\n"
 			"6- Detener la planificación.\n"
-			"7- Ver cuantas CPUs hay.\n"
-			"8- Imprimir de nuevo el menu.\n\n"
+			"7- Imprimir de nuevo el menu.\n\n"
 			"Elija el numero de su opcion: ");
-		scanf("%d", &opcion);
+		fgets(buffer,256,stdin);
+		opcion = atoi(buffer);
 	}
 }
 
