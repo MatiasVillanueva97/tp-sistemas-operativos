@@ -131,6 +131,11 @@ int buscarPosicionLibre(){
 }
 
 int crearElArchivo(char* path){
+	int posicionDelBitMap = buscarPosicionLibre();
+	if(posicionDelBitMap == -1){
+		log_error(logFS,"[Crear Archivo]-No hay bloques disponibles ");
+		return 0;
+	}
 	 DIR *dirp;
 	char* rutaTotal=obtenerRutaTotal("","Archivos");
 	//strcpy(rutaTotal,getConfigString("PUNTO_MONTAJE"));
@@ -147,11 +152,6 @@ int crearElArchivo(char* path){
 	}
 	string_append(&rutaTotal,*(directorios+i));
 	FILE* archivo = fopen(rutaTotal,"w");
-	int posicionDelBitMap = buscarPosicionLibre();
-	if(posicionDelBitMap == -1){
-		log_error(logFS,"[Crear Archivo]-No hay bloques disponibles ");
-		return 0;
-	}
 	bitarray_set_bit(bitMap,posicionDelBitMap);
 
 	fprintf(archivo,"TAMANO=0\nBLOQUES=[%d]\n",posicionDelBitMap);
