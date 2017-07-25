@@ -293,7 +293,7 @@ void *rutinaCPU(void * arg)
 			//TE MANDO UN NOMBRE DE UN SEMAFORO Y QUIERO QUE HAGAS UN WAIT, ME DEBERIAS DECIR SI ME BLOQUEO O NO
 			case waitSemaforo:{
 			//	printf("[Rutina rutinaCPU] - Entramos al Caso de que CPU pide wait de un semaforo: accion- %d!\n", waitSemaforo);
-
+				bool respuestaParaCPU = false;
 				char* nombreSemaforo;
 
 				PCB_DATA* pcbRecibido = deserializarPCBYSemaforo(stream, &nombreSemaforo);
@@ -301,12 +301,15 @@ void *rutinaCPU(void * arg)
 				//Validar que el proceso no haya sido finalizado, responder siempre a la CPU
 
 				sem_wait(&mutex_listaProcesos);
-				PCB_DATA* pcbDelProcesoActual = modificarPCB(pcbRecibido);
-
-				PROCESOS* proceso = buscarProceso(pcbDelProcesoActual->pid);
+				PROCESOS* proceso = buscarProceso(pcbRecibido->pid);
+				if(proceso->pcb->estadoDeProceso == aFinalizar ){
+					proceso_Finalizar(proceso->pcb->pid,proceso->pcb->exitCode);
+				}else{
+					PCB_DATA* pcbDelProcesoActual = modificarPCB(pcbRecibido);
 					sem_wait(&mutex_semaforos_ANSISOP);
-					bool respuestaParaCPU = (proceso->pcb->estadoDeProceso == finish) ? false : SEM_wait(nombreSemaforo, pcbDelProcesoActual);
+					respuestaParaCPU = (proceso->pcb->estadoDeProceso == finish) ? false : SEM_wait(nombreSemaforo, pcbDelProcesoActual);
 					sem_post(&mutex_semaforos_ANSISOP);
+				}
 
 				sem_post(&mutex_listaProcesos);
 

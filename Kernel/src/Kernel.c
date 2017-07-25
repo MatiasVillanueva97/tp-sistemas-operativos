@@ -149,6 +149,8 @@ bool proceso_Finalizar_conAviso(int pid, int exitCode, bool conAvisoAConsola)
 	PROCESOS* procesoAFianalizar = list_find(avisos, busqueda);
 	if(procesoAFianalizar != NULL && procesoAFianalizar->pcb->estadoDeProceso == enCPU ){
 		procesoAFianalizar->pcb->estadoDeProceso = aFinalizar;
+		procesoAFianalizar->pcb->exitCode = exitCode;
+		flag=true;
 	}
 
 	else  if(procesoAFianalizar != NULL && procesoAFianalizar->pcb->estadoDeProceso != finish){
