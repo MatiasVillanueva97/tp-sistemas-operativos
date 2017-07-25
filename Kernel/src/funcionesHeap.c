@@ -123,10 +123,11 @@ int manejarLiberacionDeHeap(int pid,int offset){
 		almacenamiento.direccion.page = fila->pagina;
 		almacenamiento.direccion.size = sizeof(HeapMetadata);
 		almacenamiento.id = fila->pid;
-		serializarAlmacenarBytes2(almacenamiento);
+		void* cosa = serializarAlmacenarBytes2(almacenamiento);
 		log_info(logKernel,"Se pide almacenar para el pid %d en la pagina %d, en el offset %d, con el siguiente tamano %d.",almacenamiento.id,almacenamiento.direccion.page,almacenamiento.direccion.offset,almacenamiento.direccion.size);
-		enviarMensaje(socketMemoria,almacenarBytes,serializarAlmacenarBytes2(almacenamiento),sizeof(int)*4+sizeof(HeapMetadata));
+		enviarMensaje(socketMemoria,almacenarBytes,cosa,sizeof(int)*4+sizeof(HeapMetadata));
 		free(stream);
+		free(cosa);
 		recibirMensaje(socketMemoria,&stream);
 
 		if(fila->tamanoDisponible +loQueTengoQueEscribir->tamanoLibre < size_pagina-sizeof(HeapMetadata)){

@@ -81,6 +81,7 @@ PCB_DATA* quitarPCBDeDondeEste(PCB_DATA* pcb){
 			return quitarPCBDeCola(cola_Ready,pcb->pid);
 		}break;
 	case enCPU:
+	case aFinalizar:
 	case exec:{
 			return quitarPCBDeCola(cola_Exec,pcb->pid);
 		}break;

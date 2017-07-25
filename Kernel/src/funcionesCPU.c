@@ -162,7 +162,6 @@ void *rutinaCPU(void * arg)
 					PROCESOS* proceso = buscarProceso(pcb->pid);
 					proceso->pcb->estadoDeProceso = exec;
 					if(pcb->exitCode<0){
-						//finalizarPid(pcb,pcb->exitCode);
 						proceso_Finalizar(pcb->pid, pcb->exitCode);
 					}
 					else{
@@ -175,7 +174,6 @@ void *rutinaCPU(void * arg)
 				}
 				sem_post(&mutex_listaProcesos);
 
-				//sem_post(&gradoDeMultiprogramacion);
 				free(stream);
 
 			}break;
@@ -356,7 +354,7 @@ void *rutinaCPU(void * arg)
 				}else{
 					enviarMensaje(socketCPU,envioValorCompartida,&(varGlob->valor),sizeof(int));
 					free(stream);
-					if(recibirMensaje(socketCPU,stream) == asignarValorCompartida){
+					if(recibirMensaje(socketCPU,&stream) == asignarValorCompartida){
 						varGlob->valor = *((int*)stream);
 					}
 					sem_post(&mutex_variables_compartidas);

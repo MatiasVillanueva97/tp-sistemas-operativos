@@ -262,6 +262,7 @@ void borrarEnTablaGlobalDeArchivo(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_d
 				if (string_contains(entrada_de_tabla_proceso->flags, "w")) {
 					void* pedidoEscritura = serializarEscribirMemoria(msj.tamanio, entrada_de_tabla_proceso->offset,entrada_de_archivo->path, msj.mensaje);
 					enviarMensaje(socketFS, guardarDatosDeArchivo,pedidoEscritura,sizeof(int) + strlen(entrada_de_archivo->path)+ msj.tamanio+ sizeof(int) * 2);
+					free(pedidoEscritura);
 					rtaCPU = recibirBooleanoDeFS(msj.pid,escrituraDenegadaPorFileSystem);
 				} else {
 					finalizarPid(msj.pid, escrituraDenegadaPorFaltaDePermisos);
@@ -342,6 +343,7 @@ void borrarEnTablaGlobalDeArchivo(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_d
 						finalizarPid(estructura.pid, lecturaDenegadaPorFileSystem); //Respuesta Mala de FS, no hay que leer en el archivo
 						enviarMensaje(socketCPU, respuestaBooleanaKernel,&rtaCPU, sizeof(int));
 					}
+					free(contenido);
 				} else {
 					finalizarPid(estructura.pid, lecturaDenegadaPorFaltaDePermisos);
 					enviarMensaje(socketCPU, respuestaBooleanaKernel, &rtaCPU,sizeof(int));
@@ -362,6 +364,7 @@ void borrarEnTablaGlobalDeArchivo(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_d
 		void* stream2;
 		recibirMensaje(socketFS, &stream2);
 		int rtaFS = (*(int*) stream2);
+		free(stream2);
 		if (rtaFS) {
 			return 1;
 		} else {

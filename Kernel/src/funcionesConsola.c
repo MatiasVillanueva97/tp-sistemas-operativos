@@ -48,7 +48,7 @@ void consola_finalizarTodosLosProcesos(int socketConsola){
 		if (process->socketConsola == socketConsola) {
 				if (process->pcb->estadoDeProceso == enCPU)
 					process->pcb->estadoDeProceso = exec;
-					proceso_Finalizar_conAviso(process->pid, -6, false);
+					proceso_Finalizar_conAviso(process->pid,deconexionConsola, false);
 
 					log_info(logKernel, "Murio el proceso: %d\n", process->pid);
 

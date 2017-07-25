@@ -610,7 +610,6 @@ int main(void) {
 	liberarConfiguracion();
 	close(socketKernel);
 	close(fd);
-	bitarray_destroy(bitMap);
 
 /*
 	crearElArchivo("passwords/hola.bin");

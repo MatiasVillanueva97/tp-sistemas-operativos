@@ -336,8 +336,10 @@ void AnSISOP_wait(t_nombre_semaforo identificador_semaforo) {
 	free(stream);
 	pcb->programCounter--;
 	bool respuestaDeKernel;
-	if (recibirMensajeSeguro(socketKernel, &stream) == respuestaBooleanaKernel)
+	if (recibirMensajeSeguro(socketKernel, &stream) == respuestaBooleanaKernel){
 		respuestaDeKernel = *((bool*) stream);
+		free(stream);
+	}
 	else {
 		terminoPrograma = true;
 		log_error(logCPU,"Error en el protocolo de comunicacion\n");
@@ -364,8 +366,10 @@ void AnSISOP_signal(t_nombre_semaforo identificador_semaforo) {
 	free(stream);
 	pcb->programCounter--;
 	bool respuestaDeKernel;
-	if (recibirMensajeSeguro(socketKernel, &stream) == respuestaBooleanaKernel)
+	if (recibirMensajeSeguro(socketKernel, &stream) == respuestaBooleanaKernel){
 		respuestaDeKernel = *((bool*) stream);
+		free(stream);
+	}
 	else {
 		terminoPrograma = true;
 		log_info(logCPU,"Error en el protocolo de comunicacion\n");
@@ -400,6 +404,7 @@ t_puntero AnSISOP_reservar(t_valor_variable espacio) {
 	}break;
 	case pedidoRechazadoPorPedirMas: { // en caso de que se pida alocar mas que el tamanio de una pagina
 		log_info(logCPU,"Se intentó reservar más memoria que el tamaño de una página\n");
+		free(stream);
 		terminoPrograma = true;
 		pcb->exitCode = -8;
 	}break;

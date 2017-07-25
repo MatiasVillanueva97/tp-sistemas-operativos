@@ -34,7 +34,7 @@ void* rutinaPrograma(void*);
 char* diferencia(char*,char*);
 void transformarFechaAInts(char*, int[4]);
 void* rutinaEscucharKernel();
-
+void switchManejoError(int exitCode);
 
 
 
@@ -139,19 +139,21 @@ void transformarFechaAInts(char * fecha, int arrayFecha[4]){
 	for (i=0;i<4;i++){
 		arrayFecha[i] = atoi(arrayCalendario[i]);
 	}
+	liberarArray(arrayCalendario);
 }
 char* transformarArrayAFecha(int arrayInt[4]){
 		int i;
 		char* fecha[4];
 		char * aux;
-		for(i=0;i<4;i++){
+		aux = string_itoa(arrayInt[0]);
+		for(i=1;i<4;i++){
 			fecha[i] = string_itoa(arrayInt[i]);
-
+			string_append_with_format(&aux,":%s",fecha[i]);
+			free(fecha[i]);
 		}
-		aux=fecha[0];
-		string_append_with_format(&aux,":%s",fecha[1]);
-		string_append_with_format(&aux,":%s",fecha[2]);
-		string_append_with_format(&aux,":%s",fecha[3]);
+		//string_append_with_format(&aux,":%s",fecha[1]);
+		//string_append_with_format(&aux,":%s",fecha[2]);
+		//string_append_with_format(&aux,":%s",fecha[3]);
 		//aux = strcat(strcat(strcat(fecha[0], fecha[1]),fecha[2]), fecha[3]);
 
 		return aux;
@@ -294,68 +296,6 @@ void sigint_handler(int signal) {
 	exit(-1);
 	return;
 }
-void switchManejoError(int exitCode){
-	switch(exitCode){
-		case noSePudoReservarRecursos :{
-			printf("Se finalizó porque no se pudo reservar recursos.\n");
-			}break;
-		case archivoInexistente :{
-			printf("Se finalizó porque el archivo es inexistente.\n");
-			}break;
-		case lecturaDenegadaPorFaltaDePermisos :{
-			printf("Se finalizó porque no se tienen permisos de lectura para el archivo.\n");
-				}break;
-		case escrituraDenegadaPorFaltaDePermisos :{
-			printf("Se finalizó porque no se tienen permisos de escritura para el archivo.\n");
-				}break;
-		case excepcionMemoria :{
-			printf("Se finalizó porque se lanzo una excepción de memoria.\n");
-				}break;
-
-		case finalizacionDesdeConsola :{
-			printf("Se finalizó porque se utilizo el comando de finalizacion por consola.\n");
-				}break;
-		case reservarMasMemoriaQueTamanoPagina:{
-			printf("Se finalizó porque se reservó más memoria que tamanio de pagina.\n");
-				}break;
-		case noSePuedenAsignarMasPaginas :{
-			printf("Se finalizó porque no se pueden asignar mas páginas.\n");
-				}break;
-		case finalizacionDesdeKenel :{
-			printf("Se finalizó porque se utilizo el comando de finalizacion por consola del Kernel.\n");
-				}break;
-		case intentoAccederAUnSemaforoInexistente:{
-			printf("Se finalizó porque se intento acceder a un semaforo inexistente.\n");
-				}break;
-		case intentoAccederAUnaVariableCompartidaInexistente:{
-			printf("Se finalizó porque se intento acceder a una variable compartida inexistente.\n");
-				}break;
-		case lecturaDenegadaPorFileSystem:{
-			printf("Se finalizó porque se denego la lectura por el FileSystem.\n");
-				}break;
-		case escrituraDenegadaPorFileSystem:{
-			printf("Se finalizó porque se denego el escritura por el FileSystem.\n");
-				}break;
-
-		case noSeCreoElArchivoPorFileSystem:{
-			printf("Se finalizó porque se denego la creacion por el FileSystem.\n");
-				}break;
-		case falloEnElFileDescriptor:{
-			printf("Se finalizó porque ocurrio un fallo en el File Descriptor.\n");
-				}break;
-		case borradoFallidoOtroProcesoLoEstaUtilizando:{
-			printf("Se finalizó porque no se pudo borrar el archivo debido a que otro proceso lo esta utilizando.\n");
-				}break;
-		case borradoFallidoPorFileSystem:{
-			printf("Se finalizó porque se denego el borrado por FileSystem.\n");
-				}break;
-		case seQuiereUtilizarUnaVariableNoDeclarada:{
-			printf("Se finalizó porque se quiso utilizar una variable no declarado.\n");
-				}break;
-		default:{
-		}
-	}
-}
 
 
 int main(void)
@@ -420,16 +360,19 @@ int main(void)
 			*pid = atoi(*stream);
 			enviarMensaje(socketKernel,finalizarCiertoScript ,pid, sizeof(int));
 			log_info(logConsola,"Se le envia el pid %d para que Kernel lo finalice",pid);
-
+			liberarArray(comandoConsola);
+			liberarArray(stream);
 			continue;
 		}
 		if(strcmp(comandoConsola[0],"desconectarConsola\n") == 0){
 			liberarArray(comandoConsola);
 			enviarMensaje(socketKernel,desconectarConsola, NULL, 0);
 			log_info(logConsola,"Se desconecto a Consola. Se le envio un mensaje al Kernel");
+
 			break;
 		}
 		if (error){
+			liberarArray(comandoConsola);
 			break;
 		}
 
@@ -549,6 +492,7 @@ void* rutinaEscucharKernel() {
 			pid = (*(int*) stream);
 			matarHiloPrograma(pid);
 			log_info(logConsola,"Se finalizo el pid %d correctamente",pid);
+			printf("Se ha finalizado correctamente el pid: %d \n", pid);
 			break;
 		}
 
@@ -594,5 +538,68 @@ void* rutinaEscucharKernel() {
 		if (operacion != 0)
 			free(stream);
 
+	}
+}
+
+void switchManejoError(int exitCode){
+	switch(exitCode){
+		case noSePudoReservarRecursos :{
+			printf("Se finalizó porque no se pudo reservar recursos.\n");
+			}break;
+		case archivoInexistente :{
+			printf("Se finalizó porque el archivo es inexistente.\n");
+			}break;
+		case lecturaDenegadaPorFaltaDePermisos :{
+			printf("Se finalizó porque no se tienen permisos de lectura para el archivo.\n");
+				}break;
+		case escrituraDenegadaPorFaltaDePermisos :{
+			printf("Se finalizó porque no se tienen permisos de escritura para el archivo.\n");
+				}break;
+		case excepcionMemoria :{
+			printf("Se finalizó porque se lanzo una excepción de memoria.\n");
+				}break;
+
+		case finalizacionDesdeConsola :{
+			printf("Se finalizó porque se utilizo el comando de finalizacion por consola.\n");
+				}break;
+		case reservarMasMemoriaQueTamanoPagina:{
+			printf("Se finalizó porque se reservó más memoria que tamanio de pagina.\n");
+				}break;
+		case noSePuedenAsignarMasPaginas :{
+			printf("Se finalizó porque no se pueden asignar mas páginas.\n");
+				}break;
+		case finalizacionDesdeKenel :{
+			printf("Se finalizó porque se utilizo el comando de finalizacion por consola del Kernel.\n");
+				}break;
+		case intentoAccederAUnSemaforoInexistente:{
+			printf("Se finalizó porque se intento acceder a un semaforo inexistente.\n");
+				}break;
+		case intentoAccederAUnaVariableCompartidaInexistente:{
+			printf("Se finalizó porque se intento acceder a una variable compartida inexistente.\n");
+				}break;
+		case lecturaDenegadaPorFileSystem:{
+			printf("Se finalizó porque se denego la lectura por el FileSystem.\n");
+				}break;
+		case escrituraDenegadaPorFileSystem:{
+			printf("Se finalizó porque se denego el escritura por el FileSystem.\n");
+				}break;
+
+		case noSeCreoElArchivoPorFileSystem:{
+			printf("Se finalizó porque se denego la creacion por el FileSystem.\n");
+				}break;
+		case falloEnElFileDescriptor:{
+			printf("Se finalizó porque ocurrio un fallo en el File Descriptor.\n");
+				}break;
+		case borradoFallidoOtroProcesoLoEstaUtilizando:{
+			printf("Se finalizó porque no se pudo borrar el archivo debido a que otro proceso lo esta utilizando.\n");
+				}break;
+		case borradoFallidoPorFileSystem:{
+			printf("Se finalizó porque se denego el borrado por FileSystem.\n");
+				}break;
+		case seQuiereUtilizarUnaVariableNoDeclarada:{
+			printf("Se finalizó porque se quiso utilizar una variable no declarado.\n");
+				}break;
+		default:{
+		}
 	}
 }

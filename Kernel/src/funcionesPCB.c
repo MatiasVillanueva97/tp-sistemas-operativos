@@ -20,6 +20,7 @@ PCB_DATA* crearPCB(char * scriptAnsisop, int pid, int contPags){
 		pcb->programCounter = metadata->instruccion_inicio;
 		pcb->cantDeRafagasEjecutadas = 0;
 		pcb->cantDeInstPrivilegiadas = 0;
+		//todo otra cosa para spisso. libera la metadata
 
 	return pcb;
 }
@@ -59,6 +60,7 @@ PCB_DATA* modificarPCB(PCB_DATA * pcbNuevo){
 
 	//****Esta linea no se si va
 	free(pcbNuevo);
+	//TODO : HOLA SPISSO ACA HAY QUE LIBERAR ALGO , SE PIERDE
 
 //	sem_post(&mutex_listaProcesos);
 	return pcbViejo;
