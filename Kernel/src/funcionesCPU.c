@@ -398,7 +398,8 @@ void *rutinaCPU(void * arg)
 				int offset = manejarPedidoDeMemoria(pid,tamano);
 				sem_post(&mutex_tablaDeHeap);
 				if(offset == 0){
-					PCB_DATA* pcb = buscarPCB(pid);
+					PCB_DATA* pcb = buscarPCB(pid);//ESTA LINEA NO HACE FALTA
+					//ESTA VALIDACION ES AL PEDO, LA CPU NUNCA TE VA A MANDAR UN PID QUE NO EXISTE
 					if(pcb != NULL){
 						finalizarPid(pid,-9);
 					}
@@ -407,8 +408,10 @@ void *rutinaCPU(void * arg)
 					}
 				}
 				if(offset == -1){
-					PCB_DATA* pcb = buscarPCB(pid);
+					PCB_DATA* pcb = buscarPCB(pid);//ESTA LINEA NO HACE FALTA
 					offset= 0;
+
+					//ESTA VALIDACION ES AL PEDO, LA CPU NUNCA TE VA A MANDAR UN PID QUE NO EXISTE
 					if(pcb != NULL){
 						finalizarPid(pid,-8);
 					}
@@ -446,7 +449,7 @@ void *rutinaCPU(void * arg)
 
 			//QUE PASA SI SE DESCONECTA LA CPU
 			case 0:{
-				log_info(logKernel,"[Rutina rutinaCPU] - Desconecto la CPU N°: %d\n", socketCPU);
+				log_info(logKernel,"[Rutina rutinaCPU] -Se desconecto la CPU de socket: %d\n", socketCPU);
 				todaviaHayTrabajo=false;
 
 			}break;

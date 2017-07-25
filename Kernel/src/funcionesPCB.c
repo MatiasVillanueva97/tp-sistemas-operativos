@@ -20,7 +20,8 @@ PCB_DATA* crearPCB(char * scriptAnsisop, int pid, int contPags){
 		pcb->programCounter = metadata->instruccion_inicio;
 		pcb->cantDeRafagasEjecutadas = 0;
 		pcb->cantDeInstPrivilegiadas = 0;
-		//todo otra cosa para spisso. libera la metadata
+
+		free(metadata);
 
 	return pcb;
 }
