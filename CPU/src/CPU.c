@@ -91,9 +91,9 @@ int main(void)
 
  	imprimirConfiguracion();
 
- 	conectarConMemoria();
-
  	conectarConKernel();
+
+ 	conectarConMemoria();
 
 
 
@@ -192,16 +192,13 @@ void conectarConMemoria(){
 	socketMemoria = conexionConServidor(getConfigString("PUERTO_MEMORIA"),getConfigString("IP_MEMORIA")); // Asignación del socket que se conectara con la memoria
 	if (socketMemoria == 1){
 		log_error(logCPU,"Falla en el protocolo de comunicación\n");
-		exit(-1);
 	}
 	if (socketMemoria == 2){
 		log_error(logCPU,"No se conectado con el Memoria, asegurese de que este abierto el proceso\n");
-		exit(-1);
 	}
 	if ( (rta_conexion = handshakeCliente(socketMemoria, CPU)) == -1) {
 		log_error(logCPU,"Error en el handshake con Memoria\n");
-		close(socketMemoria);
-		exit(-1);
+				close(socketMemoria);
 	}
 	log_info(logCPU,"Conexión exitosa con el Memoria(%i)!!\n",rta_conexion);
 }

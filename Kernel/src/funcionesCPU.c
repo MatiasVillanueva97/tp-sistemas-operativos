@@ -172,10 +172,8 @@ void *rutinaCPU(void * arg)
 
 				    modificarPCB(pcb);
 				}
-				else{
-					destruirPCB_Puntero(pcb);
-				}
 				sem_post(&mutex_listaProcesos);
+
 				free(stream);
 
 			}break;
@@ -194,12 +192,12 @@ void *rutinaCPU(void * arg)
 					sem_post(&cantidadDeProgramasEnReady);
 				}
 				else{
-					destruirPCB_Puntero(pcb);
 					proceso->pcb->estadoDeProceso = exec;
 					proceso_Finalizar(pcb->pid,finalizacionDesdeConsola);
 				}
 
 				sem_post(&mutex_listaProcesos);
+
 				free(stream);
 			}break;
 
@@ -448,7 +446,6 @@ void *rutinaCPU(void * arg)
 				}
 				enviarMensaje(socketCPU,enviarSiSePudoLiberar,&x,sizeof(int));
 			}break;
-
 
 			//QUE PASA SI SE DESCONECTA LA CPU
 			case 0:{

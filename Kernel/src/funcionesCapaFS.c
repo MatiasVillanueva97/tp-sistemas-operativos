@@ -335,7 +335,7 @@ void borrarEnTablaGlobalDeArchivo(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_d
 					void* pedidoDeLectura = serializarPedidoFs(estructura.size,entrada_de_tabla_proceso->offset,entrada_de_archivo->path); //Patos, basicamente
 					enviarMensaje(socketFS, obtenerDatosDeArchivo,pedidoDeLectura,4 + strlen(entrada_de_archivo->path)+ sizeof(int) * 2 + 1);
 					void* contenido;
-					if (recibirMensajeSeguro(socketFS, &contenido)== respuestaConContenidoDeFs) {
+					if (recibirMensaje(socketFS, &contenido)== respuestaConContenidoDeFs) {
 
 						enviarMensaje(socketCPU, respuestaLectura, contenido,estructura.size);
 						entrada_de_tabla_proceso->offset += estructura.size;
@@ -362,7 +362,7 @@ void borrarEnTablaGlobalDeArchivo(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_d
 
 	int recibirBooleanoDeFS(int pid, int exitcode) {
 		void* stream2;
-		recibirMensajeSeguro(socketFS, &stream2);
+		recibirMensaje(socketFS, &stream2);
 		int rtaFS = (*(int*) stream2);
 		free(stream2);
 		if (rtaFS) {
@@ -376,7 +376,7 @@ void borrarEnTablaGlobalDeArchivo(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_d
 	int crearArchivo(char* path, int pid, char* flags) {
 		enviarMensaje(socketFS, creacionDeArchivo, path, strlen(path) + 1);
 		void* stream;
-		recibirMensajeSeguro(socketFS, &stream);
+		recibirMensaje(socketFS, &stream);
 		int seCreoArchivo = (*(int*) stream);
 		if (seCreoArchivo) {
 			agregarATablaGlobalDeArchivos(path, 1);

@@ -194,7 +194,7 @@ void *deserializador(Header header,int socket)
 {
 	void* stream = malloc(header.tamano);
 
-	if(recv(socket,stream,header.tamano,MSG_WAITALL) == -1){
+	if(recv(socket,stream,header.tamano,0) == -1){
 		perror("Error al Recibir mensaje");
 	}
 	return stream;
@@ -204,7 +204,7 @@ int recibirMensaje(int socket,void** stream) // Toda esta funcion deberá ccambi
 {
 	Header header;
 	int cantidad;
-	if((cantidad=recv(socket,&header,8,MSG_WAITALL))==-1){
+	if((cantidad=recv(socket,&header,8,0))==-1){
 		perror("Error en el recibir");
 	}
 
@@ -247,7 +247,7 @@ int enviarMensaje(int socket, int TipoDeOperacion, void* contenido, int tamanioM
 	auxiliar = serializar(TipoDeOperacion, contenido, tamanioMensaje);
 
 	while(total < longitud){ /// NO OLVIDAR //// 32 añso 1974
-		n = send(socket, auxiliar + total, longitud - total,MSG_WAITALL);
+		n = send(socket, auxiliar + total, longitud - total,0);
 		if(n == -1)
 			return -1;
 		total += n;
@@ -276,13 +276,13 @@ int handshakeCliente(int socket, int id)
 	int id_servidor;
 
 	//Se envia el id del cliente al Servidor
-	if (send(socket, &id, sizeof(id), MSG_WAITALL) == -1)
+	if (send(socket, &id, sizeof(id), 0) == -1)
 		perror("send");
 
 
 	//Se recibe el id del Servidor
 
-	if ((recv(socket, &id_servidor, sizeof(id_servidor), MSG_WAITALL)) == -1)
+	if ((recv(socket, &id_servidor, sizeof(id_servidor), 0)) == -1)
 			perror("recv");
 
 	if(id_servidor == -1){
@@ -301,7 +301,7 @@ int handshakeServidor(int socket,int id, int permitidos[],int cantidadDePermitid
 
 	//Se recibe el id del emisor mediante la conexion
 
-	if ((recv(socket, &id_cliente, sizeof(id_cliente), MSG_WAITALL)) == -1) {
+	if ((recv(socket, &id_cliente, sizeof(id_cliente), 0)) == -1) {
 		perror("Error en el recv del HandshakeServidor");
 	}
 
@@ -309,7 +309,7 @@ int handshakeServidor(int socket,int id, int permitidos[],int cantidadDePermitid
 
 	//Se envia el id del servidor al cliente en caso de que se acepte la conexion
 
-	if (send(socket, &rta, sizeof(rta), MSG_WAITALL) == -1){
+	if (send(socket, &rta, sizeof(rta), 0) == -1){
 			perror("Error en el send del HandshakeServidor");
 	}
 

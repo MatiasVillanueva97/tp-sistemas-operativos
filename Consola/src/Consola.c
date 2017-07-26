@@ -358,13 +358,8 @@ int main(void)
 			char** stream= string_split(comandoConsola[1],"\n");
 			int *pid;
 			*pid = atoi(*stream);
-			if(encontrarElDeIgualPid(*pid)==NULL){
-				printf(" el pid es incorrecto \n");
-			}
-			else{
-				enviarMensaje(socketKernel,finalizarCiertoScript ,pid, sizeof(int));
-				log_info(logConsola,"Se le envia el pid %d para que Kernel lo finalice",pid);
-			}
+			enviarMensaje(socketKernel,finalizarCiertoScript ,pid, sizeof(int));
+			log_info(logConsola,"Se le envia el pid %d para que Kernel lo finalice",pid);
 			liberarArray(comandoConsola);
 			liberarArray(stream);
 			continue;

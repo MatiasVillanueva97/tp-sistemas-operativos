@@ -134,40 +134,7 @@ bool moverA(int pid, int movimientoACola){
 	return true;
 }
 
-void destroyerDeAvisos(PROCESOS* proceso){
-	free(proceso->scriptAnsisop);
-	destruirPCB_Puntero(proceso->pcb);
-	if(proceso->semBloqueante != NULL) free(proceso->semBloqueante);
-	free(proceso);
-}
 
-int recibirMensajeSeguro(int socket, void ** stream){
-	int valor = recibirMensaje(socket, stream);
-	if(valor == 0){
-		if(socket==socketFS)
-			log_info(logKernel,"El FS se ha desconectado, se finalizara esta CPU\n");
-		else
-			log_info(logKernel,"La Memoria se ha desconectado, se finalizara esta CPU\n");
-		close(socketFS);
-		close(socketMemoria);
-		log_destroy(logKernel);
-		list_destroy_and_destroy_elements(tablaDeHeapMemoria,free);
-		list_destroy_and_destroy_elements(tablaEstadisticaDeHeap,free);
-		list_destroy_and_destroy_elements(avisos,destroyerDeAvisos);
-
-		queue_destroy(cola_New);
-		queue_destroy(cola_Ready);
-		queue_destroy(cola_Exec);
-		queue_destroy(cola_Wait);
-		queue_destroy(cola_Finished);
-		//list_destroy_and_destroy_elements(tablaGlobalDeArchivosDeProcesos,liberarEntradaTablaDeArchivosDeProceso);
-		list_destroy_and_destroy_elements(tablaGlobalDeArchivos,liberarEntradaTablaGlobalDeArchivos);
-		liberarConfiguracion();
-
-		exit(-1);
-	}
-	return valor;
-}
 ///***Esta función tiene que buscar en todas las colas y fijarse donde esta el procesos y cambiar su estado a estado finalizado
 bool proceso_Finalizar_conAviso(int pid, int exitCode, bool conAvisoAConsola)
 {

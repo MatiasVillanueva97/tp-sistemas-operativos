@@ -993,12 +993,8 @@ int recibirMensajeSeguro(int socket, void ** stream){
 	if(valor == 0){
 		if(socket==socketKernel)
 			log_info(logCPU,"El Kernel se ha desconectado, se finalizara esta CPU\n");
-		else{
-
+		else
 			log_info(logCPU,"La Memoria se ha desconectado, se finalizara esta CPU\n");
-
-		}
-
 		close(socketKernel);
 		close(socketMemoria);
 		liberarConfiguracion();

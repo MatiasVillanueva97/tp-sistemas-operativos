@@ -32,7 +32,7 @@ int pedirPagina(int pid,int tamano){
 			log_info(logKernel,"Se pide a memoria que se reserve %d paginas para el pid %d",1,pid);
 
 			void* stream;
-			recibirMensajeSeguro(socketMemoria,&stream);
+			recibirMensaje(socketMemoria,&stream);
 			int pagina = leerInt(stream);
 			if(!pagina){
 				log_error(logKernel,"No se pudo reservar la pagina");
@@ -67,7 +67,7 @@ int pedirPagina(int pid,int tamano){
 
 			enviarMensaje(socketMemoria,almacenarBytes,cosaAMandar,sizeof(t_direccion)+sizeof(int)+w->direccion.size);//esta mal, necesito el deserealizador de spisso.
 			free(cosaAMandar);
-			recibirMensajeSeguro(socketMemoria,&stream);
+			recibirMensaje(socketMemoria,&stream);
 			free(w->valor);
 			free(w);
 			if(leerInt(stream)){
@@ -106,12 +106,12 @@ int manejarLiberacionDeHeap(int pid,int offset){
 
 	enviarMensaje(socketMemoria,solicitarBytes,&pedidoMemoria,sizeof(t_pedidoMemoria));
 	void* stream;
-	recibirMensajeSeguro(socketMemoria,&stream);
+	recibirMensaje(socketMemoria,&stream);
 	if(stream){
 		log_info(logKernel,"Se acepto el pedido a memoria y se recibio la pagina pedida");
 
 		free(stream);
-		recibirMensajeSeguro(socketMemoria,&stream);
+		recibirMensaje(socketMemoria,&stream);
 		offsetTamanoYHeader* loQueTengoQueEscribir= liberarMemoriaHeap(offset%size_pagina,stream);
 		if(loQueTengoQueEscribir == NULL){
 			log_error(logKernel,"El pedido de liberacion fue invalido");
@@ -128,7 +128,7 @@ int manejarLiberacionDeHeap(int pid,int offset){
 		enviarMensaje(socketMemoria,almacenarBytes,cosa,sizeof(int)*4+sizeof(HeapMetadata));
 		free(stream);
 		free(cosa);
-		recibirMensajeSeguro(socketMemoria,&stream);
+		recibirMensaje(socketMemoria,&stream);
 
 		if(fila->tamanoDisponible +loQueTengoQueEscribir->tamanoLibre < size_pagina-sizeof(HeapMetadata)){
 			log_info(logKernel,"Se agrego %d a la pagina %d del pid %d",loQueTengoQueEscribir->tamanoLibre,fila->pagina,fila->pid);
@@ -187,15 +187,14 @@ int manejarPedidoDeMemoria(int pid,int tamano){
 
 				enviarMensaje(socketMemoria,solicitarBytes,&escritura,sizeof(t_pedidoMemoria));
 				void* stream;
-				recibirMensajeSeguro(socketMemoria,&stream);
+				recibirMensaje(socketMemoria,&stream);
 				if(*(int*)stream ){//Si no hubo error en memoria
 					log_info(logKernel,"Se acepto el solicitar Bytes y se recibio el contenido.");
 
 					free(stream);
-					recibirMensajeSeguro(socketMemoria,&stream);
+					recibirMensaje(socketMemoria,&stream);
 
 					offsetYBuffer x = escribirMemoria(tamano,stream);
-					free(stream);
 					if(x.offset >=0){
 						log_info(logKernel,"Se pudo guardar en esta pagina");
 
@@ -209,7 +208,7 @@ int manejarPedidoDeMemoria(int pid,int tamano){
 
 						enviarMensaje(socketMemoria,almacenarBytes,serializarAlmacenarBytes2(w),sizeof(int)*4+w.direccion.size); // esto esta mal, el size es otro
 						void* stream2;
-						recibirMensajeSeguro(socketMemoria,&stream2);
+						recibirMensaje(socketMemoria,&stream2);
 						fila->tamanoDisponible -= tamano+tamanoHeader;
 						log_info(logKernel,"Se cambia el tamano disponible, dejandolo en %d", fila->tamanoDisponible);
 						list_destroy(listaFiltrada);
