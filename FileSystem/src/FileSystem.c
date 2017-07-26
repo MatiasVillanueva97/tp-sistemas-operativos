@@ -172,6 +172,10 @@ int borrarUnArchivo(char* path){
 	for(i = 0;*(bloques+i)!=NULL;i++){
 		int x = atoi(*(bloques+i));
 		bitarray_clean_bit(bitMap,x);
+		char * bloque = obtenerRutaTotal(*(bloques+i),"Bloques");
+		FILE* archivo = fopen(bloque,"w");
+		fclose(archivo);
+
 		log_info(logFS,"[Borrar Archivo]-Se desligo el bloque numero: %d ", x);
 	}
 	if (remove(ruta)==0){
@@ -406,7 +410,25 @@ void* configurarTodo(){
 		exit(-1);
 	}
 	log_info(logFS,"Se cargo el archivo Metadata.bin");
+	bool booleanDeReinicio= false;
+	int opcion;
+	printf("Ingrese 1 si quiere crear de 0 el bitmap. Sino, ingrese 0:\n");
+	scanf("%d",&opcion);
+	if(opcion == 1){
+		char* rutaDelArchivoDeBitmap2 = obtenerRutaTotal("Bitmap.bin","Metadata");
+		remove(rutaDelArchivoDeBitmap2);
+		booleanDeReinicio = true;
+		char* x =obtenerRutaTotal("","Archivos");
+		char* y =string_new();
+		string_append(&y,"rm -rf ");
 
+		string_append(&y,x);
+		system(y);
+
+		free(x);
+		free(y);
+		free(rutaDelArchivoDeBitmap2);
+	}
 	bloqueSize = config_get_int_value(configuracion,"TAMANIO_BLOQUES");
 	cantidadDeBloques = config_get_int_value(configuracion,"CANTIDAD_BLOQUES");
 	log_info(logFS,"[Configurar Todo]-Tamaño de bloque: %d",bloqueSize);
@@ -443,7 +465,7 @@ void* configurarTodo(){
 		string_append(&nombre,".bin");
 		char* rutaTotal = obtenerRutaTotal(nombre,"Bloques");
 		FILE* Bloque = fopen(rutaTotal,"r+");
-		if(Bloque == NULL){
+		if(Bloque == NULL|| booleanDeReinicio){
 			log_info(logFS,"[Configurar Todo]-Se tuvo que crear el bloque %d.bin",i);
 			Bloque = fopen(rutaTotal,"w+");
 		}
@@ -455,14 +477,6 @@ void* configurarTodo(){
 	if(!strcmp(config_get_string_value(configuracion,"MAGIC_NUMBER"),"SADICA")){
 		perror("Ingreso mal el punto de montaje");
 		exit(-2);
-	}
-	int opcion;
-	printf("Ingrese 1 si quiere crear de 0 el bitmap. Sino, ingrese 0:\n");
-	scanf("%d",opcion);
-	if(opcion == 1){
-		char* rutaDelArchivoDeBitmap2 = obtenerRutaTotal("Bitmap.bin","Metadata");
-		remove(rutaDelArchivoDeBitmap2);
-		free(rutaDelArchivoDeBitmap2);
 	}
 	char* rutaDelArchivoDeBitmap = obtenerRutaTotal("Bitmap.bin","Metadata");
 	FILE* archivoDeBitmap = fopen(rutaDelArchivoDeBitmap,"r+");
