@@ -338,7 +338,10 @@ void * consolaKernel()
 
 			}break;
 			case 6:{
+				sem_wait(&mutex_detenerPlanificacion);
 				finPorConsolaDelKernel=true;
+				sem_post(&mutex_detenerPlanificacion);
+
 				printf("\nPlanificacion detenida.\n");
 			}break;
 

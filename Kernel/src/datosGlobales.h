@@ -181,6 +181,7 @@ pthread_mutex_t mutex_tabla_estadistica_de_heap;
 
 pthread_mutex_t mutex_gradoDeMultiprogramacion;
 
+pthread_mutex_t mutex_detenerPlanificacion;
 
 sem_t sem_ConsolaKernelLenvantada;
 

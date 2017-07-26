@@ -630,7 +630,36 @@ void recibirMensajesMemoria(void* arg){
 
 	}
 }
-void *aceptarConexionesCpu( void *arg ){ // aca le sacamos el asterisco, porque esto era un void*
+void crearHiloDetach(int nuevoSocket){
+	pthread_attr_t attr;
+	pthread_t hilo_M ;
+
+	//Hilos detachables cpn manejo de errores tienen que ser logs
+	int  res;
+	res = pthread_attr_init(&attr);
+	if (res != 0) {
+	//	perror("Error en los atributos del hilo\n");
+		log_info(logMemoria,"Error en los atributos del hilo\n");
+	}
+
+	res = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+	if (res != 0) {
+
+		log_info(logMemoria,"Error en el seteado del estado de detached");
+			//perror("Error en el seteado del estado de detached");
+	}
+
+	res = pthread_create (&hilo_M ,&attr,recibirMensajesMemoria, (void *)nuevoSocket);
+	if (res != 0) {
+	//	perror("Error en la creacion del hilo");
+		log_info(logMemoria,"Error en la creacion del hilo");
+
+	}
+
+	pthread_attr_destroy(&attr);
+}
+
+void *aceptarConexionesCpu( void *arg ){
 	sem_wait(&sem_isKernelConectado);
 	int listener = (int)arg;
 	int nuevoSocketCpu;
@@ -651,7 +680,7 @@ void *aceptarConexionesCpu( void *arg ){ // aca le sacamos el asterisco, porque 
 		}
 		else{
 			log_info(logMemoria,"[AceptarConexionesCPU] - Nueva CPU Conectada! Socket CPU: %d\n", nuevoSocketCpu);
-			pthread_create(&hilo_nuevaCPU, NULL, recibirMensajesMemoria,  nuevoSocketCpu);
+			crearHiloDetach( nuevoSocketCpu);
 		}
 
 	}

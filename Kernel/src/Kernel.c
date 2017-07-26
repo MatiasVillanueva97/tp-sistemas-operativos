@@ -49,6 +49,12 @@ void conectarConFS();
 
 
 
+bool seDetuvoLaPlanificacion(){
+	sem_wait(&mutex_detenerPlanificacion);
+	bool x = finPorConsolaDelKernel;
+	sem_post(&mutex_detenerPlanificacion);
+	return x;
+}
 
 ///---FUNCIONES DEL KERNEL----//
 //Juli cambiale el nombre al semaforo aReady y aNew sino no va andar una mierda
@@ -96,7 +102,7 @@ PCB_DATA* quitarPCBDeDondeEste(PCB_DATA* pcb){
 bool moverA(int pid, int movimientoACola){
 
 	PROCESOS * proceso = buscarProceso(pid);
-	if(proceso == NULL)
+	if(proceso == NULL|| seDetuvoLaPlanificacion())
 		return false;
 	if(proceso->pcb->estadoDeProceso == finish)
 		return false;
@@ -407,7 +413,7 @@ void * estadoNEW()
 		sem_wait(&gradoDeMultiprogramacion);
 		sem_wait(&mutex_gradoDeMultiprogramacion);
 
-		if(numeroGradoDeMultiprogramacion>0){
+		if(numeroGradoDeMultiprogramacion>0&& !seDetuvoLaPlanificacion()){
 			sem_post(&mutex_gradoDeMultiprogramacion);
 
 			newToReady();
@@ -454,20 +460,22 @@ void readyToExec()
 }
 
 
+
 //*** pasar procesos de ready a exec
 void * estadoReady()
 {
 //	printf("\n[Rutina planificadorCortoPlazo] - Entramos al planificador de corto plazo!\n");
 	log_info(logKernel,"\n[Rutina planificadorCortoPlazo] - Entramos al planificador de corto plazo!\n");
 	//*** el booleano finPorConsolaDelKernel esta en false desde el inicio, en el momento en el que el kernel quiera frenar la planificiacion esta variable pasara a true, y se frenara la planificacion
-	while(!finPorConsolaDelKernel)
+	while(!seDetuvoLaPlanificacion())
 	{
 
 		sem_wait(&cantidadDeProgramasEnReady);
 		sem_wait(&cpuDisponible);
-
+		if(!seDetuvoLaPlanificacion()){
+			readyToExec();
+		}
 		///*** Quito el primer elemento de la cola de ready, valido que no haya sido finalizado y lo pongo en la cola de exec - en caso de no encontrar uno para poder trabajar no hago nada
-		readyToExec();
 	}
 	return NULL;
 }
@@ -645,7 +653,7 @@ void inicializarSemaforo(){
 	sem_init(&gradoDeMultiprogramacion,0,getConfigInt("GRADO_MULTIPROG"));
 	sem_init(&cantidadDeProgramasEnExec,0,0);
 	sem_init(&cantidadDeProgramasEnReady,0,0);
-
+	sem_init(&mutex_detenerPlanificacion,0,1);
 	sem_init(&mutex_gradoDeMultiprogramacion,0,1);
 	sem_init(&cpuDisponible,0,0);
 
