@@ -101,7 +101,7 @@ typedef struct{
 	int pid;
 	char* scriptAnsisop;
 	int socketConsola;
-	bool avisoAConsola;
+	bool consolaViva;
 	PCB_DATA* pcb;
 	char* semBloqueante;
 	//archivos tomados

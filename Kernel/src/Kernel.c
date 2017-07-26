@@ -179,9 +179,10 @@ bool proceso_Finalizar_conAviso(int pid, int exitCode, bool conAvisoAConsola)
 		enviarMensaje(socketMemoria,finalizarPrograma,&pid,sizeof(int));
 		void* respuesta;
 		recibirMensaje(socketMemoria,&respuesta);
-		free(respuesta);
+		if(respuesta != NULL)
+			free(respuesta);
 
-		if(conAvisoAConsola){
+		if(conAvisoAConsola && procesoAFianalizar->consolaViva){
 			proceso_avisarAConsola(socketConsola, pid, exitCode);
 		}
 
@@ -268,7 +269,7 @@ bool proceso_EstaFinalizado(int pid)
 	  return aviso->pid == pid;
 	 }
 	 PCB_DATA* pcb = ((PROCESOS*)list_find(avisos, busqueda))->pcb;
-	 return pcb->estadoDeProceso == finish;
+	 return pcb->estadoDeProceso == finish || pcb->estadoDeProceso ==aFinalizar;
 }
 
 ///---FIN FUNCIONES DEL KERNEL----//

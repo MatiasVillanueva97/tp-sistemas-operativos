@@ -291,7 +291,6 @@ void sigint_handler(int signal) {
 	enviarMensaje(socketKernel,desconectarConsola, NULL, 0);
 
 	list_destroy_and_destroy_elements(listaEstadoPrograma,liberarNodoListaEstado);
-
 	close(socketKernel);
 	exit(-1);
 	return;

@@ -168,24 +168,26 @@ void liberarEntradaTablaGlobalDeArchivosDeProceso(
 bool liberarRecursosArchivo(int pid) {
 	ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO* entrada_a_eliminar =	encontrarElDeIgualPid(pid);
 	int i;
-	int tamanoTabla = list_size(entrada_a_eliminar->tablaProceso);
-
-	if (tamanoTabla > 3) {
-		for (i = 3; i < tamanoTabla; i++) {
-			ENTRADA_DE_TABLA_DE_PROCESO* entrada_de_tabla_proceso = list_get(entrada_a_eliminar->tablaProceso, i);
-			sem_wait(&mutex_tablaGlobalDeArchivos);
-			ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_de_archivo = list_get(tablaGlobalDeArchivos, entrada_de_tabla_proceso->globalFD);
-			sem_post(&mutex_tablaGlobalDeArchivos);
-			borrarEnTablaGlobalDeArchivo( entrada_de_archivo,entrada_de_tabla_proceso->globalFD);
+	if(entrada_a_eliminar !=NULL){
+		int tamanoTabla = list_size(entrada_a_eliminar->tablaProceso);
+		if (tamanoTabla > 3) {
+			for (i = 3; i < tamanoTabla; i++) {
+				ENTRADA_DE_TABLA_DE_PROCESO* entrada_de_tabla_proceso = list_get(entrada_a_eliminar->tablaProceso, i);
+				sem_wait(&mutex_tablaGlobalDeArchivos);
+				ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_de_archivo = list_get(tablaGlobalDeArchivos, entrada_de_tabla_proceso->globalFD);
+				sem_post(&mutex_tablaGlobalDeArchivos);
+				borrarEnTablaGlobalDeArchivo( entrada_de_archivo,entrada_de_tabla_proceso->globalFD);
 			}
+		}
+		int posicion = posicionEnTablaGlobalArchivosDeProceso(entrada_a_eliminar);
+		sem_wait(&mutex_tablaGlobalDeArchivosDeProcesos);
+		list_remove_and_destroy_element(tablaGlobalDeArchivosDeProcesos, posicion,liberarEntradaTablaGlobalDeArchivosDeProceso);
+		sem_post(&mutex_tablaGlobalDeArchivosDeProcesos);
+		return true;
 	}
-	int posicion = posicionEnTablaGlobalArchivosDeProceso(entrada_a_eliminar);
-	sem_wait(&mutex_tablaGlobalDeArchivosDeProcesos);
-	list_remove_and_destroy_element(tablaGlobalDeArchivosDeProcesos, posicion,
-			liberarEntradaTablaGlobalDeArchivosDeProceso);
-	sem_post(&mutex_tablaGlobalDeArchivosDeProcesos);
-	return true;
+	return false;
 }
+
 
 int borrarArchivoPermanente(t_archivo estructura) {
 

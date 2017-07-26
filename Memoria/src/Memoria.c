@@ -659,31 +659,31 @@ void crearHiloDetach(int nuevoSocket){
 	pthread_attr_destroy(&attr);
 }
 
-void *aceptarConexionesCpu( void *arg ){
-	sem_wait(&sem_isKernelConectado);
-	int listener = (int)arg;
-	int nuevoSocketCpu;
-	int aceptados[] = {CPU};
-	escuchar(listener); // poner a escuchar ese socket
-	pthread_t hilo_nuevaCPU;
+void* aceptarConexionesCpu( void* arg ){ // aca le sacamos el asterisco, porque esto era un void*
+ sem_wait(&sem_isKernelConectado);
+ int listener = (int)arg;
+ int nuevoSocketCpu;
+ int aceptados[] = {CPU};
+ escuchar(listener); // poner a escuchar ese socket
+ pthread_t hilo_nuevaCPU;
 
-	log_info(logMemoria,"[AceptarConexionesCPU] - Ya se ha establecido Conexion con un Kernel, ahora si se pueden conectar CPUs: \n");
+ log_info(logMemoria,"[AceptarConexionesCPU] - Ya se ha establecido Conexion con un Kernel, ahora si se pueden conectar CPUs: \n");
 
-	while (1)
-	{
+ while (1)
+ {
 
-		int id_clienteConectado;
-		id_clienteConectado = aceptarConexiones(listener, &nuevoSocketCpu, Memoria, &aceptados,1);
-		if(id_clienteConectado == -1){
-			log_error(logMemoria,"Se rechazo una conexion invalida.");
-				close(nuevoSocketCpu);
-		}
-		else{
-			log_info(logMemoria,"[AceptarConexionesCPU] - Nueva CPU Conectada! Socket CPU: %d\n", nuevoSocketCpu);
-			crearHiloDetach( nuevoSocketCpu);
-		}
+  int id_clienteConectado;
+  id_clienteConectado = aceptarConexiones(listener, &nuevoSocketCpu, Memoria, &aceptados,1);
+  if(id_clienteConectado == -1){
+   log_error(logMemoria,"Se rechazo una conexion invalida.");
+    close(nuevoSocketCpu);
+  }
+  else{
+   log_info(logMemoria,"[AceptarConexionesCPU] - Nueva CPU Conectada! Socket CPU: %d\n", nuevoSocketCpu);
+   crearHiloDetach(nuevoSocketCpu);
+  }
 
-	}
+ }
 }
 
 

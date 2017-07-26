@@ -46,8 +46,8 @@ void consola_finalizarTodosLosProcesos(int socketConsola){
 
 	void cambiar(PROCESOS * process){
 		if (process->socketConsola == socketConsola) {
-				if (process->pcb->estadoDeProceso == enCPU)
-					process->pcb->estadoDeProceso = exec;
+				//if (process->pcb->estadoDeProceso == enCPU)process->pcb->estadoDeProceso = exec;
+					process->consolaViva = false;
 					proceso_Finalizar_conAviso(process->pid,deconexionConsola, false);
 
 					log_info(logKernel, "Murio el proceso: %d\n", process->pid);
@@ -120,7 +120,7 @@ void *rutinaConsola(void * arg)
 
 				nuevoPrograma->scriptAnsisop = string_duplicate(scripAnsisop);
 				nuevoPrograma->socketConsola = socketConsola;
-				nuevoPrograma->avisoAConsola = false;
+				nuevoPrograma->consolaViva = true;
 				nuevoPrograma->semBloqueante = NULL;
 
 				//***Creo el PCB
@@ -168,7 +168,7 @@ void *rutinaConsola(void * arg)
 
 				PROCESOS* process = buscarProceso(pid);
 
-				if(process->pcb->estadoDeProceso == enCPU) process->pcb->estadoDeProceso = exec;
+				//if(process->pcb->estadoDeProceso == enCPU) process->pcb->estadoDeProceso = exec;
 
 				if(!proceso_Finalizar(pid, -7)) {
 					log_info(logKernel,"[Rutina rutinaConsola] - No existe el pid\n");
@@ -187,6 +187,7 @@ void *rutinaConsola(void * arg)
 
 				sem_wait(&mutex_listaProcesos);
 				consola_finalizarTodosLosProcesos(socketConsola);
+
 				sem_post(&mutex_listaProcesos);
 
 				log_info(logKernel,"[Rutina rutinaConsola] - Se desconecto la consola de socket: %d\n", socketConsola);

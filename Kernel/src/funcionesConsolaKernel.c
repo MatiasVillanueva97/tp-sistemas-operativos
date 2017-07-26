@@ -306,21 +306,23 @@ void * consolaKernel()
 				fgets(buffer,256,stdin);
 				gradoNuevo = atoi(buffer);
 				int i;
-				if (gradoNuevo>0){
+				if (gradoNuevo>=0){
 					sem_wait(&mutex_gradoDeMultiprogramacion);
 					numeroGradoDeMultiprogramacion+=gradoNuevo-getConfigInt("GRADO_MULTIPROG");
 					sem_post(&mutex_gradoDeMultiprogramacion);
 					if(gradoNuevo > getConfigInt("GRADO_MULTIPROG")){
 						for(i=0;i<gradoNuevo-getConfigInt("GRADO_MULTIPROG");i++){
 							sem_post(&gradoDeMultiprogramacion);
+
 						}
-					}else{
-						printf("Comando invalido! \n");
 					}
+					setConfigInt("GRADO_MULTIPROG", gradoNuevo);
+				}else{
+					printf("Comando invalido! \n");
 				}
 
 				//probablemente tengamos qeu poner un semaforo para la variable global de grado multiprogramacion
-				setConfigInt("GRADO_MULTIPROG", gradoNuevo);
+
 			}break;
 
 			case 5:{

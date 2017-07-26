@@ -116,7 +116,7 @@ void *rutinaCPU(void * arg)
 
 				if(pcb == NULL){
 					//Segun santi, aca va un while asqueroso
-					printf("Se rompio muy feo en rutina CPU, el pcb aparecio como NULL, se cierra el Kernel");
+					printf("Se rompio muy feo en rutina CPU, el pcb aparecio como NULL, se cierra el Kernel\n");
 					exit(-1);
 				}
 
@@ -169,7 +169,6 @@ void *rutinaCPU(void * arg)
 						proceso_Finalizar(pcb->pid, pcb->exitCode);
 
 					}
-
 				    modificarPCB(pcb);
 				}
 				else{
@@ -219,8 +218,11 @@ void *rutinaCPU(void * arg)
 					void * stream2 = serializarMensajeAEscribir(msj,msj.tamanio);
 					int socketConsola = consola_buscarSocketConsola(msj.pid);
 
-					enviarMensaje(socketConsola,imprimirPorPantalla,stream2,tamanoDelBuffer);
-
+					sem_wait(&mutex_listaProcesos);
+					if(!proceso_EstaFinalizado(msj.pid)){
+						enviarMensaje(socketConsola,imprimirPorPantalla,stream2,tamanoDelBuffer);
+					}
+					sem_post(&mutex_listaProcesos);
 					respuestaACPU = true;
 					free(stream2);
 					enviarMensaje(socketCPU,respuestaBooleanaKernel,&respuestaACPU,sizeof(int));
