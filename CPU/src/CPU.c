@@ -192,13 +192,22 @@ void conectarConMemoria(){
 	socketMemoria = conexionConServidor(getConfigString("PUERTO_MEMORIA"),getConfigString("IP_MEMORIA")); // Asignación del socket que se conectara con la memoria
 	if (socketMemoria == 1){
 		log_error(logCPU,"Falla en el protocolo de comunicación\n");
+		liberarConfiguracion();
+		log_destroy(logCPU);
+		exit(-1);
 	}
 	if (socketMemoria == 2){
 		log_error(logCPU,"No se conectado con el Memoria, asegurese de que este abierto el proceso\n");
+		liberarConfiguracion();
+		log_destroy(logCPU);
+		exit(-1);
 	}
 	if ( (rta_conexion = handshakeCliente(socketMemoria, CPU)) == -1) {
 		log_error(logCPU,"Error en el handshake con Memoria\n");
 				close(socketMemoria);
+				liberarConfiguracion();
+				log_destroy(logCPU);
+				exit(-1);
 	}
 	log_info(logCPU,"Conexión exitosa con el Memoria(%i)!!\n",rta_conexion);
 }
@@ -209,13 +218,21 @@ void conectarConKernel()
 	socketKernel = conexionConServidor(getConfigString("PUERTO_KERNEL"),getConfigString("IP_KERNEL")); // Asignación del socket que se conectara con la memoria
 	if (socketKernel == 1){
 		log_error(logCPU,"Falla en el protocolo de comunicación\n");
+		liberarConfiguracion();
+		log_destroy(logCPU);
+		exit(-1);
 	}
 	if (socketKernel == 2){
 		log_error(logCPU,"No se conectado con el Kernel, asegurese de que este abierto el proceso\n");
+		liberarConfiguracion();
+		log_destroy(logCPU);
+		exit(-1);
 	}
 	if ( (rta_conexion = handshakeCliente(socketKernel, CPU)) == -1) {
 		log_error(logCPU,"Error en el handshake con Kernel\n");
-				close(socketMemoria);
+				liberarConfiguracion();
+				log_destroy(logCPU);
+				exit(-1);
 	}
 	log_info(logCPU,"Conexión exitosa con el Kernel(%i)!!\n",rta_conexion);
 }

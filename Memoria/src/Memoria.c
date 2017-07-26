@@ -622,7 +622,7 @@ void recibirMensajesMemoria(void* arg){
 				}
 
 				default:{
-					perror("Error de comando");
+
 				}
 		}
 		if(operacion != 0) free(stream);

@@ -118,7 +118,7 @@ void *rutinaConsola(void * arg)
 					historico_pid++;
 				sem_post(&mutex_HistoricoPcb);
 
-				nuevoPrograma->scriptAnsisop = scripAnsisop;
+				nuevoPrograma->scriptAnsisop = string_duplicate(scripAnsisop);
 				nuevoPrograma->socketConsola = socketConsola;
 				nuevoPrograma->avisoAConsola = false;
 				nuevoPrograma->semBloqueante = NULL;
@@ -151,8 +151,8 @@ void *rutinaConsola(void * arg)
 				sem_post(&mutex_listaProcesos);
 
 				sem_post(&programasEnNew);//
-
 				break;
+				free(stream);
 			}
 
 			case finalizarCiertoScript:{

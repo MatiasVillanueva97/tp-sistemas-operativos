@@ -172,6 +172,9 @@ void *rutinaCPU(void * arg)
 
 				    modificarPCB(pcb);
 				}
+				else{
+					destruirPCB_Puntero(pcb);
+				}
 				sem_post(&mutex_listaProcesos);
 
 				free(stream);
@@ -194,6 +197,7 @@ void *rutinaCPU(void * arg)
 				else{
 					proceso->pcb->estadoDeProceso = exec;
 					proceso_Finalizar(pcb->pid,finalizacionDesdeConsola);
+					destruirPCB_Puntero(pcb);
 				}
 
 				sem_post(&mutex_listaProcesos);
