@@ -28,7 +28,10 @@ int pedirPagina(int pid,int tamano){
 	t_asignarPaginas asignar;
 			asignar.cantPags = 1;
 			asignar.pid = pid;
+			sem_wait(&mutex_envioDeMensajeAMemoria);
+
 			enviarMensaje(socketMemoria,asignarPaginas,&asignar,sizeof(t_asignarPaginas));
+			sem_post(&mutex_envioDeMensajeAMemoria);
 			log_info(logKernel,"Se pide a memoria que se reserve %d paginas para el pid %d",1,pid);
 
 			void* stream;
@@ -64,8 +67,11 @@ int pedirPagina(int pid,int tamano){
 			cosaAMandar = serializarAlmacenarBytes2(*w);
 			log_info(logKernel,"Se envia a memoria el siguiente pedido de escritura: Pagina-> %d, Pid->%d, tamano->%d,->offset->0",w->direccion.page,w->id,w->direccion.size);
 
+			sem_wait(&mutex_envioDeMensajeAMemoria);
 
 			enviarMensaje(socketMemoria,almacenarBytes,cosaAMandar,sizeof(t_direccion)+sizeof(int)+w->direccion.size);//esta mal, necesito el deserealizador de spisso.
+			sem_post(&mutex_envioDeMensajeAMemoria);
+
 			free(cosaAMandar);
 			recibirMensaje(socketMemoria,&stream);
 			free(w->valor);
@@ -103,8 +109,9 @@ int manejarLiberacionDeHeap(int pid,int offset){
 	pedidoMemoria.direccion.size = size_pagina;
 	pedidoMemoria.id = pid;
 	log_info(logKernel,"Se pide a memoria para el pid %d, la pagina %d ",pedidoMemoria.id,pedidoMemoria.direccion.page);
-
+	sem_wait(&mutex_envioDeMensajeAMemoria);
 	enviarMensaje(socketMemoria,solicitarBytes,&pedidoMemoria,sizeof(t_pedidoMemoria));
+	sem_post(&mutex_envioDeMensajeAMemoria);
 	void* stream;
 	recibirMensaje(socketMemoria,&stream);
 	if(stream){
@@ -125,7 +132,9 @@ int manejarLiberacionDeHeap(int pid,int offset){
 		almacenamiento.id = fila->pid;
 		void* cosa = serializarAlmacenarBytes2(almacenamiento);
 		log_info(logKernel,"Se pide almacenar para el pid %d en la pagina %d, en el offset %d, con el siguiente tamano %d.",almacenamiento.id,almacenamiento.direccion.page,almacenamiento.direccion.offset,almacenamiento.direccion.size);
+		sem_wait(&mutex_envioDeMensajeAMemoria);
 		enviarMensaje(socketMemoria,almacenarBytes,cosa,sizeof(int)*4+sizeof(HeapMetadata));
+		sem_post(&mutex_envioDeMensajeAMemoria);
 		free(stream);
 		free(cosa);
 		recibirMensaje(socketMemoria,&stream);
@@ -140,7 +149,9 @@ int manejarLiberacionDeHeap(int pid,int offset){
 				{
 					if( fila2->pagina == fila->pagina &&fila2->pid == fila->pid){
 						int x[2]={fila->pid,fila->pagina}; // Para ustedes que les gusta mas
+						sem_wait(&mutex_envioDeMensajeAMemoria);
 						enviarMensaje(socketMemoria,liberarUnaPagina,x,sizeof(int)*2);
+						sem_post(&mutex_envioDeMensajeAMemoria);
 						return true;
 					}
 					return false;
@@ -184,8 +195,9 @@ int manejarPedidoDeMemoria(int pid,int tamano){
 				escritura.direccion.size = size_pagina;
 				escritura.id = pid;
 				log_info(logKernel,"Se pide  del pid %d,  la pagina %d, en el offset %d, con el siguiente tamano %d.",escritura.id,escritura.direccion.page,escritura.direccion.offset,escritura.direccion.size);
-
+				sem_wait(&mutex_envioDeMensajeAMemoria);
 				enviarMensaje(socketMemoria,solicitarBytes,&escritura,sizeof(t_pedidoMemoria));
+				sem_post(&mutex_envioDeMensajeAMemoria);
 				void* stream;
 				recibirMensaje(socketMemoria,&stream);
 				if(*(int*)stream ){//Si no hubo error en memoria
@@ -206,7 +218,9 @@ int manejarPedidoDeMemoria(int pid,int tamano){
 						w.direccion.size = tamano + sizeof(HeapMetadata) * 2;
 						log_info(logKernel,"Se escribe el metadata Heap necesario");
 
+						sem_wait(&mutex_envioDeMensajeAMemoria);
 						enviarMensaje(socketMemoria,almacenarBytes,serializarAlmacenarBytes2(w),sizeof(int)*4+w.direccion.size); // esto esta mal, el size es otro
+						sem_post(&mutex_envioDeMensajeAMemoria);
 						void* stream2;
 						recibirMensaje(socketMemoria,&stream2);
 						fila->tamanoDisponible -= tamano+tamanoHeader;
@@ -364,11 +378,14 @@ int liberarRecursosHeap(int pid){
 		sem_post(&mutex_tablaDeHeap);
 		return 1;
 	}
+		sem_wait(&mutex_envioDeMensajeAMemoria);
 	for(i=0;i<cantidad;i++){
 		filaTablaDeHeapMemoria* fila =list_remove_by_condition(tablaDeHeapMemoria,busqueda);
 		int estructuras[] = {fila->pid,fila->pagina};
 		enviarMensaje(socketMemoria,liberarUnaPagina,estructuras,sizeof(int)*2);
+
 	}
+	sem_post(&mutex_envioDeMensajeAMemoria);
 	sem_post(&mutex_tablaDeHeap);
 	log_info(logKernel,"Se removieron todos las paginas");
 	return 0;

@@ -172,6 +172,8 @@ pthread_mutex_t activarHilo_Exec;
 
 
 pthread_mutex_t mutex_semaforos_ANSISOP;
+
+pthread_mutex_t mutex_envioDeMensajeAMemoria;
 pthread_mutex_t mutex_variables_compartidas;
 pthread_mutex_t mutex_tablaDeHeap;
 pthread_mutex_t mutex_Quantum_Sleep;

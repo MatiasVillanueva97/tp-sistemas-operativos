@@ -301,6 +301,7 @@ void newToReady(){
 			dataParaMemoria.pid=programaAnsisop->pid;
 
 			//***Le Enviamos a memoria el pid con el que vamos a trabajar - Junto a la accion que vamos a realizar - Le envio a memeoria la cantidad de paginas que necesitaré reservar
+			sem_wait(&mutex_envioDeMensajeAMemoria);
 			enviarMensaje(socketMemoria,inicializarPrograma, &dataParaMemoria, sizeof(int)*2); // Enviamos el pid a memoria
 
 			int* ok;
@@ -345,6 +346,7 @@ void newToReady(){
 
 					recibirMensaje(socketMemoria,&ok);
 				}
+				sem_post(&mutex_envioDeMensajeAMemoria);
 				free(ok);
 				free(paginasParaElStack);
 				//***Termino de completar el PCB
@@ -364,9 +366,9 @@ void newToReady(){
 			}
 			else
 			{
+				sem_post(&mutex_envioDeMensajeAMemoria);
 				//***Como memoria no me puede guardar el programa, finalizo este proceso
 				proceso_Finalizar(programaAnsisop->pid, pidFinalizadoPorFaltaDeMemoria);
-
 				sem_post(&mutex_listaProcesos);
 				log_info(logKernel,"[Funcion newToReady] - No hubo espacio para guardar en memoria el proceso pid: %d\n", programaAnsisop->pid);
 				free(ok);
@@ -636,6 +638,7 @@ void inicializarSemaforo(){
 	sem_init(&mutex_variables_compartidas,0,1);
 	sem_init(&mutex_Quantum_Sleep,0,1);
 	sem_init(&mutex_tabla_estadistica_de_heap,0,1);
+	sem_init(&mutex_envioDeMensajeAMemoria,0,1);
 
 
 	sem_init(&programasEnNew,0,0);
@@ -663,9 +666,11 @@ void conectarConMemoria()
 		socketMemoria = conexionConServidor(getConfigString("PUERTO_MEMORIA"),getConfigString("IP_MEMORIA")); // Asignación del socket que se conectara con la memoria
 		if (socketMemoria == 1){
 			perror("Falla en el protocolo de comunicación");
+			exit(-1);
 		}
 		if (socketMemoria == 2){
 			perror("No se conectado con Memoria, asegurese de que este abierto el proceso");
+			exit(-1);
 		}
 		rta_conexion = handshakeCliente(socketMemoria, Kernel);
 

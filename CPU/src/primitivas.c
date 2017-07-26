@@ -399,7 +399,7 @@ t_puntero AnSISOP_reservar(t_valor_variable espacio) {
 			terminoPrograma = true;
 			pcb->exitCode = -9;
 		} else {
-			calcularDireccion(offset);
+			puts("salio todo bien");
 		}
 	}break;
 	case pedidoRechazadoPorPedirMas: { // en caso de que se pida alocar mas que el tamanio de una pagina

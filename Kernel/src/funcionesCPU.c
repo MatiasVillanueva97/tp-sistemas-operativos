@@ -406,6 +406,7 @@ void *rutinaCPU(void * arg)
 					//ESTA VALIDACION ES AL PEDO, LA CPU NUNCA TE VA A MANDAR UN PID QUE NO EXISTE
 					if(pcb != NULL){
 						finalizarPid(pid,-9);
+						enviarMensaje(socketCPU,pedidoRechazadoPorPedirMas,&offset,sizeof(int));
 					}
 					else{
 						liberarRecursosHeap(pid);
