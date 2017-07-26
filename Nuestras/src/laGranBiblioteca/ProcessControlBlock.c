@@ -389,7 +389,10 @@ PCB_DATA* deserializarPCB(void* stream){
 	pcb->cantidadDeInstrucciones = leerUINT32(stream,&recorrido);
 	pcb->contPags_pcb = leerUINT32(stream,&recorrido);
 	pcb->contextoActual = leerUINT32(stream,&recorrido);
-	pcb->indiceCodigo = deserializar__t_instructions(stream,&recorrido,pcb->cantidadDeInstrucciones);
+	pcb->indiceCodigo = malloc(sizeof(t_intructions)*pcb->cantidadDeInstrucciones);
+	void* contenido =deserializar__t_instructions(stream,&recorrido,pcb->cantidadDeInstrucciones);
+	memcpy(pcb->indiceCodigo,contenido,sizeof(t_intructions)*pcb->cantidadDeInstrucciones);
+	free(contenido);
 
 
 	pcb->sizeEtiquetas = leerUINT32(stream, &recorrido);

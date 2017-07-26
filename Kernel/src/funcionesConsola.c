@@ -158,7 +158,7 @@ void *rutinaConsola(void * arg)
 			case finalizarCiertoScript:{
 
 				//***Estoy recibiendo un script para finalizar, le digo a memoria que lo finalize y si sale bien le aviso a consola, sino tambien le aviso, pero que salio mal xd
-				int pid = leerInt(stream);
+				int pid = *((int*)stream);
 				int* respuesta = malloc(sizeof(int));
 
 				log_info(logKernel,"Entramos a finalizar el script, del pid: %d\n", pid);
@@ -203,6 +203,7 @@ void *rutinaConsola(void * arg)
 				todaviaHayTrabajo=false;
 			}break;
 		}
+		if(a != 0) free(stream);
 	}
 	//printf("Se decontecta a la consola socket: %d\n", socketConsola);
 	log_info(logKernel,"Se decontecta a la consola socket: %d\n", socketConsola);
