@@ -140,8 +140,8 @@ void* serializarEscribirMemoria(int size, int offset, char* path, char* buffer) 
 
 void finalizarPid(int pid, int exitCode) {
 	 sem_wait(&mutex_listaProcesos);
- 	 PROCESOS * proceso = buscarProceso(pid);
- 	 proceso->pcb->estadoDeProceso = exec;
+ 	 //PROCESOS * proceso = buscarProceso(pid);
+ 	 //proceso->pcb->estadoDeProceso = exec;
  	 proceso_Finalizar(pid,exitCode);
  	 sem_post(&mutex_listaProcesos);
 }

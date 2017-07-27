@@ -622,7 +622,7 @@ void recibirMensajesMemoria(void* arg){
 				}
 
 				default:{
-					printf("%d \n",operacion);
+					printf("Soy un default: %d \n",operacion);
 				}
 		}
 		if(operacion != 0) free(stream);

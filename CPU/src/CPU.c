@@ -286,8 +286,13 @@ void pedidoPCB(){
 	enviarMensaje(socketKernel,pedirPCB,&(datosIniciales->quantum),sizeof(int));
 	void* pcbSerializado;
 	log_info(logCPU,"esperando pcb\n");
-	if(recibirMensajeSeguro(socketKernel,&pcbSerializado) != envioPCB){
+	int esto = recibirMensajeSeguro(socketKernel,&pcbSerializado);
+	if(esto != envioPCB){
+		printf("%d\n",esto);
 		log_error(logCPU,"Error en el protocolo de comunicacion\n");
+		liberarConfiguracion();
+		log_destroy(logCPU);
+		exit(-1);
 	}else{
 		enviarMensaje(socketKernel,respuestaBooleanaKernel,&quantumSleep,sizeof(int));
 		hayPCB = true;
@@ -314,7 +319,9 @@ void confirmarQuantumSleep(){
 		free(stream);
 	}else{
 		log_error(logCPU,"Error en el protocolo de comunicacion\n");
-		//algo mas?
+		liberarConfiguracion();
+		log_destroy(logCPU);
+		exit(-1);
 	}
 
 }

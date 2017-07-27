@@ -96,7 +96,13 @@ void *rutinaCPU(void * arg)
 
 	//*** Voy a trabajar con esta CPU hasta que se deconecte
 	while(todaviaHayTrabajo){
-
+		bool proceso_EstaFinalizado2(int pid) {
+			bool busqueda(PROCESOS * aviso) {
+				return aviso->pid == pid;
+			}
+			PCB_DATA* pcb = ((PROCESOS*) list_find(avisos, busqueda))->pcb;
+			return pcb->estadoDeProceso == finish;
+		}
 		//*** Recibo la accion por parte de la CPU
 		accionCPU = recibirMensaje(socketCPU,&stream);
 
@@ -105,21 +111,23 @@ void *rutinaCPU(void * arg)
 			case pedirPCB:{
 				log_info(logKernel,"[Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- %d!\n", pedirPCB);
 				pcb = NULL;
+
 				while(pcb == NULL){
-				sem_post(&cpuDisponible);
+					sem_post(&cpuDisponible);
 					sem_wait(&cantidadDeProgramasEnExec);
-					pcb = cpu_pedirPCBDeExec();
-
-				}
-
 					sem_wait(&mutex_listaProcesos);
+					pcb = cpu_pedirPCBDeExec();
+					sem_post(&mutex_listaProcesos);
+				}
 
 				if(pcb == NULL){
 					//Segun santi, aca va un while asqueroso
 					printf("Se rompio muy feo en rutina CPU, el pcb aparecio como NULL, se cierra el Kernel\n");
 					exit(-1);
-				}
+								}
 
+
+				sem_wait(&mutex_listaProcesos);
 				pcb->estadoDeProceso = enCPU;
 
 				void* pcbSerializado = serializarPCB(pcb);
@@ -149,6 +157,7 @@ void *rutinaCPU(void * arg)
 
 			}break;
 
+
 			//TE MANDO UN PCB QUE YA TERMINE DE EJECUTAR POR COMPLETO, ARREGLATE LAS COSAS DE MOVER DE UNA COLA A LA OTRA Y ESO
 			case enviarPCBaTerminado:{
 				log_info(logKernel,"[Rutina rutinaCPU] - Entramos al Caso de que CPU termino la ejecucion de un proceso: accion- %d!\n", enviarPCBaTerminado);
@@ -158,7 +167,7 @@ void *rutinaCPU(void * arg)
 				printf("CPU - Se manda a finalizar este pid: %d\n", pcb->pid);
 
 				sem_wait(&mutex_listaProcesos);
-				if(!proceso_EstaFinalizado(pcb->pid)){
+				if(!proceso_EstaFinalizado2(pcb->pid)){
 					PROCESOS* proceso = buscarProceso(pcb->pid);
 					proceso->pcb->estadoDeProceso = exec;
 					if(pcb->exitCode<0){
@@ -404,7 +413,9 @@ void *rutinaCPU(void * arg)
 				int offset = manejarPedidoDeMemoria(pid,tamano);
 				sem_post(&mutex_tablaDeHeap);
 				if(offset == 0){
-					PCB_DATA* pcb = buscarPCB(pid);//ESTA LINEA NO HACE FALTA
+					sem_wait(&mutex_listaProcesos);
+					PCB_DATA* pcb = buscarPCB(pid);
+					sem_post(&mutex_listaProcesos);
 					//ESTA VALIDACION ES AL PEDO, LA CPU NUNCA TE VA A MANDAR UN PID QUE NO EXISTE
 					if(pcb != NULL){
 						finalizarPid(pid,-9);
@@ -414,23 +425,24 @@ void *rutinaCPU(void * arg)
 						liberarRecursosHeap(pid);
 					}
 				}
-				if(offset == -1){
-					PCB_DATA* pcb = buscarPCB(pid);//ESTA LINEA NO HACE FALTA
-					offset= 0;
-
-					//ESTA VALIDACION ES AL PEDO, LA CPU NUNCA TE VA A MANDAR UN PID QUE NO EXISTE
-					if(pcb != NULL){
-						finalizarPid(pid,-8);
+				else if(offset == -1){
+						sem_wait(&mutex_listaProcesos);
+						PCB_DATA* pcb = buscarPCB(pid);
+						sem_post(&mutex_listaProcesos);//ESTA LINEA NO HACE FALTA
+						offset= 0;
+						//ESTA VALIDACION ES AL PEDO, LA CPU NUNCA TE VA A MANDAR UN PID QUE NO EXISTE
+						if(pcb != NULL){
+							finalizarPid(pid,-8);
+						}
+						else{
+							liberarRecursosHeap(pid);
+						}
+						enviarMensaje(socketCPU,pedidoRechazadoPorPedirMas,&offset,sizeof(int));
 					}
 					else{
-						liberarRecursosHeap(pid);
+						enviarMensaje(socketCPU,enviarOffsetDeVariableReservada,&offset,sizeof(offset)); // Negro tene cuidado. Si te tiro un 0, es que rompio. Nunca te puedo dar el 0, porque va el metadata.
+						agregarATablaEstadistica(pid,tamano,true);
 					}
-					enviarMensaje(socketCPU,pedidoRechazadoPorPedirMas,&offset,sizeof(int));
-				}
-				else{
-					enviarMensaje(socketCPU,enviarOffsetDeVariableReservada,&offset,sizeof(offset)); // Negro tene cuidado. Si te tiro un 0, es que rompio. Nunca te puedo dar el 0, porque va el metadata.
-					agregarATablaEstadistica(pid,tamano,true);
-				}
 			}break;
 			case liberarVariable:{
 				log_info(logKernel,"[Rutina rutinaCPU] - Entramos al Caso de que CPU pide liberar una variable compartida: accion- %d!\n", liberarVariable);

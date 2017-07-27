@@ -31,11 +31,11 @@ int pedirPagina(int pid,int tamano){
 			sem_wait(&mutex_envioDeMensajeAMemoria);
 
 			enviarMensaje(socketMemoria,asignarPaginas,&asignar,sizeof(t_asignarPaginas));
-			sem_post(&mutex_envioDeMensajeAMemoria);
 			log_info(logKernel,"Se pide a memoria que se reserve %d paginas para el pid %d",1,pid);
 
 			void* stream;
 			recibirMensaje(socketMemoria,&stream);
+			sem_post(&mutex_envioDeMensajeAMemoria);
 			int pagina = leerInt(stream);
 			if(!pagina){
 				log_error(logKernel,"No se pudo reservar la pagina");
@@ -70,10 +70,10 @@ int pedirPagina(int pid,int tamano){
 			sem_wait(&mutex_envioDeMensajeAMemoria);
 
 			enviarMensaje(socketMemoria,almacenarBytes,cosaAMandar,sizeof(t_direccion)+sizeof(int)+w->direccion.size);//esta mal, necesito el deserealizador de spisso.
-			sem_post(&mutex_envioDeMensajeAMemoria);
 
-			free(cosaAMandar);
 			recibirMensaje(socketMemoria,&stream);
+			sem_post(&mutex_envioDeMensajeAMemoria);
+			free(cosaAMandar);
 			free(w->valor);
 			free(w);
 			if(leerInt(stream)){
@@ -89,7 +89,9 @@ int pedirPagina(int pid,int tamano){
 			}
 			log_error(logKernel,"No se pudo almacenar los bytes pedidos por algun motivo. Se libera la pagina y se retorna el error."); // Puede pasar muy rara vez, todavia nunca nos paso. Pero mejor chequearlo.
 			int pedidoDeLiberacion[] = {pid,pagina};
+			sem_wait(&mutex_envioDeMensajeAMemoria);
 			enviarMensaje(socketMemoria,liberarUnaPagina,pedidoDeLiberacion,sizeof(int)*2);//esta mal, necesito el deserealizador de spisso.
+			sem_post(&mutex_envioDeMensajeAMemoria);
 			return 0;
 }
 int manejarLiberacionDeHeap(int pid,int offset){
@@ -111,9 +113,9 @@ int manejarLiberacionDeHeap(int pid,int offset){
 	log_info(logKernel,"Se pide a memoria para el pid %d, la pagina %d ",pedidoMemoria.id,pedidoMemoria.direccion.page);
 	sem_wait(&mutex_envioDeMensajeAMemoria);
 	enviarMensaje(socketMemoria,solicitarBytes,&pedidoMemoria,sizeof(t_pedidoMemoria));
-	sem_post(&mutex_envioDeMensajeAMemoria);
 	void* stream;
 	recibirMensaje(socketMemoria,&stream);
+	sem_post(&mutex_envioDeMensajeAMemoria);
 	if(stream){
 		log_info(logKernel,"Se acepto el pedido a memoria y se recibio la pagina pedida");
 
@@ -134,10 +136,10 @@ int manejarLiberacionDeHeap(int pid,int offset){
 		log_info(logKernel,"Se pide almacenar para el pid %d en la pagina %d, en el offset %d, con el siguiente tamano %d.",almacenamiento.id,almacenamiento.direccion.page,almacenamiento.direccion.offset,almacenamiento.direccion.size);
 		sem_wait(&mutex_envioDeMensajeAMemoria);
 		enviarMensaje(socketMemoria,almacenarBytes,cosa,sizeof(int)*4+sizeof(HeapMetadata));
-		sem_post(&mutex_envioDeMensajeAMemoria);
 		free(stream);
 		free(cosa);
 		recibirMensaje(socketMemoria,&stream);
+		sem_post(&mutex_envioDeMensajeAMemoria);
 
 		if(fila->tamanoDisponible +loQueTengoQueEscribir->tamanoLibre < size_pagina-sizeof(HeapMetadata)){
 			log_info(logKernel,"Se agrego %d a la pagina %d del pid %d",loQueTengoQueEscribir->tamanoLibre,fila->pagina,fila->pid);
@@ -197,7 +199,6 @@ int manejarPedidoDeMemoria(int pid,int tamano){
 				log_info(logKernel,"Se pide  del pid %d,  la pagina %d, en el offset %d, con el siguiente tamano %d.",escritura.id,escritura.direccion.page,escritura.direccion.offset,escritura.direccion.size);
 				sem_wait(&mutex_envioDeMensajeAMemoria);
 				enviarMensaje(socketMemoria,solicitarBytes,&escritura,sizeof(t_pedidoMemoria));
-				sem_post(&mutex_envioDeMensajeAMemoria);
 				void* stream;
 				recibirMensaje(socketMemoria,&stream);
 				if(*(int*)stream ){//Si no hubo error en memoria
@@ -205,8 +206,10 @@ int manejarPedidoDeMemoria(int pid,int tamano){
 
 					free(stream);
 					recibirMensaje(socketMemoria,&stream);
+					sem_post(&mutex_envioDeMensajeAMemoria);
 
 					offsetYBuffer x = escribirMemoria(tamano,stream);
+
 					if(x.offset >=0){
 						log_info(logKernel,"Se pudo guardar en esta pagina");
 
@@ -220,14 +223,16 @@ int manejarPedidoDeMemoria(int pid,int tamano){
 
 						sem_wait(&mutex_envioDeMensajeAMemoria);
 						enviarMensaje(socketMemoria,almacenarBytes,serializarAlmacenarBytes2(w),sizeof(int)*4+w.direccion.size); // esto esta mal, el size es otro
-						sem_post(&mutex_envioDeMensajeAMemoria);
 						void* stream2;
 						recibirMensaje(socketMemoria,&stream2);
+						sem_post(&mutex_envioDeMensajeAMemoria);
 						fila->tamanoDisponible -= tamano+tamanoHeader;
 						log_info(logKernel,"Se cambia el tamano disponible, dejandolo en %d", fila->tamanoDisponible);
 						list_destroy(listaFiltrada);
 						return x.offset +fila->pagina*size_pagina;
 					}
+				}else{
+					sem_post(&mutex_envioDeMensajeAMemoria);
 				}
 			}
 		}

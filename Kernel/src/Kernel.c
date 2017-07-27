@@ -175,10 +175,11 @@ bool proceso_Finalizar_conAviso(int pid, int exitCode, bool conAvisoAConsola)
 
 		procesoAFianalizar->pcb->exitCode = exitCode;
 		moverA(procesoAFianalizar->pid,aFinished);
-
+		sem_wait(&mutex_envioDeMensajeAMemoria);
 		enviarMensaje(socketMemoria,finalizarPrograma,&pid,sizeof(int));
 		void* respuesta;
 		recibirMensaje(socketMemoria,&respuesta);
+		sem_post(&mutex_envioDeMensajeAMemoria);
 		if(respuesta != NULL)
 			free(respuesta);
 

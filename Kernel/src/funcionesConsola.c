@@ -46,10 +46,10 @@ void consola_finalizarTodosLosProcesos(int socketConsola){
 
 	void cambiar(PROCESOS * process){
 		if (process->socketConsola == socketConsola) {
-				//if (process->pcb->estadoDeProceso == enCPU)process->pcb->estadoDeProceso = exec;
 					process->consolaViva = false;
 					proceso_Finalizar_conAviso(process->pid,deconexionConsola, false);
-
+				//	if (process->pcb->estadoDeProceso == enCPU)
+					//process->pcb->estadoDeProceso = aFinalizar;
 					log_info(logKernel, "Murio el proceso: %d\n", process->pid);
 
 		}
@@ -151,9 +151,8 @@ void *rutinaConsola(void * arg)
 				sem_post(&mutex_listaProcesos);
 
 				sem_post(&programasEnNew);//
-				break;
 				free(stream);
-			}
+			}break;
 
 			case finalizarCiertoScript:{
 
@@ -208,7 +207,7 @@ void *rutinaConsola(void * arg)
 	//printf("Se decontecta a la consola socket: %d\n", socketConsola);
 	log_info(logKernel,"Se decontecta a la consola socket: %d\n", socketConsola);
 
-//	close(socketConsola);
+ //close(socketConsola);
 }
 
 
