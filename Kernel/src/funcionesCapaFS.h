@@ -13,10 +13,10 @@
 #include <sys/types.h>
 #include <pthread.h>
 #include "commons/collections/list.h"
-#include "commons/collections/queue.h"
+
 
 #include "datosGlobales.h"
-#include "funcionesSemaforosYCompartidas.h"
+
 
 #include "../../Nuestras/src/laGranBiblioteca/datosGobalesGenerales.h"
 
@@ -46,7 +46,9 @@ void liberarEntradaDeTablaProceso(ENTRADA_DE_TABLA_DE_PROCESO* entrada);
 
 void liberarEntradaTablaGlobalDeArchivos(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada);
 
-void liberarEntradaTablaDeArchivosDeProceso(ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO * entrada);
+
+
+void liberarEntradaTablaGlobalDeArchivosDeProceso(ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO*entrada);
 
 bool liberarRecursosArchivo(int pid);
 

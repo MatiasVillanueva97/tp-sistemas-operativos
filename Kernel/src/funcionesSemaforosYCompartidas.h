@@ -18,6 +18,7 @@
 
 #include "../../Nuestras/src/laGranBiblioteca/datosGobalesGenerales.h"
 
+
 #ifndef FUNCIONESSEMAFOROS_H_
 #define FUNCIONESSEMAFOROS_H_
 
@@ -47,5 +48,7 @@ void cargarSemaforosDesdeConfig();
 bool SEM_wait(char* nombreSEM, PCB_DATA * pcb);
 
 bool SEM_signal(char* nombreSEM, PCB_DATA* pcb);
+
+void liberarSemaforosYCompartidas();
 
 #endif /* FUNCIONESSEMAFOROS_H_ */
