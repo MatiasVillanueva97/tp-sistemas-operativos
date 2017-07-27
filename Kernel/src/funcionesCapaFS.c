@@ -140,8 +140,8 @@ void* serializarEscribirMemoria(int size, int offset, char* path, char* buffer) 
 
 void finalizarPid(int pid, int exitCode) {
 	 sem_wait(&mutex_listaProcesos);
- 	 //PROCESOS * proceso = buscarProceso(pid);
- 	 //proceso->pcb->estadoDeProceso = exec;
+ 	 PROCESOS * proceso = buscarProceso(pid);
+ 	 proceso->pcb->estadoDeProceso = exec;
  	 proceso_Finalizar(pid,exitCode);
  	 sem_post(&mutex_listaProcesos);
 }
@@ -158,10 +158,8 @@ void liberarEntradaTablaGlobalDeArchivos(
 	free(entrada);
 }
 
-void liberarEntradaTablaGlobalDeArchivosDeProceso(
-		ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO*entrada) {
-	list_clean_and_destroy_elements(entrada->tablaProceso,
-			liberarEntradaDeTablaProceso);
+void liberarEntradaTablaGlobalDeArchivosDeProceso(ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO*entrada) {
+	list_destroy_and_destroy_elements(entrada->tablaProceso,liberarEntradaDeTablaProceso);
 	free(entrada);
 }
 
@@ -336,8 +334,9 @@ void borrarEnTablaGlobalDeArchivo(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_d
 
 					void* pedidoDeLectura = serializarPedidoFs(estructura.size,entrada_de_tabla_proceso->offset,entrada_de_archivo->path); //Patos, basicamente
 					enviarMensaje(socketFS, obtenerDatosDeArchivo,pedidoDeLectura,4 + strlen(entrada_de_archivo->path)+ sizeof(int) * 2 + 1);
+					free(pedidoDeLectura);
 					void* contenido;
-					if (recibirMensaje(socketFS, &contenido)== respuestaConContenidoDeFs) {
+					if (recibirMensajeSeguro(socketFS, &contenido)== respuestaConContenidoDeFs) {
 
 						enviarMensaje(socketCPU, respuestaLectura, contenido,estructura.size);
 						entrada_de_tabla_proceso->offset += estructura.size;
@@ -364,7 +363,7 @@ void borrarEnTablaGlobalDeArchivo(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_d
 
 	int recibirBooleanoDeFS(int pid, int exitcode) {
 		void* stream2;
-		recibirMensaje(socketFS, &stream2);
+		recibirMensajeSeguro(socketFS, &stream2);
 		int rtaFS = (*(int*) stream2);
 		free(stream2);
 		if (rtaFS) {
@@ -378,7 +377,7 @@ void borrarEnTablaGlobalDeArchivo(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_d
 	int crearArchivo(char* path, int pid, char* flags) {
 		enviarMensaje(socketFS, creacionDeArchivo, path, strlen(path) + 1);
 		void* stream;
-		recibirMensaje(socketFS, &stream);
+		recibirMensajeSeguro(socketFS, &stream);
 		int seCreoArchivo = (*(int*) stream);
 		if (seCreoArchivo) {
 			agregarATablaGlobalDeArchivos(path, 1);

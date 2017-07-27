@@ -7,6 +7,20 @@
 
 #include "funcionesSemaforosYCompartidas.h"
 
+void liberarSemaforosYCompartidas(){
+	void liberarSemaforo(t_semaforo* semaforo){
+		free(semaforo->nombre);
+		queue_destroy_and_destroy_elements(semaforo->cola,free);
+		free(semaforo);
+	}
+	void liberarCompartidas(t_variableGlobal* variable){
+		if(variable->nombre != NULL)
+			free(variable->nombre-1);
+		free(variable);
+	}
+	list_destroy_and_destroy_elements(listaDeSemaforos,liberarSemaforo);
+	list_destroy_and_destroy_elements(listaDeVariablesGlobales,liberarCompartidas);
+}
 
 void cargarVariablesGlobalesDesdeConfig(){
 	listaDeVariablesGlobales = list_create();

@@ -46,7 +46,51 @@ void conectarConFS();
 
 ///----FIN SEMAFOROS----///
 
+void destroyerDeAvisos(PROCESOS* proceso){
+	free(proceso->scriptAnsisop);
+	destruirPCB_Puntero(proceso->pcb);
+	if(proceso->semBloqueante != NULL) free(proceso->semBloqueante);
+	free(proceso);
+}
 
+int recibirMensajeSeguro(int socket, void ** stream){
+	int valor = recibirMensaje(socket, stream);
+	if(valor == 0){
+		if(socket==socketFS){
+			log_info(logKernel,"El FS se ha desconectado, se finalizara el Kernel\n");
+			printf("El FS se ha desconectado, se finalizara el Kernel\n");
+		}
+		else{
+			log_info(logKernel,"La Memoria se ha desconectado, se finalizara el Kernel\n");
+			printf("La Memoria se ha desconectado, se finalizara el Kernel\n");
+		}
+		//free(*stream);
+		//free(stream);
+		close(socketFS);
+		close(socketMemoria);
+		log_destroy(logKernel);
+
+		list_destroy_and_destroy_elements(tablaDeHeapMemoria,free);
+		list_destroy_and_destroy_elements(tablaEstadisticaDeHeap,free);
+		list_destroy_and_destroy_elements(avisos,destroyerDeAvisos);
+		liberarSemaforosYCompartidas();
+
+		queue_destroy(cola_New);
+		queue_destroy(cola_Ready);
+		queue_destroy(cola_Exec);
+		queue_destroy(cola_Wait);
+		queue_destroy(cola_Finished);
+		list_destroy_and_destroy_elements(tablaGlobalDeArchivosDeProcesos,liberarEntradaTablaGlobalDeArchivosDeProceso);
+		list_destroy_and_destroy_elements(tablaGlobalDeArchivos,liberarEntradaTablaGlobalDeArchivos);
+
+		liberarConfiguracion();
+
+
+
+		exit(-1);
+	}
+	return valor;
+}
 
 
 bool seDetuvoLaPlanificacion(){
@@ -141,6 +185,7 @@ bool moverA(int pid, int movimientoACola){
 }
 
 
+
 ///***Esta función tiene que buscar en todas las colas y fijarse donde esta el procesos y cambiar su estado a estado finalizado
 bool proceso_Finalizar_conAviso(int pid, int exitCode, bool conAvisoAConsola)
 {
@@ -178,7 +223,7 @@ bool proceso_Finalizar_conAviso(int pid, int exitCode, bool conAvisoAConsola)
 		sem_wait(&mutex_envioDeMensajeAMemoria);
 		enviarMensaje(socketMemoria,finalizarPrograma,&pid,sizeof(int));
 		void* respuesta;
-		recibirMensaje(socketMemoria,&respuesta);
+		recibirMensajeSeguro(socketMemoria,&respuesta);
 		sem_post(&mutex_envioDeMensajeAMemoria);
 		if(respuesta != NULL)
 			free(respuesta);
@@ -313,7 +358,7 @@ void newToReady(){
 			enviarMensaje(socketMemoria,inicializarPrograma, &dataParaMemoria, sizeof(int)*2); // Enviamos el pid a memoria
 
 			int* ok;
-			recibirMensaje(socketMemoria, &ok); // Esperamos a que memoria me indique si puede guardar o no el stream
+			recibirMensajeSeguro(socketMemoria, &ok);// Esperamos a que memoria me indique si puede guardar o no el stream
 			if(*ok)
 			{
 				log_info(logKernel,"\n\n[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-%d\n", *ok);
@@ -336,7 +381,7 @@ void newToReady(){
 				{
 					enviarMensaje(socketMemoria,envioCantidadPaginas,scriptEnPaginas[i],size_pagina);
 					free(ok);
-					recibirMensaje(socketMemoria,&ok);
+					recibirMensajeSeguro(socketMemoria,&ok);
 					free(scriptEnPaginas[i]);
 				}
 				free(scriptEnPaginas);
@@ -352,7 +397,7 @@ void newToReady(){
 					enviarMensaje(socketMemoria,envioCantidadPaginas,paginasParaElStack,size_pagina);
 					//printf("Envio una pagina: %d\n", i+cant_paginas);
 
-					recibirMensaje(socketMemoria,&ok);
+					recibirMensajeSeguro(socketMemoria,&ok);
 				}
 				sem_post(&mutex_envioDeMensajeAMemoria);
 				free(ok);

@@ -250,9 +250,11 @@ void *rutinaCPU(void * arg)
 					t_crearArchivo estructura = deserializarCrearArchivo(stream);
 					enviarMensaje(socketFS,validacionDerArchivo,estructura.path,strlen(estructura.path)+1);
 					void * stream2;
-					recibirMensaje(socketFS,&stream2);
+					recibirMensajeSeguro(socketFS,&stream2);
 					bool existeArchivo = *(bool*) stream2;
 					abrirArchivoPermanente(existeArchivo,estructura, socketCPU);
+					free(estructura.flags);
+					free(estructura.path);
 					free(stream);
 					free(stream2);
 			 }
@@ -464,6 +466,40 @@ void *rutinaCPU(void * arg)
 					}
 				}
 				enviarMensaje(socketCPU,enviarSiSePudoLiberar,&x,sizeof(int));
+			}break;
+
+			case 7777:{
+
+				printf("Se cago muriendo la memoria\n");
+
+				close(socketFS);
+				close(socketMemoria);
+				log_destroy(logKernel);
+
+				list_destroy_and_destroy_elements(tablaDeHeapMemoria,free);
+				list_destroy_and_destroy_elements(tablaEstadisticaDeHeap,free);
+
+				void destroyerDeAvisos(PROCESOS* proceso){
+					free(proceso->scriptAnsisop);
+					destruirPCB_Puntero(proceso->pcb);
+					if(proceso->semBloqueante != NULL) free(proceso->semBloqueante);
+					free(proceso);
+				}
+
+				list_destroy_and_destroy_elements(avisos,destroyerDeAvisos);
+				liberarSemaforosYCompartidas();
+
+				queue_destroy(cola_New);
+				queue_destroy(cola_Ready);
+				queue_destroy(cola_Exec);
+				queue_destroy(cola_Wait);
+				queue_destroy(cola_Finished);
+				list_destroy_and_destroy_elements(tablaGlobalDeArchivosDeProcesos,liberarEntradaTablaGlobalDeArchivosDeProceso);
+				list_destroy_and_destroy_elements(tablaGlobalDeArchivos,liberarEntradaTablaGlobalDeArchivos);
+
+				liberarConfiguracion();
+
+				exit(-1);
 			}break;
 
 			//QUE PASA SI SE DESCONECTA LA CPU

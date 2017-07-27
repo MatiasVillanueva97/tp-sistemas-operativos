@@ -34,7 +34,7 @@ int pedirPagina(int pid,int tamano){
 			log_info(logKernel,"Se pide a memoria que se reserve %d paginas para el pid %d",1,pid);
 
 			void* stream;
-			recibirMensaje(socketMemoria,&stream);
+			recibirMensajeSeguro(socketMemoria,&stream);
 			sem_post(&mutex_envioDeMensajeAMemoria);
 			int pagina = leerInt(stream);
 			if(!pagina){
@@ -71,7 +71,7 @@ int pedirPagina(int pid,int tamano){
 
 			enviarMensaje(socketMemoria,almacenarBytes,cosaAMandar,sizeof(t_direccion)+sizeof(int)+w->direccion.size);//esta mal, necesito el deserealizador de spisso.
 
-			recibirMensaje(socketMemoria,&stream);
+			recibirMensajeSeguro(socketMemoria,&stream);
 			sem_post(&mutex_envioDeMensajeAMemoria);
 			free(cosaAMandar);
 			free(w->valor);
@@ -114,13 +114,13 @@ int manejarLiberacionDeHeap(int pid,int offset){
 	sem_wait(&mutex_envioDeMensajeAMemoria);
 	enviarMensaje(socketMemoria,solicitarBytes,&pedidoMemoria,sizeof(t_pedidoMemoria));
 	void* stream;
-	recibirMensaje(socketMemoria,&stream);
+	recibirMensajeSeguro(socketMemoria,&stream);
 	sem_post(&mutex_envioDeMensajeAMemoria);
 	if(stream){
 		log_info(logKernel,"Se acepto el pedido a memoria y se recibio la pagina pedida");
 
 		free(stream);
-		recibirMensaje(socketMemoria,&stream);
+		recibirMensajeSeguro(socketMemoria,&stream);
 		offsetTamanoYHeader* loQueTengoQueEscribir= liberarMemoriaHeap(offset%size_pagina,stream);
 		if(loQueTengoQueEscribir == NULL){
 			log_error(logKernel,"El pedido de liberacion fue invalido");
@@ -138,9 +138,8 @@ int manejarLiberacionDeHeap(int pid,int offset){
 		enviarMensaje(socketMemoria,almacenarBytes,cosa,sizeof(int)*4+sizeof(HeapMetadata));
 		free(stream);
 		free(cosa);
-		recibirMensaje(socketMemoria,&stream);
+		recibirMensajeSeguro(socketMemoria,&stream);
 		sem_post(&mutex_envioDeMensajeAMemoria);
-
 		if(fila->tamanoDisponible +loQueTengoQueEscribir->tamanoLibre < size_pagina-sizeof(HeapMetadata)){
 			log_info(logKernel,"Se agrego %d a la pagina %d del pid %d",loQueTengoQueEscribir->tamanoLibre,fila->pagina,fila->pid);
 
@@ -163,6 +162,7 @@ int manejarLiberacionDeHeap(int pid,int offset){
 			log_info(logKernel,"Se libero la pagina %d del pid %d.",fila->pagina,fila->pid);
 		}
 		agregarATablaEstadistica(pid,loQueTengoQueEscribir->tamanoLibre-5,false);
+		free(loQueTengoQueEscribir);
 		return leerInt(stream);
 	}
 	log_error(logKernel,"No se acepto el pedido de la pagina a memoria.");
@@ -200,12 +200,12 @@ int manejarPedidoDeMemoria(int pid,int tamano){
 				sem_wait(&mutex_envioDeMensajeAMemoria);
 				enviarMensaje(socketMemoria,solicitarBytes,&escritura,sizeof(t_pedidoMemoria));
 				void* stream;
-				recibirMensaje(socketMemoria,&stream);
+				recibirMensajeSeguro(socketMemoria,&stream);
 				if(*(int*)stream ){//Si no hubo error en memoria
 					log_info(logKernel,"Se acepto el solicitar Bytes y se recibio el contenido.");
 
 					free(stream);
-					recibirMensaje(socketMemoria,&stream);
+					recibirMensajeSeguro(socketMemoria,&stream);
 					sem_post(&mutex_envioDeMensajeAMemoria);
 
 					offsetYBuffer x = escribirMemoria(tamano,stream);
@@ -224,7 +224,7 @@ int manejarPedidoDeMemoria(int pid,int tamano){
 						sem_wait(&mutex_envioDeMensajeAMemoria);
 						enviarMensaje(socketMemoria,almacenarBytes,serializarAlmacenarBytes2(w),sizeof(int)*4+w.direccion.size); // esto esta mal, el size es otro
 						void* stream2;
-						recibirMensaje(socketMemoria,&stream2);
+						recibirMensajeSeguro(socketMemoria,&stream2);
 						sem_post(&mutex_envioDeMensajeAMemoria);
 						fila->tamanoDisponible -= tamano+tamanoHeader;
 						log_info(logKernel,"Se cambia el tamano disponible, dejandolo en %d", fila->tamanoDisponible);
@@ -331,6 +331,7 @@ offsetTamanoYHeader* liberarMemoriaHeap(int offset,void* pagina){
 	}
 	if(recorrido>=size_pagina){
 			log_error(logKernel,"No se pudo guardar en esta pagina");
+			free(headerAnterior);
 			return NULL;
 	}
 	else{
@@ -363,10 +364,12 @@ offsetTamanoYHeader* liberarMemoriaHeap(int offset,void* pagina){
 			x->header = headerAEscribir;
 			x->offset = offsetQueTengoQueDevolver;
 			log_info(logKernel,"Se devuelve el offset %d, el tamaño libre %d y el header, con el size %d y booleano %b",x->offset,x->tamanoLibre,x->header.size,x->header.isFree);
+			free(headerAnterior);
 			return x;
 			//tengo que devolver offsetQueTengoQueDevolver y el headerQueTengaQueEscribir
 	}
 	log_error(logKernel,"No se pudo liberar la variable.");
+	free(headerAnterior);
 	return NULL;
 }
 

@@ -194,20 +194,23 @@ void conectarConMemoria(){
 		log_error(logCPU,"Falla en el protocolo de comunicación\n");
 		liberarConfiguracion();
 		log_destroy(logCPU);
+		enviarMensaje(socketKernel,7777,NULL,0);
 		exit(-1);
 	}
 	if (socketMemoria == 2){
 		log_error(logCPU,"No se conectado con el Memoria, asegurese de que este abierto el proceso\n");
 		liberarConfiguracion();
 		log_destroy(logCPU);
+		enviarMensaje(socketKernel,7777,NULL,0);
 		exit(-1);
 	}
 	if ( (rta_conexion = handshakeCliente(socketMemoria, CPU)) == -1) {
 		log_error(logCPU,"Error en el handshake con Memoria\n");
-				close(socketMemoria);
-				liberarConfiguracion();
-				log_destroy(logCPU);
-				exit(-1);
+		enviarMensaje(socketKernel,7777,NULL,0);
+		close(socketMemoria);
+		liberarConfiguracion();
+		log_destroy(logCPU);
+		exit(-1);
 	}
 	log_info(logCPU,"Conexión exitosa con el Memoria(%i)!!\n",rta_conexion);
 }
