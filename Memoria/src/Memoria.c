@@ -850,6 +850,15 @@ int main(void) {
 	free(memoriaTotal);
 	log_info(logMemoria,"Se finalizo el modulo Memoria.");
 	cacheFlush();
+
+	void destroyerCantidadDePaginas(filaTablaCantidadDePaginas* fila){
+		list_destroy_and_destroy_elements(fila->listaDePaginasLiberadas,free);
+		free(fila);
+	}
+	list_destroy_and_destroy_elements(tablaConCantidadDePaginas,destroyerCantidadDePaginas);
+	list_destroy(tablaDeEntradasDeCache);
+	log_destroy(logMemoria);
+	puts("Se desconecto el kernel, me desconecto");
 	return EXIT_SUCCESS;
 
 }
