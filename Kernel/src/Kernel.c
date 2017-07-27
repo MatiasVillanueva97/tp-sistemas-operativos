@@ -73,7 +73,9 @@ int recibirMensajeSeguro(int socket, void ** stream){
 		list_destroy_and_destroy_elements(tablaDeHeapMemoria,free);
 		list_destroy_and_destroy_elements(tablaEstadisticaDeHeap,free);
 		list_destroy_and_destroy_elements(avisos,destroyerDeAvisos);
+		sem_wait(&mutex_semaforos_ANSISOP);
 		liberarSemaforosYCompartidas();
+		sem_post(&mutex_semaforos_ANSISOP);
 
 		queue_destroy(cola_New);
 		queue_destroy(cola_Ready);
@@ -275,11 +277,11 @@ void liberarProcesoDeSemaforo(char* nombreSEM, PCB_DATA* pcb){
 }
 
 bool liberarSemaforo(PROCESOS* proceso){
-	sem_wait(&mutex_semaforos_ANSISOP);
+	//sem_wait(&mutex_semaforos_ANSISOP);
 	if(proceso->semBloqueante != NULL){
 		liberarProcesoDeSemaforo(proceso->semBloqueante,proceso->pcb);
 	}
-	sem_post(&mutex_semaforos_ANSISOP);
+	//sem_post(&mutex_semaforos_ANSISOP);
 
 	return false;
 }

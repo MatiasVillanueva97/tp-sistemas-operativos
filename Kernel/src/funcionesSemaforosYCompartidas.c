@@ -18,6 +18,7 @@ void liberarSemaforosYCompartidas(){
 			free(variable->nombre-1);
 		free(variable);
 	}
+
 	list_destroy_and_destroy_elements(listaDeSemaforos,liberarSemaforo);
 	list_destroy_and_destroy_elements(listaDeVariablesGlobales,liberarCompartidas);
 }
