@@ -12682,3 +12682,233 @@ Esperando conexiones:
 [INFO] 13:24:44:428 Kernel/(4003:4005): 
 [rutina estadoNEW] - Entramos al planificador de largo plazo!
 
+[INFO] 18:44:07:175 Kernel/(3787:3787): 
+
+
+Esperando conexiones:
+-FileSystem
+-Memoria
+
+[INFO] 18:44:07:175 Kernel/(3787:3787): Conexión exitosa con el Memoria(2)!!
+
+[INFO] 18:44:07:175 Kernel/(3787:3787): [Conexion con Memoria] - El Size pag es: 256
+[INFO] 18:44:07:175 Kernel/(3787:3787): Conexión exitosa con el FileSystem(4)!!
+
+[INFO] 18:44:07:176 Kernel/(3787:3790): 
+[Rutina planificadorCortoPlazo] - Entramos al planificador de corto plazo!
+
+[INFO] 18:44:07:176 Kernel/(3787:3789): 
+[rutina estadoNEW] - Entramos al planificador de largo plazo!
+
+[INFO] 18:44:12:104 Kernel/(3787:3792): 
+[rutina aceptarConexiones] - Nueva Consola Conectada!
+Socket Consola 7
+
+
+[INFO] 18:44:12:104 Kernel/(3787:3794): [Rutina rutinaConsola] - Entramos al hilo de la consola: 7!
+
+[INFO] 18:44:16:241 Kernel/(3787:3792): 
+[rutina aceptarConexiones] - Nueva CPU Conectada
+Socket CPU 9
+
+
+[INFO] 18:44:16:241 Kernel/(3787:3797): [Rutina rutinaCPU] - Entramos al hilo de la CPU cuyo socket es: 9.
+
+[INFO] 18:44:16:241 Kernel/(3787:3797): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 18:44:36:253 Kernel/(3787:3794): [Rutina rutinaConsola] - Nuevo script recibido!
+
+[INFO] 18:44:36:254 Kernel/(3787:3789): 
+
+
+Estamos en la función newToReady a largo plazo!
+
+
+[INFO] 18:44:36:254 Kernel/(3787:3789): Estructura:--
+Pid: 1
+Script: #!/usr/bin/ansisop
+begin
+variables a
+variables b
+variables c
+variables d
+variables f
+alocar a 100
+alocar b 50
+alocar c 30
+alocar d 30
+liberar b
+liberar c
+alocar f 60
+end
+SocketConsola:7
+
+
+[INFO] 18:44:36:254 Kernel/(3787:3789): [memoria_dividirScriptEnPaginas] - #!/usr/bin/ansisop
+begin
+variables a
+variables b
+variables c
+variables d
+variables f
+alocar a 100
+alocar b 50
+alocar c 30
+alocar d 30
+liberar b
+liberar c
+alocar f 60
+end
+[INFO] 18:44:36:254 Kernel/(3787:3789): 
+
+[Funcion consola_recibirScript] - Memoria dio el Ok para el proceso recien enviado: Ok-1
+
+[INFO] 18:44:36:911 Kernel/(3787:3797): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 18:44:36:949 Kernel/(3787:3797): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 18:44:37:38 Kernel/(3787:3797): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide reservar una variable compartida: accion- 71!
+
+[INFO] 18:44:37:38 Kernel/(3787:3797): No tiene paginas de heap. Se procede a pedir una pagina.
+[INFO] 18:44:37:38 Kernel/(3787:3797): Se pide a memoria que se reserve 1 paginas para el pid 1
+[INFO] 18:44:37:38 Kernel/(3787:3797): Se reservan 100 bytes  en la pagina pedida.
+[INFO] 18:44:37:38 Kernel/(3787:3797): Se escribe el heapMetadata que informa cuanto tamaño queda (el ultimo)
+[INFO] 18:44:37:38 Kernel/(3787:3797): Se envia a memoria el siguiente pedido de escritura: Pagina-> 3, Pid->1, tamano->110,->offset->0
+[INFO] 18:44:37:39 Kernel/(3787:3797): Se almaceno correctamente los bytes en memoria.
+[INFO] 18:44:37:39 Kernel/(3787:3797): Se añade la pagina a la tabla de heap, y se retorna el offset de la variable pedida.
+[INFO] 18:44:37:90 Kernel/(3787:3797): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide reservar una variable compartida: accion- 71!
+
+[INFO] 18:44:37:90 Kernel/(3787:3797): El proceso tiene 1 paginas de heap
+[INFO] 18:44:37:90 Kernel/(3787:3797): Tiene tamano sufieciente para guardarlo aparentemente la pagina 3 del pid 1
+[INFO] 18:44:37:90 Kernel/(3787:3797): Se pide  del pid 1,  la pagina 3, en el offset 0, con el siguiente tamano 256.
+[INFO] 18:44:37:90 Kernel/(3787:3797): Se acepto el solicitar Bytes y se recibio el contenido.
+[INFO] 18:44:37:90 Kernel/(3787:3797): Empiezo a recorrer la pagina
+[INFO] 18:44:37:90 Kernel/(3787:3797): El heap leido no alcanza para el tamano pedido o estaba reservado, tenia 100 como tamaño y %b como boleano
+[INFO] 18:44:37:90 Kernel/(3787:3797): El recorrido ahora es 105
+[INFO] 18:44:37:90 Kernel/(3787:3797): El heapMetadata tiene  146 como tamaño y %b como boleano
+[INFO] 18:44:37:90 Kernel/(3787:3797): El recorrido ahora es 110
+[INFO] 18:44:37:90 Kernel/(3787:3797): Se escribe el heapMetadata con tamano 50, y no esta libre
+[INFO] 18:44:37:90 Kernel/(3787:3797): Se escribe el heapMetadata con tamano 91, y  esta libre
+[INFO] 18:44:37:90 Kernel/(3787:3797): Se copia el contenido para enviarselo a memoria
+[INFO] 18:44:37:90 Kernel/(3787:3797): Se devuelve el offset 110 y los siguientes heapMetadata:
+[INFO] 18:44:37:90 Kernel/(3787:3797): Se pudo guardar en esta pagina
+[INFO] 18:44:37:90 Kernel/(3787:3797): Se escribe el metadata Heap necesario
+[INFO] 18:44:37:90 Kernel/(3787:3797): Se cambia el tamano disponible, dejandolo en 91
+[INFO] 18:44:37:141 Kernel/(3787:3797): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide reservar una variable compartida: accion- 71!
+
+[INFO] 18:44:37:142 Kernel/(3787:3797): El proceso tiene 1 paginas de heap
+[INFO] 18:44:37:142 Kernel/(3787:3797): Tiene tamano sufieciente para guardarlo aparentemente la pagina 3 del pid 1
+[INFO] 18:44:37:142 Kernel/(3787:3797): Se pide  del pid 1,  la pagina 3, en el offset 0, con el siguiente tamano 256.
+[INFO] 18:44:37:142 Kernel/(3787:3797): Se acepto el solicitar Bytes y se recibio el contenido.
+[INFO] 18:44:37:142 Kernel/(3787:3797): Empiezo a recorrer la pagina
+[INFO] 18:44:37:142 Kernel/(3787:3797): El heap leido no alcanza para el tamano pedido o estaba reservado, tenia 100 como tamaño y %b como boleano
+[INFO] 18:44:37:142 Kernel/(3787:3797): El recorrido ahora es 105
+[INFO] 18:44:37:142 Kernel/(3787:3797): El heapMetadata tiene  50 como tamaño y %b como boleano
+[INFO] 18:44:37:142 Kernel/(3787:3797): El recorrido ahora es 110
+[INFO] 18:44:37:142 Kernel/(3787:3797): El heap leido no alcanza para el tamano pedido o estaba reservado, tenia 50 como tamaño y %b como boleano
+[INFO] 18:44:37:142 Kernel/(3787:3797): El recorrido ahora es 160
+[INFO] 18:44:37:142 Kernel/(3787:3797): El heapMetadata tiene  91 como tamaño y %b como boleano
+[INFO] 18:44:37:142 Kernel/(3787:3797): El recorrido ahora es 165
+[INFO] 18:44:37:142 Kernel/(3787:3797): Se escribe el heapMetadata con tamano 30, y no esta libre
+[INFO] 18:44:37:142 Kernel/(3787:3797): Se escribe el heapMetadata con tamano 56, y  esta libre
+[INFO] 18:44:37:142 Kernel/(3787:3797): Se copia el contenido para enviarselo a memoria
+[INFO] 18:44:37:142 Kernel/(3787:3797): Se devuelve el offset 165 y los siguientes heapMetadata:
+[INFO] 18:44:37:142 Kernel/(3787:3797): Se pudo guardar en esta pagina
+[INFO] 18:44:37:142 Kernel/(3787:3797): Se escribe el metadata Heap necesario
+[INFO] 18:44:37:142 Kernel/(3787:3797): Se cambia el tamano disponible, dejandolo en 56
+[INFO] 18:44:37:153 Kernel/(3787:3797): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 18:44:37:193 Kernel/(3787:3797): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 18:44:37:234 Kernel/(3787:3797): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide reservar una variable compartida: accion- 71!
+
+[INFO] 18:44:37:234 Kernel/(3787:3797): El proceso tiene 1 paginas de heap
+[INFO] 18:44:37:234 Kernel/(3787:3797): Tiene tamano sufieciente para guardarlo aparentemente la pagina 3 del pid 1
+[INFO] 18:44:37:234 Kernel/(3787:3797): Se pide  del pid 1,  la pagina 3, en el offset 0, con el siguiente tamano 256.
+[INFO] 18:44:37:234 Kernel/(3787:3797): Se acepto el solicitar Bytes y se recibio el contenido.
+[INFO] 18:44:37:234 Kernel/(3787:3797): Empiezo a recorrer la pagina
+[INFO] 18:44:37:234 Kernel/(3787:3797): El heap leido no alcanza para el tamano pedido o estaba reservado, tenia 100 como tamaño y %b como boleano
+[INFO] 18:44:37:234 Kernel/(3787:3797): El recorrido ahora es 105
+[INFO] 18:44:37:234 Kernel/(3787:3797): El heapMetadata tiene  50 como tamaño y %b como boleano
+[INFO] 18:44:37:234 Kernel/(3787:3797): El recorrido ahora es 110
+[INFO] 18:44:37:234 Kernel/(3787:3797): El heap leido no alcanza para el tamano pedido o estaba reservado, tenia 50 como tamaño y %b como boleano
+[INFO] 18:44:37:234 Kernel/(3787:3797): El recorrido ahora es 160
+[INFO] 18:44:37:234 Kernel/(3787:3797): El heapMetadata tiene  30 como tamaño y %b como boleano
+[INFO] 18:44:37:234 Kernel/(3787:3797): El recorrido ahora es 165
+[INFO] 18:44:37:234 Kernel/(3787:3797): El heap leido no alcanza para el tamano pedido o estaba reservado, tenia 30 como tamaño y %b como boleano
+[INFO] 18:44:37:234 Kernel/(3787:3797): El recorrido ahora es 195
+[INFO] 18:44:37:234 Kernel/(3787:3797): El heapMetadata tiene  56 como tamaño y %b como boleano
+[INFO] 18:44:37:234 Kernel/(3787:3797): El recorrido ahora es 200
+[INFO] 18:44:37:234 Kernel/(3787:3797): Se escribe el heapMetadata con tamano 30, y no esta libre
+[INFO] 18:44:37:234 Kernel/(3787:3797): Se escribe el heapMetadata con tamano 21, y  esta libre
+[INFO] 18:44:37:234 Kernel/(3787:3797): Se copia el contenido para enviarselo a memoria
+[INFO] 18:44:37:234 Kernel/(3787:3797): Se devuelve el offset 200 y los siguientes heapMetadata:
+[INFO] 18:44:37:234 Kernel/(3787:3797): Se pudo guardar en esta pagina
+[INFO] 18:44:37:234 Kernel/(3787:3797): Se escribe el metadata Heap necesario
+[INFO] 18:44:37:235 Kernel/(3787:3797): Se cambia el tamano disponible, dejandolo en 21
+[INFO] 18:44:37:325 Kernel/(3787:3797): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide liberar una variable compartida: accion- 70!
+
+[INFO] 18:44:37:325 Kernel/(3787:3797): Se pide a memoria para el pid 1, la pagina 3 
+[INFO] 18:44:37:325 Kernel/(3787:3797): Se acepto el pedido a memoria y se recibio la pagina pedida
+[INFO] 18:44:37:325 Kernel/(3787:3797): El offset es: 110 y el HeapMetadata es: 100 tamano y esta %b como booleano 
+[INFO] 18:44:37:325 Kernel/(3787:3797): Se empieza a recorrer la pagina para buscar el heapMetadata donde se pueda guardar
+[INFO] 18:44:37:325 Kernel/(3787:3797): El HeapMetadata Anterior es: 110 tamano y esta 100 como booleano 
+[INFO] 18:44:37:325 Kernel/(3787:3797): El HeapMetadata Actual es: 110 tamano y esta 50 como booleano 
+[INFO] 18:44:37:325 Kernel/(3787:3797): El HeapMetadata a escribir es: 110 tamano y esta %b como booleano 
+[INFO] 18:44:37:325 Kernel/(3787:3797): El HeapMetadata Siguiente es: 110 tamano y esta %b como booleano 
+[INFO] 18:44:37:325 Kernel/(3787:3797): Se devuelve el offset 105, el tamaño libre 50 y el header, con el size 50 y booleano %b
+[INFO] 18:44:37:326 Kernel/(3787:3797): Se pide almacenar para el pid 1 en la pagina 3, en el offset 105, con el siguiente tamano 5.
+[INFO] 18:44:37:326 Kernel/(3787:3797): Se agrego 50 a la pagina 3 del pid 1
+[INFO] 18:44:37:413 Kernel/(3787:3797): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide liberar una variable compartida: accion- 70!
+
+[INFO] 18:44:37:413 Kernel/(3787:3797): Se pide a memoria para el pid 1, la pagina 3 
+[INFO] 18:44:37:413 Kernel/(3787:3797): Se acepto el pedido a memoria y se recibio la pagina pedida
+[INFO] 18:44:37:414 Kernel/(3787:3797): El offset es: 165 y el HeapMetadata es: 100 tamano y esta %b como booleano 
+[INFO] 18:44:37:414 Kernel/(3787:3797): Se empieza a recorrer la pagina para buscar el heapMetadata donde se pueda guardar
+[INFO] 18:44:37:414 Kernel/(3787:3797): El HeapMetadata Anterior es: 165 tamano y esta 100 como booleano 
+[INFO] 18:44:37:414 Kernel/(3787:3797): El HeapMetadata Actual es: 165 tamano y esta 50 como booleano 
+[INFO] 18:44:37:414 Kernel/(3787:3797): El HeapMetadata Anterior es: 165 tamano y esta 50 como booleano 
+[INFO] 18:44:37:414 Kernel/(3787:3797): El HeapMetadata Actual es: 165 tamano y esta 30 como booleano 
+[INFO] 18:44:37:414 Kernel/(3787:3797): El HeapMetadata a escribir es: 165 tamano y esta %b como booleano 
+[INFO] 18:44:37:414 Kernel/(3787:3797): El HeapMetadata Siguiente es: 165 tamano y esta %b como booleano 
+[INFO] 18:44:37:414 Kernel/(3787:3797): El  heapMetadata anterior estaba libre, por lo que se ajusta para evitar la fragmentacion
+[INFO] 18:44:37:414 Kernel/(3787:3797): El HeapMetadata a escribir es: 165 tamano y esta %b como booleano 
+[INFO] 18:44:37:414 Kernel/(3787:3797): 
+[INFO] 18:44:37:414 Kernel/(3787:3797): Se devuelve el offset 105, el tamaño libre 35 y el header, con el size 85 y booleano %b
+[INFO] 18:44:37:414 Kernel/(3787:3797): Se pide almacenar para el pid 1 en la pagina 3, en el offset 105, con el siguiente tamano 5.
+[INFO] 18:44:37:414 Kernel/(3787:3797): Se agrego 35 a la pagina 3 del pid 1
+[INFO] 18:44:37:465 Kernel/(3787:3797): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide reservar una variable compartida: accion- 71!
+
+[INFO] 18:44:37:465 Kernel/(3787:3797): El proceso tiene 1 paginas de heap
+[INFO] 18:44:37:465 Kernel/(3787:3797): Tiene tamano sufieciente para guardarlo aparentemente la pagina 3 del pid 1
+[INFO] 18:44:37:465 Kernel/(3787:3797): Se pide  del pid 1,  la pagina 3, en el offset 0, con el siguiente tamano 256.
+[INFO] 18:44:37:465 Kernel/(3787:3797): Se acepto el solicitar Bytes y se recibio el contenido.
+[INFO] 18:44:37:465 Kernel/(3787:3797): Empiezo a recorrer la pagina
+[INFO] 18:44:37:465 Kernel/(3787:3797): El heap leido no alcanza para el tamano pedido o estaba reservado, tenia 100 como tamaño y %b como boleano
+[INFO] 18:44:37:465 Kernel/(3787:3797): El recorrido ahora es 105
+[INFO] 18:44:37:466 Kernel/(3787:3797): El heapMetadata tiene  85 como tamaño y %b como boleano
+[INFO] 18:44:37:466 Kernel/(3787:3797): El recorrido ahora es 110
+[INFO] 18:44:37:466 Kernel/(3787:3797): Se escribe el heapMetadata con tamano 60, y no esta libre
+[INFO] 18:44:37:466 Kernel/(3787:3797): Se escribe el heapMetadata con tamano 20, y  esta libre
+[INFO] 18:44:37:466 Kernel/(3787:3797): Se copia el contenido para enviarselo a memoria
+[INFO] 18:44:37:466 Kernel/(3787:3797): Se devuelve el offset 110 y los siguientes heapMetadata:
+[INFO] 18:44:37:466 Kernel/(3787:3797): Se pudo guardar en esta pagina
+[INFO] 18:44:37:466 Kernel/(3787:3797): Se escribe el metadata Heap necesario
+[INFO] 18:44:37:466 Kernel/(3787:3797): Se cambia el tamano disponible, dejandolo en 41
+[INFO] 18:44:37:477 Kernel/(3787:3797): [Rutina rutinaCPU] - Entramos al Caso de que CPU se quedo sin quamtum y el proceso pasa a ready: accion- 105!
+
+[INFO] 18:44:37:517 Kernel/(3787:3797): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+
+[INFO] 18:44:37:568 Kernel/(3787:3797): [Rutina rutinaCPU] - Entramos al Caso de que CPU termino la ejecucion de un proceso: accion- 104!
+
+[INFO] 18:44:37:568 Kernel/(3787:3797): Se removieron todos las paginas
+[INFO] 18:44:37:568 Kernel/(3787:3797): No se liberaron los recursos del heap correctamenete del pid 1
+
+[INFO] 18:44:37:568 Kernel/(3787:3797): No se liberaron los recursos del de los archivos correctamenete del pid 1
+
+[INFO] 18:44:37:568 Kernel/(3787:3797): Se liberaron correctamente los recursos de los semaforos del pid 1
+
+[INFO] 18:44:37:605 Kernel/(3787:3797): Se acaba de mandar a la consola n°: 7, que el proceso 1 acaba de finalizar con exit code: 0
+
+[INFO] 18:44:37:605 Kernel/(3787:3797): [Rutina rutinaCPU] - Entramos al Caso de que CPU pide un pcb: accion- 103!
+

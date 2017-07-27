@@ -331,7 +331,6 @@ offsetTamanoYHeader* liberarMemoriaHeap(int offset,void* pagina){
 	}
 	if(recorrido>=size_pagina){
 			log_error(logKernel,"No se pudo guardar en esta pagina");
-			free(headerAnterior);
 			return NULL;
 	}
 	else{
@@ -364,12 +363,10 @@ offsetTamanoYHeader* liberarMemoriaHeap(int offset,void* pagina){
 			x->header = headerAEscribir;
 			x->offset = offsetQueTengoQueDevolver;
 			log_info(logKernel,"Se devuelve el offset %d, el tamaño libre %d y el header, con el size %d y booleano %b",x->offset,x->tamanoLibre,x->header.size,x->header.isFree);
-			free(headerAnterior);
 			return x;
 			//tengo que devolver offsetQueTengoQueDevolver y el headerQueTengaQueEscribir
 	}
 	log_error(logKernel,"No se pudo liberar la variable.");
-	free(headerAnterior);
 	return NULL;
 }
 
