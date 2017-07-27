@@ -447,7 +447,9 @@ void *rutinaConsolaMemoria(void* x){
 
 				if(strcmp(comandoConsola[0],"flush\n") == 0){
 					log_info(logMemoria,"Entramos en cache flush");
+					sem_wait(&mutex_cache);
 					cacheFlush();
+					sem_post(&mutex_cache);
 					continue;
 				}
 

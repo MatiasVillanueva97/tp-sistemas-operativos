@@ -174,7 +174,8 @@ bool liberarRecursosArchivo(int pid) {
 				sem_wait(&mutex_tablaGlobalDeArchivos);
 				ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_de_archivo = list_get(tablaGlobalDeArchivos, entrada_de_tabla_proceso->globalFD);
 				sem_post(&mutex_tablaGlobalDeArchivos);
-				borrarEnTablaGlobalDeArchivo( entrada_de_archivo,entrada_de_tabla_proceso->globalFD);
+				if(entrada_de_archivo != NULL)
+					borrarEnTablaGlobalDeArchivo( entrada_de_archivo,entrada_de_tabla_proceso->globalFD);
 			}
 		}
 		int posicion = posicionEnTablaGlobalArchivosDeProceso(entrada_a_eliminar);
@@ -215,7 +216,8 @@ int borrarArchivoPermanente(t_archivo estructura) {
 	return rtaCPU;
 }
 
-void borrarEnTablaGlobalDeArchivo(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_de_archivo, int globalFD) {
+void borrarEnTablaGlobalDeArchivo(ENTRADA_DE_TABLA_GLOBAL_DE_ARCHIVOS* entrada_de_archivo, int globalFD){
+
 	entrada_de_archivo->cantidad_aperturas--;
 	if (entrada_de_archivo->cantidad_aperturas == 0) {
 		sem_wait(&mutex_tablaGlobalDeArchivosDeProcesos);
