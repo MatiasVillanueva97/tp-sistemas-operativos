@@ -190,7 +190,7 @@ void *rutinaConsola(void * arg)
 				sem_post(&mutex_listaProcesos);
 
 				log_info(logKernel,"[Rutina rutinaConsola] - Se desconecto la consola de socket: %d\n", socketConsola);
-
+				free(stream);
 			}break;
 			case 0:{
 				//printf("[Rutina rutinaConsola] - La consola ha perecido\n");

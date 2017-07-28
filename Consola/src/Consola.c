@@ -288,7 +288,7 @@ void liberarNodoListaEstado(t_Estado* nodo){
 void sigint_handler(int signal) {
 	printf("Se recibio una SIGINT, se finalizará el proceso\n" );
 	log_warning(logConsola,"Se recibio una SIGINT, se finalizará el proceso");
-	enviarMensaje(socketKernel,desconectarConsola, NULL, 0);
+	enviarMensaje(socketKernel,desconectarConsola, &socketKernel, 4);
 
 	list_destroy_and_destroy_elements(listaEstadoPrograma,liberarNodoListaEstado);
 	close(socketKernel);
@@ -334,6 +334,18 @@ int main(void)
 		char** comandoConsola = NULL;//Esta variable es para cortar el mensaje en 2.
 		comandoConsola = string_split(mensaje, " "); // separa la entrada en un char**
 
+		if(strcmp(comandoConsola[0],"desconectarConsola\n") == 0){
+			liberarArray(comandoConsola);
+			enviarMensaje(socketKernel,desconectarConsola, &socketKernel, 4);
+			log_info(logConsola,"Se desconecto a Consola. Se le envio un mensaje al Kernel");
+			break;
+		}
+		if(strcmp(comandoConsola[0],"limpiarMensajes\n") == 0){
+			system("clear");
+			log_info(logConsola,"Se limpiaron los mensajes de la consola");
+			liberarArray(comandoConsola);
+			continue;
+		}
 		if(strcmp(comandoConsola[0],"iniciarPrograma") == 0){//Primer Comando iniciarPrograma
 			char** nombreDeArchivo= string_split(comandoConsola[1], "\n");//Toma el parametro que contiene el archivo y le quita el \n
 			char* script = generarScript(nombreDeArchivo[0]);
@@ -345,12 +357,6 @@ int main(void)
 			liberarArray(comandoConsola);
 			free(script);
 			sem_wait(&mutex_ordenDeEscritura);
-			continue;
-		}
-		if(strcmp(comandoConsola[0],"limpiarMensajes\n") == 0){
-			system("clear");
-			log_info(logConsola,"Se limpiaron los mensajes de la consola");
-			liberarArray(comandoConsola);
 			continue;
 		}
 		if(strcmp(comandoConsola[0],"finalizarPrograma") == 0){
@@ -367,13 +373,6 @@ int main(void)
 			liberarArray(comandoConsola);
 			liberarArray(stream);
 			continue;
-		}
-		if(strcmp(comandoConsola[0],"desconectarConsola\n") == 0){
-			liberarArray(comandoConsola);
-			enviarMensaje(socketKernel,desconectarConsola, NULL, 0);
-			log_info(logConsola,"Se desconecto a Consola. Se le envio un mensaje al Kernel");
-
-			break;
 		}
 		if (error){
 			liberarArray(comandoConsola);
