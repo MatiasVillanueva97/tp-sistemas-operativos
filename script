@@ -1,0 +1,40 @@
+echo "Holi"
+cd ../
+echo "Instalando Commons"
+git clone https://github.com/sisoputnfrba/so-commons-library
+cd so-commons-library
+make install
+cd ../
+echo "Instalando Parser"
+git clone https://github.com/sisoputnfrba/ansisop-parser
+cd ansisop-parser/parser
+make install
+echo "Compilando"
+cd home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Memoria/Debug
+rm Memoria
+make Memoria
+cd ../../FileSystem/Debug
+rm FileSystem
+make FileSystem
+cd ../../Kernel/Debug
+rm Kernel
+make Kernel
+cd ../../Consola/Debug
+rm Consola
+make Consola
+cd ../../CPU/Debug
+rm CPU
+make CPU
+echo "Creando FS crap en home"
+mkdir /home/utnso/FS_SADICA
+cd /home/utnso/FS_SADICA
+mkdir Bloques
+mkdir Metadata
+mkdir Archivos
+cd Metadata
+touch Metadata.bin
+echo "TAMANIO_BLOQUES=64" >> /home/utnso/FS_SADICA/Metadata/Metadata.bin
+echo "CANTIDAD_BLOQUES=24" >> /home/utnso/FS_SADICA/Metadata/Metadata.bin
+echo "MAGIC_NUMBER=SADICA" >> /home/utnso/FS_SADICA/Metadata/Metadata.bin
+cd /home/utnso/FS_SADICA
+chmod 0777 *
