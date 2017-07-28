@@ -109,49 +109,59 @@ void *rutinaConsola(void * arg)
 				//***Estoy recibiendo un script para inicializar. Creo un neuvo proceso y ya comeizno a rellenarlo con los datos que ya tengo
 				log_info(logKernel,"[Rutina rutinaConsola] - Nuevo script recibido!\n");
 
-				char* scripAnsisop = (char *)stream;
+				if(!seDetuvoLaPlanificacion())
+				{
+					char* scripAnsisop = (char *)stream;
 
-				PROCESOS * nuevoPrograma = malloc(sizeof(PROCESOS));
+					PROCESOS * nuevoPrograma = malloc(sizeof(PROCESOS));
 
-				sem_wait(&mutex_HistoricoPcb);
-					nuevoPrograma->pid= historico_pid;
-					historico_pid++;
-				sem_post(&mutex_HistoricoPcb);
+					sem_wait(&mutex_HistoricoPcb);
+						nuevoPrograma->pid= historico_pid;
+						historico_pid++;
+					sem_post(&mutex_HistoricoPcb);
 
-				nuevoPrograma->scriptAnsisop = string_duplicate(scripAnsisop);
-				nuevoPrograma->socketConsola = socketConsola;
-				nuevoPrograma->consolaViva = true;
-				nuevoPrograma->semBloqueante = NULL;
+					nuevoPrograma->scriptAnsisop = string_duplicate(scripAnsisop);
+					nuevoPrograma->socketConsola = socketConsola;
+					nuevoPrograma->consolaViva = true;
+					nuevoPrograma->semBloqueante = NULL;
 
-				//***Creo el PCB
-				PCB_DATA * pcbNuevo = crearPCB(nuevoPrograma->scriptAnsisop, nuevoPrograma->pid, 0);
-				nuevoPrograma->pcb = pcbNuevo;
-				//**Le doy una tabla para sus archivos abiertos
-
-
-				ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO * nuevaEntrada = malloc(sizeof(int)+4);
-				nuevaEntrada->pid = nuevoPrograma->pid;
-				nuevaEntrada->tablaProceso = list_create();
-
-				agregarATablaDeProceso(0," ",nuevaEntrada->tablaProceso);
-				agregarATablaDeProceso(0," ",nuevaEntrada->tablaProceso);
-				agregarATablaDeProceso(0," ",nuevaEntrada->tablaProceso);
-
-				sem_wait(&mutex_tablaGlobalDeArchivosDeProcesos);
-				list_add(tablaGlobalDeArchivosDeProcesos,nuevaEntrada);
-				sem_post(&mutex_tablaGlobalDeArchivosDeProcesos);
+					//***Creo el PCB
+					PCB_DATA * pcbNuevo = crearPCB(nuevoPrograma->scriptAnsisop, nuevoPrograma->pid, 0);
+					nuevoPrograma->pcb = pcbNuevo;
+					//**Le doy una tabla para sus archivos abiertos
 
 
-				//***Le envio a consola el pid del script que me acaba de enviar
-				enviarMensaje(socketConsola,envioDelPidEnSeco,&nuevoPrograma->pid,sizeof(int));
+					ENTRADA_DE_TABLA_GLOBAL_DE_PROCESO * nuevaEntrada = malloc(sizeof(int)+4);
+					nuevaEntrada->pid = nuevoPrograma->pid;
+					nuevaEntrada->tablaProceso = list_create();
 
-				sem_wait(&mutex_listaProcesos);
-				list_add(avisos,nuevoPrograma);
-				moverA(nuevoPrograma->pid,aNew);
-				sem_post(&mutex_listaProcesos);
+					agregarATablaDeProceso(0," ",nuevaEntrada->tablaProceso);
+					agregarATablaDeProceso(0," ",nuevaEntrada->tablaProceso);
+					agregarATablaDeProceso(0," ",nuevaEntrada->tablaProceso);
 
-				sem_post(&programasEnNew);//
+					sem_wait(&mutex_tablaGlobalDeArchivosDeProcesos);
+					list_add(tablaGlobalDeArchivosDeProcesos,nuevaEntrada);
+					sem_post(&mutex_tablaGlobalDeArchivosDeProcesos);
+
+
+					//***Le envio a consola el pid del script que me acaba de enviar
+					enviarMensaje(socketConsola,envioDelPidEnSeco,&nuevoPrograma->pid,sizeof(int));
+
+					sem_wait(&mutex_listaProcesos);
+					list_add(avisos,nuevoPrograma);
+					moverA(nuevoPrograma->pid,aNew);
+					sem_post(&mutex_listaProcesos);
+
+					sem_post(&programasEnNew);//
+				}
+				else{
+					int Ariel=-1;
+					enviarMensaje(socketConsola,envioDelPidEnSeco,&Ariel,sizeof(int));
+					printf("Entramos aca menos 1 wawawaw, %d\n", historico_pid);
+				}
+
 				free(stream);
+
 			}break;
 
 			case finalizarCiertoScript:{

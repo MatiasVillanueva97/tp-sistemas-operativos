@@ -382,7 +382,7 @@ int main(void)
 	puts("Comando Inválido!\n");
 	}
 
-	pthread_join(hiloMaster,NULL);
+
 	sem_wait(&mutex_lista);
 	list_destroy_and_destroy_elements(listaEstadoPrograma,liberarNodoListaEstado);
 	sem_post(&mutex_lista);
