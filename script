@@ -10,7 +10,7 @@ git clone https://github.com/sisoputnfrba/ansisop-parser
 cd ansisop-parser/parser
 make install
 echo "Compilando"
-cd home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Memoria/Debug
+cd /home/utnso/workspace/tp-2017-1c-While-1-recursar-grupo-/Memoria/Debug
 rm Memoria
 make Memoria
 cd ../../FileSystem/Debug
