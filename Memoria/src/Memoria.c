@@ -410,6 +410,7 @@ void *rutinaConsolaMemoria(void* x){
 	size_t len = 0;
 		char* mensaje = NULL;
 		while(1){
+				printf("Comandos disponibles:\n-retardo\n-dump memoria\n-dump cache\n-dump estructuras\n-flush\n-size memoria\n-size PID: numeroDePid\n");
 				printf("\nIngrese Comando: \n");
 				getline(&mensaje,&len,stdin);
 				char** comandoConsola = NULL;
@@ -473,7 +474,7 @@ void *rutinaConsolaMemoria(void* x){
 							int pidPedido = atoi(comandoConsola[0]);
 							filaTablaCantidadDePaginas* fila = buscarFilaEnTablaCantidadDePaginas(pidPedido);
 							if(fila == NULL){
-								log_info(logMemoria,"Pidio un pid invalido");
+								log_info(logMemoria,"P	idio un pid invalido");
 								printf("Pidio un pid invalido");
 
 							}
@@ -483,6 +484,7 @@ void *rutinaConsolaMemoria(void* x){
 							}
 						}
 				}
+				printf("\Comando inválido.\n");
 				liberarArray(comandoConsola);
 			}
 }

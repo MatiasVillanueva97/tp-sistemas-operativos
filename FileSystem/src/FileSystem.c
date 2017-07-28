@@ -248,12 +248,13 @@ void* obtenerDatos(char* path,int offset, int size){
 	while(size!=0){ // revisarEsto
 			FILE * archivo = aperturaDeArchivo(*(bloques+bloqueInicial));
 			if(archivo == NULL){
-				log_error(logFS,"[Obtener datos]-El bloque %d.bin no existe más",bloqueInicial);
+				return 0;
+				/*log_error(logFS,"[Obtener datos]-El bloque %d.bin no existe más",bloqueInicial);
 				char* pathTotal = obtenerRutaTotal(string_itoa(*(bloques+bloqueInicial)),"Bloques");
 				string_append(&pathTotal,".bin");
 				log_warning(logFS,"[Obtener datos]-Se procede a crear nuevamente el bloque para escribirlo",bloqueInicial);
 				archivo= fopen(pathTotal,"w+");
-				free(pathTotal);
+				free(pathTotal);*/
 			}
 			else{
 				log_info(logFS,"[Obtener datos]-Se abrio el archivo %d.bin",*(bloques+bloqueInicial));

@@ -164,7 +164,7 @@ void *rutinaCPU(void * arg)
 
 				pcb = deserializarPCB(stream);
 
-				printf("CPU - Se manda a finalizar este pid: %d\n", pcb->pid);
+				//printf("CPU - Se manda a finalizar este pid: %d\n", pcb->pid);
 
 				sem_wait(&mutex_listaProcesos);
 				if(!proceso_EstaFinalizado2(pcb->pid)){
@@ -174,7 +174,7 @@ void *rutinaCPU(void * arg)
 						proceso_Finalizar(pcb->pid, pcb->exitCode);
 					}
 					else{
-						printf("CPU - salio todo bien pid:%d\n", pcb->pid);
+						//printf("CPU - salio todo bien pid:%d\n", pcb->pid);
 						proceso_Finalizar(pcb->pid, pcb->exitCode);
 
 					}
@@ -470,7 +470,7 @@ void *rutinaCPU(void * arg)
 
 			case 7777:{
 
-				printf("Se cago muriendo la memoria\n");
+				printf("Se desconecto la Memoria, se procede a cerrar el Kernel\n");
 
 				close(socketFS);
 				close(socketMemoria);
