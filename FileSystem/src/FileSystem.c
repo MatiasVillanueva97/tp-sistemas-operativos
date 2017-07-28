@@ -486,7 +486,7 @@ void* configurarTodo(){
 		archivoDeBitmap =fopen(rutaDelArchivoDeBitmap,"w+");
 		int cantidad = ceil(((double)cantidadDeBloques)/8.0);
 		char* cosa = string_repeat('\0',cantidad);
-		fwrite(cosa,1,cantidadDeBloques,archivoDeBitmap);
+		fwrite(cosa,1,cantidad,archivoDeBitmap);
 		free(cosa);
 	}
 	else{
