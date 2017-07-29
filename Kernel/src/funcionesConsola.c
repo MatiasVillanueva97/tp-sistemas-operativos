@@ -166,24 +166,27 @@ void *rutinaConsola(void * arg)
 
 			case finalizarCiertoScript:{
 
-				//***Estoy recibiendo un script para finalizar, le digo a memoria que lo finalize y si sale bien le aviso a consola, sino tambien le aviso, pero que salio mal xd
-				int pid = leerInt(stream);
-				int* respuesta = malloc(sizeof(int));
+				if(seDetuvoLaPlanificacion())
+					break;
 
-				log_info(logKernel,"Entramos a finalizar el script, del pid: %d\n", pid);
+					//***Estoy recibiendo un script para finalizar, le digo a memoria que lo finalize y si sale bien le aviso a consola, sino tambien le aviso, pero que salio mal xd
+					int pid = leerInt(stream);
+					int* respuesta = malloc(sizeof(int));
 
-				sem_wait(&mutex_listaProcesos);
-				//***Esta función actualizará el estado de finalizacion de un proceso
+					log_info(logKernel,"Entramos a finalizar el script, del pid: %d\n", pid);
 
-				PROCESOS* process = buscarProceso(pid);
+					sem_wait(&mutex_listaProcesos);
+					//***Esta función actualizará el estado de finalizacion de un proceso
 
-				//if(process->pcb->estadoDeProceso == enCPU) process->pcb->estadoDeProceso = exec;
+					PROCESOS* process = buscarProceso(pid);
 
-				if(!proceso_Finalizar(pid, -7)) {
-					log_info(logKernel,"[Rutina rutinaConsola] - No existe el pid\n");
-					enviarMensaje(socketConsola,errorFinalizacionPid, &pid,sizeof(int));
-				}
-				sem_post(&mutex_listaProcesos);
+					//if(process->pcb->estadoDeProceso == enCPU) process->pcb->estadoDeProceso = exec;
+
+					if(!proceso_Finalizar(pid, -7)) {
+						log_info(logKernel,"[Rutina rutinaConsola] - No existe el pid\n");
+						enviarMensaje(socketConsola,errorFinalizacionPid, &pid,sizeof(int));
+					}
+					sem_post(&mutex_listaProcesos);
 
 				free(respuesta);
 			}break;
