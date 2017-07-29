@@ -475,10 +475,7 @@ void* configurarTodo(){
 		free(rutaTotal);
 		free(nombre);
 	}
-	if(!strcmp(config_get_string_value(configuracion,"MAGIC_NUMBER"),"SADICA")){
-		perror("Ingreso mal el punto de montaje");
-		exit(-2);
-	}
+
 	char* rutaDelArchivoDeBitmap = obtenerRutaTotal("Bitmap.bin","Metadata");
 	FILE* archivoDeBitmap = fopen(rutaDelArchivoDeBitmap,"r+");
 	if(archivoDeBitmap == NULL){
