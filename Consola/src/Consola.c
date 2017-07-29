@@ -472,8 +472,19 @@ void* rutinaEscucharKernel() {
 		case (envioDelPidEnSeco): {
 			int pid;
 			pid = *((int*) stream);
+			/*pid = *((int*) stream);
 			crearHiloDetachPrograma(&pid);
 			sem_wait(&mutex_espera);
+			break;
+			 */
+			if(pid == -1){
+				printf("La planificacion fue detenida, no se aceptan nuevos scripts.\n");
+				sem_post(&mutex_ordenDeEscritura);
+			}
+			else{
+				crearHiloDetachPrograma(&pid);
+				sem_wait(&mutex_espera);
+			}
 			break;
 		}
 		case (imprimirPorPantalla): {

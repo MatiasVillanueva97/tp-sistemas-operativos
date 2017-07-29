@@ -1,0 +1,39 @@
+[INFO] 22:25:13:4 Consola/(3027:3027): Se inicializan los semaforos
+[INFO] 22:25:14:14 Consola/(3027:3027): Se conecto la Consola y el Kernel
+[INFO] 22:25:18:702 Consola/(3027:3027): Se escribió un comando en la consola
+[ERROR] 22:25:18:704 Consola/(3027:3027): Error: el archivo ../for no esta en el directorio o no existe 
+[INFO] 22:25:25:416 Consola/(3027:3027): Se escribió un comando en la consola
+[INFO] 22:25:25:417 Consola/(3027:3027): Se creo el script correctamente este dice: begin
+variables f, i, t
+#`i`: Iterador
+i=0
+#`f`: Hasta donde contar
+f=20
+:inicio
+#Incrementar el iterador
+i=i+1
+#Imprimir el contador
+prints n i
+#`t`: Comparador entre `i` y `f`
+t=f-i
+#De no ser iguales, salta a inicio
+jnz t inicio
+end
+
+[INFO] 22:25:25:419 Consola/(3027:3027): Se le envio el script al Kernel que dice : begin
+variables f, i, t
+#`i`: Iterador
+i=0
+#`f`: Hasta donde contar
+f=20
+:inicio
+#Incrementar el iterador
+i=i+1
+#Imprimir el contador
+prints n i
+#`t`: Comparador entre `i` y `f`
+t=f-i
+#De no ser iguales, salta a inicio
+jnz t inicio
+end
+

@@ -332,6 +332,10 @@ void * consolaKernel()
 				fgets(buffer,256,stdin);
 				pid = atoi(buffer);
 				sem_wait(&mutex_listaProcesos);
+				if(seDetuvoLaPlanificacion()){
+					puts("No se pudo finalizar, ya que la planificacion esta detenida.");
+					break;
+				}
 				if(proceso_Finalizar(pid,  finalizacionDesdeKenel)) //cambiar el numero del exit code, por el que sea el correcto
 					printf("\nFinalizacion exitosa.\n");
 				else

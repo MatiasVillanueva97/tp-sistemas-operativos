@@ -157,7 +157,7 @@ void *rutinaConsola(void * arg)
 				else{
 					int Ariel=-1;
 					enviarMensaje(socketConsola,envioDelPidEnSeco,&Ariel,sizeof(int));
-					printf("Entramos aca menos 1 wawawaw, %d\n", historico_pid);
+					log_info(logKernel,"Se envio el pid -1, para informarle a la consola que el script fue rechazado antes de entrar en la cola de new");
 				}
 
 				free(stream);
